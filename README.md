@@ -2,14 +2,28 @@
 
 这个仓库按 `纯文档` 方式维护，目标不是只做抖音号，而是把 `儿童贴身棉品门店` 的 `内容增长 + 店铺经营 + 1个老板2个员工的小团队管理` 放在一个总文档仓里持续推进。
 
-## 快速入口
+## 先看这里
 
+- 总导航：看 [00-文档阅读导航](docs/00-文档阅读导航.md)
 - 想先搭整体经营盘：看 [店铺经营基础框架](docs/06-店铺经营基础框架.md)
-- 想先救老号和做内容：看 [抖音老号低流量优化手册](docs/02-抖音老号低流量优化手册.md)
-- 想先学工具：看 [AI工具学习与协同手册](docs/03-AI工具学习与协同手册.md)
-- 想直接开做未来 14 天：看 [PhaseA前14天执行清单](docs/05-PhaseA前14天执行清单.md)
-- 想看 90 天推进逻辑：看 [项目推进路线图](docs/04-项目推进路线图.md)
-- 想把 1 个老板 + 2 个员工的人和事带顺：看 [小团队门店分工与排班手册](docs/08-小团队门店分工与排班手册.md)
+- 想先拉营业额：看 [门店营业额增长框架](docs/15-门店营业额增长框架.md)
+- 想先让员工跑顺：看 [小团队门店分工与排班手册](docs/08-小团队门店分工与排班手册.md)
+- 想先看全部脑图：去 `mindmaps/`
+
+## 按目标阅读
+
+| 目标 | 建议先看 |
+| --- | --- |
+| 门店整体经营 | [06-店铺经营基础框架](docs/06-店铺经营基础框架.md) |
+| 营业额增长 | [15-门店营业额增长框架](docs/15-门店营业额增长框架.md) |
+| 商场引流 | [14-商场引流与营业额增长方法](docs/14-商场引流与营业额增长方法.md) |
+| 员工执行 | [08-小团队门店分工与排班手册](docs/08-小团队门店分工与排班手册.md) |
+| 接待成交 | [12-门店接待话术SOP](docs/12-门店接待话术SOP.md) |
+| 抖音内容 | [01-抖音起号执行手册](docs/01-抖音起号执行手册.md) |
+| 老号优化 | [02-抖音老号低流量优化手册](docs/02-抖音老号低流量优化手册.md) |
+| AI协同 | [03-AI工具学习与协同手册](docs/03-AI工具学习与协同手册.md) |
+
+## 文档目录
 
 ## 内容增长线
 
@@ -32,6 +46,12 @@
   让每天、每周、每月的经营复盘有固定记录方式
 - [门店接待话术SOP](docs/12-门店接待话术SOP.md)
   把顾客进店后的开口、判断、推荐和收口统一成现场可执行的话术
+- [抖音到店承接SOP](docs/13-抖音到店承接SOP.md)
+  把评论、私信、直播里的问题一路接到门店现场，不让顾客到店重新解释一遍
+- [商场引流与营业额增长方法](docs/14-商场引流与营业额增长方法.md)
+  重点解决商场店怎么把现成客流变成停留、进店和成交
+- [门店营业额增长框架](docs/15-门店营业额增长框架.md)
+  把营业额拆成公式、分工和周看板，知道门店该先拉哪个指标
 
 ## 小团队管理线
 
@@ -46,23 +66,29 @@
 
 ## 脑图资源
 
-- [抖音起号脑图](mindmaps/01-抖音起号-mindmap.md)
-- [老号优化脑图](mindmaps/02-抖音老号低流量优化-mindmap.md)
-- [AI工具学习 XMind](mindmaps/03-AI工具学习与协同手册.xmind)
-- [项目推进路线图脑图](mindmaps/04-项目推进路线图-mindmap.md)
-- [PhaseA前14天执行清单脑图](mindmaps/05-PhaseA前14天执行清单-mindmap.md)
-- [店铺经营基础框架脑图](mindmaps/06-店铺经营基础框架-mindmap.md)
-- [店铺日常经营复盘表脑图](mindmaps/07-店铺日常经营复盘表-mindmap.md)
-- [小团队门店分工与排班脑图](mindmaps/08-小团队门店分工与排班手册-mindmap.md)
-- [员工培训与带教脑图](mindmaps/09-员工培训与带教SOP-mindmap.md)
-- [老板周复盘与执行校准脑图](mindmaps/10-老板周复盘与执行校准-mindmap.md)
-- [员工日常检查清单脑图](mindmaps/11-员工日常检查清单-mindmap.md)
-- [门店接待话术SOP脑图](mindmaps/12-门店接待话术SOP-mindmap.md)
-
 说明：
 
-- `03-AI工具学习与协同手册.xmind` 现在使用新版 `content.json` 包结构，优先用 XMind 打开
-- 其余脑图当前是 Markdown + Mermaid 版本，适合在仓库里直接阅读和后续继续改写
+- `mindmaps/*.md` 是可编辑源文件
+- `mindmaps/*.xmind` 是可直接在 XMind 里打开的版本
+
+| 主题 | Markdown脑图 | XMind |
+| --- | --- | --- |
+| 文档阅读导航 | [00](mindmaps/00-文档阅读导航-mindmap.md) | [00](mindmaps/00-文档阅读导航-mindmap.xmind) |
+| 抖音起号 | [01](mindmaps/01-抖音起号-mindmap.md) | [01](mindmaps/01-抖音起号-mindmap.xmind) |
+| 老号优化 | [02](mindmaps/02-抖音老号低流量优化-mindmap.md) | [02](mindmaps/02-抖音老号低流量优化-mindmap.xmind) |
+| AI工具学习 | 无 | [03](mindmaps/03-AI工具学习与协同手册.xmind) |
+| 项目推进路线图 | [04](mindmaps/04-项目推进路线图-mindmap.md) | [04](mindmaps/04-项目推进路线图-mindmap.xmind) |
+| PhaseA前14天执行清单 | [05](mindmaps/05-PhaseA前14天执行清单-mindmap.md) | [05](mindmaps/05-PhaseA前14天执行清单-mindmap.xmind) |
+| 店铺经营基础框架 | [06](mindmaps/06-店铺经营基础框架-mindmap.md) | [06](mindmaps/06-店铺经营基础框架-mindmap.xmind) |
+| 店铺日常经营复盘表 | [07](mindmaps/07-店铺日常经营复盘表-mindmap.md) | [07](mindmaps/07-店铺日常经营复盘表-mindmap.xmind) |
+| 小团队门店分工与排班 | [08](mindmaps/08-小团队门店分工与排班手册-mindmap.md) | [08](mindmaps/08-小团队门店分工与排班手册-mindmap.xmind) |
+| 员工培训与带教 | [09](mindmaps/09-员工培训与带教SOP-mindmap.md) | [09](mindmaps/09-员工培训与带教SOP-mindmap.xmind) |
+| 老板周复盘与执行校准 | [10](mindmaps/10-老板周复盘与执行校准-mindmap.md) | [10](mindmaps/10-老板周复盘与执行校准-mindmap.xmind) |
+| 员工日常检查清单 | [11](mindmaps/11-员工日常检查清单-mindmap.md) | [11](mindmaps/11-员工日常检查清单-mindmap.xmind) |
+| 门店接待话术 | [12](mindmaps/12-门店接待话术SOP-mindmap.md) | [12](mindmaps/12-门店接待话术SOP-mindmap.xmind) |
+| 抖音到店承接 | [13](mindmaps/13-抖音到店承接SOP-mindmap.md) | [13](mindmaps/13-抖音到店承接SOP-mindmap.xmind) |
+| 商场引流与营业额增长 | [14](mindmaps/14-商场引流与营业额增长方法-mindmap.md) | [14](mindmaps/14-商场引流与营业额增长方法-mindmap.xmind) |
+| 门店营业额增长框架 | [15](mindmaps/15-门店营业额增长框架-mindmap.md) | [15](mindmaps/15-门店营业额增长框架-mindmap.xmind) |
 
 ## 仓库定位
 
