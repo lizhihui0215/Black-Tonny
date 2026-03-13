@@ -96,6 +96,15 @@
    - 核心经营指标
    - 赚钱机会
 
+如果想在开启前先做一次自动检查，先看：
+
+- [26-GitHub Pages上线前最后检查](26-GitHub%20Pages上线前最后检查.md)
+- 或直接运行：
+
+```bash
+python3 /Users/lizhihui/Workspace/black\ Tony/scripts/check_pages_ready.py
+```
+
 ## 上线后怎么验证
 
 Pages 开启后，打开：

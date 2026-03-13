@@ -8,6 +8,7 @@
 - 想直接打开最新在线经营仪表盘入口文件：看 [docs/dashboard/index.html](docs/dashboard/index.html)
 - 想先看 GitHub Pages 首页入口：看 [docs/index.html](docs/index.html)
 - 想直接看怎么开启 GitHub Pages：看 [GitHub Pages开启清单](docs/25-GitHub%20Pages开启清单.md)
+- 想先做 GitHub Pages 上线前自检：看 [GitHub Pages上线前最后检查](docs/26-GitHub%20Pages上线前最后检查.md)
 - 想先搭整体经营盘：看 [店铺经营基础框架](docs/06-店铺经营基础框架.md)
 - 想先拉营业额：看 [门店营业额增长框架](docs/15-门店营业额增长框架.md)
 - 想先管库存和进货：看 [门店库存与营收核心计算方法](docs/18-门店库存与营收核心计算方法.md)
@@ -30,6 +31,7 @@
 | GitHub Pages 在线仪表盘入口 | [docs/dashboard/index.html](docs/dashboard/index.html) |
 | GitHub Pages 首页入口 | [docs/index.html](docs/index.html) |
 | GitHub Pages 开启步骤 | [25-GitHub Pages开启清单](docs/25-GitHub%20Pages开启清单.md) |
+| GitHub Pages 上线前最后检查 | [26-GitHub Pages上线前最后检查](docs/26-GitHub%20Pages上线前最后检查.md) |
 | 历史数据补齐 | [23-全量历史数据导出与看板升级清单](docs/23-全量历史数据导出与看板升级清单.md) |
 | 下一步优化建议 | [24-内容经营与数据看板下一步优化建议](docs/24-内容经营与数据看板下一步优化建议.md) |
 | 复购和会员 | [19-老客复购经营清单](docs/19-老客复购经营清单.md) |
@@ -49,6 +51,7 @@
 - GitHub Pages 首页入口：[`docs/index.html`](docs/index.html)
 - Pages 开启后，建议固定访问路径：`/dashboard/`
 - GitHub Pages 开启说明：[`docs/25-GitHub Pages开启清单.md`](docs/25-GitHub%20Pages开启清单.md)
+- GitHub Pages 上线前最后检查：[`docs/26-GitHub Pages上线前最后检查.md`](docs/26-GitHub%20Pages上线前最后检查.md)
 - 历史版本继续保留在 [`reports/inventory_dashboard/`](reports/inventory_dashboard/)
 - 仓库内 `docs/dashboard/` 放最新可发布版本，`reports/` 放每天留档版本
 
