@@ -34,6 +34,7 @@ class ReportFiles:
     member_report: Path
     product_sales: Path
     movement_report: Path
+    store_retail_report: Path | None = None
 
 
 def pick_file(input_dir: Path, exact_name: str) -> Path:
@@ -88,6 +89,12 @@ def pick_by_keywords(
 
 
 def resolve_reports(input_dir: Path) -> ReportFiles:
+    store_retail_report = None
+    try:
+        store_retail_report = pick_by_keywords(input_dir, keywords=["店铺零售清单"])
+    except FileNotFoundError:
+        store_retail_report = None
+
     return ReportFiles(
         sales_detail=pick_by_keywords(input_dir, keywords=["销售清单"]),
         inventory_detail=pick_by_keywords(
@@ -101,6 +108,7 @@ def resolve_reports(input_dir: Path) -> ReportFiles:
         member_report=pick_by_keywords(input_dir, keywords=["会员综合分析"]),
         product_sales=pick_by_keywords(input_dir, keywords=["商品销售情况"]),
         movement_report=pick_by_keywords(input_dir, keywords=["出入库单据"]),
+        store_retail_report=store_retail_report,
     )
 
 
@@ -120,6 +128,7 @@ def load_data(files: ReportFiles) -> dict[str, pd.DataFrame]:
     members = pd.read_excel(files.member_report)
     product_sales = pd.read_excel(files.product_sales)
     movement = pd.read_excel(files.movement_report)
+    store_retail = pd.read_excel(files.store_retail_report) if files.store_retail_report else pd.DataFrame()
 
     sales["销售日期"] = pd.to_datetime(sales["销售日期"], errors="coerce")
     sales = to_numeric(sales, ["数量", "金额", "吊牌金额", "单价", "折扣"])
@@ -162,6 +171,10 @@ def load_data(files: ReportFiles) -> dict[str, pd.DataFrame]:
             product_sales[col] = pd.to_datetime(product_sales[col], errors="coerce")
     movement["发货时间"] = pd.to_datetime(movement["发货时间"], errors="coerce")
     movement = to_numeric(movement, ["数量", "吊牌金额"])
+    if not store_retail.empty:
+        if "销售日期" in store_retail.columns:
+            store_retail["销售日期"] = pd.to_datetime(store_retail["销售日期"], errors="coerce")
+        store_retail = to_numeric(store_retail, ["数量", "金额", "吊牌金额", "单价", "折扣"])
 
     return {
         "sales": sales,
@@ -172,6 +185,7 @@ def load_data(files: ReportFiles) -> dict[str, pd.DataFrame]:
         "members": members,
         "product_sales": product_sales,
         "movement": movement,
+        "store_retail": store_retail,
     }
 
 
@@ -203,6 +217,15 @@ def clean_data(data: dict[str, pd.DataFrame], store_name: str) -> dict[str, pd.D
     cleaned["movement"] = data["movement"][
         data["movement"]["接收店铺"].eq(store_name)
     ].copy()
+    if "store_retail" in data and not data["store_retail"].empty:
+        store_retail = data["store_retail"].copy()
+        if "输入人" in store_retail.columns:
+            store_retail["输入人"] = store_retail["输入人"].fillna("未标记").astype(str).str.strip()
+        if "店铺名称" in store_retail.columns:
+            store_retail["店铺名称"] = store_retail["店铺名称"].fillna("未标记店铺").astype(str).str.strip()
+        cleaned["store_retail"] = store_retail
+    else:
+        cleaned["store_retail"] = pd.DataFrame()
     return cleaned
 
 
@@ -352,6 +375,7 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
     members = data["members"].copy()
     product_sales = data["product_sales"].copy()
     movement = data["movement"].copy()
+    store_retail = data.get("store_retail", pd.DataFrame()).copy()
     stock_flow = stock_flow[stock_flow["商品款号"].notna()].copy()
     stock_flow["近期零售"] = stock_flow["零售数量"].abs()
     stock_flow["动销率"] = stock_flow.apply(
@@ -364,6 +388,8 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
     inventory_no_props = inventory_detail[inventory_detail["大类"].ne("道具")].copy()
     inventory_props = inventory_detail[inventory_detail["大类"].eq("道具")].copy()
     inventory_sales_no_props = inventory_sales[inventory_sales["大类"].ne("道具")].copy()
+    product_sales = product_sales[product_sales["款号"].notna()].copy()
+    product_sales = product_sales[product_sales["款号"].astype(str).str.strip().ne("合计")].copy()
     product_sales_no_props = product_sales[product_sales["中类"].ne("道具")].copy()
     product_sales_props = product_sales[product_sales["中类"].eq("道具")].copy()
     sales_no_props["导购员"] = sales_no_props["导购员"].fillna("未分配").astype(str).str.strip()
@@ -489,6 +515,26 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         ["VIP姓名", "服务导购", "购买金额", "购买总数", "消费次数/年", "平均单笔消费额", "储值余额"]
     ].sort_values("购买金额", ascending=False)
 
+    primary_input = "郭文攀"
+    if not store_retail.empty and {"输入人", "店铺名称", "零售单号", "金额", "数量"}.issubset(store_retail.columns):
+        retail_reference = (
+            store_retail[store_retail["输入人"].ne("未标记")]
+            .groupby(["输入人", "店铺名称"])
+            .agg(
+                销售额=("金额", "sum"),
+                销量=("数量", "sum"),
+                订单数=("零售单号", "nunique"),
+            )
+            .reset_index()
+            .sort_values(["销售额", "订单数"], ascending=[False, False])
+        )
+        primary_reference = retail_reference[retail_reference["输入人"].eq(primary_input)].head(1)
+        other_references = retail_reference[retail_reference["输入人"].ne(primary_input)].head(8)
+    else:
+        retail_reference = pd.DataFrame()
+        primary_reference = pd.DataFrame()
+        other_references = pd.DataFrame()
+
     negative_inventory = inventory_no_props[inventory_no_props["库存"] < 0][
         ["款号", "品名", "颜色", "尺码", "库存", "库存额", "大类", "小类"]
     ].sort_values("库存额")
@@ -524,12 +570,15 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
     product_sales_no_props["建议补货量"] = (
         (product_sales_no_props["周均销量"] * 4).round().clip(lower=0) - product_sales_no_props["库存"]
     ).clip(lower=0)
-
-    replenish = product_sales_no_props[
+    product_sales_no_props["补货候选"] = (
         (product_sales_no_props["销售数"] >= 3)
         & (product_sales_no_props["周均销量"] >= 0.5)
         & (product_sales_no_props["建议补货量"] >= 1)
         & ((product_sales_no_props["库存"] <= 2) | (product_sales_no_props["库存周数"] <= 2))
+    )
+
+    replenish = product_sales_no_props[
+        product_sales_no_props["补货候选"]
         & (product_sales_no_props["季节策略"].isin(["当季主推", "下一季试补"]))
     ][
         ["款号", "颜色", "中类", "季节", "季节策略", "销售数", "销售金额", "库存", "周均销量", "库存周数", "建议补货量"]
@@ -549,7 +598,7 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
 
     seasonal_actions = product_sales_no_props[
         (product_sales_no_props["季节策略"].isin(["跨季去化", "暂缓补货"]))
-        & ((product_sales_no_props["销售数"] >= 1) | (product_sales_no_props["库存"] > 0))
+        & (product_sales_no_props["补货候选"] | (product_sales_no_props["库存"] >= 10))
     ][
         ["款号", "颜色", "中类", "季节", "季节策略", "销售数", "销售金额", "库存", "周均销量", "库存周数"]
     ].copy()
@@ -561,9 +610,12 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         ),
         axis=1,
     )
+    seasonal_actions["季节策略优先级"] = seasonal_actions["季节策略"].map(
+        {"跨季去化": 0, "暂缓补货": 1}
+    ).fillna(9)
     seasonal_actions = seasonal_actions.sort_values(
-        ["季节策略", "库存", "销售金额"], ascending=[True, False, False]
-    )
+        ["季节策略优先级", "库存", "销售金额"], ascending=[True, False, False]
+    ).drop(columns=["季节策略优先级"])
 
     clearance = stock_flow[
         (stock_flow["商品款号"].notna())
@@ -603,6 +655,12 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         f"{action_summary['seasonal_hold_count']} 个跨季不建议补货、应转去化或暂缓的 SKU，"
         f"{action_summary['clearance_count']} 个建议先去化的高库存低动销 SKU。",
     ]
+    if not primary_reference.empty:
+        row = primary_reference.iloc[0]
+        insights.append(
+            f"店铺零售清单已按输入人区分参考店铺；主逻辑只关注 {primary_input} / {row['店铺名称']}，"
+            f"其余输入人仅作为参考对比。"
+        )
 
     return {
         "summary_cards": summary_cards,
@@ -613,6 +671,9 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         "stock_sales_ratio": stock_sales_ratio,
         "guide_perf": guide_perf,
         "top_members": top_members,
+        "primary_input": primary_input,
+        "primary_reference": primary_reference,
+        "other_references": other_references,
         "negative_inventory": negative_inventory,
         "low_stock_bestsellers": low_stock_bestsellers,
         "slow_moving": slow_moving,
@@ -709,6 +770,15 @@ def format_badge(value: str, level: str) -> str:
 
 def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
     decorated = df.copy()
+    if "季节策略" in decorated.columns:
+        decorated["季节策略"] = decorated["季节策略"].map(
+            {
+                "当季主推": format_badge("当季主推", "green"),
+                "下一季试补": format_badge("下一季试补", "yellow"),
+                "跨季去化": format_badge("跨季去化", "red"),
+                "暂缓补货": format_badge("暂缓补货", "yellow"),
+            }
+        ).fillna(decorated["季节策略"])
     if "状态" in decorated.columns:
         decorated["状态"] = decorated["状态"].map(
             {
@@ -723,8 +793,12 @@ def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
                 "立即补货": format_badge("立即补货", "red"),
                 "优先补货": format_badge("优先补货", "yellow"),
                 "先校库存再补货": format_badge("先校库存再补货", "red"),
+                "小量试补": format_badge("小量试补", "yellow"),
                 "先停补再去化": format_badge("先停补再去化", "red"),
                 "观察并做组合去化": format_badge("观察并做组合去化", "yellow"),
+                "优先去化": format_badge("优先去化", "red"),
+                "跨季不补货": format_badge("跨季不补货", "red"),
+                "暂缓补货": format_badge("暂缓补货", "yellow"),
             }
         ).fillna(decorated["建议动作"])
     return decorated
@@ -761,6 +835,11 @@ def build_dashboard_tips(cards: dict, actions: dict) -> list[dict[str, str]]:
             "term": "建议去化 SKU",
             "meaning": "库存较高、近期卖得慢的商品数。",
             "watch": "先停补，再做搭配、组合或清货动作。",
+        },
+        {
+            "term": "跨季处理 SKU",
+            "meaning": "当前时间点不适合补货的商品数，包括跨季去化和暂缓补货。",
+            "watch": "先看季节策略，冬款临近夏天不要直接补，优先去化或等待下季。",
         },
         {
             "term": "高压货品类",
@@ -919,8 +998,12 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
     time_strategy = build_time_strategy(metrics)
     category_risks = metrics["category_risks"]
     top_members = metrics["top_members"].head(3)
+    seasonal_actions = metrics["seasonal_actions"].head(3)
     top_risk_category = top_label_from_series(category_risks["大类"], "高库存品类")
     top_member_names = "、".join(top_members["VIP姓名"].astype(str).tolist()) if not top_members.empty else "高价值会员"
+    top_seasonal_sample = (
+        "、".join(seasonal_actions["款号"].astype(str).tolist()) if not seasonal_actions.empty else "跨季款"
+    )
 
     playbooks: list[dict] = []
 
@@ -996,6 +1079,30 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
             }
         )
 
+    if actions["seasonal_hold_count"] >= 1:
+        playbooks.append(
+            {
+                "level": "yellow",
+                "title": "跨季款先别补，先按季节处理",
+                "trigger": f"当前有 {format_num(actions['seasonal_hold_count'])} 个 SKU 被识别为跨季去化或暂缓补货，例如 {top_seasonal_sample}。",
+                "goal": "避免把非主销季的货继续补深，把钱和货位留给当前季节。",
+                "schemes": [
+                    {
+                        "name": "有库存先去化",
+                        "detail": "如果跨季款手里还有库存，优先转到去化清单，用组合价、加价购、门口清货位来动销。",
+                    },
+                    {
+                        "name": "没库存不再追补",
+                        "detail": "如果像冬季羽绒这样当前库存已经为 0，现阶段不要因为历史卖过就立即补，先等回到主销季再评估。",
+                    },
+                    {
+                        "name": "跨季款单独看板",
+                        "detail": "把跨季款放到单独的“跨季处理建议清单”，由老板每周决定去化、暂缓还是等待下季，不跟当季补货混在一起。",
+                    },
+                ],
+            }
+        )
+
     if cards["member_sales_ratio"] >= 0.6:
         playbooks.append(
             {
@@ -1044,6 +1151,8 @@ def build_html(metrics: dict) -> str:
     dashboard_tips = build_dashboard_tips(cards, actions)
     time_strategy = build_time_strategy(metrics)
     playbooks = build_operational_playbooks(metrics)
+    primary_reference = metrics["primary_reference"]
+    other_references = metrics["other_references"]
 
     card_items = [
         ("经营销售额", f"{format_num(cards['sales_amount'], 2)} 元", "默认已排除道具"),
@@ -1056,6 +1165,7 @@ def build_html(metrics: dict) -> str:
         ("会员销售额占比", f"{format_num(cards['member_sales_ratio'] * 100, 1)}%", "会员是核心来源"),
         ("预计库存覆盖天数", f"{format_num(cards['estimated_inventory_days'], 1)} 天", "经营商品口径"),
         ("建议补货 SKU", format_num(actions["replenish_count"]), "优先看畅销低库存"),
+        ("跨季处理 SKU", format_num(actions["seasonal_hold_count"]), "不建议按原逻辑继续补货"),
         ("建议去化 SKU", format_num(actions["clearance_count"]), "优先看高库存低动销"),
         ("高压货品类", format_num(actions["high_risk_category_count"]), "按库存金额/销售金额判断"),
     ]
@@ -1127,15 +1237,25 @@ def build_html(metrics: dict) -> str:
         """
         for item in playbooks
     )
+    if not primary_reference.empty:
+        primary = primary_reference.iloc[0]
+        reference_intro = (
+            f"主逻辑固定关注 {metrics['primary_input']} / {primary['店铺名称']}。"
+            "下面其他输入人代表其他店铺，只做参考对比，不参与主经营结论。"
+        )
+    else:
+        reference_intro = "未读取到可用的输入人参考表。"
 
     tables = "".join(
         [
             table_html(metrics["replenish"], "补货建议清单", 12, "先看销售金额高、库存低、库存周数短的款，优先补畅销款。"),
+            table_html(metrics["seasonal_actions"], "跨季处理建议清单", 12, "先看季节策略。跨季去化的款不要继续补，有库存先清；没库存就等下季。"),
             table_html(metrics["clearance"], "去化建议清单", 12, "先看实际库存高、近期零售低、动销率低的款，先停补再想去化。"),
             table_html(metrics["low_stock_bestsellers"], "畅销但低库存的商品", 12, "这些款卖得不差，但库存已经很低，容易影响营业额。"),
             table_html(metrics["slow_moving"], "高库存但低动销的商品", 12, "这些款库存不少，但近期基本没卖动，适合优先排查。"),
             table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨，别直接按这张表补货。"),
             table_html(metrics["top_members"], "高价值会员", 12, "优先回访高消费或高频顾客，做复购和转介绍。"),
+            table_html(other_references, "其他店铺参考", 8, reference_intro),
         ]
     )
 
@@ -1580,11 +1700,13 @@ def build_markdown_summary(metrics: dict) -> str:
     cards = metrics["summary_cards"]
     actions = metrics["action_summary"]
     health_lights = build_health_lights(cards, actions)
-    dashboard_tips = build_dashboard_tips(cards, actions)[:6]
+    dashboard_tips = build_dashboard_tips(cards, actions)[:7]
     time_strategy = build_time_strategy(metrics)
     playbooks = build_operational_playbooks(metrics)
     replenish = metrics["replenish"].head(5)
+    seasonal_actions = metrics["seasonal_actions"].head(5)
     clearance = metrics["clearance"].head(5)
+    primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
     lines = [
         f"# {cards['store_name']} 库存销售摘要",
@@ -1602,8 +1724,24 @@ def build_markdown_summary(metrics: dict) -> str:
         f"- 负库存 SKU：{format_num(cards['negative_sku_count'])}",
         f"- 会员销售额占比：{format_num(cards['member_sales_ratio'] * 100, 1)}%",
         f"- 建议补货 SKU：{format_num(actions['replenish_count'])}",
+        f"- 跨季处理 SKU：{format_num(actions['seasonal_hold_count'])}",
         f"- 建议去化 SKU：{format_num(actions['clearance_count'])}",
         "",
+        "## 输入人 / 店铺逻辑",
+    ]
+    if not primary_reference.empty:
+        row = primary_reference.iloc[0]
+        lines.extend([
+            f"- 主逻辑固定关注：{metrics['primary_input']} / {row['店铺名称']}",
+            "- 其他输入人代表其他店铺，只做参考，不参与主经营口径。",
+            "",
+        ])
+    else:
+        lines.extend([
+            "- 当前没有读取到可用的输入人参考表。",
+            "",
+        ])
+    lines.extend([
         "## 北京时间与季节决策",
         f"- 北京时间：{time_strategy['beijing_time']}",
         f"- 当前季节：{time_strategy['season']} / {time_strategy['phase']}",
@@ -1663,6 +1801,7 @@ def build_markdown_summary(metrics: dict) -> str:
     lines.append("")
     lines.append("## 最值得先处理的表")
     lines.append("- 畅销但低库存的商品：优先补货")
+    lines.append("- 跨季处理建议清单：当前不该补的款先拎出来")
     lines.append("- 高库存但低动销的商品：优先去化或停补")
     lines.append("- 负库存异常清单：优先纠偏")
     if not replenish.empty:
@@ -1671,6 +1810,13 @@ def build_markdown_summary(metrics: dict) -> str:
         for _, row in replenish.iterrows():
             lines.append(
                 f"- {row['款号']} / {row['颜色']}：库存 {format_num(row['库存'])}，周均销量 {format_num(row['周均销量'], 1)}，建议补货 {format_num(row['建议补货量'])}"
+            )
+    if not seasonal_actions.empty:
+        lines.append("")
+        lines.append("## 跨季处理 Top 5")
+        for _, row in seasonal_actions.iterrows():
+            lines.append(
+                f"- {row['款号']} / {row['颜色']} / {row['季节']}：季节策略 {row['季节策略']}，库存 {format_num(row['库存'])}，建议 {row['建议动作']}"
             )
     if not clearance.empty:
         lines.append("")
@@ -1687,9 +1833,11 @@ def build_business_report(metrics: dict) -> str:
     sales_top = metrics["sales_by_category_ex_props"].head(4)
     category_risks = metrics["category_risks"].head(4)
     guides = metrics["guide_perf"].head(3)
+    seasonal_actions = metrics["seasonal_actions"].head(5)
     health_lights = build_health_lights(cards, metrics["action_summary"])
     time_strategy = build_time_strategy(metrics)
     playbooks = build_operational_playbooks(metrics)
+    primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
 
     lines = [
@@ -1719,7 +1867,24 @@ def build_business_report(metrics: dict) -> str:
         f"- 道具库存额参考：{format_num(cards['props_inventory_amount'], 2)} 元",
         f"- 负库存 SKU：{format_num(cards['negative_sku_count'])}",
         f"- 会员销售额占比：{format_num(cards['member_sales_ratio'] * 100, 1)}%",
+        f"- 跨季处理 SKU：{format_num(metrics['action_summary']['seasonal_hold_count'])}",
         "",
+        "## 输入人 / 店铺逻辑",
+        "",
+    ]
+    if not primary_reference.empty:
+        row = primary_reference.iloc[0]
+        lines.extend([
+            f"- 主逻辑固定关注：{metrics['primary_input']} / {row['店铺名称']}",
+            "- 其他输入人代表其他店铺，只做参考，不参与主经营口径。",
+            "",
+        ])
+    else:
+        lines.extend([
+            "- 当前没有读取到可用的输入人参考表。",
+            "",
+        ])
+    lines.extend([
         "## 北京时间与季节决策",
         "",
         f"- 北京时间：{time_strategy['beijing_time']}",
@@ -1762,6 +1927,15 @@ def build_business_report(metrics: dict) -> str:
         lines.append(f"- 目标：{item['goal']}")
         for idx, scheme in enumerate(item["schemes"], 1):
             lines.append(f"- 方案{idx}：{scheme['name']}，{scheme['detail']}")
+        lines.append("")
+
+    if not seasonal_actions.empty:
+        lines.append("## 跨季处理 Top 5")
+        lines.append("")
+        for _, row in seasonal_actions.iterrows():
+            lines.append(
+                f"- {row['款号']} / {row['颜色']} / {row['季节']}：季节策略 {row['季节策略']}，库存 {format_num(row['库存'])}，建议 {row['建议动作']}"
+            )
         lines.append("")
 
     lines.extend([
