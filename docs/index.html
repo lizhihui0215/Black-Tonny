@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵门店经营入口</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      color: #0f172a;
+    }
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 20px 40px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: #fff;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+    .hero p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.8;
+      opacity: 0.92;
+      max-width: 760px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .hero-actions a {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .btn-primary {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .section {
+      margin-top: 22px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+    .section p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      background: #fff;
+    }
+    .card-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .card p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+      margin: 0 0 12px;
+    }
+    .card a {
+      text-decoration: none;
+      color: #1d4ed8;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .tip-list {
+      margin: 14px 0 0 18px;
+      padding: 0;
+      line-height: 1.9;
+      color: #334155;
+      font-size: 14px;
+    }
+    .footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.8;
+    }
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 12px 28px;
+      }
+      .hero {
+        padding: 20px;
+        border-radius: 18px;
+      }
+      .hero h1 {
+        font-size: 26px;
+      }
+      .hero p {
+        font-size: 13px;
+      }
+      .hero-actions a {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .section {
+        padding: 16px;
+        border-radius: 16px;
+      }
+      .section h2 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>小黑托昵门店经营入口</h1>
+      <p>这是 GitHub Pages 的首页入口。老板和店员日常优先打开在线经营仪表盘；摘要、分析报告和 CSV 明细保留在下面，方便复盘和下载。</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="./dashboard/">进入在线经营仪表盘</a>
+        <a class="btn-secondary" href="./dashboard/summary.md">查看文字摘要</a>
+        <a class="btn-secondary" href="./dashboard/report.md">查看分析报告</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>老板怎么用</h2>
+      <p>如果你只是想知道今天该做什么，直接打开仪表盘，不需要先看明细表。</p>
+      <ul class="tip-list">
+        <li>先看“今日经营重点”。</li>
+        <li>再看“核心经营指标”和“库存风险”。</li>
+        <li>最后才看补货机会、会员经营和详细数据。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>常用入口</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="card-kicker">主入口</div>
+          <h3>在线经营仪表盘</h3>
+          <p>给老板和店员直接看的页面，重点看今日结论、今日执行任务、库存风险和补货机会。</p>
+          <a href="./dashboard/">打开仪表盘</a>
+        </article>
+        <article class="card">
+          <div class="card-kicker">文字版</div>
+          <h3>经营摘要</h3>
+          <p>适合在群里转发或做日报，内容更短，先看老板一分钟结论和当前经营阶段。</p>
+          <a href="./dashboard/summary.md">打开摘要</a>
+        </article>
+        <article class="card">
+          <div class="card-kicker">复盘版</div>
+          <h3>分析报告</h3>
+          <p>适合老板自己看或者周会讨论，包含经营判断、趋势和风险拆解。</p>
+          <a href="./dashboard/report.md">打开分析报告</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>数据文件下载</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="card-kicker">CSV</div>
+          <h3>补货建议清单</h3>
+          <p>给执行补货时使用，先看品类，再下钻到具体 SKU。</p>
+          <a href="./dashboard/%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">下载 CSV</a>
+        </article>
+        <article class="card">
+          <div class="card-kicker">CSV</div>
+          <h3>去化建议清单</h3>
+          <p>给安排去库存和陈列调整时使用，优先看高库存低动销部分。</p>
+          <a href="./dashboard/%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">下载 CSV</a>
+        </article>
+        <article class="card">
+          <div class="card-kicker">CSV</div>
+          <h3>品类风险概览</h3>
+          <p>适合老板判断哪些品类库存压力大，先停补还是继续维持。</p>
+          <a href="./dashboard/%E5%93%81%E7%B1%BB%E9%A3%8E%E9%99%A9%E6%A6%82%E8%A7%88.csv">下载 CSV</a>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer">
+      Pages 根目录建议使用 `docs/`。在线仪表盘固定入口是 `./dashboard/`。如果你在仓库里更新了数据，只要重新运行生成脚本并 push，老板访问的入口地址不需要更换。
+    </div>
+  </div>
+</body>
+</html>

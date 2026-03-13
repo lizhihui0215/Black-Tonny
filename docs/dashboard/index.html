@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 老板经营仪表盘</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+    .page {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+    .hero p {
+      margin: 0;
+      opacity: 0.92;
+      line-height: 1.7;
+    }
+    .hero-note {
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.88;
+    }
+    .quick-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 14px 0 18px;
+    }
+    .quick-nav a {
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .module {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .module-title {
+      margin: 0;
+      font-size: 22px;
+      color: #0f172a;
+    }
+    .module-note {
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .focus-wrap {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }
+    .focus-panel {
+      background: #fffdf7;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .focus-headline {
+      font-size: 28px;
+      font-weight: 800;
+      color: #92400e;
+      margin: 0 0 10px;
+    }
+    .focus-summary {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #5b4636;
+    }
+    .chip-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .mini-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .mini-chip-primary {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .mini-chip-soft {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .mini-chip-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .mini-chip-warn {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .task-list, .detail-list {
+      margin: 0 0 0 18px;
+      padding: 0;
+      line-height: 1.9;
+      color: #334155;
+      font-size: 14px;
+    }
+    .metrics-grid, .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .metric-card, .opportunity-card, .risk-card, .member-card, .health-card, .tip-card, .playbook-card, .chart-card, .table-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+    }
+    .metric-card {
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .metric-title {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+    .metric-note {
+      font-size: 13px;
+      color: #64748b;
+    }
+    .metric-red {
+      border-color: #fecaca;
+      background: #fff7f7;
+    }
+    .metric-red .metric-value {
+      color: #991b1b;
+    }
+    .metric-yellow {
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+    .metric-yellow .metric-value {
+      color: #92400e;
+    }
+    .metric-green {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+    .metric-green .metric-value {
+      color: #166534;
+    }
+    .card-kicker {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+    }
+    .card-note {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 10px;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .stat-row strong {
+      color: #0f172a;
+      font-size: 15px;
+    }
+    .risk-card {
+      background: #fff8f5;
+      border-color: #fed7aa;
+    }
+    .member-card {
+      background: #f8fafc;
+    }
+    .empty-card {
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 20px;
+      color: #64748b;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .tooltip-badge {
+      position: relative;
+      cursor: help;
+    }
+    .tooltip-badge::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 10px);
+      width: min(320px, 68vw);
+      white-space: normal;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.6;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 40;
+    }
+    .tooltip-badge::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      bottom: calc(100% + 4px);
+      width: 10px;
+      height: 10px;
+      background: #0f172a;
+      transform: rotate(45deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 39;
+    }
+    .tooltip-badge:hover::after,
+    .tooltip-badge:hover::before,
+    .tooltip-badge:focus-visible::after,
+    .tooltip-badge:focus-visible::before {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tooltip-badge:focus-visible {
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+    }
+    .detail-panel {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .detail-panel summary {
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      list-style: none;
+    }
+    .detail-panel summary::-webkit-details-marker {
+      display: none;
+    }
+    .detail-panel[open] summary {
+      margin-bottom: 14px;
+    }
+    .nested-detail {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      background: #ffffff;
+      margin-top: 14px;
+    }
+    .nested-detail summary {
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      list-style: none;
+    }
+    .nested-detail summary::-webkit-details-marker {
+      display: none;
+    }
+    .nested-detail[open] summary {
+      margin-bottom: 12px;
+    }
+    .detail-grid, .health-grid, .tip-grid, .playbook-grid, .charts, .tables {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .health-red {
+      background: #fff1f2;
+      border-color: #fecdd3;
+    }
+    .health-yellow {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .health-green {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+    .health-title {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .health-value {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .health-note {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #475569;
+    }
+    .tip-term {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .tip-meaning, .tip-watch, .playbook-trigger, .playbook-goal, .table-tip {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .playbook-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .playbook-red {
+      background: #fff7f7;
+      border-color: #fecaca;
+    }
+    .playbook-yellow {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .playbook-green {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .playbook-card ul, .insight-list {
+      margin: 10px 0 0 18px;
+      padding: 0;
+      line-height: 1.8;
+      font-size: 13px;
+      color: #334155;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .data-table th, .data-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f8fafc;
+      position: sticky;
+      top: 0;
+    }
+    .table-card {
+      overflow-x: auto;
+    }
+    @media (max-width: 960px) {
+      .page {
+        padding: 16px;
+      }
+      .quick-nav {
+        position: sticky;
+        top: 8px;
+        z-index: 20;
+        background: rgba(246, 247, 251, 0.96);
+        padding: 8px 0 6px;
+        margin-top: 10px;
+      }
+      .quick-nav a {
+        font-size: 12px;
+        padding: 7px 10px;
+      }
+      .focus-wrap {
+        grid-template-columns: 1fr;
+      }
+      .module-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .metrics-grid, .cards-grid, .detail-grid, .health-grid, .tip-grid, .playbook-grid, .charts, .tables {
+        grid-template-columns: 1fr;
+      }
+      .tooltip-badge::after {
+        width: min(260px, 72vw);
+      }
+    }
+    @media (max-width: 640px) {
+      .page {
+        padding: 12px;
+      }
+      .quick-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 10px 0 14px;
+      }
+      .hero {
+        padding: 18px;
+        border-radius: 16px;
+      }
+      .hero h1 {
+        font-size: 24px;
+        line-height: 1.3;
+      }
+      .hero p, .hero-note {
+        font-size: 12px;
+        line-height: 1.7;
+      }
+      .module {
+        padding: 14px;
+        border-radius: 16px;
+        margin-bottom: 14px;
+      }
+      .module-title {
+        font-size: 18px;
+      }
+      .focus-panel,
+      .metric-card, .opportunity-card, .risk-card, .member-card, .health-card, .tip-card, .playbook-card, .chart-card, .table-card {
+        padding: 14px;
+        border-radius: 14px;
+      }
+      .focus-headline {
+        font-size: 22px;
+        line-height: 1.35;
+      }
+      .focus-summary,
+      .module-note,
+      .task-list, .detail-list,
+      .tip-meaning, .tip-watch, .playbook-trigger, .playbook-goal, .table-tip,
+      .health-note {
+        font-size: 12px;
+        line-height: 1.75;
+      }
+      .metric-value,
+      .health-value {
+        font-size: 24px;
+      }
+      .card-title {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      .stat-row {
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .stat-row strong {
+        font-size: 14px;
+      }
+      .mini-chip {
+        font-size: 12px;
+        padding: 6px 10px;
+        white-space: normal;
+      }
+      .chip-row {
+        gap: 8px;
+      }
+      .task-list, .detail-list {
+        margin-left: 16px;
+      }
+      .data-table {
+        font-size: 12px;
+      }
+      .data-table th, .data-table td {
+        padding: 7px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 老板经营仪表盘</h1>
+      <p>老板打开 10 秒内先看今日结论，再看今天执行任务。复杂图表和原始明细都保留在页面下方的“详细数据与图表”。</p>
+      <div class="hero-note">主店铺：郭文攀 / 咸阳沣西吾悦专卖店 · 当前季节：春季 / 春夏换季期 · 日销趋势：上涨</div>
+    </section>
+
+    <nav class="quick-nav"><a href='#focus'>今日重点</a><a href='#core-metrics'>核心指标</a><a href='#money-opportunities'>赚钱机会</a><a href='#inventory-risks'>库存风险</a><a href='#replenish-opportunities'>补货机会</a><a href='#member-ops'>会员经营</a><a href='#details'>详细数据</a></nav>
+
+    <section class="module" id="focus">
+      <div class="module-header">
+        <h2 class="module-title">1. 今日经营重点</h2>
+        <p class="module-note">当前阶段：换季切换。先看 3 条今日结论，再安排今天执行任务。</p>
+      </div>
+      <div class="focus-wrap">
+        <div class="focus-panel">
+          <div class="focus-headline">先校库存，再决定补货和去化。</div>
+          <p class="focus-summary">春夏换季期阶段，最近日销上涨，但当前有 105 个负库存 SKU。先把账实校准，不然所有经营动作都会跑偏。 当前阶段：换季切换；最近日销均值 1,476.17 元。</p>
+          <div class="chip-row"><span class='mini-chip mini-chip-primary tooltip-badge' title="今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。" data-tip="今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。" tabindex="0" role="note">先处理负库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。" data-tip="先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。" tabindex="0" role="note">先去库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" data-tip="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" tabindex="0" role="note">先停补袜品</span></div>
+        </div>
+        <div class="focus-panel">
+          <div class="card-title">今日执行任务</div>
+          <ul class="task-list"><li><span class='mini-chip mini-chip-soft'>处理负库存</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="今天要明确哪些品类先停补、哪些品类上清货位、哪些品类做组合促销。" data-tip="今天要明确哪些品类先停补、哪些品类上清货位、哪些品类做组合促销。" tabindex="0" role="note">安排去库存动作</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" data-tip="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" tabindex="0" role="note">调整袜品陈列</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" data-tip="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" tabindex="0" role="note">检查裤类断码</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="由老板拍板跨季品类是去化、暂缓还是等下季，不要混进当季补货里。" data-tip="由老板拍板跨季品类是去化、暂缓还是等下季，不要混进当季补货里。" tabindex="0" role="note">确认跨季处理</span></li></ul>
+          <div class="card-note" style="margin-top:12px;">今天先别做：</div>
+          <ul class="detail-list"><li><span class='mini-chip mini-chip-warn'>不要先看单款，先看品类，再下钻到 SKU。</span></li><li><span class='mini-chip mini-chip-warn'>不要把道具金额和库存算进正常经营判断。</span></li><li><span class='mini-chip mini-chip-warn'>不要把其他输入人的店铺数据当成本店结论。</span></li><li><span class='mini-chip mini-chip-warn'>不要因为某个冬款历史卖过，就在春夏阶段继续追补。</span></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="module" id="core-metrics">
+      <div class="module-header">
+        <h2 class="module-title">2. 核心经营指标</h2>
+        <p class="module-note">只保留 4 个最关键指标，方便老板先判断大方向。</p>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">经营销售额</div>
+          <div class="metric-value">10,855.52 元</div>
+          <div class="metric-note">近 8 天经营数据</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">客单价</div>
+          <div class="metric-value">162.02 元</div>
+          <div class="metric-note">经营销售额 / 订单数</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">库存覆盖天数</div>
+          <div class="metric-value">303.1 天</div>
+          <div class="metric-note">库存还能卖多久</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">会员销售占比</div>
+          <div class="metric-value">73.1%</div>
+          <div class="metric-note">会员带来的销售贡献</div>
+        </div>
+        </div>
+    </section>
+
+    <section class="module" id="money-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">3. 赚钱机会</h2>
+        <p class="module-note">找出卖得动但库存偏低的品类，先保营业额。</p>
+      </div>
+      <div class="cards-grid">
+            <div class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">裤类</div>
+              <div class="stat-row"><span>销售额</span><strong>48,696.63</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>-3</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>159</strong></div>
+            </div>
+            
+            <div class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">衣类</div>
+              <div class="stat-row"><span>销售额</span><strong>45,158.01</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>-16</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>197</strong></div>
+            </div>
+            
+            <div class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">儿童袜</div>
+              <div class="stat-row"><span>销售额</span><strong>8,357.57</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>1</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>89</strong></div>
+            </div>
+            
+            <div class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">家居服</div>
+              <div class="stat-row"><span>销售额</span><strong>8,206.45</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>-1</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>24</strong></div>
+            </div>
+            </div>
+    </section>
+
+    <section class="module" id="inventory-risks">
+      <div class="module-header">
+        <h2 class="module-title">4. 库存风险</h2>
+        <p class="module-note">优先看库存深、近期动销弱的品类，先停补再去化。</p>
+      </div>
+      <div class="cards-grid">
+            <div class="risk-card">
+              <div class="card-title">袜品</div>
+              <div class="stat-row"><span>库存数量</span><strong>796</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>28</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" data-tip="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" data-tip="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" data-tip="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" tabindex="0" role="note">清货陈列</span></div>
+            </div>
+            
+            <div class="risk-card">
+              <div class="card-title">袜品</div>
+              <div class="stat-row"><span>库存数量</span><strong>235</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" data-tip="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" data-tip="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" data-tip="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" tabindex="0" role="note">调整陈列</span></div>
+            </div>
+            
+            <div class="risk-card">
+              <div class="card-title">少女文胸</div>
+              <div class="stat-row"><span>库存数量</span><strong>202</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" data-tip="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" data-tip="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" data-tip="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" tabindex="0" role="note">调整陈列</span></div>
+            </div>
+            
+            <div class="risk-card">
+              <div class="card-title">内裤</div>
+              <div class="stat-row"><span>库存数量</span><strong>170</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" data-tip="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" data-tip="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" data-tip="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" tabindex="0" role="note">清货陈列</span></div>
+            </div>
+            </div>
+    </section>
+
+    <section class="module" id="replenish-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">5. 补货机会</h2>
+        <p class="module-note">先按品类看补货机会，再下钻到 SKU。</p>
+      </div>
+      <div class="cards-grid">
+            <div class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">衣类</div>
+              <div class="stat-row"><span>销售额</span><strong>49,768.33</strong></div>
+              <div class="stat-row"><span>库存</span><strong>-11</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>206</strong></div>
+              <div class="card-note">建议补货 SKU：47</div>
+            </div>
+            
+            <div class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">裤类</div>
+              <div class="stat-row"><span>销售额</span><strong>58,034.66</strong></div>
+              <div class="stat-row"><span>库存</span><strong>6</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>148</strong></div>
+              <div class="card-note">建议补货 SKU：38</div>
+            </div>
+            
+            <div class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">儿童袜</div>
+              <div class="stat-row"><span>销售额</span><strong>12,831.48</strong></div>
+              <div class="stat-row"><span>库存</span><strong>18</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>108</strong></div>
+              <div class="card-note">建议补货 SKU：25</div>
+            </div>
+            
+            <div class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">家居服</div>
+              <div class="stat-row"><span>销售额</span><strong>9,436.90</strong></div>
+              <div class="stat-row"><span>库存</span><strong>1</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>24</strong></div>
+              <div class="card-note">建议补货 SKU：12</div>
+            </div>
+            </div>
+    </section>
+
+    <section class="module" id="member-ops">
+      <div class="module-header">
+        <h2 class="module-title">6. 会员经营</h2>
+        <p class="module-note">优先回访高价值会员，放大复购和客单价。</p>
+      </div>
+      <div class="cards-grid">
+            <div class="member-card">
+              <div class="card-title">圆子</div>
+              <div class="card-note">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>675.00</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>1</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>84.38</strong></div>
+            </div>
+            
+            <div class="member-card">
+              <div class="card-title">茵茵</div>
+              <div class="card-note">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>664.00</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>1</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>94.86</strong></div>
+            </div>
+            
+            <div class="member-card">
+              <div class="card-title">呦米</div>
+              <div class="card-note">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>533.00</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>1</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>177.67</strong></div>
+            </div>
+            </div>
+    </section>
+
+    <details class="detail-panel" id="details">
+      <summary>查看详细数据与图表</summary>
+      <details class="nested-detail">
+        <summary>经营健康灯与季节节奏</summary>
+        <div class="detail-grid">
+          <div class="module" style="margin:0;">
+            <div class="module-header">
+              <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
+              <p class="module-note">红色优先处理，黄色持续盯住，绿色维持节奏。</p>
+            </div>
+            <div class="health-grid">
+        <div class="health-card health-red">
+          <div class="health-title">库存压力</div>
+          <div class="health-value">303.1 天</div>
+          <div class="health-note">库存覆盖偏长，先控补货再做去化</div>
+        </div>
+        
+        <div class="health-card health-red">
+          <div class="health-title">库存准确性</div>
+          <div class="health-value">105</div>
+          <div class="health-note">负库存较多，先校库存再做经营判断</div>
+        </div>
+        
+        <div class="health-card health-red">
+          <div class="health-title">压货风险</div>
+          <div class="health-value">2</div>
+          <div class="health-note">高压货品类较多，先看去化和停补</div>
+        </div>
+        
+        <div class="health-card health-yellow">
+          <div class="health-title">缺货风险</div>
+          <div class="health-value">150</div>
+          <div class="health-note">部分畅销款补货压力较高</div>
+        </div>
+        
+        <div class="health-card health-green">
+          <div class="health-title">会员经营</div>
+          <div class="health-value">73.1%</div>
+          <div class="health-note">会员贡献高，适合继续做复购经营</div>
+        </div>
+        </div>
+          </div>
+          <div class="module" style="margin:0;">
+            <div class="module-header">
+              <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
+              <p class="module-note">今天 / 本周 / 本月的季节动作参考。</p>
+            </div>
+            <ul class="insight-list">
+              <li>北京时间：2026-03-14 06:55</li>
+              <li>当前判断：春夏换季，重心是薄款起量、冬款不深补。</li>
+              <li>今天先查负库存和断码，避免春夏补货判断失真。</li><li>今天补货优先看 裤类，但冬季类补货先人工复核，不做深补。</li><li>今天去化先盯 袜品，先停补再想组合去化。</li>
+              <li>本周把补货重心转到 夏季，尤其是 裤类 这类能直接起量的商品。</li><li>本周减少厚款和冬款的新进货，旧货先靠搭配和小组合去化。</li><li>本周检查门店陈列，让春款在前，夏款预热，厚款退到后区。</li>
+              <li>本月经营目标不是压更多货，而是把春款卖动、为夏款腾货位。</li><li>本月把高压货品类做成专项表，先控进货，再安排去化节奏。</li><li>本月会员触达重点围绕换季、开学、出游、早晚温差场景去做。</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details class="nested-detail">
+        <summary>自动经营方案与术语</summary>
+        <div class="module" style="margin-top:12px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动生成经营方案</h3>
+            <p class="module-note">基于当前数据生成的处理方案，适合老板拍板。</p>
+          </div>
+          <div class="playbook-grid">
+        <div class="playbook-card playbook-red">
+          <div class="playbook-title">库存周期过长，先做促销去化</div>
+          <div class="playbook-trigger">触发原因：当前经营库存覆盖天数 303.1 天，已经明显偏长。</div>
+          <div class="playbook-goal">目标：先把高库存慢销货动起来，给当季主销和补货腾出空间。</div>
+          <div class="chip-row">
+            <span class='mini-chip mini-chip-soft'>袜品 组合促销</span><span class='mini-chip mini-chip-soft'>会员定向去化促销</span><span class='mini-chip mini-chip-soft'>周末限时清货台</span>
+          </div>
+          <ul>
+            <li><strong>袜品 组合促销</strong>：围绕 袜品 做 2 件 / 3 件组合价，优先配基础内裤、袜品、家居这类低决策商品，门店主推“顺手带走”的组合。</li><li><strong>会员定向去化促销</strong>：优先触达 圆子、茵茵、呦米 这一类老客，发换季组合包或加价购，主推“到店试一套 / 顺手补一轮”。</li><li><strong>周末限时清货台</strong>：把 袜品 和当前去化重点放到门口清货位，做 3 天限时陈列，配合第二件折扣或满额换购，但不全场乱打折。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-red">
+          <div class="playbook-title">畅销款缺货风险高，补货要分级</div>
+          <div class="playbook-trigger">触发原因：当前建议补货 SKU 150 个，补货压力较高。</div>
+          <div class="playbook-goal">目标：先保住最能带营业额的款，不让补货动作失控。</div>
+          <div class="chip-row">
+            <span class='mini-chip mini-chip-soft'>A类马上补</span><span class='mini-chip mini-chip-soft'>B类本周补</span><span class='mini-chip mini-chip-soft'>C类先观察</span>
+          </div>
+          <ul>
+            <li><strong>A类马上补</strong>：今天先定 裤类 这个品类的补货预算，再下钻到销售金额高、库存 0-1、库存周数小于 1 的款。</li><li><strong>B类本周补</strong>：本周内处理同品类里销售稳定但库存还有 1-2 周的款，避免一下子把补货预算打满。</li><li><strong>C类先观察</strong>：春季 和下季交界的款先小量试补，避免把非主销季的货压深。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-red">
+          <div class="playbook-title">负库存先纠偏，再谈补货</div>
+          <div class="playbook-trigger">触发原因：当前负库存 SKU 105 个，库存口径已经影响经营判断。</div>
+          <div class="playbook-goal">目标：先把库存账实校准，不然补货和去化都会跑偏。</div>
+          <div class="chip-row">
+            <span class='mini-chip mini-chip-soft'>先查高频负库存</span><span class='mini-chip mini-chip-soft'>按来源分三类排查</span><span class='mini-chip mini-chip-soft'>未校正前先冻结深补</span>
+          </div>
+          <ul>
+            <li><strong>先查高频负库存</strong>：先从销售高、库存低、还在建议补货清单里的负库存款开始校正，优先处理最影响营业额的货。</li><li><strong>按来源分三类排查</strong>：把负库存拆成盘点错误、调拨未入、销售未回写 3 类，店员照类别处理，不要混着查。</li><li><strong>未校正前先冻结深补</strong>：对负库存涉及的款先不要深补，只允许人工确认后补货，避免一边错一边继续压货。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-yellow">
+          <div class="playbook-title">跨季款先别补，先按季节处理</div>
+          <div class="playbook-trigger">触发原因：当前有 246 个 SKU 被识别为跨季去化或暂缓补货，重点集中在 儿童袜、常规内裤、连裤袜 这些品类。</div>
+          <div class="playbook-goal">目标：避免把非主销季的货继续补深，把钱和货位留给当前季节。</div>
+          <div class="chip-row">
+            <span class='mini-chip mini-chip-soft'>有库存先去化</span><span class='mini-chip mini-chip-soft'>没库存不再追补</span><span class='mini-chip mini-chip-soft'>跨季款单独看板</span>
+          </div>
+          <ul>
+            <li><strong>有库存先去化</strong>：如果 儿童袜、常规内裤、连裤袜 这些跨季品类手里还有库存，优先转到去化清单，用组合价、加价购、门口清货位来动销。</li><li><strong>没库存不再追补</strong>：如果某个跨季品类当前库存已经为 0，现阶段不要因为历史卖过就立即补，先等回到主销季再评估。</li><li><strong>跨季款单独看板</strong>：先看“跨季处理重点品类”，再下钻到单款。由老板每周决定这些品类是去化、暂缓还是等待下季，不跟当季补货混在一起。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-green">
+          <div class="playbook-title">会员占比高，适合做定向复购</div>
+          <div class="playbook-trigger">触发原因：会员销售额占比 73.1%，会员已经是门店核心来源。</div>
+          <div class="playbook-goal">目标：把已有会员复购做深，而不是只靠新客自然进店。</div>
+          <div class="chip-row">
+            <span class='mini-chip mini-chip-soft'>换季提醒</span><span class='mini-chip mini-chip-soft'>高客单老客回访</span><span class='mini-chip mini-chip-soft'>复购带连带</span>
+          </div>
+          <ul>
+            <li><strong>换季提醒</strong>：围绕 春季 到 夏季 的换季场景，给老客发“尺码 / 厚薄 / 到店试一轮”的提醒。</li><li><strong>高客单老客回访</strong>：优先回访 圆子、茵茵、呦米 这类高价值会员，话术聚焦“新到一批适合你家孩子的基础款”。</li><li><strong>复购带连带</strong>：会员到店不要只补单品，主推基础打底 + 袜品 + 家居这种顺手连带组合，放大客单价。</li>
+          </ul>
+        </div>
+        </div>
+        </div>
+        <div class="module" style="margin-top:18px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">术语 Tips</h3>
+            <p class="module-note">鼠标悬浮或点按标签可看动作词解释；这里是完整词典。</p>
+          </div>
+          <div class="tip-grid">
+        <div class="tip-card">
+          <div class="tip-term">经营销售额</div>
+          <div class="tip-meaning">只看正常商品销售，不包含道具，更接近门店真实营业额。</div>
+          <div class="tip-watch">看法：先看这个数，再看客单价和订单数有没有一起增长。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">客单价</div>
+          <div class="tip-meaning">平均每一单花了多少钱，公式是经营销售额 / 订单数。</div>
+          <div class="tip-watch">看法：客单价低，优先查连带推荐和组合销售做得够不够。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">库存覆盖天数</div>
+          <div class="tip-meaning">按最近销售速度估算，现有库存大约还能卖多少天。</div>
+          <div class="tip-watch">看法：天数越高，压货越重；天数太低，容易断货。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">负库存 SKU</div>
+          <div class="tip-meaning">系统里库存小于 0 的商品数量，说明账和货对不上。</div>
+          <div class="tip-watch">看法：这个数不先处理，补货和去化判断都会失真。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">建议补货 SKU</div>
+          <div class="tip-meaning">最近卖得不差、但库存偏低的商品数。</div>
+          <div class="tip-watch">看法：先看销售金额高、库存接近 0、库存周数短的款。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">建议去化 SKU</div>
+          <div class="tip-meaning">库存较高、近期卖得慢的商品数。</div>
+          <div class="tip-watch">看法：先停补，再做搭配、组合或清货动作。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">跨季处理 SKU</div>
+          <div class="tip-meaning">当前时间点不适合补货的商品数，包括跨季去化和暂缓补货。</div>
+          <div class="tip-watch">看法：先看季节策略，冬款临近夏天不要直接补，优先去化或等待下季。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">高压货品类</div>
+          <div class="tip-meaning">库存金额相对销售金额明显偏高的品类数量。</div>
+          <div class="tip-watch">看法：高压货品类多，说明进货节奏和去化节奏都要收紧。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">会员销售额占比</div>
+          <div class="tip-meaning">会员顾客贡献了多少经营销售额。</div>
+          <div class="tip-watch">看法：占比越高，越值得做回访、复购提醒和老客经营。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">道具参考</div>
+          <div class="tip-meaning">单独展示道具相关金额和库存，只作参考，不参与主经营判断。</div>
+          <div class="tip-watch">看法：不要拿道具数值去判断真实商品卖得好不好。</div>
+        </div>
+        </div>
+        </div>
+      </details>
+
+      <details class="nested-detail">
+        <summary>道具口径与自动提醒</summary>
+        <div class="module" style="margin-top:12px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
+            <p class="module-note">道具已从主经营指标剥离，只保留为参考值。</p>
+          </div>
+          <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-title">道具销售额</div>
+          <div class="metric-value">7,988.48 元</div>
+          <div class="metric-note">单独参考，不计入经营销售额</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">道具库存额</div>
+          <div class="metric-value">251,929.00 元</div>
+          <div class="metric-note">单独参考，不计入经营库存额</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">道具销量</div>
+          <div class="metric-value">48</div>
+          <div class="metric-note">单独参考</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">道具库存件数</div>
+          <div class="metric-value">1,256</div>
+          <div class="metric-note">单独参考</div>
+        </div>
+        </div>
+        </div>
+        <div class="module" style="margin-top:18px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
+            <p class="module-note">保留原有数据提醒，方便二次复盘。</p>
+          </div>
+          <ul class="insight-list"><li>近 8 天门店经营销售额为 10,855.52 元，客单价约 162.02 元。</li><li>当前日销趋势来自销售清单，时间范围是 2026-03-06 到 2026-03-13；所以趋势图只反映最近 8 天。</li><li>历史累计口径在商品销售情况里可以看到，自 2025-03-17 以来累计销售额约 856,536.85 元。</li><li>当前账面库存 5,873 件，零售价口径库存额约 534,771.00 元；库存覆盖天数约 303.1 天。</li><li>会员销售额占比约 73.1%，说明会员经营已经是核心收入来源。</li><li>存在 105 个负库存 SKU，负库存金额合计 -16,764.00 元，这部分需要优先纠偏，不然补货和动销判断会失真。</li><li>道具已从主经营口径里单独剥离；当前仅作为参考值显示，道具销售额约 7,988.48 元，道具库存额约 251,929.00 元。</li><li>当前筛出 150 个建议优先补货的 SKU，246 个跨季不建议补货、应转去化或暂缓的 SKU，63 个建议先去化的高库存低动销 SKU。</li><li>店铺零售清单已按输入人区分参考店铺；主逻辑只关注 郭文攀 / 咸阳沣西吾悦专卖店，其余输入人仅作为参考对比。</li></ul>
+        </div>
+      </details>
+
+      <details class="nested-detail">
+        <summary>图表</summary>
+        <div class="charts"><section class='chart-card'><div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="ad3ef541-e642-4337-babc-5756806b37f1" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ad3ef541-e642-4337-babc-5756806b37f1")) {                    Plotly.newPlot(                        "ad3ef541-e642-4337-babc-5756806b37f1",                        [{"hovertemplate":"\u65e5\u671f=%{x}\u003cbr\u003e\u9500\u552e\u989d=%{y}\u003cbr\u003e\u8ba2\u5355\u6570=%{text}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","line":{"color":"#636efa","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines+markers+text","name":"","orientation":"v","showlegend":false,"text":{"dtype":"f8","bdata":"AAAAAAAAGEAAAAAAAAAqQAAAAAAAACpAAAAAAAAAHEAAAAAAAAAUQAAAAAAAACJAAAAAAAAAIkAAAAAAAAAUQA=="},"x":["2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13"],"xaxis":"x","y":{"dtype":"f8","bdata":"FK5H4XoIjUCamZmZGYqgQHsUrkfhS5tAH4XrUbgfkkAAAAAAAKB9QGZmZmZmfotAAAAAAACwmkCkcD0K18KcQA=="},"yaxis":"y","type":"scatter","textposition":"top center"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u65e5\u671f"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u9500\u552e\u989d"}},"legend":{"tracegroupgap":0},"title":{"text":"\u6bcf\u65e5\u7ecf\u8425\u9500\u552e\u989d\u8d70\u52bf\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="4b725a9d-b778-4895-9de8-a641ebe5fdc4" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("4b725a9d-b778-4895-9de8-a641ebe5fdc4")) {                    Plotly.newPlot(                        "4b725a9d-b778-4895-9de8-a641ebe5fdc4",                        [{"hovertemplate":"\u5546\u54c1\u5927\u7c7b=%{x}\u003cbr\u003e\u9500\u552e\u989d=%{y}\u003cbr\u003e\u9500\u91cf=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"i1","bdata":"KC47Cg=="},"coloraxis":"coloraxis","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","texttemplate":"%{y:.2s}","x":["\u8863\u7740\u7cfb\u5217","\u5185\u88e4","\u889c\u54c1","\u5c11\u5973\u6587\u80f8"],"xaxis":"x","y":{"dtype":"f8","bdata":"H4XrUTittUAVrkfhejSkQIXrUbgeH59ACtejcD3ChkA="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u5546\u54c1\u5927\u7c7b"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u9500\u552e\u989d"}},"coloraxis":{"colorbar":{"title":{"text":"\u9500\u91cf"}},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"legend":{"tracegroupgap":0},"title":{"text":"\u7ecf\u8425\u9500\u552e\u989d\u6700\u9ad8\u7684\u54c1\u7c7b\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"barmode":"relative","margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="076a817a-c5d3-4bb0-8b7c-7442fb8ad26d" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("076a817a-c5d3-4bb0-8b7c-7442fb8ad26d")) {                    Plotly.newPlot(                        "076a817a-c5d3-4bb0-8b7c-7442fb8ad26d",                        [{"hovertemplate":"\u5927\u7c7b=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91cf=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"f8","bdata":"AAAAAAB8lEAAAAAAAJBwQAAAAAAAIKFAAAAAAADAb0AAAAAAADB8QAAAAAAA8HZAAAAAAABQekAAAAAAAOB1QAAAAAAAAD1AAAAAAADgaEA="},"coloraxis":"coloraxis","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","texttemplate":"%{y:.2s}","x":["\u5e38\u89c4\u5185\u88e4","\u5bb6\u5c45\u670d","\u513f\u7ae5\u889c","\u513f\u7ae5\u5185\u8863\u5957\u88c5","\u8863\u7c7b","\u88e4\u7c7b","\u5c11\u5973\u6587\u80f8","\u8fde\u88e4\u889c","\u7fbd\u7ed2\u7cfb\u5217","\u4eb2\u5b50\u889c"],"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAIDe+EAAAAAAII\u002f0QAAAAABQ3fFAAAAAABDB8EAAAAAA4GjsQAAAAADAEepAAAAAAKD\u002f4kAAAAAAQD3WQAAAAAAA+spAAAAAAIDVwEA="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u5927\u7c7b"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u5e93\u5b58\u989d"}},"coloraxis":{"colorbar":{"title":{"text":"\u5e93\u5b58\u91cf"}},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"legend":{"tracegroupgap":0},"title":{"text":"\u7ecf\u8425\u5e93\u5b58\u91d1\u989d\u6700\u9ad8\u7684\u54c1\u7c7b\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"barmode":"relative","margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="24529ad8-1c58-4f78-9f8d-0a1f259f1b4c" class="plotly-graph-div" style="height:440px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("24529ad8-1c58-4f78-9f8d-0a1f259f1b4c")) {                    Plotly.newPlot(                        "24529ad8-1c58-4f78-9f8d-0a1f259f1b4c",                        [{"customdata":{"dtype":"f8","bdata":"IoMRQQkgFUC2Img4qfsWQA==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u889c\u54c1\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u889c\u54c1","marker":{"color":"#636efa","size":{"dtype":"f8","bdata":"IoMRQQkgFUA="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u889c\u54c1","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"AAAAAAAfn0A="},"xaxis":"x","y":{"dtype":"i2","bdata":"Fyk="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"c4VzGCsZDkAAAAAAAAAIQA==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u5c11\u5973\u6587\u80f8\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u5c11\u5973\u6587\u80f8","marker":{"color":"#EF553B","size":{"dtype":"f8","bdata":"c4VzGCsZDkA="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u5c11\u5973\u6587\u80f8","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"CtejcD3ChkA="},"xaxis":"x","y":{"dtype":"i2","bdata":"tAo="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"wO0fyOF0\u002fj8WspCFLGT5Pw==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u5185\u88e4\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u5185\u88e4","marker":{"color":"#00cc96","size":{"dtype":"f8","bdata":"wO0fyOF0\u002fj8="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u5185\u88e4","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"Fa5H4Xo0pEA="},"xaxis":"x","y":{"dtype":"i2","bdata":"OxM="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"KdGY9KrV9D8AAAAAAAD0Pw==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u8863\u7740\u7cfb\u5217\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u8863\u7740\u7cfb\u5217","marker":{"color":"#ab63fa","size":{"dtype":"f8","bdata":"KdGY9KrV9D8="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u8863\u7740\u7cfb\u5217","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"H4XrUTittUA="},"xaxis":"x","y":{"dtype":"i2","bdata":"Ohw="},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u96f6\u552e\u989d"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u5e93\u5b58\u989d"}},"legend":{"title":{"text":"\u5927\u7c7b"},"tracegroupgap":0,"itemsizing":"constant"},"title":{"text":"\u7ecf\u8425\u54c1\u7c7b\u5e93\u5b58\u989d vs \u9500\u552e\u989d\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"margin":{"l":20,"r":20,"t":60,"b":20},"height":440},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="a38eab1d-e6cf-45d1-8b7f-42b38af65d4d" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("a38eab1d-e6cf-45d1-8b7f-42b38af65d4d")) {                    Plotly.newPlot(                        "a38eab1d-e6cf-45d1-8b7f-42b38af65d4d",                        [{"customdata":{"dtype":"f8","bdata":"AAAAAAAAQkDSSMA3r9piQOxRuB4FQrNAAAAAAAAAQEA9CtejcANjQHsUrkfhHqNAAAAAAAAA8D8VrkfhenCBQBWuR+F6cIFA","shape":"3, 3"},"hovertemplate":"\u5bfc\u8d2d\u5458=%{x}\u003cbr\u003e\u5b9e\u6536\u91d1\u989d=%{y}\u003cbr\u003e\u7968\u6570=%{customdata[0]}\u003cbr\u003e\u5355\u6548=%{customdata[1]}\u003cbr\u003e\u4f1a\u5458\u9500\u989d=%{customdata[2]}\u003cbr\u003e\u8fde\u5e26=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"f8","bdata":"OY7jOI7jAkAAAAAAAMAAQAAAAAAAAAhA"},"coloraxis":"coloraxis","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","texttemplate":"%{y:.2s}","x":["\u5f20\u9759","\u90ed\u6587\u6500","\u5218\u6885"],"xaxis":"x","y":{"dtype":"f8","bdata":"7FG4HgU2tUA9CtejcAOzQBWuR+F6cIFA"},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u5bfc\u8d2d\u5458"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u5b9e\u6536\u91d1\u989d"}},"coloraxis":{"colorbar":{"title":{"text":"\u8fde\u5e26"}},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"legend":{"tracegroupgap":0},"title":{"text":"\u5bfc\u8d2d\u4e1a\u7ee9\u5bf9\u6bd4"},"barmode":"relative","margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section></div>
+      </details>
+
+      <details class="nested-detail">
+        <summary>明细表与其他店参考</summary>
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">明细表与其他店参考</h3>
+          <p class="module-note">执行层和复盘层使用。第一页先看上面的 6 个模块。</p>
+        </div>
+        <div class="tables">
+    <section class="table-card">
+      <h3>补货重点品类</h3>
+      <p class='table-tip'>先按品类定补货优先级，再下钻到单款。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>中类</th>
+      <th>季节策略</th>
+      <th>SKU数</th>
+      <th>销售额</th>
+      <th>库存</th>
+      <th>建议补货量</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>裤类</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>38</td>
+      <td>58034.66</td>
+      <td>6</td>
+      <td>148.0</td>
+    </tr>
+    <tr>
+      <td>衣类</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>47</td>
+      <td>49768.33</td>
+      <td>-11</td>
+      <td>206.0</td>
+    </tr>
+    <tr>
+      <td>防晒服</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>5</td>
+      <td>14402.21</td>
+      <td>4</td>
+      <td>11.0</td>
+    </tr>
+    <tr>
+      <td>儿童袜</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>25</td>
+      <td>12831.48</td>
+      <td>18</td>
+      <td>108.0</td>
+    </tr>
+    <tr>
+      <td>常规内裤</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>7</td>
+      <td>11442.28</td>
+      <td>5</td>
+      <td>39.0</td>
+    </tr>
+    <tr>
+      <td>家居服</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>12</td>
+      <td>9436.90</td>
+      <td>1</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <td>裤类</td>
+      <td><span class='badge badge-green tooltip-badge' title="这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。" data-tip="这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。" tabindex="0" role="note">当季主推</span></td>
+      <td>7</td>
+      <td>6242.86</td>
+      <td>1</td>
+      <td>25.0</td>
+    </tr>
+    <tr>
+      <td>少女文胸</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>7</td>
+      <td>3460.55</td>
+      <td>-1</td>
+      <td>22.0</td>
+    </tr>
+    <tr>
+      <td>家居服</td>
+      <td><span class='badge badge-green tooltip-badge' title="这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。" data-tip="这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。" tabindex="0" role="note">当季主推</span></td>
+      <td>1</td>
+      <td>1166.01</td>
+      <td>0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <td>儿童袜</td>
+      <td><span class='badge badge-green tooltip-badge' title="这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。" data-tip="这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。" tabindex="0" role="note">当季主推</span></td>
+      <td>1</td>
+      <td>763.58</td>
+      <td>0</td>
+      <td>4.0</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>跨季处理重点品类</h3>
+      <p class='table-tip'>先看哪些品类已经跨季。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>中类</th>
+      <th>季节策略</th>
+      <th>建议动作</th>
+      <th>SKU数</th>
+      <th>销售额</th>
+      <th>库存</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>儿童袜</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>43</td>
+      <td>15790.83</td>
+      <td>784</td>
+    </tr>
+    <tr>
+      <td>常规内裤</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>28</td>
+      <td>33911.44</td>
+      <td>645</td>
+    </tr>
+    <tr>
+      <td>连裤袜</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>7</td>
+      <td>3954.01</td>
+      <td>254</td>
+    </tr>
+    <tr>
+      <td>亲子袜</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>6</td>
+      <td>2248.66</td>
+      <td>157</td>
+    </tr>
+    <tr>
+      <td>连裤袜</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+      <td>2</td>
+      <td>1573.38</td>
+      <td>52</td>
+    </tr>
+    <tr>
+      <td>衣类</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>46</td>
+      <td>50130.90</td>
+      <td>38</td>
+    </tr>
+    <tr>
+      <td>少女文胸</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>1</td>
+      <td>266.92</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <td>裤类</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+      <td>9</td>
+      <td>12341.75</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>羽绒系列</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+      <td>4</td>
+      <td>13822.40</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>裤类</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" data-tip="这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。" tabindex="0" role="note">暂缓补货</span></td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要急着补，把预算和货位留给当前主销品类。" data-tip="先不要急着补，把预算和货位留给当前主销品类。" tabindex="0" role="note">暂缓补货</span></td>
+      <td>9</td>
+      <td>8530.71</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>去化重点品类</h3>
+      <p class='table-tip'>先按品类看库存压力。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>大类</th>
+      <th>建议动作</th>
+      <th>SKU数</th>
+      <th>实际库存</th>
+      <th>近期零售</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>袜品</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+      <td>24</td>
+      <td>796</td>
+      <td>28</td>
+    </tr>
+    <tr>
+      <td>袜品</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" data-tip="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" tabindex="0" role="note">观察并做组合去化</span></td>
+      <td>15</td>
+      <td>235</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>少女文胸</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" data-tip="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" tabindex="0" role="note">观察并做组合去化</span></td>
+      <td>12</td>
+      <td>202</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>内裤</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+      <td>5</td>
+      <td>170</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>衣着系列</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+      <td>4</td>
+      <td>86</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>衣着系列</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" data-tip="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" tabindex="0" role="note">观察并做组合去化</span></td>
+      <td>2</td>
+      <td>23</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>内裤</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" data-tip="先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。" tabindex="0" role="note">观察并做组合去化</span></td>
+      <td>1</td>
+      <td>10</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>补货 SKU 明细</h3>
+      <p class='table-tip'>确定品类要补后，再来这里挑具体款。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>款号</th>
+      <th>颜色</th>
+      <th>中类</th>
+      <th>季节</th>
+      <th>季节策略</th>
+      <th>销售数</th>
+      <th>销售金额</th>
+      <th>库存</th>
+      <th>周均销量</th>
+      <th>库存周数</th>
+      <th>建议补货量</th>
+      <th>建议动作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TNX1Y90914Z</td>
+      <td>紫红色</td>
+      <td>防晒服</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>18</td>
+      <td>4841.37</td>
+      <td>2</td>
+      <td>0.750</td>
+      <td>2.666667</td>
+      <td>1.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1T20195Z</td>
+      <td>白色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>33</td>
+      <td>3923.49</td>
+      <td>0</td>
+      <td>2.500</td>
+      <td>0.000000</td>
+      <td>10.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1Y90915X</td>
+      <td>米黄色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>20</td>
+      <td>3671.19</td>
+      <td>-1</td>
+      <td>1.500</td>
+      <td>-0.666667</td>
+      <td>7.0</td>
+      <td><span class='badge badge-red tooltip-badge' title="系统库存不准。先查盘点、调拨和销售回写，确认真实库存后再决定是否补货。" data-tip="系统库存不准。先查盘点、调拨和销售回写，确认真实库存后再决定是否补货。" tabindex="0" role="note">先校库存再补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1K60603X</td>
+      <td>橘粉色</td>
+      <td>裤类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>29</td>
+      <td>3141.31</td>
+      <td>1</td>
+      <td>1.750</td>
+      <td>0.571429</td>
+      <td>6.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1Y90914Z</td>
+      <td>绿色</td>
+      <td>防晒服</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>12</td>
+      <td>3089.21</td>
+      <td>1</td>
+      <td>0.875</td>
+      <td>1.142857</td>
+      <td>3.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1K60604X</td>
+      <td>深咖色</td>
+      <td>裤类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>28</td>
+      <td>3081.59</td>
+      <td>1</td>
+      <td>2.000</td>
+      <td>0.500000</td>
+      <td>7.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1T20182X</td>
+      <td>白色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>39</td>
+      <td>3075.76</td>
+      <td>0</td>
+      <td>3.375</td>
+      <td>0.000000</td>
+      <td>14.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1T20182X</td>
+      <td>米黄色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>40</td>
+      <td>2978.04</td>
+      <td>0</td>
+      <td>3.125</td>
+      <td>0.000000</td>
+      <td>12.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1K60613Z</td>
+      <td>紫红色</td>
+      <td>裤类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>21</td>
+      <td>2939.33</td>
+      <td>1</td>
+      <td>1.000</td>
+      <td>1.000000</td>
+      <td>3.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1K60614Z</td>
+      <td>藏青色</td>
+      <td>裤类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>18</td>
+      <td>2757.83</td>
+      <td>0</td>
+      <td>1.125</td>
+      <td>0.000000</td>
+      <td>4.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1Y90912Z</td>
+      <td>米白色</td>
+      <td>防晒服</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>13</td>
+      <td>2750.18</td>
+      <td>0</td>
+      <td>0.875</td>
+      <td>0.000000</td>
+      <td>4.0</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="可以少量补货试销。先小批量补，不要一次压很多库存。" data-tip="可以少量补货试销。先小批量补，不要一次压很多库存。" tabindex="0" role="note">小量试补</span></td>
+    </tr>
+    <tr>
+      <td>TNX1T20177X</td>
+      <td>蓝色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td><span class='badge badge-yellow tooltip-badge' title="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" data-tip="这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。" tabindex="0" role="note">下一季试补</span></td>
+      <td>18</td>
+      <td>2681.38</td>
+      <td>-1</td>
+      <td>1.500</td>
+      <td>-0.666667</td>
+      <td>7.0</td>
+      <td><span class='badge badge-red tooltip-badge' title="系统库存不准。先查盘点、调拨和销售回写，确认真实库存后再决定是否补货。" data-tip="系统库存不准。先查盘点、调拨和销售回写，确认真实库存后再决定是否补货。" tabindex="0" role="note">先校库存再补货</span></td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>跨季处理 SKU 明细</h3>
+      <p class='table-tip'>老板做二次判断时使用。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>款号</th>
+      <th>颜色</th>
+      <th>中类</th>
+      <th>季节</th>
+      <th>季节策略</th>
+      <th>销售数</th>
+      <th>销售金额</th>
+      <th>库存</th>
+      <th>周均销量</th>
+      <th>库存周数</th>
+      <th>建议动作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TND1W60626</td>
+      <td>黑色</td>
+      <td>连裤袜</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>12</td>
+      <td>1154.62</td>
+      <td>34</td>
+      <td>0.375</td>
+      <td>90.666667</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1W60625</td>
+      <td>黑色</td>
+      <td>连裤袜</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>6</td>
+      <td>418.76</td>
+      <td>18</td>
+      <td>0.500</td>
+      <td>36.000000</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1B81003Z</td>
+      <td>咖色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>7</td>
+      <td>1794.60</td>
+      <td>2</td>
+      <td>0.750</td>
+      <td>2.666667</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1K60661Z</td>
+      <td>粉色</td>
+      <td>裤类</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>5</td>
+      <td>823.79</td>
+      <td>2</td>
+      <td>0.750</td>
+      <td>2.666667</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1Y81001X</td>
+      <td>灰蓝色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>10</td>
+      <td>5182.93</td>
+      <td>1</td>
+      <td>1.000</td>
+      <td>1.000000</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1Y81001X</td>
+      <td>杏粉色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>9</td>
+      <td>4539.50</td>
+      <td>1</td>
+      <td>0.625</td>
+      <td>1.600000</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1K60650</td>
+      <td>深麻灰</td>
+      <td>裤类</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>17</td>
+      <td>2889.45</td>
+      <td>1</td>
+      <td>1.750</td>
+      <td>0.571429</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1K60650</td>
+      <td>黑色</td>
+      <td>裤类</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>15</td>
+      <td>2505.97</td>
+      <td>1</td>
+      <td>0.875</td>
+      <td>1.142857</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1Y81006Z</td>
+      <td>深灰色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>8</td>
+      <td>2305.37</td>
+      <td>1</td>
+      <td>0.875</td>
+      <td>1.142857</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1K60641X</td>
+      <td>浅杏色</td>
+      <td>裤类</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>10</td>
+      <td>1767.77</td>
+      <td>1</td>
+      <td>0.875</td>
+      <td>1.142857</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1K60645Z</td>
+      <td>紫红色</td>
+      <td>裤类</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>6</td>
+      <td>1240.63</td>
+      <td>1</td>
+      <td>0.500</td>
+      <td>2.000000</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+    <tr>
+      <td>TND1K60652</td>
+      <td>粉色</td>
+      <td>裤类</td>
+      <td>冬</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" data-tip="这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。" tabindex="0" role="note">跨季去化</span></td>
+      <td>9</td>
+      <td>999.36</td>
+      <td>1</td>
+      <td>0.625</td>
+      <td>1.600000</td>
+      <td><span class='badge badge-red tooltip-badge' title="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" data-tip="这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。" tabindex="0" role="note">优先去化</span></td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>去化 SKU 明细</h3>
+      <p class='table-tip'>执行去化时再下钻到具体款。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>商品款号</th>
+      <th>商品名称</th>
+      <th>大类</th>
+      <th>中类</th>
+      <th>小类</th>
+      <th>实际库存</th>
+      <th>近期零售</th>
+      <th>动销率</th>
+      <th>零售价</th>
+      <th>建议动作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TNQ1W60628</td>
+      <td>小黑托昵连裤袜</td>
+      <td>袜品</td>
+      <td>连裤袜</td>
+      <td>丝制连裤袜</td>
+      <td>62</td>
+      <td>4</td>
+      <td>0.064516</td>
+      <td>49</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX2K10296</td>
+      <td>抑菌男平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>莫代尔内裤</td>
+      <td>51</td>
+      <td>1</td>
+      <td>0.019608</td>
+      <td>66</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30932</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>48</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>14</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30935</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>16</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30936</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>16</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30931</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>14</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30925</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>46</td>
+      <td>2</td>
+      <td>0.043478</td>
+      <td>12</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30938</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>45</td>
+      <td>3</td>
+      <td>0.066667</td>
+      <td>14</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TNQ2W30888</td>
+      <td>宝宝对对袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>宝宝对对袜</td>
+      <td>44</td>
+      <td>4</td>
+      <td>0.090909</td>
+      <td>26</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TNQ2W30889</td>
+      <td>宝宝对对袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>宝宝对对袜</td>
+      <td>44</td>
+      <td>4</td>
+      <td>0.090909</td>
+      <td>26</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TNQ2K10258</td>
+      <td>抑菌男平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>天丝棉内裤</td>
+      <td>40</td>
+      <td>2</td>
+      <td>0.050000</td>
+      <td>72</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30930</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>36</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>16</td>
+      <td><span class='badge badge-red tooltip-badge' title="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" data-tip="先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。" tabindex="0" role="note">先停补再去化</span></td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>负库存异常清单</h3>
+      <p class='table-tip'>先查账、查盘点、查调拨。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>款号</th>
+      <th>品名</th>
+      <th>颜色</th>
+      <th>尺码</th>
+      <th>库存</th>
+      <th>库存额</th>
+      <th>大类</th>
+      <th>小类</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TND1Y81007Z</td>
+      <td>羽绒衣</td>
+      <td>藏青色</td>
+      <td>120</td>
+      <td>-1.0</td>
+      <td>-648.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒衣</td>
+    </tr>
+    <tr>
+      <td>TND1Y81005Z</td>
+      <td>羽绒衣</td>
+      <td>灰紫色</td>
+      <td>160</td>
+      <td>-1.0</td>
+      <td>-498.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒衣</td>
+    </tr>
+    <tr>
+      <td>TNQ1K60642Z</td>
+      <td>小黑托昵休闲裤</td>
+      <td>黑色</td>
+      <td>140</td>
+      <td>-1.0</td>
+      <td>-328.0</td>
+      <td>裤类</td>
+      <td>单裤</td>
+    </tr>
+    <tr>
+      <td>TNC1Y90861D</td>
+      <td>小黑托昵家居服</td>
+      <td>款色</td>
+      <td>170</td>
+      <td>-1.0</td>
+      <td>-318.0</td>
+      <td>家居服</td>
+      <td>长袖套装</td>
+    </tr>
+    <tr>
+      <td>TNX1Y90866D</td>
+      <td>小黑托昵家居服</td>
+      <td>款色</td>
+      <td>160</td>
+      <td>-1.0</td>
+      <td>-318.0</td>
+      <td>家居服</td>
+      <td>短袖套装</td>
+    </tr>
+    <tr>
+      <td>TNX1K60603X</td>
+      <td>防蚊裤</td>
+      <td>米白色</td>
+      <td>110</td>
+      <td>-2.0</td>
+      <td>-296.0</td>
+      <td>裤类</td>
+      <td>防蚊裤</td>
+    </tr>
+    <tr>
+      <td>TNC1Y90861Z</td>
+      <td>小黑托昵家居服</td>
+      <td>款色</td>
+      <td>130</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>家居服</td>
+      <td>长袖套装</td>
+    </tr>
+    <tr>
+      <td>TND1K60647Z</td>
+      <td>小黑托昵休闲裤</td>
+      <td>韩粉色</td>
+      <td>150</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>裤类</td>
+      <td>单裤</td>
+    </tr>
+    <tr>
+      <td>TND1K60647Z</td>
+      <td>小黑托昵休闲裤</td>
+      <td>浅杏色</td>
+      <td>150</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>裤类</td>
+      <td>单裤</td>
+    </tr>
+    <tr>
+      <td>TND1B80999X</td>
+      <td>羽绒马甲</td>
+      <td>杏粉色</td>
+      <td>100</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒马甲</td>
+    </tr>
+    <tr>
+      <td>TND1B80998X</td>
+      <td>羽绒马甲</td>
+      <td>浅咖色</td>
+      <td>100</td>
+      <td>-1.0</td>
+      <td>-278.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒马甲</td>
+    </tr>
+    <tr>
+      <td>TND1B80998X</td>
+      <td>羽绒马甲</td>
+      <td>浅咖色</td>
+      <td>110</td>
+      <td>-1.0</td>
+      <td>-278.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒马甲</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>高价值会员</h3>
+      <p class='table-tip'>优先回访高消费或高频顾客。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>VIP姓名</th>
+      <th>服务导购</th>
+      <th>购买金额</th>
+      <th>购买总数</th>
+      <th>消费次数/年</th>
+      <th>平均单笔消费额</th>
+      <th>储值余额</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>圆子</td>
+      <td>郭文攀</td>
+      <td>675.0</td>
+      <td>8</td>
+      <td>1</td>
+      <td>84.38</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>茵茵</td>
+      <td>郭文攀</td>
+      <td>664.0</td>
+      <td>7</td>
+      <td>1</td>
+      <td>94.86</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>呦米</td>
+      <td>郭文攀</td>
+      <td>533.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>177.67</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>嘟嘟</td>
+      <td>郭文攀</td>
+      <td>425.0</td>
+      <td>8</td>
+      <td>1</td>
+      <td>53.13</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>胡</td>
+      <td>郭文攀</td>
+      <td>378.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>126.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>宸宸</td>
+      <td>郭文攀</td>
+      <td>372.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>124.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>月月</td>
+      <td>郭文攀</td>
+      <td>337.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>112.33</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>洋洋</td>
+      <td>郭文攀</td>
+      <td>330.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>110.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>贝贝</td>
+      <td>郭文攀</td>
+      <td>330.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>110.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>黄晨馨</td>
+      <td>郭文攀</td>
+      <td>304.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>101.33</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>汤圆</td>
+      <td>郭文攀</td>
+      <td>279.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>93.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>诺宝</td>
+      <td>郭文攀</td>
+      <td>252.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>84.00</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>其他店铺参考</h3>
+      <p class='table-tip'>主逻辑固定关注 郭文攀 / 咸阳沣西吾悦专卖店。下面其他输入人代表其他店铺，只做参考对比，不参与主经营结论。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>输入人</th>
+      <th>店铺名称</th>
+      <th>销售额</th>
+      <th>销量</th>
+      <th>订单数</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>赛格直营店</td>
+      <td>赛格直营店</td>
+      <td>1772.00</td>
+      <td>20</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>罗莹</td>
+      <td>陕西华县专卖店</td>
+      <td>1557.00</td>
+      <td>24</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>高榕1</td>
+      <td>龙首原印象城专卖店</td>
+      <td>1401.00</td>
+      <td>22</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <td>郑贻丹</td>
+      <td>丰禾路万达专卖店</td>
+      <td>1365.00</td>
+      <td>11</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>张颖</td>
+      <td>华阳城专卖店</td>
+      <td>1221.00</td>
+      <td>11</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>高萌</td>
+      <td>咸阳龙湖彩虹Park专卖</td>
+      <td>990.37</td>
+      <td>13</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>郑剑蓝</td>
+      <td>大茂城专卖</td>
+      <td>438.00</td>
+      <td>5</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>王惠</td>
+      <td>西北商贸小黑托昵</td>
+      <td>410.00</td>
+      <td>8</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    </div>
+      </details>
+    </details>
+  </div>
+</body>
+</html>

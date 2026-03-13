@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import math
 import tempfile
 import zipfile
@@ -21,7 +22,47 @@ import plotly.graph_objects as go
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INPUT_DIR = ROOT / "data" / "inventory_zip_extract"
 DEFAULT_OUTPUT_DIR = ROOT / "reports" / "inventory_dashboard"
+DEFAULT_PAGES_DIR = ROOT / "docs" / "dashboard"
 BEIJING_TZ = ZoneInfo("Asia/Shanghai")
+PRIMARY_INPUT = "郭文攀"
+SEASON_STRATEGY_TOOLTIPS = {
+    "当季主推": "这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。",
+    "下一季试补": "这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。",
+    "跨季去化": "这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。",
+    "暂缓补货": "这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。",
+}
+STATUS_TOOLTIPS = {
+    "高压货": "这个品类库存金额明显高于销售金额。先停补，再安排组合促销或清货位去化。",
+    "需关注": "这个品类已经有库存压力，但还没到最严重。建议连续观察 1-2 周，必要时先收紧补货。",
+    "相对健康": "这个品类的库存和销售关系还算正常，当前维持节奏即可。",
+}
+ACTION_TOOLTIPS = {
+    "立即补货": "这是当前主销且库存非常低的款。今天就补，优先补核心尺码和卖得快的颜色。",
+    "优先补货": "这类商品需要尽快补，但不一定要今天全部补完。先保最能带营业额的款。",
+    "先校库存再补货": "系统库存不准。先查盘点、调拨和销售回写，确认真实库存后再决定是否补货。",
+    "小量试补": "可以少量补货试销。先小批量补，不要一次压很多库存。",
+    "先停补再去化": "先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。",
+    "观察并做组合去化": "先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。",
+    "优先去化": "这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。",
+    "跨季不补货": "当前不是这个品类的主销季。即使历史卖过，现在也先别补，等回到主销季再判断。",
+    "暂缓补货": "先不要急着补，把预算和货位留给当前主销品类。",
+}
+HIGH_FREQUENCY_ACTION_TOOLTIPS = {
+    "先处理负库存": "今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。",
+    "先去库存": "先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。",
+    "控制库存量": "先收紧进货和补货节奏，把预算留给主销品类，避免继续压货。",
+    "处理跨季品类": "把已经跨季的品类单独拎出来。有库存先去化，没库存先别追补。",
+    "联系高价值会员": "优先联系购买金额高、消费次数多的会员，用换季提醒和到店试穿带动复购。",
+    "安排去库存动作": "今天要明确哪些品类先停补、哪些品类上清货位、哪些品类做组合促销。",
+    "确认跨季处理": "由老板拍板跨季品类是去化、暂缓还是等下季，不要混进当季补货里。",
+    "停止补货": "这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。",
+    "组合促销": "把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。",
+    "清货陈列": "把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。",
+    "控制补货": "补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。",
+    "组合去化": "不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。",
+    "调整陈列": "通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。",
+    "稳住会员复购": "用换季提醒、到店试穿和组合推荐，先把老客的复购频率稳住。",
+}
 
 
 @dataclass
@@ -189,9 +230,34 @@ def load_data(files: ReportFiles) -> dict[str, pd.DataFrame]:
     }
 
 
+def infer_primary_store_from_retail(data: dict[str, pd.DataFrame], primary_input: str = PRIMARY_INPUT) -> str | None:
+    store_retail = data.get("store_retail", pd.DataFrame())
+    required_columns = {"输入人", "店铺名称", "金额", "零售单号"}
+    if store_retail.empty or not required_columns.issubset(store_retail.columns):
+        return None
+
+    primary_rows = store_retail[store_retail["输入人"].fillna("").astype(str).str.strip().eq(primary_input)].copy()
+    if primary_rows.empty:
+        return None
+
+    grouped = (
+        primary_rows.groupby("店铺名称")
+        .agg(销售额=("金额", "sum"), 订单数=("零售单号", "nunique"))
+        .reset_index()
+        .sort_values(["销售额", "订单数", "店铺名称"], ascending=[False, False, True])
+    )
+    if grouped.empty:
+        return None
+    return str(grouped.iloc[0]["店铺名称"]).strip()
+
+
 def infer_store_name(data: dict[str, pd.DataFrame], preferred_store: str | None) -> str:
     if preferred_store:
         return preferred_store
+
+    primary_store = infer_primary_store_from_retail(data)
+    if primary_store:
+        return primary_store
 
     sales = data["sales"]
     if "店铺名称" in sales.columns and not sales["店铺名称"].dropna().empty:
@@ -515,7 +581,7 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         ["VIP姓名", "服务导购", "购买金额", "购买总数", "消费次数/年", "平均单笔消费额", "储值余额"]
     ].sort_values("购买金额", ascending=False)
 
-    primary_input = "郭文攀"
+    primary_input = PRIMARY_INPUT
     if not store_retail.empty and {"输入人", "店铺名称", "零售单号", "金额", "数量"}.issubset(store_retail.columns):
         retail_reference = (
             store_retail[store_retail["输入人"].ne("未标记")]
@@ -595,6 +661,19 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
     replenish = replenish.sort_values(
         ["销售金额", "库存周数", "库存"], ascending=[False, True, True]
     )
+    replenish_categories = (
+        replenish.groupby(["中类", "季节策略"])
+        .agg(
+            SKU数=("款号", "count"),
+            销售额=("销售金额", "sum"),
+            库存=("库存", "sum"),
+            建议补货量=("建议补货量", "sum"),
+        )
+        .reset_index()
+        .sort_values(["销售额", "建议补货量", "SKU数"], ascending=[False, False, False])
+        if not replenish.empty
+        else pd.DataFrame(columns=["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量"])
+    )
 
     seasonal_actions = product_sales_no_props[
         (product_sales_no_props["季节策略"].isin(["跨季去化", "暂缓补货"]))
@@ -616,6 +695,18 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
     seasonal_actions = seasonal_actions.sort_values(
         ["季节策略优先级", "库存", "销售金额"], ascending=[True, False, False]
     ).drop(columns=["季节策略优先级"])
+    seasonal_categories = (
+        seasonal_actions.groupby(["中类", "季节策略", "建议动作"])
+        .agg(
+            SKU数=("款号", "count"),
+            销售额=("销售金额", "sum"),
+            库存=("库存", "sum"),
+        )
+        .reset_index()
+        .sort_values(["库存", "销售额", "SKU数"], ascending=[False, False, False])
+        if not seasonal_actions.empty
+        else pd.DataFrame(columns=["中类", "季节策略", "建议动作", "SKU数", "销售额", "库存"])
+    )
 
     clearance = stock_flow[
         (stock_flow["商品款号"].notna())
@@ -629,6 +720,18 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         lambda x: "先停补再去化" if x >= 20 else "观察并做组合去化"
     )
     clearance = clearance.sort_values(["实际库存", "零售价"], ascending=[False, False])
+    clearance_categories = (
+        clearance.groupby(["大类", "建议动作"])
+        .agg(
+            SKU数=("商品款号", "count"),
+            实际库存=("实际库存", "sum"),
+            近期零售=("近期零售", "sum"),
+        )
+        .reset_index()
+        .sort_values(["实际库存", "SKU数"], ascending=[False, False])
+        if not clearance.empty
+        else pd.DataFrame(columns=["大类", "建议动作", "SKU数", "实际库存", "近期零售"])
+    )
 
     action_summary = {
         "replenish_count": int(len(replenish)),
@@ -679,8 +782,11 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         "slow_moving": slow_moving,
         "category_risks": category_risks,
         "replenish": replenish,
+        "replenish_categories": replenish_categories,
         "seasonal_actions": seasonal_actions,
+        "seasonal_categories": seasonal_categories,
         "clearance": clearance,
+        "clearance_categories": clearance_categories,
         "action_summary": action_summary,
         "insights": insights,
     }
@@ -764,8 +870,15 @@ def build_charts(metrics: dict) -> list[str]:
     return charts
 
 
-def format_badge(value: str, level: str) -> str:
-    return f"<span class='badge badge-{level}'>{value}</span>"
+def format_badge(value: str, level: str, tip: str | None = None) -> str:
+    safe_value = html.escape(value)
+    classes = f"badge badge-{level}"
+    attrs = ""
+    if tip:
+        safe_tip = html.escape(tip, quote=True)
+        classes += " tooltip-badge"
+        attrs = f' title="{safe_tip}" data-tip="{safe_tip}" tabindex="0" role="note"'
+    return f"<span class='{classes}'{attrs}>{safe_value}</span>"
 
 
 def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
@@ -773,32 +886,32 @@ def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
     if "季节策略" in decorated.columns:
         decorated["季节策略"] = decorated["季节策略"].map(
             {
-                "当季主推": format_badge("当季主推", "green"),
-                "下一季试补": format_badge("下一季试补", "yellow"),
-                "跨季去化": format_badge("跨季去化", "red"),
-                "暂缓补货": format_badge("暂缓补货", "yellow"),
+                "当季主推": format_badge("当季主推", "green", SEASON_STRATEGY_TOOLTIPS["当季主推"]),
+                "下一季试补": format_badge("下一季试补", "yellow", SEASON_STRATEGY_TOOLTIPS["下一季试补"]),
+                "跨季去化": format_badge("跨季去化", "red", SEASON_STRATEGY_TOOLTIPS["跨季去化"]),
+                "暂缓补货": format_badge("暂缓补货", "yellow", SEASON_STRATEGY_TOOLTIPS["暂缓补货"]),
             }
         ).fillna(decorated["季节策略"])
     if "状态" in decorated.columns:
         decorated["状态"] = decorated["状态"].map(
             {
-                "高压货": format_badge("高压货", "red"),
-                "需关注": format_badge("需关注", "yellow"),
-                "相对健康": format_badge("相对健康", "green"),
+                "高压货": format_badge("高压货", "red", STATUS_TOOLTIPS["高压货"]),
+                "需关注": format_badge("需关注", "yellow", STATUS_TOOLTIPS["需关注"]),
+                "相对健康": format_badge("相对健康", "green", STATUS_TOOLTIPS["相对健康"]),
             }
         ).fillna(decorated["状态"])
     if "建议动作" in decorated.columns:
         decorated["建议动作"] = decorated["建议动作"].astype(str).map(
             {
-                "立即补货": format_badge("立即补货", "red"),
-                "优先补货": format_badge("优先补货", "yellow"),
-                "先校库存再补货": format_badge("先校库存再补货", "red"),
-                "小量试补": format_badge("小量试补", "yellow"),
-                "先停补再去化": format_badge("先停补再去化", "red"),
-                "观察并做组合去化": format_badge("观察并做组合去化", "yellow"),
-                "优先去化": format_badge("优先去化", "red"),
-                "跨季不补货": format_badge("跨季不补货", "red"),
-                "暂缓补货": format_badge("暂缓补货", "yellow"),
+                "立即补货": format_badge("立即补货", "red", ACTION_TOOLTIPS["立即补货"]),
+                "优先补货": format_badge("优先补货", "yellow", ACTION_TOOLTIPS["优先补货"]),
+                "先校库存再补货": format_badge("先校库存再补货", "red", ACTION_TOOLTIPS["先校库存再补货"]),
+                "小量试补": format_badge("小量试补", "yellow", ACTION_TOOLTIPS["小量试补"]),
+                "先停补再去化": format_badge("先停补再去化", "red", ACTION_TOOLTIPS["先停补再去化"]),
+                "观察并做组合去化": format_badge("观察并做组合去化", "yellow", ACTION_TOOLTIPS["观察并做组合去化"]),
+                "优先去化": format_badge("优先去化", "red", ACTION_TOOLTIPS["优先去化"]),
+                "跨季不补货": format_badge("跨季不补货", "red", ACTION_TOOLTIPS["跨季不补货"]),
+                "暂缓补货": format_badge("暂缓补货", "yellow", ACTION_TOOLTIPS["暂缓补货"]),
             }
         ).fillna(decorated["建议动作"])
     return decorated
@@ -864,6 +977,31 @@ def top_label_from_series(series: pd.Series, fallback: str) -> str:
     if clean.empty:
         return fallback
     return str(clean.iloc[0])
+
+
+def top_labels_from_series(series: pd.Series, fallback: str, limit: int = 2) -> str:
+    clean = [str(item).strip() for item in series.dropna().tolist() if str(item).strip()]
+    unique_labels = list(dict.fromkeys(clean))
+    if not unique_labels:
+        return fallback
+    return "、".join(unique_labels[:limit])
+
+
+def trim_text(text: str, max_chars: int = 12) -> str:
+    value = str(text).strip()
+    if len(value) <= max_chars:
+        return value
+    return value[:max_chars]
+
+
+def dedupe_preserve_order(items: list[str]) -> list[str]:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for item in items:
+        if item not in seen:
+            seen.add(item)
+            ordered.append(item)
+    return ordered
 
 
 def build_time_strategy(metrics: dict, now: datetime | None = None) -> dict:
@@ -992,17 +1130,130 @@ def build_time_strategy(metrics: dict, now: datetime | None = None) -> dict:
     }
 
 
+def classify_sales_trend(sales_daily: pd.DataFrame) -> dict[str, object]:
+    if sales_daily.empty:
+        return {
+            "label": "数据不足",
+            "direction": "flat",
+            "recent_avg": 0.0,
+            "previous_avg": 0.0,
+            "ratio": 1.0,
+            "detail": "暂无足够的日销数据做趋势判断。",
+        }
+
+    ordered = sales_daily.sort_values("日期").copy()
+    window = 3 if len(ordered) >= 6 else max(1, len(ordered) // 2)
+    recent = ordered.tail(window)
+    previous = ordered.iloc[-(window * 2):-window] if len(ordered) >= window * 2 else ordered.head(window)
+
+    recent_avg = float(recent["销售额"].mean()) if not recent.empty else 0.0
+    previous_avg = float(previous["销售额"].mean()) if not previous.empty else recent_avg
+    ratio = safe_ratio(recent_avg, previous_avg) if previous_avg else 1.0
+
+    if previous_avg == 0 and recent_avg > 0:
+        label = "上涨"
+        direction = "up"
+    elif ratio >= 1.15:
+        label = "上涨"
+        direction = "up"
+    elif ratio <= 0.85:
+        label = "下滑"
+        direction = "down"
+    else:
+        label = "走平"
+        direction = "flat"
+
+    return {
+        "label": label,
+        "direction": direction,
+        "recent_avg": recent_avg,
+        "previous_avg": previous_avg,
+        "ratio": ratio,
+        "detail": f"最近 {len(recent)} 天日销均值 {format_num(recent_avg, 2)} 元，对比前段为 {label}。",
+    }
+
+
+def classify_business_stage(phase: str) -> str:
+    if "主销" in phase or "起量" in phase:
+        return "旺季冲量"
+    if "换季" in phase or "预热" in phase or "上新" in phase:
+        return "换季切换"
+    return "平稳经营"
+
+
+def build_decision_engine(metrics: dict) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    actions = metrics["action_summary"]
+    time_strategy = build_time_strategy(metrics)
+    sales_trend = classify_sales_trend(metrics["sales_daily"])
+    stage = classify_business_stage(time_strategy["phase"])
+
+    top_replenish = top_labels_from_series(metrics["replenish_categories"]["中类"], time_strategy["top_replenish_category"], 2)
+    top_clearance = top_labels_from_series(metrics["clearance_categories"]["大类"], time_strategy["top_clearance_category"], 2)
+    top_seasonal = top_labels_from_series(metrics["seasonal_categories"]["中类"], "跨季品类", 2)
+
+    if cards["negative_sku_count"] >= 50:
+        mode = "校库存优先"
+        headline = "先校库存，再决定补货和去化。"
+        summary = (
+            f"{time_strategy['phase']}阶段，最近日销{sales_trend['label']}，但当前有 {format_num(cards['negative_sku_count'])} 个负库存 SKU。"
+            "先把账实校准，不然所有经营动作都会跑偏。"
+        )
+    elif cards["estimated_inventory_days"] >= 180 and sales_trend["direction"] != "up":
+        mode = "去库存优先"
+        headline = "库存偏重，当前先去库存。"
+        summary = (
+            f"{time_strategy['phase']}阶段，最近日销{sales_trend['label']}，库存还能卖约 {format_num(cards['estimated_inventory_days'], 1)} 天。"
+            f"先处理 {top_clearance} 这些高库存品类，别继续深补。"
+        )
+    elif stage == "换季切换" and actions["seasonal_hold_count"] >= 1:
+        mode = "换季切换"
+        headline = "换季先切结构，不要补错季。"
+        summary = (
+            f"现在处于 {time_strategy['phase']}，重点是让 {top_replenish} 起量，同时把 {top_seasonal} 这些跨季品类单独处理。"
+        )
+    elif actions["replenish_count"] >= 100 and sales_trend["direction"] in {"up", "flat"}:
+        mode = "保畅销优先"
+        headline = "主销品类要快补，但只补当季。"
+        summary = (
+            f"{time_strategy['phase']}阶段，最近日销{sales_trend['label']}，当前建议补货 SKU {format_num(actions['replenish_count'])} 个。"
+            f"优先保住 {top_replenish} 的主销不断货。"
+        )
+    else:
+        mode = "稳经营"
+        headline = "按季节稳经营，边卖边调结构。"
+        summary = (
+            f"当前处于 {time_strategy['phase']}，最近日销{sales_trend['label']}。"
+            f"补货先看 {top_replenish}，去化先看 {top_clearance}，按周复盘即可。"
+        )
+
+    return {
+        "mode": mode,
+        "stage": stage,
+        "headline": headline,
+        "summary": summary,
+        "sales_trend": sales_trend,
+        "season": time_strategy["season"],
+        "phase": time_strategy["phase"],
+        "top_replenish": top_replenish,
+        "top_clearance": top_clearance,
+        "top_seasonal": top_seasonal,
+    }
+
+
 def build_operational_playbooks(metrics: dict) -> list[dict]:
     cards = metrics["summary_cards"]
     actions = metrics["action_summary"]
     time_strategy = build_time_strategy(metrics)
     category_risks = metrics["category_risks"]
     top_members = metrics["top_members"].head(3)
-    seasonal_actions = metrics["seasonal_actions"].head(3)
+    seasonal_categories = metrics["seasonal_categories"].head(3)
     top_risk_category = top_label_from_series(category_risks["大类"], "高库存品类")
     top_member_names = "、".join(top_members["VIP姓名"].astype(str).tolist()) if not top_members.empty else "高价值会员"
-    top_seasonal_sample = (
-        "、".join(seasonal_actions["款号"].astype(str).tolist()) if not seasonal_actions.empty else "跨季款"
+    top_seasonal_categories = (
+        top_labels_from_series(seasonal_categories["中类"], "跨季品类", 3)
+        if not seasonal_categories.empty
+        else "跨季品类"
     )
 
     playbooks: list[dict] = []
@@ -1041,11 +1292,11 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
                 "schemes": [
                     {
                         "name": "A类马上补",
-                        "detail": f"今天先补 {time_strategy['top_replenish_category']}，优先销售金额高、库存 0-1、库存周数小于 1 的款。",
+                        "detail": f"今天先定 {time_strategy['top_replenish_category']} 这个品类的补货预算，再下钻到销售金额高、库存 0-1、库存周数小于 1 的款。",
                     },
                     {
                         "name": "B类本周补",
-                        "detail": "本周内处理销售稳定但库存还有 1-2 周的款，避免一下子把补货预算打满。",
+                        "detail": "本周内处理同品类里销售稳定但库存还有 1-2 周的款，避免一下子把补货预算打满。",
                     },
                     {
                         "name": "C类先观察",
@@ -1084,20 +1335,20 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
             {
                 "level": "yellow",
                 "title": "跨季款先别补，先按季节处理",
-                "trigger": f"当前有 {format_num(actions['seasonal_hold_count'])} 个 SKU 被识别为跨季去化或暂缓补货，例如 {top_seasonal_sample}。",
+                "trigger": f"当前有 {format_num(actions['seasonal_hold_count'])} 个 SKU 被识别为跨季去化或暂缓补货，重点集中在 {top_seasonal_categories} 这些品类。",
                 "goal": "避免把非主销季的货继续补深，把钱和货位留给当前季节。",
                 "schemes": [
                     {
                         "name": "有库存先去化",
-                        "detail": "如果跨季款手里还有库存，优先转到去化清单，用组合价、加价购、门口清货位来动销。",
+                        "detail": f"如果 {top_seasonal_categories} 这些跨季品类手里还有库存，优先转到去化清单，用组合价、加价购、门口清货位来动销。",
                     },
                     {
                         "name": "没库存不再追补",
-                        "detail": "如果像冬季羽绒这样当前库存已经为 0，现阶段不要因为历史卖过就立即补，先等回到主销季再评估。",
+                        "detail": "如果某个跨季品类当前库存已经为 0，现阶段不要因为历史卖过就立即补，先等回到主销季再评估。",
                     },
                     {
                         "name": "跨季款单独看板",
-                        "detail": "把跨季款放到单独的“跨季处理建议清单”，由老板每周决定去化、暂缓还是等待下季，不跟当季补货混在一起。",
+                        "detail": "先看“跨季处理重点品类”，再下钻到单款。由老板每周决定这些品类是去化、暂缓还是等待下季，不跟当季补货混在一起。",
                     },
                 ],
             }
@@ -1130,6 +1381,173 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
     return playbooks
 
 
+def build_boss_action_board(metrics: dict) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    decision = build_decision_engine(metrics)
+    time_strategy = build_time_strategy(metrics)
+    seasonal_categories = metrics["seasonal_categories"].head(3)
+    top_replenish_categories = decision["top_replenish"]
+    top_clearance_categories = decision["top_clearance"]
+    top_seasonal_categories = decision["top_seasonal"]
+    headline = decision["headline"]
+    summary = (
+        f"{decision['summary']} 当前阶段：{decision['stage']}；"
+        f"最近日销均值 {format_num(decision['sales_trend']['recent_avg'], 2)} 元。"
+    )
+
+    actions_today = [
+        {
+            "title": "先看哪张表",
+            "body": (
+                "先打开“去化重点品类”和“负库存异常清单”。"
+                if cards["negative_sku_count"] >= 30
+                else "先打开“去化重点品类”，确认今天最该先处理的品类。"
+            ),
+        },
+        {
+            "title": "今天怎么做",
+            "body": (
+                f"先处理 {top_clearance_categories} 的库存压力；"
+                f"补货只看 {top_replenish_categories} 这些当季主销品类。"
+            ),
+        },
+        {
+            "title": "老板今天拍板什么",
+            "body": (
+                f"单独看 {top_seasonal_categories} 这些跨季品类，决定是去化、暂缓，还是等回到主销季再补。"
+            ),
+        },
+    ]
+
+    dont_do = [
+        "不要先看单款，先看品类，再下钻到 SKU。",
+        "不要把道具金额和库存算进正常经营判断。",
+        "不要把其他输入人的店铺数据当成本店结论。",
+    ]
+    if not seasonal_categories.empty:
+        dont_do.append("不要因为某个冬款历史卖过，就在春夏阶段继续追补。")
+
+    reading_order = [
+        "先看“老板一分钟结论”，确认今天的主任务。",
+        "再看“经营健康灯”，判断先救火还是先放大机会。",
+        "再看“补货重点品类 / 去化重点品类 / 跨季处理重点品类”。",
+        "最后再下钻到具体 SKU 明细表执行。",
+    ]
+
+    meeting_script = [
+        f"今天主任务：{headline}",
+        f"今天主盯品类：去化看 {top_clearance_categories}，补货看 {top_replenish_categories}。",
+        "今天执行顺序：先纠偏，再去化，再补货。",
+    ]
+
+    return {
+        "headline": headline,
+        "summary": summary,
+        "actions_today": actions_today,
+        "dont_do": dont_do,
+        "reading_order": reading_order,
+        "meeting_script": meeting_script,
+        "decision": decision,
+    }
+
+
+def build_today_focus(metrics: dict) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    actions = metrics["action_summary"]
+    decision = build_decision_engine(metrics)
+    replenish_categories = metrics["replenish_categories"]
+    clearance_categories = metrics["clearance_categories"]
+    seasonal_categories = metrics["seasonal_categories"]
+    top_members = metrics["top_members"]
+
+    top_replenish = trim_text(top_label_from_series(replenish_categories["中类"], "主销品类"), 6)
+    top_clearance = trim_text(top_label_from_series(clearance_categories["大类"], "高库存品类"), 6)
+
+    conclusions: list[str] = []
+    if cards["negative_sku_count"] > 50:
+        conclusions.append("先处理负库存")
+    if cards["estimated_inventory_days"] > 180:
+        conclusions.append("先去库存")
+    elif cards["estimated_inventory_days"] > 120:
+        conclusions.append("控制库存量")
+    if actions["clearance_count"] > 50 or actions["high_risk_category_count"] > 0:
+        conclusions.append(trim_text(f"先停补{top_clearance}", 12))
+    if actions["replenish_count"] > 100:
+        conclusions.append(trim_text(f"优先补{top_replenish}", 12))
+    if seasonal_categories.shape[0] > 0:
+        conclusions.append("处理跨季品类")
+    if cards["member_sales_ratio"] >= 0.6:
+        conclusions.append("联系高价值会员")
+    if decision["mode"] == "保畅销优先":
+        conclusions.append(trim_text(f"优先补{top_replenish}", 12))
+    if decision["mode"] == "换季切换":
+        conclusions.append("先做换季切换")
+
+    conclusions = dedupe_preserve_order(conclusions)
+    if len(conclusions) < 3:
+        conclusions.extend(
+            dedupe_preserve_order(
+                [
+                    trim_text(f"调整{top_clearance}陈列", 12),
+                    trim_text(f"检查{top_replenish}断码", 12),
+                    "稳住会员复购",
+                ]
+            )
+        )
+    conclusions = conclusions[:3]
+
+    tasks: list[str] = []
+    if cards["negative_sku_count"] > 0:
+        tasks.append("处理负库存")
+    if cards["estimated_inventory_days"] > 180:
+        tasks.append("安排去库存动作")
+    if not clearance_categories.empty:
+        tasks.append(trim_text(f"调整{top_clearance}陈列", 12))
+    if not replenish_categories.empty:
+        tasks.append(trim_text(f"检查{top_replenish}断码", 12))
+    if not seasonal_categories.empty:
+        tasks.append("确认跨季处理")
+    if not top_members.empty:
+        tasks.append("联系高价值会员")
+    tasks = dedupe_preserve_order(tasks)[:5]
+
+    return {
+        "conclusions": conclusions,
+        "tasks": tasks,
+    }
+
+
+def suggestions_for_risk_action(action: str) -> list[str]:
+    if action == "先停补再去化":
+        return ["停止补货", "组合促销", "清货陈列"]
+    return ["控制补货", "组合去化", "调整陈列"]
+
+
+def infer_action_tip(label: str) -> str | None:
+    text = str(label).strip()
+    if text in HIGH_FREQUENCY_ACTION_TOOLTIPS:
+        return HIGH_FREQUENCY_ACTION_TOOLTIPS[text]
+    if text in ACTION_TOOLTIPS:
+        return ACTION_TOOLTIPS[text]
+    if text in STATUS_TOOLTIPS:
+        return STATUS_TOOLTIPS[text]
+    if text in SEASON_STRATEGY_TOOLTIPS:
+        return SEASON_STRATEGY_TOOLTIPS[text]
+    if text.startswith("先停补"):
+        category = text.replace("先停补", "", 1) or "该品类"
+        return f"这个结论表示先暂停 {category} 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。"
+    if text.startswith("优先补"):
+        category = text.replace("优先补", "", 1) or "该品类"
+        return f"这个结论表示先保住 {category} 的主销不断货。先补核心尺码和卖得快的颜色，不要平均补。"
+    if text.startswith("调整") and text.endswith("陈列"):
+        category = text[2:-2] or "该品类"
+        return f"把 {category} 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。"
+    if text.startswith("检查") and text.endswith("断码"):
+        category = text[2:-2] or "该品类"
+        return f"先检查 {category} 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。"
+    return None
+
+
 def table_html(df: pd.DataFrame, title: str, rows: int = 10, tip: str | None = None) -> str:
     preview = df.head(rows).copy()
     preview = decorate_table(preview)
@@ -1151,33 +1569,173 @@ def build_html(metrics: dict) -> str:
     dashboard_tips = build_dashboard_tips(cards, actions)
     time_strategy = build_time_strategy(metrics)
     playbooks = build_operational_playbooks(metrics)
+    boss_board = build_boss_action_board(metrics)
+    focus = build_today_focus(metrics)
+    decision = build_decision_engine(metrics)
     primary_reference = metrics["primary_reference"]
     other_references = metrics["other_references"]
 
-    card_items = [
-        ("经营销售额", f"{format_num(cards['sales_amount'], 2)} 元", "默认已排除道具"),
-        ("订单数", format_num(cards["sales_orders"]), f"{cards['sales_days']} 天经营明细"),
-        ("客单价", f"{format_num(cards['avg_order_value'], 2)} 元", "经营销售额 / 订单数"),
-        ("历史累计销售额", f"{format_num(cards['cumulative_sales_amount'], 2)} 元", "历史累计，默认已排除道具"),
-        ("历史累计销量", format_num(cards["cumulative_sales_qty"]), "自首次销售起累计"),
-        ("经营库存额", f"{format_num(cards['inventory_amount'], 2)} 元", "默认已排除道具"),
-        ("负库存 SKU", format_num(cards["negative_sku_count"]), "需要优先纠偏"),
-        ("会员销售额占比", f"{format_num(cards['member_sales_ratio'] * 100, 1)}%", "会员是核心来源"),
-        ("预计库存覆盖天数", f"{format_num(cards['estimated_inventory_days'], 1)} 天", "经营商品口径"),
-        ("建议补货 SKU", format_num(actions["replenish_count"]), "优先看畅销低库存"),
-        ("跨季处理 SKU", format_num(actions["seasonal_hold_count"]), "不建议按原逻辑继续补货"),
-        ("建议去化 SKU", format_num(actions["clearance_count"]), "优先看高库存低动销"),
-        ("高压货品类", format_num(actions["high_risk_category_count"]), "按库存金额/销售金额判断"),
-    ]
-    reference_items = [
-        ("道具销售额", f"{format_num(cards['props_sales_amount'], 2)} 元", "单独参考，不计入经营销售额"),
-        ("道具库存额", f"{format_num(cards['props_inventory_amount'], 2)} 元", "单独参考，不计入经营库存额"),
-        ("道具销量", format_num(cards["props_sales_qty"]), "单独参考"),
-        ("道具库存件数", format_num(cards["props_inventory_qty"]), "单独参考"),
+    def chip(label: str, tone: str = "neutral") -> str:
+        safe_label = html.escape(str(label))
+        tip = infer_action_tip(label)
+        attrs = ""
+        classes = f"mini-chip mini-chip-{tone}"
+        if tip:
+            safe_tip = html.escape(tip, quote=True)
+            classes += " tooltip-badge"
+            attrs = f' title="{safe_tip}" data-tip="{safe_tip}" tabindex="0" role="note"'
+        return f"<span class='{classes}'{attrs}>{safe_label}</span>"
+
+    def render_empty(message: str) -> str:
+        return f"<div class='empty-card'>{html.escape(message)}</div>"
+
+    inventory_days_level = (
+        "red" if cards["estimated_inventory_days"] > 180 else "yellow" if cards["estimated_inventory_days"] > 120 else "green"
+    )
+    core_metrics = [
+        ("经营销售额", f"{format_num(cards['sales_amount'], 2)} 元", f"近 {cards['sales_days']} 天经营数据", "neutral"),
+        ("客单价", f"{format_num(cards['avg_order_value'], 2)} 元", "经营销售额 / 订单数", "neutral"),
+        ("库存覆盖天数", f"{format_num(cards['estimated_inventory_days'], 1)} 天", "库存还能卖多久", inventory_days_level),
+        ("会员销售占比", f"{format_num(cards['member_sales_ratio'] * 100, 1)}%", "会员带来的销售贡献", "neutral"),
     ]
 
-    insights_html = "".join(f"<li>{item}</li>" for item in metrics["insights"])
-    chart_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts)
+    money_opportunities = (
+        metrics["replenish"][metrics["replenish"]["库存周数"] < 1]
+        .groupby("中类")
+        .agg(销售额=("销售金额", "sum"), 当前库存=("库存", "sum"), 建议补货量=("建议补货量", "sum"))
+        .reset_index()
+        .sort_values(["销售额", "当前库存"], ascending=[False, True])
+        .head(4)
+    )
+    if money_opportunities.empty:
+        money_opportunities = (
+            metrics["replenish_categories"][["中类", "销售额", "库存", "建议补货量"]]
+            .rename(columns={"库存": "当前库存"})
+            .head(4)
+        )
+
+    inventory_risks = metrics["clearance_categories"].head(4).copy()
+    replenish_focus = (
+        metrics["replenish_categories"]
+        .sort_values(["SKU数", "销售额", "库存"], ascending=[False, False, True])
+        .head(4)
+        .copy()
+    )
+    member_focus = metrics["top_members"].head(3).copy()
+
+    if not primary_reference.empty:
+        primary = primary_reference.iloc[0]
+        store_note = f"主店铺：{metrics['primary_input']} / {primary['店铺名称']}"
+        reference_intro = (
+            f"主逻辑固定关注 {metrics['primary_input']} / {primary['店铺名称']}。"
+            "下面其他输入人代表其他店铺，只做参考对比，不参与主经营结论。"
+        )
+    else:
+        store_note = f"主店铺：{cards['store_name']}"
+        reference_intro = "未读取到可用的输入人参考表。"
+
+    core_metric_html = "".join(
+        f"""
+        <div class="metric-card metric-{level}">
+          <div class="metric-title">{title}</div>
+          <div class="metric-value">{value}</div>
+          <div class="metric-note">{note}</div>
+        </div>
+        """
+        for title, value, note, level in core_metrics
+    )
+
+    conclusions_html = "".join(chip(item, "primary") for item in focus["conclusions"])
+    tasks_html = "".join(
+        f"<li>{chip(item, 'soft')}</li>" for item in focus["tasks"]
+    )
+    dont_do_html = "".join(f"<li>{chip(item, 'warn')}</li>" for item in boss_board["dont_do"])
+    quick_nav_html = "".join(
+        [
+            "<a href='#focus'>今日重点</a>",
+            "<a href='#core-metrics'>核心指标</a>",
+            "<a href='#money-opportunities'>赚钱机会</a>",
+            "<a href='#inventory-risks'>库存风险</a>",
+            "<a href='#replenish-opportunities'>补货机会</a>",
+            "<a href='#member-ops'>会员经营</a>",
+            "<a href='#details'>详细数据</a>",
+        ]
+    )
+
+    if not money_opportunities.empty:
+        money_html = "".join(
+            f"""
+            <div class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">{html.escape(str(row['中类']))}</div>
+              <div class="stat-row"><span>销售额</span><strong>{format_num(row['销售额'], 2)}</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>{format_num(row['当前库存'])}</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>{format_num(row['建议补货量'])}</strong></div>
+            </div>
+            """
+            for _, row in money_opportunities.iterrows()
+        )
+    else:
+        money_html = render_empty("当前没有明显的低库存赚钱机会。")
+
+    if not inventory_risks.empty:
+        inventory_risk_html = "".join(
+            f"""
+            <div class="risk-card">
+              <div class="card-title">{html.escape(str(row['大类']))}</div>
+              <div class="stat-row"><span>库存数量</span><strong>{format_num(row['实际库存'])}</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>{format_num(row['近期零售'])}</strong></div>
+              <div class="chip-row">{''.join(chip(item, 'danger') for item in suggestions_for_risk_action(str(row['建议动作'])))}</div>
+            </div>
+            """
+            for _, row in inventory_risks.iterrows()
+        )
+    else:
+        inventory_risk_html = render_empty("当前没有明显的高库存风险品类。")
+
+    if not replenish_focus.empty:
+        replenish_html = "".join(
+            f"""
+            <div class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">{html.escape(str(row['中类']))}</div>
+              <div class="stat-row"><span>销售额</span><strong>{format_num(row['销售额'], 2)}</strong></div>
+              <div class="stat-row"><span>库存</span><strong>{format_num(row['库存'])}</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>{format_num(row['建议补货量'])}</strong></div>
+              <div class="card-note">建议补货 SKU：{format_num(row['SKU数'])}</div>
+            </div>
+            """
+            for _, row in replenish_focus.iterrows()
+        )
+    else:
+        replenish_html = render_empty("当前没有明显需要优先补货的品类。")
+
+    if not member_focus.empty:
+        member_html = "".join(
+            f"""
+            <div class="member-card">
+              <div class="card-title">{html.escape(str(row['VIP姓名']))}</div>
+              <div class="card-note">服务导购：{html.escape(str(row['服务导购']))}</div>
+              <div class="stat-row"><span>购买金额</span><strong>{format_num(row['购买金额'], 2)}</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>{format_num(row['消费次数/年'])}</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>{format_num(row['平均单笔消费额'], 2)}</strong></div>
+            </div>
+            """
+            for _, row in member_focus.iterrows()
+        )
+    else:
+        member_html = render_empty("当前没有可展示的高价值会员。")
+
+    health_html = "".join(
+        f"""
+        <div class="health-card health-{item['level']}">
+          <div class="health-title">{item['title']}</div>
+          <div class="health-value">{item['value']}</div>
+          <div class="health-note">{item['note']}</div>
+        </div>
+        """
+        for item in health_lights
+    )
     tips_html = "".join(
         f"""
         <div class="tip-card">
@@ -1188,48 +1746,15 @@ def build_html(metrics: dict) -> str:
         """
         for item in dashboard_tips
     )
-    time_html = "".join(
-        [
-            f"""
-            <div class="time-card">
-              <div class="time-title">北京时间</div>
-              <div class="time-value">{time_strategy['beijing_time']}</div>
-              <div class="time-note">{time_strategy['season']} / {time_strategy['phase']}</div>
-            </div>
-            """,
-            f"""
-            <div class="time-card">
-              <div class="time-title">当前季节判断</div>
-              <div class="time-value">{time_strategy['season']}</div>
-              <div class="time-note">{time_strategy['headline']}</div>
-            </div>
-            """,
-            f"""
-            <div class="time-card">
-              <div class="time-title">补货关注</div>
-              <div class="time-value">{time_strategy['top_replenish_category']}</div>
-              <div class="time-note">当前建议补货最多的季节：{time_strategy['top_replenish_season']}</div>
-            </div>
-            """,
-            f"""
-            <div class="time-card">
-              <div class="time-title">去化关注</div>
-              <div class="time-value">{time_strategy['top_clearance_category']}</div>
-              <div class="time-note">当前库存覆盖约 {format_num(time_strategy['inventory_days'], 1)} 天</div>
-            </div>
-            """,
-        ]
-    )
-    daily_actions_html = "".join(f"<li>{item}</li>" for item in time_strategy["daily_actions"])
-    weekly_actions_html = "".join(f"<li>{item}</li>" for item in time_strategy["weekly_actions"])
-    monthly_actions_html = "".join(f"<li>{item}</li>" for item in time_strategy["monthly_actions"])
     playbooks_html = "".join(
         f"""
         <div class="playbook-card playbook-{item['level']}">
           <div class="playbook-title">{item['title']}</div>
           <div class="playbook-trigger">触发原因：{item['trigger']}</div>
           <div class="playbook-goal">目标：{item['goal']}</div>
-          <div class="playbook-subtitle">可直接执行的 3 套方案</div>
+          <div class="chip-row">
+            {"".join(chip(scheme['name'], 'soft') for scheme in item['schemes'])}
+          </div>
           <ul>
             {"".join(f"<li><strong>{scheme['name']}</strong>：{scheme['detail']}</li>" for scheme in item['schemes'])}
           </ul>
@@ -1237,38 +1762,8 @@ def build_html(metrics: dict) -> str:
         """
         for item in playbooks
     )
-    if not primary_reference.empty:
-        primary = primary_reference.iloc[0]
-        reference_intro = (
-            f"主逻辑固定关注 {metrics['primary_input']} / {primary['店铺名称']}。"
-            "下面其他输入人代表其他店铺，只做参考对比，不参与主经营结论。"
-        )
-    else:
-        reference_intro = "未读取到可用的输入人参考表。"
-
-    tables = "".join(
-        [
-            table_html(metrics["replenish"], "补货建议清单", 12, "先看销售金额高、库存低、库存周数短的款，优先补畅销款。"),
-            table_html(metrics["seasonal_actions"], "跨季处理建议清单", 12, "先看季节策略。跨季去化的款不要继续补，有库存先清；没库存就等下季。"),
-            table_html(metrics["clearance"], "去化建议清单", 12, "先看实际库存高、近期零售低、动销率低的款，先停补再想去化。"),
-            table_html(metrics["low_stock_bestsellers"], "畅销但低库存的商品", 12, "这些款卖得不差，但库存已经很低，容易影响营业额。"),
-            table_html(metrics["slow_moving"], "高库存但低动销的商品", 12, "这些款库存不少，但近期基本没卖动，适合优先排查。"),
-            table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨，别直接按这张表补货。"),
-            table_html(metrics["top_members"], "高价值会员", 12, "优先回访高消费或高频顾客，做复购和转介绍。"),
-            table_html(other_references, "其他店铺参考", 8, reference_intro),
-        ]
-    )
-
-    card_html = "".join(
-        f"""
-        <div class="metric-card">
-          <div class="metric-title">{title}</div>
-          <div class="metric-value">{value}</div>
-          <div class="metric-note">{note}</div>
-        </div>
-        """
-        for title, value, note in card_items
-    )
+    insights_html = "".join(f"<li>{item}</li>" for item in metrics["insights"])
+    chart_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts)
     reference_html = "".join(
         f"""
         <div class="metric-card">
@@ -1277,20 +1772,26 @@ def build_html(metrics: dict) -> str:
           <div class="metric-note">{note}</div>
         </div>
         """
-        for title, value, note in reference_items
+        for title, value, note in [
+            ("道具销售额", f"{format_num(cards['props_sales_amount'], 2)} 元", "单独参考，不计入经营销售额"),
+            ("道具库存额", f"{format_num(cards['props_inventory_amount'], 2)} 元", "单独参考，不计入经营库存额"),
+            ("道具销量", format_num(cards["props_sales_qty"]), "单独参考"),
+            ("道具库存件数", format_num(cards["props_inventory_qty"]), "单独参考"),
+        ]
     )
-    health_html = "".join(
-        f"""
-        <div class="health-card health-{item['level']}">
-          <div class="health-top">
-            <span class="health-dot"></span>
-            <span class="health-title">{item['title']}</span>
-          </div>
-          <div class="health-value">{item['value']}</div>
-          <div class="health-note">{item['note']}</div>
-        </div>
-        """
-        for item in health_lights
+
+    tables = "".join(
+        [
+            table_html(metrics["replenish_categories"], "补货重点品类", 10, "先按品类定补货优先级，再下钻到单款。"),
+            table_html(metrics["seasonal_categories"], "跨季处理重点品类", 10, "先看哪些品类已经跨季。"),
+            table_html(metrics["clearance_categories"], "去化重点品类", 10, "先按品类看库存压力。"),
+            table_html(metrics["replenish"], "补货 SKU 明细", 12, "确定品类要补后，再来这里挑具体款。"),
+            table_html(metrics["seasonal_actions"], "跨季处理 SKU 明细", 12, "老板做二次判断时使用。"),
+            table_html(metrics["clearance"], "去化 SKU 明细", 12, "执行去化时再下钻到具体款。"),
+            table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨。"),
+            table_html(metrics["top_members"], "高价值会员", 12, "优先回访高消费或高频顾客。"),
+            table_html(other_references, "其他店铺参考", 8, reference_intro),
+        ]
     )
 
     return f"""<!DOCTYPE html>
@@ -1298,7 +1799,7 @@ def build_html(metrics: dict) -> str:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{cards['store_name']} 库存销售看板</title>
+  <title>{cards['store_name']} 老板经营仪表盘</title>
   <style>
     body {{
       margin: 0;
@@ -1308,16 +1809,16 @@ def build_html(metrics: dict) -> str:
       color: #1f2937;
     }}
     .page {{
-      max-width: 1440px;
+      max-width: 1380px;
       margin: 0 auto;
-      padding: 28px;
+      padding: 24px;
     }}
     .hero {{
       background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
       color: white;
-      padding: 28px;
+      padding: 24px;
       border-radius: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
     }}
     .hero h1 {{
@@ -1326,20 +1827,131 @@ def build_html(metrics: dict) -> str:
     }}
     .hero p {{
       margin: 0;
-      opacity: 0.9;
-      line-height: 1.6;
+      opacity: 0.92;
+      line-height: 1.7;
     }}
-    .grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin: 24px 0;
+    .hero-note {{
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.88;
     }}
-    .metric-card, .chart-card, .table-card, .insight-card {{
+    .quick-nav {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 14px 0 18px;
+    }}
+    .quick-nav a {{
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+    .module {{
       background: white;
       border-radius: 18px;
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       padding: 18px;
+      margin-bottom: 18px;
+    }}
+    .module-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }}
+    .module-title {{
+      margin: 0;
+      font-size: 22px;
+      color: #0f172a;
+    }}
+    .module-note {{
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.7;
+    }}
+    .focus-wrap {{
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }}
+    .focus-panel {{
+      background: #fffdf7;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+    }}
+    .focus-headline {{
+      font-size: 28px;
+      font-weight: 800;
+      color: #92400e;
+      margin: 0 0 10px;
+    }}
+    .focus-summary {{
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #5b4636;
+    }}
+    .chip-row {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }}
+    .mini-chip {{
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+    .mini-chip-primary {{
+      background: #dbeafe;
+      color: #1d4ed8;
+    }}
+    .mini-chip-soft {{
+      background: #f1f5f9;
+      color: #334155;
+    }}
+    .mini-chip-danger {{
+      background: #fee2e2;
+      color: #991b1b;
+    }}
+    .mini-chip-warn {{
+      background: #fef3c7;
+      color: #92400e;
+    }}
+    .task-list, .detail-list {{
+      margin: 0 0 0 18px;
+      padding: 0;
+      line-height: 1.9;
+      color: #334155;
+      font-size: 14px;
+    }}
+    .metrics-grid, .cards-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }}
+    .metric-card, .opportunity-card, .risk-card, .member-card, .health-card, .tip-card, .playbook-card, .chart-card, .table-card {{
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+    }}
+    .metric-card {{
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }}
     .metric-title {{
       font-size: 14px;
@@ -1347,133 +1959,221 @@ def build_html(metrics: dict) -> str:
       margin-bottom: 8px;
     }}
     .metric-value {{
-      font-size: 28px;
-      font-weight: 700;
+      font-size: 30px;
+      font-weight: 800;
       margin-bottom: 6px;
+      color: #0f172a;
     }}
     .metric-note {{
       font-size: 13px;
-      color: #94a3b8;
+      color: #64748b;
     }}
-    .tip-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
+    .metric-red {{
+      border-color: #fecaca;
+      background: #fff7f7;
     }}
-    .tip-card {{
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px;
+    .metric-red .metric-value {{
+      color: #991b1b;
     }}
-    .tip-term {{
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #0f172a;
+    .metric-yellow {{
+      border-color: #fde68a;
+      background: #fffbeb;
     }}
-    .tip-meaning {{
-      font-size: 13px;
-      line-height: 1.7;
-      color: #334155;
-      margin-bottom: 8px;
+    .metric-yellow .metric-value {{
+      color: #92400e;
     }}
-    .tip-watch {{
+    .metric-green {{
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }}
+    .metric-green .metric-value {{
+      color: #166534;
+    }}
+    .card-kicker {{
       font-size: 12px;
-      line-height: 1.7;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }}
+    .card-title {{
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+    }}
+    .card-note {{
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 10px;
+    }}
+    .stat-row {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.8;
       color: #475569;
     }}
-    .time-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
+    .stat-row strong {{
+      color: #0f172a;
+      font-size: 15px;
     }}
-    .time-card {{
+    .risk-card {{
+      background: #fff8f5;
+      border-color: #fed7aa;
+    }}
+    .member-card {{
       background: #f8fafc;
-      border: 1px solid #dbeafe;
-      border-radius: 16px;
-      padding: 16px;
     }}
-    .time-title {{
-      font-size: 13px;
+    .empty-card {{
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 20px;
+      color: #64748b;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }}
+    .tooltip-badge {{
+      position: relative;
+      cursor: help;
+    }}
+    .tooltip-badge::after {{
+      content: attr(data-tip);
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 10px);
+      width: min(320px, 68vw);
+      white-space: normal;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.6;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 40;
+    }}
+    .tooltip-badge::before {{
+      content: "";
+      position: absolute;
+      left: 14px;
+      bottom: calc(100% + 4px);
+      width: 10px;
+      height: 10px;
+      background: #0f172a;
+      transform: rotate(45deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 39;
+    }}
+    .tooltip-badge:hover::after,
+    .tooltip-badge:hover::before,
+    .tooltip-badge:focus-visible::after,
+    .tooltip-badge:focus-visible::before {{
+      opacity: 1;
+      transform: translateY(0);
+    }}
+    .tooltip-badge:focus-visible {{
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+    }}
+    .detail-panel {{
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      margin-bottom: 18px;
+    }}
+    .detail-panel summary {{
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      list-style: none;
+    }}
+    .detail-panel summary::-webkit-details-marker {{
+      display: none;
+    }}
+    .detail-panel[open] summary {{
+      margin-bottom: 14px;
+    }}
+    .nested-detail {{
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      background: #ffffff;
+      margin-top: 14px;
+    }}
+    .nested-detail summary {{
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      list-style: none;
+    }}
+    .nested-detail summary::-webkit-details-marker {{
+      display: none;
+    }}
+    .nested-detail[open] summary {{
+      margin-bottom: 12px;
+    }}
+    .detail-grid, .health-grid, .tip-grid, .playbook-grid, .charts, .tables {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }}
+    .health-red {{
+      background: #fff1f2;
+      border-color: #fecdd3;
+    }}
+    .health-yellow {{
+      background: #fffbeb;
+      border-color: #fde68a;
+    }}
+    .health-green {{
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }}
+    .health-title {{
+      font-size: 14px;
       color: #64748b;
       margin-bottom: 8px;
     }}
-    .time-value {{
-      font-size: 24px;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 8px;
+    .health-value {{
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 6px;
     }}
-    .time-note {{
+    .health-note {{
       font-size: 13px;
       line-height: 1.7;
-      color: #334155;
+      color: #475569;
     }}
-    .decision-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }}
-    .decision-card {{
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 16px;
-    }}
-    .decision-title {{
+    .tip-term {{
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 8px;
-      color: #0f172a;
     }}
-    .decision-card ul {{
-      margin: 0 0 0 18px;
-      padding: 0;
-      line-height: 1.8;
-      color: #334155;
+    .tip-meaning, .tip-watch, .playbook-trigger, .playbook-goal, .table-tip {{
       font-size: 13px;
-    }}
-    .playbook-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }}
-    .playbook-card {{
-      border-radius: 18px;
-      padding: 18px;
-      border: 1px solid #e5e7eb;
-      background: #ffffff;
+      line-height: 1.8;
+      color: #475569;
     }}
     .playbook-title {{
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 10px;
-      color: #0f172a;
-    }}
-    .playbook-trigger,
-    .playbook-goal {{
-      font-size: 13px;
-      line-height: 1.7;
-      color: #334155;
-      margin-bottom: 8px;
-    }}
-    .playbook-subtitle {{
-      font-size: 13px;
-      font-weight: 700;
-      color: #0f172a;
-      margin: 12px 0 6px;
-    }}
-    .playbook-card ul {{
-      margin: 0 0 0 18px;
-      padding: 0;
-      line-height: 1.8;
-      color: #334155;
-      font-size: 13px;
     }}
     .playbook-red {{
       background: #fff7f7;
@@ -1487,97 +2187,17 @@ def build_html(metrics: dict) -> str:
       background: #f0fdf4;
       border-color: #bbf7d0;
     }}
-    .health-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }}
-    .health-card {{
-      border-radius: 18px;
-      padding: 18px;
-      border: 1px solid #e5e7eb;
-    }}
-    .health-top {{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }}
-    .health-dot {{
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      display: inline-block;
-    }}
-    .health-title {{
-      font-size: 14px;
-      font-weight: 600;
-    }}
-    .health-value {{
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }}
-    .health-note {{
-      font-size: 13px;
-      line-height: 1.6;
-    }}
-    .health-red {{
-      background: #fff1f2;
-      border-color: #fecdd3;
-    }}
-    .health-red .health-dot {{
-      background: #dc2626;
-    }}
-    .health-red .health-title,
-    .health-red .health-value {{
-      color: #991b1b;
-    }}
-    .health-yellow {{
-      background: #fffbeb;
-      border-color: #fde68a;
-    }}
-    .health-yellow .health-dot {{
-      background: #d97706;
-    }}
-    .health-yellow .health-title,
-    .health-yellow .health-value {{
-      color: #92400e;
-    }}
-    .health-green {{
-      background: #ecfdf5;
-      border-color: #a7f3d0;
-    }}
-    .health-green .health-dot {{
-      background: #059669;
-    }}
-    .health-green .health-title,
-    .health-green .health-value {{
-      color: #065f46;
-    }}
-    .insight-card ul {{
-      margin: 8px 0 0 18px;
+    .playbook-card ul, .insight-list {{
+      margin: 10px 0 0 18px;
       padding: 0;
-      line-height: 1.7;
-    }}
-    .charts {{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin: 24px 0;
-    }}
-    .tables {{
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-      margin: 24px 0;
+      line-height: 1.8;
+      font-size: 13px;
+      color: #334155;
     }}
     .data-table {{
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      overflow: hidden;
     }}
     .data-table th, .data-table td {{
       padding: 8px 10px;
@@ -1589,42 +2209,117 @@ def build_html(metrics: dict) -> str:
       position: sticky;
       top: 0;
     }}
-    .table-tip {{
-      font-size: 13px;
-      color: #475569;
-      line-height: 1.7;
-      margin: 6px 0 12px;
-    }}
-    .badge {{
-      display: inline-flex;
-      align-items: center;
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      white-space: nowrap;
-    }}
-    .badge-red {{
-      background: #fee2e2;
-      color: #991b1b;
-    }}
-    .badge-yellow {{
-      background: #fef3c7;
-      color: #92400e;
-    }}
-    .badge-green {{
-      background: #dcfce7;
-      color: #166534;
-    }}
     .table-card {{
       overflow-x: auto;
     }}
     @media (max-width: 960px) {{
-      .charts {{
-        grid-template-columns: 1fr;
-      }}
       .page {{
         padding: 16px;
+      }}
+      .quick-nav {{
+        position: sticky;
+        top: 8px;
+        z-index: 20;
+        background: rgba(246, 247, 251, 0.96);
+        padding: 8px 0 6px;
+        margin-top: 10px;
+      }}
+      .quick-nav a {{
+        font-size: 12px;
+        padding: 7px 10px;
+      }}
+      .focus-wrap {{
+        grid-template-columns: 1fr;
+      }}
+      .module-header {{
+        flex-direction: column;
+        align-items: flex-start;
+      }}
+      .metrics-grid, .cards-grid, .detail-grid, .health-grid, .tip-grid, .playbook-grid, .charts, .tables {{
+        grid-template-columns: 1fr;
+      }}
+      .tooltip-badge::after {{
+        width: min(260px, 72vw);
+      }}
+    }}
+    @media (max-width: 640px) {{
+      .page {{
+        padding: 12px;
+      }}
+      .quick-nav {{
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 10px 0 14px;
+      }}
+      .hero {{
+        padding: 18px;
+        border-radius: 16px;
+      }}
+      .hero h1 {{
+        font-size: 24px;
+        line-height: 1.3;
+      }}
+      .hero p, .hero-note {{
+        font-size: 12px;
+        line-height: 1.7;
+      }}
+      .module {{
+        padding: 14px;
+        border-radius: 16px;
+        margin-bottom: 14px;
+      }}
+      .module-title {{
+        font-size: 18px;
+      }}
+      .focus-panel,
+      .metric-card, .opportunity-card, .risk-card, .member-card, .health-card, .tip-card, .playbook-card, .chart-card, .table-card {{
+        padding: 14px;
+        border-radius: 14px;
+      }}
+      .focus-headline {{
+        font-size: 22px;
+        line-height: 1.35;
+      }}
+      .focus-summary,
+      .module-note,
+      .task-list, .detail-list,
+      .tip-meaning, .tip-watch, .playbook-trigger, .playbook-goal, .table-tip,
+      .health-note {{
+        font-size: 12px;
+        line-height: 1.75;
+      }}
+      .metric-value,
+      .health-value {{
+        font-size: 24px;
+      }}
+      .card-title {{
+        font-size: 16px;
+        margin-bottom: 10px;
+      }}
+      .stat-row {{
+        font-size: 13px;
+        line-height: 1.7;
+      }}
+      .stat-row strong {{
+        font-size: 14px;
+      }}
+      .mini-chip {{
+        font-size: 12px;
+        padding: 6px 10px;
+        white-space: normal;
+      }}
+      .chip-row {{
+        gap: 8px;
+      }}
+      .task-list, .detail-list {{
+        margin-left: 16px;
+      }}
+      .data-table {{
+        font-size: 12px;
+      }}
+      .data-table th, .data-table td {{
+        padding: 7px 8px;
       }}
     }}
   </style>
@@ -1632,64 +2327,151 @@ def build_html(metrics: dict) -> str:
 <body>
   <div class="page">
     <section class="hero">
-      <h1>{cards['store_name']} 库存销售看板</h1>
-      <p>这份看板把库存、销售、会员、导购和补货风险放在一页里，适合老板和店员直接看重点，不需要先看原始 Excel。</p>
+      <h1>{cards['store_name']} 老板经营仪表盘</h1>
+      <p>老板打开 10 秒内先看今日结论，再看今天执行任务。复杂图表和原始明细都保留在页面下方的“详细数据与图表”。</p>
+      <div class="hero-note">{store_note} · 当前季节：{time_strategy['season']} / {time_strategy['phase']} · 日销趋势：{decision['sales_trend']['label']}</div>
     </section>
 
-    <section class="grid">{card_html}</section>
+    <nav class="quick-nav">{quick_nav_html}</nav>
 
-    <section class="insight-card">
-      <h2>北京时间与季节决策</h2>
-      <p>这部分按北京时间和当前季节自动生成，直接告诉门店今天、本周、本月更应该抓什么。</p>
-      <section class="time-grid">{time_html}</section>
-      <section class="decision-grid">
-        <div class="decision-card">
-          <div class="decision-title">今天先做</div>
-          <ul>{daily_actions_html}</ul>
+    <section class="module" id="focus">
+      <div class="module-header">
+        <h2 class="module-title">1. 今日经营重点</h2>
+        <p class="module-note">当前阶段：{decision['stage']}。先看 3 条今日结论，再安排今天执行任务。</p>
+      </div>
+      <div class="focus-wrap">
+        <div class="focus-panel">
+          <div class="focus-headline">{boss_board['headline']}</div>
+          <p class="focus-summary">{boss_board['summary']}</p>
+          <div class="chip-row">{conclusions_html}</div>
         </div>
-        <div class="decision-card">
-          <div class="decision-title">本周重点</div>
-          <ul>{weekly_actions_html}</ul>
+        <div class="focus-panel">
+          <div class="card-title">今日执行任务</div>
+          <ul class="task-list">{tasks_html}</ul>
+          <div class="card-note" style="margin-top:12px;">今天先别做：</div>
+          <ul class="detail-list">{dont_do_html}</ul>
         </div>
-        <div class="decision-card">
-          <div class="decision-title">本月方向</div>
-          <ul>{monthly_actions_html}</ul>
+      </div>
+    </section>
+
+    <section class="module" id="core-metrics">
+      <div class="module-header">
+        <h2 class="module-title">2. 核心经营指标</h2>
+        <p class="module-note">只保留 4 个最关键指标，方便老板先判断大方向。</p>
+      </div>
+      <div class="metrics-grid">{core_metric_html}</div>
+    </section>
+
+    <section class="module" id="money-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">3. 赚钱机会</h2>
+        <p class="module-note">找出卖得动但库存偏低的品类，先保营业额。</p>
+      </div>
+      <div class="cards-grid">{money_html}</div>
+    </section>
+
+    <section class="module" id="inventory-risks">
+      <div class="module-header">
+        <h2 class="module-title">4. 库存风险</h2>
+        <p class="module-note">优先看库存深、近期动销弱的品类，先停补再去化。</p>
+      </div>
+      <div class="cards-grid">{inventory_risk_html}</div>
+    </section>
+
+    <section class="module" id="replenish-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">5. 补货机会</h2>
+        <p class="module-note">先按品类看补货机会，再下钻到 SKU。</p>
+      </div>
+      <div class="cards-grid">{replenish_html}</div>
+    </section>
+
+    <section class="module" id="member-ops">
+      <div class="module-header">
+        <h2 class="module-title">6. 会员经营</h2>
+        <p class="module-note">优先回访高价值会员，放大复购和客单价。</p>
+      </div>
+      <div class="cards-grid">{member_html}</div>
+    </section>
+
+    <details class="detail-panel" id="details">
+      <summary>查看详细数据与图表</summary>
+      <details class="nested-detail">
+        <summary>经营健康灯与季节节奏</summary>
+        <div class="detail-grid">
+          <div class="module" style="margin:0;">
+            <div class="module-header">
+              <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
+              <p class="module-note">红色优先处理，黄色持续盯住，绿色维持节奏。</p>
+            </div>
+            <div class="health-grid">{health_html}</div>
+          </div>
+          <div class="module" style="margin:0;">
+            <div class="module-header">
+              <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
+              <p class="module-note">今天 / 本周 / 本月的季节动作参考。</p>
+            </div>
+            <ul class="insight-list">
+              <li>北京时间：{time_strategy['beijing_time']}</li>
+              <li>当前判断：{time_strategy['headline']}</li>
+              {"".join(f"<li>{item}</li>" for item in time_strategy['daily_actions'])}
+              {"".join(f"<li>{item}</li>" for item in time_strategy['weekly_actions'])}
+              {"".join(f"<li>{item}</li>" for item in time_strategy['monthly_actions'])}
+            </ul>
+          </div>
         </div>
-      </section>
-    </section>
+      </details>
 
-    <section class="insight-card">
-      <h2>具体操作方案</h2>
-      <p>这部分不是提醒，而是根据当前数据自动生成的处理方案。先处理红色方案，再看绿色增量方案。</p>
-      <section class="playbook-grid">{playbooks_html}</section>
-    </section>
+      <details class="nested-detail">
+        <summary>自动经营方案与术语</summary>
+        <div class="module" style="margin-top:12px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动生成经营方案</h3>
+            <p class="module-note">基于当前数据生成的处理方案，适合老板拍板。</p>
+          </div>
+          <div class="playbook-grid">{playbooks_html}</div>
+        </div>
+        <div class="module" style="margin-top:18px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">术语 Tips</h3>
+            <p class="module-note">鼠标悬浮或点按标签可看动作词解释；这里是完整词典。</p>
+          </div>
+          <div class="tip-grid">{tips_html}</div>
+        </div>
+      </details>
 
-    <section class="insight-card">
-      <h2>经营健康灯</h2>
-      <p>先看颜色，再看数字。红色优先处理，黄色持续盯住，绿色维持节奏。</p>
-      <section class="health-grid">{health_html}</section>
-    </section>
+      <details class="nested-detail">
+        <summary>道具口径与自动提醒</summary>
+        <div class="module" style="margin-top:12px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
+            <p class="module-note">道具已从主经营指标剥离，只保留为参考值。</p>
+          </div>
+          <div class="metrics-grid">{reference_html}</div>
+        </div>
+        <div class="module" style="margin-top:18px;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
+            <p class="module-note">保留原有数据提醒，方便二次复盘。</p>
+          </div>
+          <ul class="insight-list">{insights_html}</ul>
+        </div>
+      </details>
 
-    <section class="insight-card">
-      <h2>术语 Tips</h2>
-      <p>如果你对这些数字不熟，先看这里。每个术语都告诉你“这是什么”和“你该怎么看”。</p>
-      <section class="tip-grid">{tips_html}</section>
-    </section>
+      <details class="nested-detail">
+        <summary>图表</summary>
+        <div class="charts">{chart_html}</div>
+      </details>
 
-    <section class="insight-card">
-      <h2>道具参考口径</h2>
-      <p>道具已从主经营指标里剥离。下面这组数值只做参考，不参与经营销售、库存覆盖、补货和去化判断。</p>
-      <section class="grid">{reference_html}</section>
-    </section>
-
-    <section class="insight-card">
-      <h2>自动提炼的重点提醒</h2>
-      <ul>{insights_html}</ul>
-    </section>
-
-    <section class="charts">{chart_html}</section>
-
-    <section class="tables">{tables}</section>
+      <details class="nested-detail">
+        <summary>明细表与其他店参考</summary>
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">明细表与其他店参考</h3>
+          <p class="module-note">执行层和复盘层使用。第一页先看上面的 6 个模块。</p>
+        </div>
+        <div class="tables">{tables}</div>
+      </details>
+    </details>
   </div>
 </body>
 </html>
@@ -1703,13 +2485,39 @@ def build_markdown_summary(metrics: dict) -> str:
     dashboard_tips = build_dashboard_tips(cards, actions)[:7]
     time_strategy = build_time_strategy(metrics)
     playbooks = build_operational_playbooks(metrics)
+    boss_board = build_boss_action_board(metrics)
+    decision = build_decision_engine(metrics)
     replenish = metrics["replenish"].head(5)
+    replenish_categories = metrics["replenish_categories"].head(5)
     seasonal_actions = metrics["seasonal_actions"].head(5)
+    seasonal_categories = metrics["seasonal_categories"].head(5)
     clearance = metrics["clearance"].head(5)
+    clearance_categories = metrics["clearance_categories"].head(5)
     primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
     lines = [
         f"# {cards['store_name']} 库存销售摘要",
+        "",
+        "## 老板一分钟结论",
+        f"- 结论：{boss_board['headline']}",
+        f"- 说明：{boss_board['summary']}",
+        f"- 当前经营阶段：{decision['stage']} / {decision['phase']}",
+        f"- 日销趋势：{decision['sales_trend']['detail']}",
+        "",
+        "### 今天先做",
+    ]
+    lines.extend(f"- {item['title']}：{item['body']}" for item in boss_board["actions_today"])
+    lines.extend([
+        "",
+        "### 今天先别做",
+    ])
+    lines.extend(f"- {item}" for item in boss_board["dont_do"])
+    lines.extend([
+        "",
+        "### 看板阅读顺序",
+    ])
+    lines.extend(f"- {item}" for item in boss_board["reading_order"])
+    lines.extend([
         "",
         "## 核心指标",
         f"- 经营销售额：{format_num(cards['sales_amount'], 2)} 元",
@@ -1728,7 +2536,7 @@ def build_markdown_summary(metrics: dict) -> str:
         f"- 建议去化 SKU：{format_num(actions['clearance_count'])}",
         "",
         "## 输入人 / 店铺逻辑",
-    ]
+    ])
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         lines.extend([
@@ -1750,7 +2558,7 @@ def build_markdown_summary(metrics: dict) -> str:
         f"- 去化重点：{time_strategy['top_clearance_category']}",
         "",
         "### 今天先做",
-    ]
+    ])
     lines.extend(f"- {item}" for item in time_strategy["daily_actions"])
     lines.extend([
         "",
@@ -1800,27 +2608,48 @@ def build_markdown_summary(metrics: dict) -> str:
     lines.extend(f"- {item}" for item in metrics["insights"])
     lines.append("")
     lines.append("## 最值得先处理的表")
-    lines.append("- 畅销但低库存的商品：优先补货")
-    lines.append("- 跨季处理建议清单：当前不该补的款先拎出来")
-    lines.append("- 高库存但低动销的商品：优先去化或停补")
+    lines.append("- 补货重点品类：先定补货优先级，再下钻具体款")
+    lines.append("- 跨季处理重点品类：先判断哪些品类当前不该补")
+    lines.append("- 去化重点品类：先看哪些品类库存深、动销弱")
     lines.append("- 负库存异常清单：优先纠偏")
+    if not replenish_categories.empty:
+        lines.append("")
+        lines.append("## 补货重点品类 Top 5")
+        for _, row in replenish_categories.iterrows():
+            lines.append(
+                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，销售额 {format_num(row['销售额'], 2)}，建议补货量 {format_num(row['建议补货量'])}"
+            )
+    if not seasonal_categories.empty:
+        lines.append("")
+        lines.append("## 跨季处理重点品类 Top 5")
+        for _, row in seasonal_categories.iterrows():
+            lines.append(
+                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，库存 {format_num(row['库存'])}，建议 {row['建议动作']}"
+            )
+    if not clearance_categories.empty:
+        lines.append("")
+        lines.append("## 去化重点品类 Top 5")
+        for _, row in clearance_categories.iterrows():
+            lines.append(
+                f"- {row['大类']}：SKU数 {format_num(row['SKU数'])}，实际库存 {format_num(row['实际库存'])}，建议 {row['建议动作']}"
+            )
     if not replenish.empty:
         lines.append("")
-        lines.append("## 优先补货 Top 5")
+        lines.append("## 补货 SKU 明细 Top 5")
         for _, row in replenish.iterrows():
             lines.append(
                 f"- {row['款号']} / {row['颜色']}：库存 {format_num(row['库存'])}，周均销量 {format_num(row['周均销量'], 1)}，建议补货 {format_num(row['建议补货量'])}"
             )
     if not seasonal_actions.empty:
         lines.append("")
-        lines.append("## 跨季处理 Top 5")
+        lines.append("## 跨季处理 SKU 明细 Top 5")
         for _, row in seasonal_actions.iterrows():
             lines.append(
                 f"- {row['款号']} / {row['颜色']} / {row['季节']}：季节策略 {row['季节策略']}，库存 {format_num(row['库存'])}，建议 {row['建议动作']}"
             )
     if not clearance.empty:
         lines.append("")
-        lines.append("## 优先去化 Top 5")
+        lines.append("## 去化 SKU 明细 Top 5")
         for _, row in clearance.iterrows():
             lines.append(
                 f"- {row['商品款号']} / {row['商品名称']}：实际库存 {format_num(row['实际库存'])}，近期零售 {format_num(row['近期零售'])}，建议 {row['建议动作']}"
@@ -1834,9 +2663,14 @@ def build_business_report(metrics: dict) -> str:
     category_risks = metrics["category_risks"].head(4)
     guides = metrics["guide_perf"].head(3)
     seasonal_actions = metrics["seasonal_actions"].head(5)
+    replenish_categories = metrics["replenish_categories"].head(5)
+    seasonal_categories = metrics["seasonal_categories"].head(5)
+    clearance_categories = metrics["clearance_categories"].head(5)
     health_lights = build_health_lights(cards, metrics["action_summary"])
     time_strategy = build_time_strategy(metrics)
     playbooks = build_operational_playbooks(metrics)
+    boss_board = build_boss_action_board(metrics)
+    decision = build_decision_engine(metrics)
     primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
 
@@ -1844,6 +2678,37 @@ def build_business_report(metrics: dict) -> str:
         f"# {cards['store_name']} 库存销售分析报告",
         "",
         f"日期：{pd.Timestamp.today().strftime('%Y-%m-%d')}",
+        "",
+        "## 老板一分钟结论",
+        "",
+        f"- 结论：{boss_board['headline']}",
+        f"- 说明：{boss_board['summary']}",
+        f"- 当前经营阶段：{decision['stage']} / {decision['phase']}",
+        f"- 日销趋势：{decision['sales_trend']['detail']}",
+        "",
+        "### 今天先做",
+    ]
+
+    for item in boss_board["actions_today"]:
+        lines.append(f"- {item['title']}：{item['body']}")
+
+    lines.extend([
+        "",
+        "### 今天先别做",
+    ])
+
+    for item in boss_board["dont_do"]:
+        lines.append(f"- {item}")
+
+    lines.extend([
+        "",
+        "### 看板阅读顺序",
+    ])
+
+    for item in boss_board["reading_order"]:
+        lines.append(f"- {item}")
+
+    lines.extend([
         "",
         "## 一句话结论",
         "",
@@ -1871,7 +2736,7 @@ def build_business_report(metrics: dict) -> str:
         "",
         "## 输入人 / 店铺逻辑",
         "",
-    ]
+    ])
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         lines.extend([
@@ -1894,7 +2759,7 @@ def build_business_report(metrics: dict) -> str:
         f"- 当前去化重点：{time_strategy['top_clearance_category']}",
         "",
         "### 今天先做",
-    ]
+    ])
 
     for item in time_strategy["daily_actions"]:
         lines.append(f"- {item}")
@@ -1929,8 +2794,35 @@ def build_business_report(metrics: dict) -> str:
             lines.append(f"- 方案{idx}：{scheme['name']}，{scheme['detail']}")
         lines.append("")
 
+    if not replenish_categories.empty:
+        lines.append("## 补货重点品类 Top 5")
+        lines.append("")
+        for _, row in replenish_categories.iterrows():
+            lines.append(
+                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，销售额 {format_num(row['销售额'], 2)}，建议补货量 {format_num(row['建议补货量'])}"
+            )
+        lines.append("")
+
+    if not seasonal_categories.empty:
+        lines.append("## 跨季处理重点品类 Top 5")
+        lines.append("")
+        for _, row in seasonal_categories.iterrows():
+            lines.append(
+                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，库存 {format_num(row['库存'])}，建议 {row['建议动作']}"
+            )
+        lines.append("")
+
+    if not clearance_categories.empty:
+        lines.append("## 去化重点品类 Top 5")
+        lines.append("")
+        for _, row in clearance_categories.iterrows():
+            lines.append(
+                f"- {row['大类']}：SKU数 {format_num(row['SKU数'])}，实际库存 {format_num(row['实际库存'])}，建议 {row['建议动作']}"
+            )
+        lines.append("")
+
     if not seasonal_actions.empty:
-        lines.append("## 跨季处理 Top 5")
+        lines.append("## 跨季处理 SKU 明细 Top 5")
         lines.append("")
         for _, row in seasonal_actions.iterrows():
             lines.append(
@@ -2002,28 +2894,53 @@ def build_business_report(metrics: dict) -> str:
     return "\n".join(lines)
 
 
-def write_outputs(metrics: dict, output_dir: Path) -> dict[str, Path]:
+def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
+    pages_dir.mkdir(parents=True, exist_ok=True)
     date_tag = pd.Timestamp.today().strftime("%Y-%m-%d")
     html_path = output_dir / f"库存销售看板_{date_tag}.html"
+    latest_html_path = output_dir / "index.html"
     md_path = output_dir / f"库存销售摘要_{date_tag}.md"
     report_path = output_dir / f"库存销售分析报告_{date_tag}.md"
     replenish_csv = output_dir / f"补货建议清单_{date_tag}.csv"
     clearance_csv = output_dir / f"去化建议清单_{date_tag}.csv"
     category_csv = output_dir / f"品类风险概览_{date_tag}.csv"
-    html_path.write_text(build_html(metrics), encoding="utf-8")
-    md_path.write_text(build_markdown_summary(metrics), encoding="utf-8")
-    report_path.write_text(build_business_report(metrics), encoding="utf-8")
+    pages_html_path = pages_dir / "index.html"
+    pages_md_path = pages_dir / "summary.md"
+    pages_report_path = pages_dir / "report.md"
+    pages_replenish_csv = pages_dir / "补货建议清单.csv"
+    pages_clearance_csv = pages_dir / "去化建议清单.csv"
+    pages_category_csv = pages_dir / "品类风险概览.csv"
+    html_output = build_html(metrics)
+    markdown_output = build_markdown_summary(metrics)
+    report_output = build_business_report(metrics)
+    html_path.write_text(html_output, encoding="utf-8")
+    latest_html_path.write_text(html_output, encoding="utf-8")
+    md_path.write_text(markdown_output, encoding="utf-8")
+    report_path.write_text(report_output, encoding="utf-8")
     metrics["replenish"].to_csv(replenish_csv, index=False, encoding="utf-8-sig")
     metrics["clearance"].to_csv(clearance_csv, index=False, encoding="utf-8-sig")
     metrics["category_risks"].to_csv(category_csv, index=False, encoding="utf-8-sig")
+    pages_html_path.write_text(html_output, encoding="utf-8")
+    pages_md_path.write_text(markdown_output, encoding="utf-8")
+    pages_report_path.write_text(report_output, encoding="utf-8")
+    metrics["replenish"].to_csv(pages_replenish_csv, index=False, encoding="utf-8-sig")
+    metrics["clearance"].to_csv(pages_clearance_csv, index=False, encoding="utf-8-sig")
+    metrics["category_risks"].to_csv(pages_category_csv, index=False, encoding="utf-8-sig")
     return {
         "html": html_path,
+        "latest_html": latest_html_path,
+        "pages_html": pages_html_path,
         "markdown": md_path,
+        "pages_markdown": pages_md_path,
         "report": report_path,
+        "pages_report": pages_report_path,
         "replenish_csv": replenish_csv,
+        "pages_replenish_csv": pages_replenish_csv,
         "clearance_csv": clearance_csv,
+        "pages_clearance_csv": pages_clearance_csv,
         "category_csv": category_csv,
+        "pages_category_csv": pages_category_csv,
     }
 
 
@@ -2031,6 +2948,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--pages-dir", type=Path, default=DEFAULT_PAGES_DIR)
     parser.add_argument("--store", default=None, help="Optional store name override")
     parser.add_argument("--zip-file", type=Path, default=None, help="Optional zip export to extract and analyze")
     args = parser.parse_args()
@@ -2046,22 +2964,29 @@ def main() -> int:
             store_name = infer_store_name(raw, args.store)
             cleaned = clean_data(raw, store_name)
             metrics = build_metrics(cleaned, store_name)
-            outputs = write_outputs(metrics, args.output_dir)
+            outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
     else:
         reports = resolve_reports(args.input_dir)
         raw = load_data(reports)
         store_name = infer_store_name(raw, args.store)
         cleaned = clean_data(raw, store_name)
         metrics = build_metrics(cleaned, store_name)
-        outputs = write_outputs(metrics, args.output_dir)
+        outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
 
     print(f"Store: {store_name}")
     print(f"HTML dashboard: {outputs['html']}")
+    print(f"Latest HTML dashboard: {outputs['latest_html']}")
+    print(f"Pages HTML dashboard: {outputs['pages_html']}")
     print(f"Markdown summary: {outputs['markdown']}")
+    print(f"Pages Markdown summary: {outputs['pages_markdown']}")
     print(f"Business report: {outputs['report']}")
+    print(f"Pages business report: {outputs['pages_report']}")
     print(f"Replenish CSV: {outputs['replenish_csv']}")
+    print(f"Pages replenish CSV: {outputs['pages_replenish_csv']}")
     print(f"Clearance CSV: {outputs['clearance_csv']}")
+    print(f"Pages clearance CSV: {outputs['pages_clearance_csv']}")
     print(f"Category risk CSV: {outputs['category_csv']}")
+    print(f"Pages category risk CSV: {outputs['pages_category_csv']}")
     return 0
 
 
