@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 库存销售看板</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: white;
+      padding: 28px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+    .hero p {
+      margin: 0;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .metric-card, .chart-card, .table-card, .insight-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+    }
+    .metric-title {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .metric-note {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .tip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .tip-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .tip-term {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+    .tip-meaning {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+    .tip-watch {
+      font-size: 12px;
+      line-height: 1.7;
+      color: #475569;
+    }
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .time-card {
+      background: #f8fafc;
+      border: 1px solid #dbeafe;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .time-title {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .time-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .time-note {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #334155;
+    }
+    .decision-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .decision-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .decision-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+    .decision-card ul {
+      margin: 0 0 0 18px;
+      padding: 0;
+      line-height: 1.8;
+      color: #334155;
+      font-size: 13px;
+    }
+    .playbook-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .playbook-card {
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+    }
+    .playbook-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+    .playbook-trigger,
+    .playbook-goal {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+    .playbook-subtitle {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 12px 0 6px;
+    }
+    .playbook-card ul {
+      margin: 0 0 0 18px;
+      padding: 0;
+      line-height: 1.8;
+      color: #334155;
+      font-size: 13px;
+    }
+    .playbook-red {
+      background: #fff7f7;
+      border-color: #fecaca;
+    }
+    .playbook-yellow {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .playbook-green {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .health-card {
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+    }
+    .health-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .health-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+    .health-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .health-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .health-note {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .health-red {
+      background: #fff1f2;
+      border-color: #fecdd3;
+    }
+    .health-red .health-dot {
+      background: #dc2626;
+    }
+    .health-red .health-title,
+    .health-red .health-value {
+      color: #991b1b;
+    }
+    .health-yellow {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+    .health-yellow .health-dot {
+      background: #d97706;
+    }
+    .health-yellow .health-title,
+    .health-yellow .health-value {
+      color: #92400e;
+    }
+    .health-green {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+    .health-green .health-dot {
+      background: #059669;
+    }
+    .health-green .health-title,
+    .health-green .health-value {
+      color: #065f46;
+    }
+    .insight-card ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+      line-height: 1.7;
+    }
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 24px 0;
+    }
+    .tables {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin: 24px 0;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      overflow: hidden;
+    }
+    .data-table th, .data-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f8fafc;
+      position: sticky;
+      top: 0;
+    }
+    .table-tip {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.7;
+      margin: 6px 0 12px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-red {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .badge-yellow {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .badge-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .table-card {
+      overflow-x: auto;
+    }
+    @media (max-width: 960px) {
+      .charts {
+        grid-template-columns: 1fr;
+      }
+      .page {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 库存销售看板</h1>
+      <p>这份看板把库存、销售、会员、导购和补货风险放在一页里，适合老板和店员直接看重点，不需要先看原始 Excel。</p>
+    </section>
+
+    <section class="grid">
+        <div class="metric-card">
+          <div class="metric-title">经营销售额</div>
+          <div class="metric-value">10,855.52 元</div>
+          <div class="metric-note">默认已排除道具</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">订单数</div>
+          <div class="metric-value">67</div>
+          <div class="metric-note">8 天经营明细</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">客单价</div>
+          <div class="metric-value">162.02 元</div>
+          <div class="metric-note">经营销售额 / 订单数</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">历史累计销售额</div>
+          <div class="metric-value">1,753,755.85 元</div>
+          <div class="metric-note">历史累计，默认已排除道具</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">历史累计销量</div>
+          <div class="metric-value">18,206</div>
+          <div class="metric-note">自首次销售起累计</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">经营库存额</div>
+          <div class="metric-value">534,771.00 元</div>
+          <div class="metric-note">默认已排除道具</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">负库存 SKU</div>
+          <div class="metric-value">105</div>
+          <div class="metric-note">需要优先纠偏</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">会员销售额占比</div>
+          <div class="metric-value">73.1%</div>
+          <div class="metric-note">会员是核心来源</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">预计库存覆盖天数</div>
+          <div class="metric-value">303.1 天</div>
+          <div class="metric-note">经营商品口径</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">建议补货 SKU</div>
+          <div class="metric-value">315</div>
+          <div class="metric-note">优先看畅销低库存</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">建议去化 SKU</div>
+          <div class="metric-value">63</div>
+          <div class="metric-note">优先看高库存低动销</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">高压货品类</div>
+          <div class="metric-value">2</div>
+          <div class="metric-note">按库存金额/销售金额判断</div>
+        </div>
+        </section>
+
+    <section class="insight-card">
+      <h2>北京时间与季节决策</h2>
+      <p>这部分按北京时间和当前季节自动生成，直接告诉门店今天、本周、本月更应该抓什么。</p>
+      <section class="time-grid">
+            <div class="time-card">
+              <div class="time-title">北京时间</div>
+              <div class="time-value">2026-03-13 22:45</div>
+              <div class="time-note">春季 / 春夏换季期</div>
+            </div>
+            
+            <div class="time-card">
+              <div class="time-title">当前季节判断</div>
+              <div class="time-value">春季</div>
+              <div class="time-note">春夏换季，重心是薄款起量、冬款不深补。</div>
+            </div>
+            
+            <div class="time-card">
+              <div class="time-title">补货关注</div>
+              <div class="time-value">衣类</div>
+              <div class="time-note">当前建议补货最多的季节：夏</div>
+            </div>
+            
+            <div class="time-card">
+              <div class="time-title">去化关注</div>
+              <div class="time-value">袜品</div>
+              <div class="time-note">当前库存覆盖约 303.1 天</div>
+            </div>
+            </section>
+      <section class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-title">今天先做</div>
+          <ul><li>今天先查负库存和断码，避免春夏补货判断失真。</li><li>今天补货优先看 衣类，但冬季类补货先人工复核，不做深补。</li><li>今天去化先盯 袜品，先停补再想组合去化。</li></ul>
+        </div>
+        <div class="decision-card">
+          <div class="decision-title">本周重点</div>
+          <ul><li>本周把补货重心转到 夏季，尤其是 衣类 这类能直接起量的商品。</li><li>本周减少厚款和冬款的新进货，旧货先靠搭配和小组合去化。</li><li>本周检查门店陈列，让春款在前，夏款预热，厚款退到后区。</li></ul>
+        </div>
+        <div class="decision-card">
+          <div class="decision-title">本月方向</div>
+          <ul><li>本月经营目标不是压更多货，而是把春款卖动、为夏款腾货位。</li><li>本月把高压货品类做成专项表，先控进货，再安排去化节奏。</li><li>本月会员触达重点围绕换季、开学、出游、早晚温差场景去做。</li></ul>
+        </div>
+      </section>
+    </section>
+
+    <section class="insight-card">
+      <h2>具体操作方案</h2>
+      <p>这部分不是提醒，而是根据当前数据自动生成的处理方案。先处理红色方案，再看绿色增量方案。</p>
+      <section class="playbook-grid">
+        <div class="playbook-card playbook-red">
+          <div class="playbook-title">库存周期过长，先做促销去化</div>
+          <div class="playbook-trigger">触发原因：当前经营库存覆盖天数 303.1 天，已经明显偏长。</div>
+          <div class="playbook-goal">目标：先把高库存慢销货动起来，给当季主销和补货腾出空间。</div>
+          <div class="playbook-subtitle">可直接执行的 3 套方案</div>
+          <ul>
+            <li><strong>袜品 组合促销</strong>：围绕 袜品 做 2 件 / 3 件组合价，优先配基础内裤、袜品、家居这类低决策商品，门店主推“顺手带走”的组合。</li><li><strong>会员定向去化促销</strong>：优先触达 圆子、茵茵、呦米 这一类老客，发换季组合包或加价购，主推“到店试一套 / 顺手补一轮”。</li><li><strong>周末限时清货台</strong>：把 袜品 和当前去化重点放到门口清货位，做 3 天限时陈列，配合第二件折扣或满额换购，但不全场乱打折。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-red">
+          <div class="playbook-title">畅销款缺货风险高，补货要分级</div>
+          <div class="playbook-trigger">触发原因：当前建议补货 SKU 315 个，补货压力较高。</div>
+          <div class="playbook-goal">目标：先保住最能带营业额的款，不让补货动作失控。</div>
+          <div class="playbook-subtitle">可直接执行的 3 套方案</div>
+          <ul>
+            <li><strong>A类马上补</strong>：今天先补 衣类，优先销售金额高、库存 0-1、库存周数小于 1 的款。</li><li><strong>B类本周补</strong>：本周内处理销售稳定但库存还有 1-2 周的款，避免一下子把补货预算打满。</li><li><strong>C类先观察</strong>：春季 和下季交界的款先小量试补，避免把非主销季的货压深。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-red">
+          <div class="playbook-title">负库存先纠偏，再谈补货</div>
+          <div class="playbook-trigger">触发原因：当前负库存 SKU 105 个，库存口径已经影响经营判断。</div>
+          <div class="playbook-goal">目标：先把库存账实校准，不然补货和去化都会跑偏。</div>
+          <div class="playbook-subtitle">可直接执行的 3 套方案</div>
+          <ul>
+            <li><strong>先查高频负库存</strong>：先从销售高、库存低、还在建议补货清单里的负库存款开始校正，优先处理最影响营业额的货。</li><li><strong>按来源分三类排查</strong>：把负库存拆成盘点错误、调拨未入、销售未回写 3 类，店员照类别处理，不要混着查。</li><li><strong>未校正前先冻结深补</strong>：对负库存涉及的款先不要深补，只允许人工确认后补货，避免一边错一边继续压货。</li>
+          </ul>
+        </div>
+        
+        <div class="playbook-card playbook-green">
+          <div class="playbook-title">会员占比高，适合做定向复购</div>
+          <div class="playbook-trigger">触发原因：会员销售额占比 73.1%，会员已经是门店核心来源。</div>
+          <div class="playbook-goal">目标：把已有会员复购做深，而不是只靠新客自然进店。</div>
+          <div class="playbook-subtitle">可直接执行的 3 套方案</div>
+          <ul>
+            <li><strong>换季提醒</strong>：围绕 春季 到 夏季 的换季场景，给老客发“尺码 / 厚薄 / 到店试一轮”的提醒。</li><li><strong>高客单老客回访</strong>：优先回访 圆子、茵茵、呦米 这类高价值会员，话术聚焦“新到一批适合你家孩子的基础款”。</li><li><strong>复购带连带</strong>：会员到店不要只补单品，主推基础打底 + 袜品 + 家居这种顺手连带组合，放大客单价。</li>
+          </ul>
+        </div>
+        </section>
+    </section>
+
+    <section class="insight-card">
+      <h2>经营健康灯</h2>
+      <p>先看颜色，再看数字。红色优先处理，黄色持续盯住，绿色维持节奏。</p>
+      <section class="health-grid">
+        <div class="health-card health-red">
+          <div class="health-top">
+            <span class="health-dot"></span>
+            <span class="health-title">库存压力</span>
+          </div>
+          <div class="health-value">303.1 天</div>
+          <div class="health-note">库存覆盖偏长，先控补货再做去化</div>
+        </div>
+        
+        <div class="health-card health-red">
+          <div class="health-top">
+            <span class="health-dot"></span>
+            <span class="health-title">库存准确性</span>
+          </div>
+          <div class="health-value">105</div>
+          <div class="health-note">负库存较多，先校库存再做经营判断</div>
+        </div>
+        
+        <div class="health-card health-red">
+          <div class="health-top">
+            <span class="health-dot"></span>
+            <span class="health-title">压货风险</span>
+          </div>
+          <div class="health-value">2</div>
+          <div class="health-note">高压货品类较多，先看去化和停补</div>
+        </div>
+        
+        <div class="health-card health-red">
+          <div class="health-top">
+            <span class="health-dot"></span>
+            <span class="health-title">缺货风险</span>
+          </div>
+          <div class="health-value">315</div>
+          <div class="health-note">建议补货 SKU 偏多，畅销货有断货风险</div>
+        </div>
+        
+        <div class="health-card health-green">
+          <div class="health-top">
+            <span class="health-dot"></span>
+            <span class="health-title">会员经营</span>
+          </div>
+          <div class="health-value">73.1%</div>
+          <div class="health-note">会员贡献高，适合继续做复购经营</div>
+        </div>
+        </section>
+    </section>
+
+    <section class="insight-card">
+      <h2>术语 Tips</h2>
+      <p>如果你对这些数字不熟，先看这里。每个术语都告诉你“这是什么”和“你该怎么看”。</p>
+      <section class="tip-grid">
+        <div class="tip-card">
+          <div class="tip-term">经营销售额</div>
+          <div class="tip-meaning">只看正常商品销售，不包含道具，更接近门店真实营业额。</div>
+          <div class="tip-watch">看法：先看这个数，再看客单价和订单数有没有一起增长。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">客单价</div>
+          <div class="tip-meaning">平均每一单花了多少钱，公式是经营销售额 / 订单数。</div>
+          <div class="tip-watch">看法：客单价低，优先查连带推荐和组合销售做得够不够。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">库存覆盖天数</div>
+          <div class="tip-meaning">按最近销售速度估算，现有库存大约还能卖多少天。</div>
+          <div class="tip-watch">看法：天数越高，压货越重；天数太低，容易断货。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">负库存 SKU</div>
+          <div class="tip-meaning">系统里库存小于 0 的商品数量，说明账和货对不上。</div>
+          <div class="tip-watch">看法：这个数不先处理，补货和去化判断都会失真。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">建议补货 SKU</div>
+          <div class="tip-meaning">最近卖得不差、但库存偏低的商品数。</div>
+          <div class="tip-watch">看法：先看销售金额高、库存接近 0、库存周数短的款。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">建议去化 SKU</div>
+          <div class="tip-meaning">库存较高、近期卖得慢的商品数。</div>
+          <div class="tip-watch">看法：先停补，再做搭配、组合或清货动作。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">高压货品类</div>
+          <div class="tip-meaning">库存金额相对销售金额明显偏高的品类数量。</div>
+          <div class="tip-watch">看法：高压货品类多，说明进货节奏和去化节奏都要收紧。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">会员销售额占比</div>
+          <div class="tip-meaning">会员顾客贡献了多少经营销售额。</div>
+          <div class="tip-watch">看法：占比越高，越值得做回访、复购提醒和老客经营。</div>
+        </div>
+        
+        <div class="tip-card">
+          <div class="tip-term">道具参考</div>
+          <div class="tip-meaning">单独展示道具相关金额和库存，只作参考，不参与主经营判断。</div>
+          <div class="tip-watch">看法：不要拿道具数值去判断真实商品卖得好不好。</div>
+        </div>
+        </section>
+    </section>
+
+    <section class="insight-card">
+      <h2>道具参考口径</h2>
+      <p>道具已从主经营指标里剥离。下面这组数值只做参考，不参与经营销售、库存覆盖、补货和去化判断。</p>
+      <section class="grid">
+        <div class="metric-card">
+          <div class="metric-title">道具销售额</div>
+          <div class="metric-value">7,988.48 元</div>
+          <div class="metric-note">单独参考，不计入经营销售额</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">道具库存额</div>
+          <div class="metric-value">251,929.00 元</div>
+          <div class="metric-note">单独参考，不计入经营库存额</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">道具销量</div>
+          <div class="metric-value">48</div>
+          <div class="metric-note">单独参考</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-title">道具库存件数</div>
+          <div class="metric-value">1,256</div>
+          <div class="metric-note">单独参考</div>
+        </div>
+        </section>
+    </section>
+
+    <section class="insight-card">
+      <h2>自动提炼的重点提醒</h2>
+      <ul><li>近 8 天门店经营销售额为 10,855.52 元，客单价约 162.02 元。</li><li>当前日销趋势来自销售清单，时间范围是 2026-03-06 到 2026-03-13；所以趋势图只反映最近 8 天。</li><li>历史累计口径在商品销售情况里可以看到，自 2025-03-17 以来累计销售额约 1,753,755.85 元。</li><li>当前账面库存 5,873 件，零售价口径库存额约 534,771.00 元；库存覆盖天数约 303.1 天。</li><li>会员销售额占比约 73.1%，说明会员经营已经是核心收入来源。</li><li>存在 105 个负库存 SKU，负库存金额合计 -16,764.00 元，这部分需要优先纠偏，不然补货和动销判断会失真。</li><li>道具已从主经营口径里单独剥离；当前仅作为参考值显示，道具销售额约 7,988.48 元，道具库存额约 251,929.00 元。</li><li>当前筛出 315 个建议优先补货的 SKU，63 个建议先去化的高库存低动销 SKU。</li></ul>
+    </section>
+
+    <section class="charts"><section class='chart-card'><div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="118499f7-a5da-437c-8537-a492d728f898" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("118499f7-a5da-437c-8537-a492d728f898")) {                    Plotly.newPlot(                        "118499f7-a5da-437c-8537-a492d728f898",                        [{"hovertemplate":"\u65e5\u671f=%{x}\u003cbr\u003e\u9500\u552e\u989d=%{y}\u003cbr\u003e\u8ba2\u5355\u6570=%{text}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","line":{"color":"#636efa","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines+markers+text","name":"","orientation":"v","showlegend":false,"text":{"dtype":"f8","bdata":"AAAAAAAAGEAAAAAAAAAqQAAAAAAAACpAAAAAAAAAHEAAAAAAAAAUQAAAAAAAACJAAAAAAAAAIkAAAAAAAAAUQA=="},"x":["2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13"],"xaxis":"x","y":{"dtype":"f8","bdata":"FK5H4XoIjUCamZmZGYqgQHsUrkfhS5tAH4XrUbgfkkAAAAAAAKB9QGZmZmZmfotAAAAAAACwmkCkcD0K18KcQA=="},"yaxis":"y","type":"scatter","textposition":"top center"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u65e5\u671f"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u9500\u552e\u989d"}},"legend":{"tracegroupgap":0},"title":{"text":"\u6bcf\u65e5\u7ecf\u8425\u9500\u552e\u989d\u8d70\u52bf\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="bfc83996-4961-4e73-84e8-ea1c3c1091a0" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("bfc83996-4961-4e73-84e8-ea1c3c1091a0")) {                    Plotly.newPlot(                        "bfc83996-4961-4e73-84e8-ea1c3c1091a0",                        [{"hovertemplate":"\u5546\u54c1\u5927\u7c7b=%{x}\u003cbr\u003e\u9500\u552e\u989d=%{y}\u003cbr\u003e\u9500\u91cf=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"i1","bdata":"KC47Cg=="},"coloraxis":"coloraxis","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","texttemplate":"%{y:.2s}","x":["\u8863\u7740\u7cfb\u5217","\u5185\u88e4","\u889c\u54c1","\u5c11\u5973\u6587\u80f8"],"xaxis":"x","y":{"dtype":"f8","bdata":"H4XrUTittUAVrkfhejSkQIXrUbgeH59ACtejcD3ChkA="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u5546\u54c1\u5927\u7c7b"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u9500\u552e\u989d"}},"coloraxis":{"colorbar":{"title":{"text":"\u9500\u91cf"}},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"legend":{"tracegroupgap":0},"title":{"text":"\u7ecf\u8425\u9500\u552e\u989d\u6700\u9ad8\u7684\u54c1\u7c7b\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"barmode":"relative","margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="083f7170-58c6-4f5e-9124-6b4146d8d192" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("083f7170-58c6-4f5e-9124-6b4146d8d192")) {                    Plotly.newPlot(                        "083f7170-58c6-4f5e-9124-6b4146d8d192",                        [{"hovertemplate":"\u5927\u7c7b=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91cf=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"f8","bdata":"AAAAAAB8lEAAAAAAAJBwQAAAAAAAIKFAAAAAAADAb0AAAAAAADB8QAAAAAAA8HZAAAAAAABQekAAAAAAAOB1QAAAAAAAAD1AAAAAAADgaEA="},"coloraxis":"coloraxis","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","texttemplate":"%{y:.2s}","x":["\u5e38\u89c4\u5185\u88e4","\u5bb6\u5c45\u670d","\u513f\u7ae5\u889c","\u513f\u7ae5\u5185\u8863\u5957\u88c5","\u8863\u7c7b","\u88e4\u7c7b","\u5c11\u5973\u6587\u80f8","\u8fde\u88e4\u889c","\u7fbd\u7ed2\u7cfb\u5217","\u4eb2\u5b50\u889c"],"xaxis":"x","y":{"dtype":"f8","bdata":"AAAAAIDe+EAAAAAAII\u002f0QAAAAABQ3fFAAAAAABDB8EAAAAAA4GjsQAAAAADAEepAAAAAAKD\u002f4kAAAAAAQD3WQAAAAAAA+spAAAAAAIDVwEA="},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u5927\u7c7b"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u5e93\u5b58\u989d"}},"coloraxis":{"colorbar":{"title":{"text":"\u5e93\u5b58\u91cf"}},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"legend":{"tracegroupgap":0},"title":{"text":"\u7ecf\u8425\u5e93\u5b58\u91d1\u989d\u6700\u9ad8\u7684\u54c1\u7c7b\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"barmode":"relative","margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="f962f8e3-eec3-4583-be19-a43efd50ece9" class="plotly-graph-div" style="height:440px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("f962f8e3-eec3-4583-be19-a43efd50ece9")) {                    Plotly.newPlot(                        "f962f8e3-eec3-4583-be19-a43efd50ece9",                        [{"customdata":{"dtype":"f8","bdata":"IoMRQQkgFUC2Img4qfsWQA==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u889c\u54c1\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u889c\u54c1","marker":{"color":"#636efa","size":{"dtype":"f8","bdata":"IoMRQQkgFUA="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u889c\u54c1","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"AAAAAAAfn0A="},"xaxis":"x","y":{"dtype":"i2","bdata":"Fyk="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"c4VzGCsZDkAAAAAAAAAIQA==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u5c11\u5973\u6587\u80f8\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u5c11\u5973\u6587\u80f8","marker":{"color":"#EF553B","size":{"dtype":"f8","bdata":"c4VzGCsZDkA="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u5c11\u5973\u6587\u80f8","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"CtejcD3ChkA="},"xaxis":"x","y":{"dtype":"i2","bdata":"tAo="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"wO0fyOF0\u002fj8WspCFLGT5Pw==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u5185\u88e4\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u5185\u88e4","marker":{"color":"#00cc96","size":{"dtype":"f8","bdata":"wO0fyOF0\u002fj8="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u5185\u88e4","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"Fa5H4Xo0pEA="},"xaxis":"x","y":{"dtype":"i2","bdata":"OxM="},"yaxis":"y","type":"scatter"},{"customdata":{"dtype":"f8","bdata":"KdGY9KrV9D8AAAAAAAD0Pw==","shape":"1, 2"},"hovertemplate":"\u5927\u7c7b=\u8863\u7740\u7cfb\u5217\u003cbr\u003e\u96f6\u552e\u989d=%{x}\u003cbr\u003e\u5e93\u5b58\u989d=%{y}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d=%{customdata[0]}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf=%{customdata[1]}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"\u8863\u7740\u7cfb\u5217","marker":{"color":"#ab63fa","size":{"dtype":"f8","bdata":"KdGY9KrV9D8="},"sizemode":"area","sizeref":0.013203213254675536,"symbol":"circle"},"mode":"markers","name":"\u8863\u7740\u7cfb\u5217","orientation":"v","showlegend":true,"x":{"dtype":"f8","bdata":"H4XrUTittUA="},"xaxis":"x","y":{"dtype":"i2","bdata":"Ohw="},"yaxis":"y","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u96f6\u552e\u989d"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u5e93\u5b58\u989d"}},"legend":{"title":{"text":"\u5927\u7c7b"},"tracegroupgap":0,"itemsizing":"constant"},"title":{"text":"\u7ecf\u8425\u54c1\u7c7b\u5e93\u5b58\u989d vs \u9500\u552e\u989d\uff08\u5df2\u5254\u9664\u9053\u5177\uff09"},"margin":{"l":20,"r":20,"t":60,"b":20},"height":440},                        {"responsive": true}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="97e8eb28-6a5a-4c60-ac1c-44d565f6954a" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("97e8eb28-6a5a-4c60-ac1c-44d565f6954a")) {                    Plotly.newPlot(                        "97e8eb28-6a5a-4c60-ac1c-44d565f6954a",                        [{"customdata":{"dtype":"f8","bdata":"AAAAAAAAQkDSSMA3r9piQOxRuB4FQrNAAAAAAAAAQEA9CtejcANjQHsUrkfhHqNAAAAAAAAA8D8VrkfhenCBQBWuR+F6cIFA","shape":"3, 3"},"hovertemplate":"\u5bfc\u8d2d\u5458=%{x}\u003cbr\u003e\u5b9e\u6536\u91d1\u989d=%{y}\u003cbr\u003e\u7968\u6570=%{customdata[0]}\u003cbr\u003e\u5355\u6548=%{customdata[1]}\u003cbr\u003e\u4f1a\u5458\u9500\u989d=%{customdata[2]}\u003cbr\u003e\u8fde\u5e26=%{marker.color}\u003cextra\u003e\u003c\u002fextra\u003e","legendgroup":"","marker":{"color":{"dtype":"f8","bdata":"OY7jOI7jAkAAAAAAAMAAQAAAAAAAAAhA"},"coloraxis":"coloraxis","pattern":{"shape":""}},"name":"","orientation":"v","showlegend":false,"textposition":"auto","texttemplate":"%{y:.2s}","x":["\u5f20\u9759","\u90ed\u6587\u6500","\u5218\u6885"],"xaxis":"x","y":{"dtype":"f8","bdata":"7FG4HgU2tUA9CtejcAOzQBWuR+F6cIFA"},"yaxis":"y","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u5bfc\u8d2d\u5458"}},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"\u5b9e\u6536\u91d1\u989d"}},"coloraxis":{"colorbar":{"title":{"text":"\u8fde\u5e26"}},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"legend":{"tracegroupgap":0},"title":{"text":"\u5bfc\u8d2d\u4e1a\u7ee9\u5bf9\u6bd4"},"barmode":"relative","margin":{"l":20,"r":20,"t":60,"b":20},"height":420},                        {"responsive": true}                    )                };            </script>        </div></section></section>
+
+    <section class="tables">
+    <section class="table-card">
+      <h3>补货建议清单</h3>
+      <p class='table-tip'>先看销售金额高、库存低、库存周数短的款，优先补畅销款。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>款号</th>
+      <th>颜色</th>
+      <th>中类</th>
+      <th>季节</th>
+      <th>销售数</th>
+      <th>销售金额</th>
+      <th>库存</th>
+      <th>周均销量</th>
+      <th>库存周数</th>
+      <th>建议补货量</th>
+      <th>建议动作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TND1Y81001X</td>
+      <td>灰蓝色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td>10</td>
+      <td>5182.93</td>
+      <td>1</td>
+      <td>1.000</td>
+      <td>1.000000</td>
+      <td>3.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1Y90914Z</td>
+      <td>紫红色</td>
+      <td>防晒服</td>
+      <td>夏</td>
+      <td>18</td>
+      <td>4841.37</td>
+      <td>2</td>
+      <td>0.750</td>
+      <td>2.666667</td>
+      <td>1.0</td>
+      <td><span class='badge badge-yellow'>优先补货</span></td>
+    </tr>
+    <tr>
+      <td>TND1Y81001X</td>
+      <td>杏粉色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td>9</td>
+      <td>4539.50</td>
+      <td>1</td>
+      <td>0.625</td>
+      <td>1.600000</td>
+      <td>1.0</td>
+      <td><span class='badge badge-yellow'>优先补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1T20195Z</td>
+      <td>白色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td>33</td>
+      <td>3923.49</td>
+      <td>0</td>
+      <td>2.500</td>
+      <td>0.000000</td>
+      <td>10.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1Y90915X</td>
+      <td>米黄色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td>20</td>
+      <td>3671.19</td>
+      <td>-1</td>
+      <td>1.500</td>
+      <td>-0.666667</td>
+      <td>7.0</td>
+      <td><span class='badge badge-red'>先校库存再补货</span></td>
+    </tr>
+    <tr>
+      <td>TND1B80998X</td>
+      <td>浅咖色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td>16</td>
+      <td>3627.58</td>
+      <td>-1</td>
+      <td>0.875</td>
+      <td>-1.142857</td>
+      <td>5.0</td>
+      <td><span class='badge badge-red'>先校库存再补货</span></td>
+    </tr>
+    <tr>
+      <td>TND1Y81000X</td>
+      <td>浅咖色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td>11</td>
+      <td>3340.56</td>
+      <td>0</td>
+      <td>1.125</td>
+      <td>0.000000</td>
+      <td>4.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1K60603X</td>
+      <td>橘粉色</td>
+      <td>裤类</td>
+      <td>夏</td>
+      <td>29</td>
+      <td>3141.31</td>
+      <td>1</td>
+      <td>1.750</td>
+      <td>0.571429</td>
+      <td>6.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1Y90914Z</td>
+      <td>绿色</td>
+      <td>防晒服</td>
+      <td>夏</td>
+      <td>12</td>
+      <td>3089.21</td>
+      <td>1</td>
+      <td>0.875</td>
+      <td>1.142857</td>
+      <td>3.0</td>
+      <td><span class='badge badge-yellow'>优先补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1K60604X</td>
+      <td>深咖色</td>
+      <td>裤类</td>
+      <td>夏</td>
+      <td>28</td>
+      <td>3081.59</td>
+      <td>1</td>
+      <td>2.000</td>
+      <td>0.500000</td>
+      <td>7.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+    <tr>
+      <td>TNX1T20182X</td>
+      <td>白色</td>
+      <td>衣类</td>
+      <td>夏</td>
+      <td>39</td>
+      <td>3075.76</td>
+      <td>0</td>
+      <td>3.375</td>
+      <td>0.000000</td>
+      <td>14.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+    <tr>
+      <td>TND1Y81000X</td>
+      <td>米灰色</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+      <td>10</td>
+      <td>3073.46</td>
+      <td>0</td>
+      <td>1.250</td>
+      <td>0.000000</td>
+      <td>5.0</td>
+      <td><span class='badge badge-red'>立即补货</span></td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>去化建议清单</h3>
+      <p class='table-tip'>先看实际库存高、近期零售低、动销率低的款，先停补再想去化。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>商品款号</th>
+      <th>商品名称</th>
+      <th>大类</th>
+      <th>中类</th>
+      <th>小类</th>
+      <th>实际库存</th>
+      <th>近期零售</th>
+      <th>动销率</th>
+      <th>零售价</th>
+      <th>建议动作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TNQ1W60628</td>
+      <td>小黑托昵连裤袜</td>
+      <td>袜品</td>
+      <td>连裤袜</td>
+      <td>丝制连裤袜</td>
+      <td>62</td>
+      <td>4</td>
+      <td>0.064516</td>
+      <td>49</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX2K10296</td>
+      <td>抑菌男平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>莫代尔内裤</td>
+      <td>51</td>
+      <td>1</td>
+      <td>0.019608</td>
+      <td>66</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30932</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>48</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>14</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30935</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>16</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30936</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>16</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30931</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>14</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30925</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>46</td>
+      <td>2</td>
+      <td>0.043478</td>
+      <td>12</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30938</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>45</td>
+      <td>3</td>
+      <td>0.066667</td>
+      <td>14</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TNQ2W30888</td>
+      <td>宝宝对对袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>宝宝对对袜</td>
+      <td>44</td>
+      <td>4</td>
+      <td>0.090909</td>
+      <td>26</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TNQ2W30889</td>
+      <td>宝宝对对袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>宝宝对对袜</td>
+      <td>44</td>
+      <td>4</td>
+      <td>0.090909</td>
+      <td>26</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TNQ2K10258</td>
+      <td>抑菌男平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>天丝棉内裤</td>
+      <td>40</td>
+      <td>2</td>
+      <td>0.050000</td>
+      <td>72</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+    <tr>
+      <td>TOX1W30930</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>36</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>16</td>
+      <td><span class='badge badge-red'>先停补再去化</span></td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>畅销但低库存的商品</h3>
+      <p class='table-tip'>这些款卖得不差，但库存已经很低，容易影响营业额。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>款号</th>
+      <th>颜色</th>
+      <th>销售数</th>
+      <th>销售金额</th>
+      <th>库存</th>
+      <th>周期售罄</th>
+      <th>中类</th>
+      <th>季节</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TND1Y81001X</td>
+      <td>灰蓝色</td>
+      <td>10</td>
+      <td>5182.93</td>
+      <td>1</td>
+      <td>1.00</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+    </tr>
+    <tr>
+      <td>TNX1Y90914Z</td>
+      <td>紫红色</td>
+      <td>18</td>
+      <td>4841.37</td>
+      <td>2</td>
+      <td>0.95</td>
+      <td>防晒服</td>
+      <td>夏</td>
+    </tr>
+    <tr>
+      <td>TND1Y81002X</td>
+      <td>藕粉色</td>
+      <td>8</td>
+      <td>4599.91</td>
+      <td>2</td>
+      <td>0.80</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+    </tr>
+    <tr>
+      <td>TND1Y81001X</td>
+      <td>杏粉色</td>
+      <td>9</td>
+      <td>4539.50</td>
+      <td>1</td>
+      <td>0.82</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+    </tr>
+    <tr>
+      <td>TNX1T20195Z</td>
+      <td>白色</td>
+      <td>33</td>
+      <td>3923.49</td>
+      <td>0</td>
+      <td>1.03</td>
+      <td>衣类</td>
+      <td>夏</td>
+    </tr>
+    <tr>
+      <td>TNX1Y90915X</td>
+      <td>米黄色</td>
+      <td>20</td>
+      <td>3671.19</td>
+      <td>-1</td>
+      <td>1.67</td>
+      <td>衣类</td>
+      <td>夏</td>
+    </tr>
+    <tr>
+      <td>TND1B80998X</td>
+      <td>浅咖色</td>
+      <td>16</td>
+      <td>3627.58</td>
+      <td>-1</td>
+      <td>1.60</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+    </tr>
+    <tr>
+      <td>TND1Y81000X</td>
+      <td>浅咖色</td>
+      <td>11</td>
+      <td>3340.56</td>
+      <td>0</td>
+      <td>1.10</td>
+      <td>羽绒系列</td>
+      <td>冬</td>
+    </tr>
+    <tr>
+      <td>TNX1K60603X</td>
+      <td>橘粉色</td>
+      <td>29</td>
+      <td>3141.31</td>
+      <td>1</td>
+      <td>0.94</td>
+      <td>裤类</td>
+      <td>夏</td>
+    </tr>
+    <tr>
+      <td>TNX1Y90914Z</td>
+      <td>绿色</td>
+      <td>12</td>
+      <td>3089.21</td>
+      <td>1</td>
+      <td>1.00</td>
+      <td>防晒服</td>
+      <td>夏</td>
+    </tr>
+    <tr>
+      <td>TNX1K60604X</td>
+      <td>深咖色</td>
+      <td>28</td>
+      <td>3081.59</td>
+      <td>1</td>
+      <td>1.00</td>
+      <td>裤类</td>
+      <td>夏</td>
+    </tr>
+    <tr>
+      <td>TNX1T20182X</td>
+      <td>白色</td>
+      <td>39</td>
+      <td>3075.76</td>
+      <td>0</td>
+      <td>1.50</td>
+      <td>衣类</td>
+      <td>夏</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>高库存但低动销的商品</h3>
+      <p class='table-tip'>这些款库存不少，但近期基本没卖动，适合优先排查。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>商品款号</th>
+      <th>商品名称</th>
+      <th>大类</th>
+      <th>中类</th>
+      <th>小类</th>
+      <th>实际库存</th>
+      <th>近期零售</th>
+      <th>动销率</th>
+      <th>零售价</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TOX2K10296</td>
+      <td>抑菌男平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>莫代尔内裤</td>
+      <td>51</td>
+      <td>1</td>
+      <td>0.019608</td>
+      <td>66</td>
+    </tr>
+    <tr>
+      <td>TOX1W30932</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>48</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <td>TOX1W30935</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>TOX1W30936</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>TOX1W30931</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>47</td>
+      <td>1</td>
+      <td>0.021277</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <td>TOX1W30930</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>36</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>TOX1W30939</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>35</td>
+      <td>1</td>
+      <td>0.028571</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>TOX1W30947</td>
+      <td>小黑托昵童袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>单双装童袜</td>
+      <td>35</td>
+      <td>1</td>
+      <td>0.028571</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>TOX3K10312</td>
+      <td>高端抑菌无痕男平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>60S高端系列</td>
+      <td>33</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>128</td>
+    </tr>
+    <tr>
+      <td>TOX1T20214X</td>
+      <td>小黑托昵针织外套</td>
+      <td>衣着系列</td>
+      <td>衣类</td>
+      <td>T恤</td>
+      <td>24</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>248</td>
+    </tr>
+    <tr>
+      <td>TOX3K50355</td>
+      <td>高端抑菌无痕女平角内裤</td>
+      <td>内裤</td>
+      <td>常规内裤</td>
+      <td>60S高端系列</td>
+      <td>24</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>118</td>
+    </tr>
+    <tr>
+      <td>TOX1W30949</td>
+      <td>小黑托昵中筒袜</td>
+      <td>袜品</td>
+      <td>儿童袜</td>
+      <td>中筒袜</td>
+      <td>24</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>22</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>负库存异常清单</h3>
+      <p class='table-tip'>先查账、查盘点、查调拨，别直接按这张表补货。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>款号</th>
+      <th>品名</th>
+      <th>颜色</th>
+      <th>尺码</th>
+      <th>库存</th>
+      <th>库存额</th>
+      <th>大类</th>
+      <th>小类</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>TND1Y81007Z</td>
+      <td>羽绒衣</td>
+      <td>藏青色</td>
+      <td>120</td>
+      <td>-1.0</td>
+      <td>-648.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒衣</td>
+    </tr>
+    <tr>
+      <td>TND1Y81005Z</td>
+      <td>羽绒衣</td>
+      <td>灰紫色</td>
+      <td>160</td>
+      <td>-1.0</td>
+      <td>-498.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒衣</td>
+    </tr>
+    <tr>
+      <td>TNQ1K60642Z</td>
+      <td>小黑托昵休闲裤</td>
+      <td>黑色</td>
+      <td>140</td>
+      <td>-1.0</td>
+      <td>-328.0</td>
+      <td>裤类</td>
+      <td>单裤</td>
+    </tr>
+    <tr>
+      <td>TNC1Y90861D</td>
+      <td>小黑托昵家居服</td>
+      <td>款色</td>
+      <td>170</td>
+      <td>-1.0</td>
+      <td>-318.0</td>
+      <td>家居服</td>
+      <td>长袖套装</td>
+    </tr>
+    <tr>
+      <td>TNX1Y90866D</td>
+      <td>小黑托昵家居服</td>
+      <td>款色</td>
+      <td>160</td>
+      <td>-1.0</td>
+      <td>-318.0</td>
+      <td>家居服</td>
+      <td>短袖套装</td>
+    </tr>
+    <tr>
+      <td>TNX1K60603X</td>
+      <td>防蚊裤</td>
+      <td>米白色</td>
+      <td>110</td>
+      <td>-2.0</td>
+      <td>-296.0</td>
+      <td>裤类</td>
+      <td>防蚊裤</td>
+    </tr>
+    <tr>
+      <td>TNC1Y90861Z</td>
+      <td>小黑托昵家居服</td>
+      <td>款色</td>
+      <td>130</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>家居服</td>
+      <td>长袖套装</td>
+    </tr>
+    <tr>
+      <td>TND1K60647Z</td>
+      <td>小黑托昵休闲裤</td>
+      <td>韩粉色</td>
+      <td>150</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>裤类</td>
+      <td>单裤</td>
+    </tr>
+    <tr>
+      <td>TND1K60647Z</td>
+      <td>小黑托昵休闲裤</td>
+      <td>浅杏色</td>
+      <td>150</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>裤类</td>
+      <td>单裤</td>
+    </tr>
+    <tr>
+      <td>TND1B80999X</td>
+      <td>羽绒马甲</td>
+      <td>杏粉色</td>
+      <td>100</td>
+      <td>-1.0</td>
+      <td>-288.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒马甲</td>
+    </tr>
+    <tr>
+      <td>TND1B80998X</td>
+      <td>羽绒马甲</td>
+      <td>浅咖色</td>
+      <td>100</td>
+      <td>-1.0</td>
+      <td>-278.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒马甲</td>
+    </tr>
+    <tr>
+      <td>TND1B80998X</td>
+      <td>羽绒马甲</td>
+      <td>浅咖色</td>
+      <td>110</td>
+      <td>-1.0</td>
+      <td>-278.0</td>
+      <td>羽绒系列</td>
+      <td>羽绒马甲</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    
+    <section class="table-card">
+      <h3>高价值会员</h3>
+      <p class='table-tip'>优先回访高消费或高频顾客，做复购和转介绍。</p>
+      <table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>VIP姓名</th>
+      <th>服务导购</th>
+      <th>购买金额</th>
+      <th>购买总数</th>
+      <th>消费次数/年</th>
+      <th>平均单笔消费额</th>
+      <th>储值余额</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>圆子</td>
+      <td>郭文攀</td>
+      <td>675.0</td>
+      <td>8</td>
+      <td>1</td>
+      <td>84.38</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>茵茵</td>
+      <td>郭文攀</td>
+      <td>664.0</td>
+      <td>7</td>
+      <td>1</td>
+      <td>94.86</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>呦米</td>
+      <td>郭文攀</td>
+      <td>533.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>177.67</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>嘟嘟</td>
+      <td>郭文攀</td>
+      <td>425.0</td>
+      <td>8</td>
+      <td>1</td>
+      <td>53.13</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>胡</td>
+      <td>郭文攀</td>
+      <td>378.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>126.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>宸宸</td>
+      <td>郭文攀</td>
+      <td>372.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>124.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>月月</td>
+      <td>郭文攀</td>
+      <td>337.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>112.33</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>洋洋</td>
+      <td>郭文攀</td>
+      <td>330.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>110.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>贝贝</td>
+      <td>郭文攀</td>
+      <td>330.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>110.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>黄晨馨</td>
+      <td>郭文攀</td>
+      <td>304.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>101.33</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>汤圆</td>
+      <td>郭文攀</td>
+      <td>279.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>93.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>诺宝</td>
+      <td>郭文攀</td>
+      <td>252.0</td>
+      <td>3</td>
+      <td>1</td>
+      <td>84.00</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+    </section>
+    </section>
+  </div>
+</body>
+</html>
