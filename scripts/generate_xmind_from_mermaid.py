@@ -75,9 +75,20 @@ def parse_mermaid_tree(path: Path) -> Node:
     return root
 
 
-def topic_dict(node: Node, *, structure_root: bool = False) -> dict:
+def stable_id(*parts: str) -> str:
+    seed = "::".join(parts)
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, seed))
+
+
+def topic_dict(
+    node: Node,
+    *,
+    source_key: str,
+    lineage: list[str],
+    structure_root: bool = False,
+) -> dict:
     topic = {
-        "id": str(uuid.uuid4()),
+        "id": stable_id(source_key, *lineage),
         "class": "topic",
         "title": node.title,
     }
@@ -85,14 +96,26 @@ def topic_dict(node: Node, *, structure_root: bool = False) -> dict:
         topic["structureClass"] = "org.xmind.ui.logic.right"
     if node.children:
         topic["children"] = {
-            "attached": [topic_dict(child) for child in node.children]
+            "attached": [
+                topic_dict(
+                    child,
+                    source_key=source_key,
+                    lineage=[*lineage, str(index), child.title],
+                )
+                for index, child in enumerate(node.children, start=1)
+            ]
         }
     return topic
 
 
-def workbook_dict(root: Node) -> tuple[list[dict], dict]:
-    sheet_id = str(uuid.uuid4())
-    root_topic = topic_dict(root, structure_root=True)
+def workbook_dict(root: Node, *, source_key: str) -> tuple[list[dict], dict]:
+    sheet_id = stable_id(source_key, "sheet")
+    root_topic = topic_dict(
+        root,
+        source_key=source_key,
+        lineage=["root", root.title],
+        structure_root=True,
+    )
     workbook = [
         {
             "id": sheet_id,
@@ -112,7 +135,7 @@ def workbook_dict(root: Node) -> tuple[list[dict], dict]:
 
 def write_xmind(src: Path) -> Path:
     root = parse_mermaid_tree(src)
-    workbook, metadata = workbook_dict(root)
+    workbook, metadata = workbook_dict(root, source_key=src.stem)
     manifest = {
         "file-entries": {
             "content.json": {},
