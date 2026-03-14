@@ -23,6 +23,95 @@
       margin: 0 auto;
       padding: 24px;
     }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin-bottom: 18px;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+    }
+    .top-nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      text-decoration: none;
+    }
+    .top-nav-link.is-active {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .page-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 18px;
+    }
+    .main-column {
+      min-width: 0;
+    }
+    .side-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }
+    .rail-card {
+      position: sticky;
+      top: 88px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+    .rail-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #0f172a;
+    }
+    .rail-card p {
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #64748b;
+    }
+    .rail-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rail-links a {
+      display: block;
+      text-decoration: none;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rail-links a.current {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
     .hero {
       background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
       color: white;
@@ -392,6 +481,16 @@
       .page {
         padding: 16px;
       }
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+      .rail-card {
+        position: static;
+      }
+      .rail-links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       .focus-wrap {
         grid-template-columns: 1fr;
       }
@@ -406,6 +505,12 @@
     @media (max-width: 640px) {
       .page {
         padding: 12px;
+      }
+      .top-nav-links {
+        width: 100%;
+      }
+      .top-nav-link {
+        width: 100%;
       }
       .hero {
         padding: 18px;
@@ -450,6 +555,9 @@
         padding: 6px 10px;
         white-space: normal;
       }
+      .rail-links {
+        grid-template-columns: 1fr;
+      }
       .card-title {
         font-size: 16px;
       }
@@ -467,6 +575,15 @@
 </head>
 <body>
   <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
     <section class="hero">
       <h1>咸阳沣西吾悦专卖店 老板经营仪表盘</h1>
       <p>首页只保留老板 10 秒内最该知道的事情。总览、经营策略、图表和明细已经拆到详细页，首页更适合每天快速拍板。</p>
@@ -477,6 +594,8 @@
       </div>
     </section>
 
+    <div class="page-shell">
+      <div class="main-column">
     <nav class="quick-nav">
       <a href="#focus">今日重点</a>
       <a href="#core-metrics">核心指标</a>
@@ -494,7 +613,7 @@
       <div class="focus-wrap">
         <div class="focus-panel">
           <div class="focus-headline">先校库存，再决定补货和去化。</div>
-          <p class="focus-summary">春夏换季期阶段，最近日销上涨，但当前有 105 个负库存 SKU。先把账实校准，不然所有经营动作都会跑偏。 当前阶段：换季切换；最近日销均值 1,476.17 元。 当前净利润 14,095.67 元，已过保本线。 按当前节奏月末净利润约 69,081.13 元。 POS 库存主要压在 2026春、2025秋、2026夏。 近段时间净入库 29 件，补货节奏也要一并考虑。</p>
+          <p class="focus-summary">春夏换季期阶段，最近日销上涨，但当前有 105 个负库存 SKU。先把账实校准，不然所有经营动作都会跑偏。 当前阶段：换季切换；最近日销均值 1,476.17 元。 当前净利润 14,095.67 元，已过保本线。 按当前节奏月末净利润约 69,081.13 元。</p>
           <div class="chip-row"><span class='mini-chip mini-chip-primary tooltip-badge' title="今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。" data-tip="今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。" tabindex="0" role="note">先处理负库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。" data-tip="先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。" tabindex="0" role="note">先去库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" data-tip="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" tabindex="0" role="note">先停补袜品</span></div>
           <ul class="focus-list"><li>当前阶段：换季切换 / 春夏换季期</li><li>日销趋势：上涨</li><li>今日主打法：校库存优先</li><li>季节判断：春夏换季，重心是薄款起量、冬款不深补。</li></ul>
         </div>
@@ -521,7 +640,7 @@
       <div class="strip-card">
         <div>
           <strong>POS 高价值数据已接入</strong>
-          <p>POS 库存结构：2026春、2025秋、2026夏；近 7 天出入库：净入库 29 件；POS 当日流水：290.00 元。当季库存占比 36.0%，跨季库存占比 40.0%。 入库 34 件 / 3,113.00 元，出库 5 件 / 1,001.00 元。</p>
+          <p>POS 当日流水：290.00 元。1 单 / 7 件，现金占比 100.0%。</p>
         </div>
         <a class="strip-link" href="./details.html#overview-section">看 POS 详情</a>
       </div>
@@ -792,6 +911,33 @@
         </li>
         </ul>
     </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>老板每天最常用的入口都固定在这里，不用回头找按钮。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a class="current" href="./index.html">当前仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a href="../manuals/index.html">进入文档中心</a>
+            <a href="../costs/index.html">进入成本维护台</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速跳到某一块，直接点右边，不用整页来回找。</p>
+          <div class="rail-links">
+            <a href="#focus">今日重点</a>
+            <a href="#core-metrics">核心指标</a>
+            <a href="#money-opportunities">赚钱机会</a>
+            <a href="#inventory-risks">库存风险</a>
+            <a href="#replenish-opportunities">补货机会</a>
+            <a href="#member-ops">会员经营</a>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
 </body>
 </html>

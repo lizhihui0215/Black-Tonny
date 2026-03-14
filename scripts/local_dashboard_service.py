@@ -99,6 +99,11 @@ class JobState:
     steps: list[dict[str, str]] = field(default_factory=list)
     last_scan_index: str | None = None
     last_dashboard: str | None = None
+    last_source: str | None = None
+    last_success_at: str | None = None
+    last_error_at: str | None = None
+    last_error: str | None = None
+    run_count: int = 0
 
 
 STATE = JobState()
@@ -122,6 +127,11 @@ def snapshot_state() -> dict[str, Any]:
             "steps": list(STATE.steps),
             "last_scan_index": STATE.last_scan_index,
             "last_dashboard": STATE.last_dashboard,
+            "last_source": STATE.last_source,
+            "last_success_at": STATE.last_success_at,
+            "last_error_at": STATE.last_error_at,
+            "last_error": STATE.last_error,
+            "run_count": STATE.run_count,
         }
 
 
@@ -141,7 +151,7 @@ def run_command(cmd: list[str], env: dict[str, str] | None = None) -> subprocess
     )
 
 
-def refresh_job() -> None:
+def refresh_job(source: str = "unknown") -> None:
     config = load_local_config()
     env = {
         **os.environ,
@@ -157,6 +167,7 @@ def refresh_job() -> None:
         status="running",
         message="正在抓取 Yeusoft 报表并重建仪表盘。",
         steps=[],
+        last_source=source,
     )
 
     try:
@@ -197,6 +208,9 @@ def refresh_job() -> None:
             message="抓取和重建已完成，可以刷新首页和仪表盘查看最新结果。",
             last_scan_index=last_scan_index,
             last_dashboard=last_dashboard,
+            last_success_at=now_text(),
+            last_error=None,
+            run_count=STATE.run_count + 1,
         )
     except Exception as error:  # noqa: BLE001
         append_step("执行失败", "error", str(error))
@@ -205,6 +219,9 @@ def refresh_job() -> None:
             finished_at=now_text(),
             status="error",
             message=str(error),
+            last_error=str(error),
+            last_error_at=now_text(),
+            run_count=STATE.run_count + 1,
         )
 
 
@@ -294,12 +311,14 @@ class Handler(BaseHTTPRequestHandler):
             self._send(404, {"ok": False, "message": "Not found"})
             return
 
+        payload = self._read_json_body()
+        source = str(payload.get("source") or "unknown")
         current = snapshot_state()
         if current["running"]:
             self._send(409, {"ok": False, "message": "已有抓取任务正在执行。", **current})
             return
 
-        thread = threading.Thread(target=refresh_job, daemon=True)
+        thread = threading.Thread(target=refresh_job, args=(source,), daemon=True)
         thread.start()
         self._send(
             202,

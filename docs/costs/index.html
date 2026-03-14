@@ -65,6 +65,41 @@
       background: #fbbf24;
       color: #1f2937;
     }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin-bottom: 18px;
+      background: rgba(248, 250, 252, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+    }
+    .top-nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      text-decoration: none;
+    }
+    .top-nav-link.is-active {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
     .section {
       margin-top: 20px;
       background: #fff;
@@ -87,6 +122,60 @@
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 14px;
       margin-top: 16px;
+    }
+    .page-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .main-column {
+      min-width: 0;
+    }
+    .side-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }
+    .rail-card {
+      position: sticky;
+      top: 88px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+    .rail-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .rail-card p {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .rail-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rail-links a {
+      display: block;
+      text-decoration: none;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rail-links a.current {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
     }
     .card {
       border: 1px solid #e2e8f0;
@@ -230,10 +319,26 @@
       .hero p {
         font-size: 13px;
       }
+      .top-nav-links,
       .hero-actions a,
       .hero-actions button,
       .section button {
         width: 100%;
+      }
+      .top-nav-link {
+        width: 100%;
+      }
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+      .rail-card {
+        position: static;
+        padding: 16px;
+        border-radius: 16px;
+      }
+      .rail-links {
+        display: grid;
+        grid-template-columns: 1fr;
       }
       .section {
         padding: 16px;
@@ -250,17 +355,28 @@
 </head>
 <body>
   <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="../dashboard/index.html">仪表盘</a>
+        <a class="top-nav-link" href="../dashboard/details.html">详细页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link is-active" href="./index.html">成本维护台</a>
+      </div>
+    </nav>
     <section class="hero">
       <h1>月度成本维护台</h1>
       <p>这个页面只给店里电脑用。你在这里维护月度销售、进货成本和固定费用，系统会自动重算毛利、总费用、净利润和保本线，然后保存到本地成本快照文件。</p>
       <div class="hero-actions">
-        <a class="btn-light" href="../dashboard/">返回仪表盘</a>
+        <a class="btn-light" href="../dashboard/index.html">返回仪表盘</a>
         <a class="btn-soft" href="../manuals/28-%E6%9C%88%E5%BA%A6%E6%88%90%E6%9C%AC%E5%BF%AB%E7%85%A7%E7%BB%B4%E6%8A%A4%E8%AF%B4%E6%98%8E.html">查看维护说明</a>
         <button class="btn-primary" type="button" id="load-cost-btn">读取当前成本快照</button>
       </div>
     </section>
 
-    <section class="section">
+    <div class="page-shell">
+      <div class="main-column">
+    <section class="section" id="cost-preview">
       <h2>利润预览</h2>
       <p>这里会根据你当前填的数字实时重算，不用先保存就能看结果。</p>
       <div class="grid" id="preview-grid">
@@ -291,7 +407,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="cost-base">
       <h2>基础口径</h2>
       <p>先维护本月销售和进货成本，毛利会自动计算。</p>
       <div class="form-grid">
@@ -322,7 +438,7 @@
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="cost-expenses">
       <h2>固定费用</h2>
       <p>这里维护月固定费用和分摊费用，合计后会自动进入总费用。</p>
       <div class="table-wrap">
@@ -340,7 +456,7 @@
       <p class="inline-note">如果某个费用本月没有变化，直接保留上个月数值即可。</p>
     </section>
 
-    <section class="section">
+    <section class="section" id="cost-salary">
       <h2>人工口径</h2>
       <p>当前按你的最新要求，员工工资统一按固定口径计算，不参考截图里的逐人工资拆分。</p>
       <div class="form-grid">
@@ -356,7 +472,7 @@
       <div class="danger-note">如果后面人工口径改了，再统一改这个维护台逻辑，不要临时在 JSON 里手改不同版本。</div>
     </section>
 
-    <section class="section">
+    <section class="section" id="cost-actions">
       <h2>说明与保存</h2>
       <p>保存后会写回本地 `data/store_cost_snapshot.json`。你可以继续一键重建仪表盘，让利润和保本判断同步更新。</p>
       <div class="form-grid">
@@ -379,6 +495,32 @@
         <li>如果你希望利润看板立刻更新，保存后点“保存并刷新仪表盘”。</li>
       </ul>
     </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>这里固定放老板最常用的入口，避免在不同页面里来回找。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="../dashboard/index.html">进入仪表盘</a>
+            <a href="../dashboard/details.html">进入详细页</a>
+            <a href="../manuals/index.html">进入文档中心</a>
+            <a class="current" href="./index.html">当前成本维护台</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只是修改其中一部分，不用来回翻到底。</p>
+          <div class="rail-links">
+            <a href="#cost-preview">利润预览</a>
+            <a href="#cost-base">基础口径</a>
+            <a href="#cost-expenses">固定费用</a>
+            <a href="#cost-salary">人工口径</a>
+            <a href="#cost-actions">说明与保存</a>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
 
   <script>

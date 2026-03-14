@@ -60,6 +60,41 @@ body {
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.22);
 }
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
 .breadcrumbs,
 .meta-row {
   display: flex;
@@ -107,6 +142,60 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 14px;
   margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
 }
 .card {
   border: 1px solid #e2e8f0;
@@ -277,11 +366,18 @@ body {
   color: #64748b;
 }
 @media (max-width: 880px) {
+  .page-shell,
   .doc-layout {
     grid-template-columns: 1fr;
   }
-  .toc-panel {
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
     position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 640px) {
@@ -301,16 +397,26 @@ body {
   .doc-article li {
     font-size: 14px;
   }
+  .top-nav-links,
   .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
     width: 100%;
     text-align: center;
     box-sizing: border-box;
   }
   .section,
   .doc-article,
-  .toc-panel {
+  .toc-panel,
+  .rail-panel {
     padding: 16px;
     border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
   }
   .doc-article h1 {
     font-size: 28px;
@@ -320,6 +426,7 @@ body {
 </head>
 <body>
   <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../../index.html">首页</a><a class="top-nav-link" href="../../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="../index.html">文档中心</a><a class="top-nav-link" href="../../costs/index.html">成本维护台</a></div></nav>
     <section class="hero">
       <h1>咸阳沣西吾悦专卖店 库存销售摘要</h1>
       <p>目标：先把高库存慢销货动起来，给当季主销和补货腾出空间。</p>
@@ -338,9 +445,11 @@ body {
       </div>
     </section>
 
-    <div class="doc-layout" style="margin-top:22px;">
-      <article class="doc-article">
-        <h1 id="_1">咸阳沣西吾悦专卖店 库存销售摘要<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="_1">咸阳沣西吾悦专卖店 库存销售摘要<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
 <h2 id="_2">老板一分钟结论<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
 <ul>
 <li>结论：先校库存，再决定补货和去化。</li>
@@ -407,7 +516,7 @@ body {
 </ul>
 <h2 id="_9">北京时间与季节决策<a class="headerlink" href="#_9" title="Permanent link">¶</a></h2>
 <ul>
-<li>北京时间：2026-03-14 15:44</li>
+<li>北京时间：2026-03-14 16:40</li>
 <li>当前季节：春季 / 春夏换季期</li>
 <li>当前判断：春夏换季，重心是薄款起量、冬款不深补。</li>
 <li>补货重点：裤类</li>
@@ -501,6 +610,7 @@ body {
 <li>当前保本销售额约 53,392.46 元，平均每天至少要卖 1,722.34 元。</li>
 <li>固定费用约 24,001.55 元，人工费用约 7,500.00 元；目前保本进度约 144.0%。</li>
 <li>按当前平均日销推算，月末销售约 170,479.12 元，月末净利润约 69,081.13 元。</li>
+<li>成本历史已开始累计，当前只有 1 个月快照，建议从下个月开始连续对比利润和费用。</li>
 <li>店铺零售清单已按输入人区分参考店铺；主逻辑只关注 郭文攀 / 咸阳沣西吾悦专卖店，其余输入人仅作为参考对比。</li>
 </ul>
 <h2 id="_17">最值得先处理的表<a class="headerlink" href="#_17" title="Permanent link">¶</a></h2>
@@ -558,14 +668,18 @@ body {
 <li>TOX1W30935 / 小黑托昵童袜：实际库存 47，近期零售 1，建议 先停补再去化</li>
 <li>TOX1W30936 / 小黑托昵童袜：实际库存 47，近期零售 1，建议 先停补再去化</li>
 </ul>
-        <div class="doc-footer">
-          <div class="footer-card"><div class="label">上一篇</div><a href="report.html">咸阳沣西吾悦专卖店 库存销售分析报告</a><p>仪表盘输出</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../dashboard/summary.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="report.html">咸阳沣西吾悦专卖店 库存销售分析报告</a><p>仪表盘输出</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../dashboard/summary.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
         </div>
-        <div class="footer-note">
-          这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
-        </div>
-      </article>
-      <aside class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../../index.html">Pages 首页</a><a class="" href="../../dashboard/index.html">经营仪表盘</a><a class="" href="../../dashboard/details.html">详细经营页</a><a class="current" href="../index.html">文档中心</a><a class="" href="../../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
 <ul>
 <li><a href="#_1">咸阳沣西吾悦专卖店 库存销售摘要</a><ul>
 <li><a href="#_2">老板一分钟结论</a><ul>
@@ -600,7 +714,8 @@ body {
 </li>
 </ul>
 </div>
-</aside>
+</section>
+      </aside>
     </div>
   </div>
 </body>

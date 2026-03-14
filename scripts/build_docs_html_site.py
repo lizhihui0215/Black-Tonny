@@ -90,6 +90,41 @@ body {
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.22);
 }
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
 .breadcrumbs,
 .meta-row {
   display: flex;
@@ -137,6 +172,60 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 14px;
   margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
 }
 .card {
   border: 1px solid #e2e8f0;
@@ -307,11 +396,18 @@ body {
   color: #64748b;
 }
 @media (max-width: 880px) {
+  .page-shell,
   .doc-layout {
     grid-template-columns: 1fr;
   }
-  .toc-panel {
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
     position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 640px) {
@@ -331,16 +427,26 @@ body {
   .doc-article li {
     font-size: 14px;
   }
+  .top-nav-links,
   .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
     width: 100%;
     text-align: center;
     box-sizing: border-box;
   }
   .section,
   .doc-article,
-  .toc-panel {
+  .toc-panel,
+  .rail-panel {
     padding: 16px;
     border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
   }
   .doc-article h1 {
     font-size: 28px;
@@ -360,6 +466,40 @@ class Page:
     version: str | None
     updated_at: str | None
     audience: str | None
+
+
+def render_site_nav(
+    *,
+    home_href: str,
+    dashboard_href: str,
+    details_href: str,
+    manuals_href: str,
+    costs_href: str,
+    current: str,
+) -> str:
+    links = [
+        ("首页", home_href, "home"),
+        ("仪表盘", dashboard_href, "dashboard"),
+        ("详细页", details_href, "details"),
+        ("文档中心", manuals_href, "manuals"),
+        ("成本维护台", costs_href, "costs"),
+    ]
+    rendered = "".join(
+        f'<a class="top-nav-link{" is-active" if key == current else ""}" href="{href}">{label}</a>'
+        for label, href, key in links
+    )
+    return f'<nav class="top-nav"><div class="top-nav-links">{rendered}</div></nav>'
+
+
+def render_rail_panel(title: str, note: str, items: list[tuple[str, str, bool]]) -> str:
+    links = "".join(
+        f'<a class="{"current" if is_current else ""}" href="{href}">{label}</a>'
+        for label, href, is_current in items
+    )
+    return (
+        f'<section class="rail-panel"><h2>{html.escape(title)}</h2><p>{html.escape(note)}</p>'
+        f'<div class="rail-links">{links}</div></section>'
+    )
 
 
 def collect_markdown_files() -> list[Path]:
@@ -494,7 +634,9 @@ def render_page(page: Page, body_html: str, toc_html: str, prev_page: Page | Non
     page_path = OUTPUT_DIR / page.output_rel
     home_href = os.path.relpath(DOCS_DIR / "index.html", page_path.parent).replace(os.sep, "/")
     dashboard_href = os.path.relpath(DOCS_DIR / "dashboard" / "index.html", page_path.parent).replace(os.sep, "/")
+    details_href = os.path.relpath(DOCS_DIR / "dashboard" / "details.html", page_path.parent).replace(os.sep, "/")
     index_href = os.path.relpath(OUTPUT_DIR / "index.html", page_path.parent).replace(os.sep, "/")
+    costs_href = os.path.relpath(DOCS_DIR / "costs" / "index.html", page_path.parent).replace(os.sep, "/")
     source_href = os.path.relpath(page.source_path, page_path.parent).replace(os.sep, "/")
 
     meta_bits = [f'<span class="meta-chip">{html.escape(page.category)}</span>']
@@ -523,11 +665,31 @@ def render_page(page: Page, body_html: str, toc_html: str, prev_page: Page | Non
         f'<p>如果你要继续修改内容，优先改这份源文件。</p></div>'
     )
 
+    site_nav = render_site_nav(
+        home_href=home_href,
+        dashboard_href=dashboard_href,
+        details_href=details_href,
+        manuals_href=index_href,
+        costs_href=costs_href,
+        current="manuals",
+    )
+    global_nav = render_rail_panel(
+        "常用导航",
+        "不管你现在在哪份手册里，都能从这里直接回到最常用的页面。",
+        [
+            ("Pages 首页", home_href, False),
+            ("经营仪表盘", dashboard_href, False),
+            ("详细经营页", details_href, False),
+            ("文档中心", index_href, True),
+            ("成本维护台", costs_href, False),
+        ],
+    )
+
     toc_panel = ""
     if toc_html.strip():
         toc_panel = (
-            '<aside class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p>'
-            f"{toc_html}</aside>"
+            '<section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p>'
+            f"{toc_html}</section>"
         )
 
     return f"""<!DOCTYPE html>
@@ -540,6 +702,7 @@ def render_page(page: Page, body_html: str, toc_html: str, prev_page: Page | Non
 </head>
 <body>
   <div class="page">
+    {site_nav}
     <section class="hero">
       <h1>{html.escape(page.title)}</h1>
       <p>{html.escape(page.excerpt)}</p>
@@ -558,17 +721,24 @@ def render_page(page: Page, body_html: str, toc_html: str, prev_page: Page | Non
       </div>
     </section>
 
-    <div class="doc-layout" style="margin-top:22px;">
-      <article class="doc-article">
-        {body_html}
-        <div class="doc-footer">
-          {''.join(footer_cards)}
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            {body_html}
+            <div class="doc-footer">
+              {''.join(footer_cards)}
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
         </div>
-        <div class="footer-note">
-          这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
-        </div>
-      </article>
-      {toc_panel}
+      </div>
+      <aside class="side-rail">
+        {global_nav}
+        {toc_panel}
+      </aside>
     </div>
   </div>
 </body>
@@ -582,10 +752,15 @@ def render_index(pages: list[Page]) -> str:
         grouped.setdefault(page.category, []).append(page)
 
     sections: list[str] = []
+    rail_items: list[tuple[str, str, bool]] = []
+    section_index = 0
     for label in DOC_CATEGORY_ORDER:
         items = grouped.get(label) or []
         if not items:
             continue
+        section_index += 1
+        section_id = f"manual-group-{section_index}"
+        rail_items.append((label, f"#{section_id}", False))
         cards = []
         for page in items:
             href = page.output_rel.as_posix()
@@ -604,11 +779,35 @@ def render_index(pages: list[Page]) -> str:
                 f'<a href="{href}">打开 HTML 文档</a></article>'
             )
         sections.append(
-            f'<section class="section"><h2>{html.escape(label)}</h2><p class="section-note">这一组文档已经整理成网页阅读版，适合老板、店员和协作人员直接在 Pages 里浏览。</p>'
+            f'<section class="section" id="{section_id}"><h2>{html.escape(label)}</h2><p class="section-note">这一组文档已经整理成网页阅读版，适合老板、店员和协作人员直接在 Pages 里浏览。</p>'
             f'<div class="grid">{"".join(cards)}</div></section>'
         )
 
     generated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
+    site_nav = render_site_nav(
+        home_href="../index.html",
+        dashboard_href="../dashboard/index.html",
+        details_href="../dashboard/details.html",
+        manuals_href="./index.html",
+        costs_href="../costs/index.html",
+        current="manuals",
+    )
+    global_nav = render_rail_panel(
+        "常用导航",
+        "这里是所有手册的入口，但老板日常更适合先去仪表盘。",
+        [
+            ("Pages 首页", "../index.html", False),
+            ("经营仪表盘", "../dashboard/index.html", False),
+            ("详细经营页", "../dashboard/details.html", False),
+            ("文档中心", "./index.html", True),
+            ("成本维护台", "../costs/index.html", False),
+        ],
+    )
+    category_nav = render_rail_panel(
+        "文档分类",
+        "先选一条主线，再进具体文档，会比整页上下翻更顺。",
+        rail_items,
+    )
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -619,12 +818,13 @@ def render_index(pages: list[Page]) -> str:
 </head>
 <body>
   <div class="page">
+    {site_nav}
     <section class="hero">
       <h1>小黑托昵文档中心</h1>
       <p>这里收的是 `docs/` 目录下的网页阅读版文档。老板可以直接读策略和经营手册，员工也可以用手机打开培训、接待、检查清单，不需要再看原始 Markdown。</p>
       <div class="hero-actions">
         <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
-        <a class="btn-secondary" href="../dashboard/">打开经营仪表盘</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
       </div>
       <div class="meta-row">
         <span class="meta-chip">生成时间：{generated_at}</span>
@@ -632,12 +832,20 @@ def render_index(pages: list[Page]) -> str:
       </div>
     </section>
 
-    <section class="section">
-      <h2>怎么用最顺</h2>
-      <p class="section-note">如果你是老板，建议先看经营基础、库存与进货、会员与扩品；如果你是员工，优先看小团队管理线和接待成交。所有文档都保留源 Markdown，不影响后续继续修改。</p>
-    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <section class="section" id="manual-guide">
+          <h2>怎么用最顺</h2>
+          <p class="section-note">如果你是老板，建议先看经营基础、库存与进货、会员与扩品；如果你是员工，优先看小团队管理线和接待成交。所有文档都保留源 Markdown，不影响后续继续修改。</p>
+        </section>
 
-    {''.join(sections)}
+        {''.join(sections)}
+      </div>
+      <aside class="side-rail">
+        {global_nav}
+        {category_nav}
+      </aside>
+    </div>
   </div>
 </body>
 </html>

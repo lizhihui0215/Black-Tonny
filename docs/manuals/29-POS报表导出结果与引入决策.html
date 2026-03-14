@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POS 报表导出结果与引入决策 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>POS 报表导出结果与引入决策</h1>
+      <p>这份文档不是再讲“理论上哪些报表有价值”，而是把当前已经实际跑过的导出结果收成一份可决策清单：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">POS 报表导出结果与引入决策</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">Pages 与发布</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="pos">POS 报表导出结果与引入决策<a class="headerlink" href="#pos" title="Permanent link">¶</a></h1>
+<h2 id="_1">这份文档解决什么问题<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<p>这份文档不是再讲“理论上哪些报表有价值”，而是把当前已经实际跑过的导出结果收成一份可决策清单：</p>
+<ul>
+<li>哪些报表已经能导出</li>
+<li>哪些报表虽然有价值，但还没有稳定拿到</li>
+<li>哪些报表暂时收益不高，不值得优先投入</li>
+</ul>
+<p>目标是让老板只回答一件事：</p>
+<p><code>哪些现在就接入看板，哪些先放一放。</code></p>
+<h2 id="_2">当前结论先看这里<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<h3 id="_3">建议立即引入<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>店铺零售清单</code></li>
+<li><code>库存综合分析</code></li>
+<li><code>每日流水单</code></li>
+</ol>
+<p>原因：</p>
+<ul>
+<li>这三张表最贴近老板每天要做的判断</li>
+<li>已经有真实抓取样本</li>
+<li>能直接提升首页和详细页的经营建议</li>
+</ul>
+<h3 id="_4">建议优先继续攻克<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>销售清单</code></li>
+<li><code>商品销售情况</code></li>
+<li><code>出入库单据</code></li>
+</ol>
+<p>原因：</p>
+<ul>
+<li>这三张表一旦稳定拿到，会显著提升历史趋势、库存纠偏和长期结构判断</li>
+<li>但当前抓取还不够稳，直接强接入会让看板判断带噪音</li>
+</ul>
+<h3 id="_5">建议暂缓引入<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>零售明细统计</code></li>
+<li><code>库存明细统计</code></li>
+<li><code>库存零售统计</code></li>
+<li><code>导购员统计</code></li>
+<li><code>零售缴款单</code></li>
+<li><code>储值按店汇总 / 储值卡汇总 / 储值卡明细</code></li>
+</ol>
+<p>原因：</p>
+<ul>
+<li>不是没价值，而是对老板首页的直接决策收益不高</li>
+<li>更适合详细页、复盘页或后续专项分析</li>
+</ul>
+<h2 id="_6">导出结果总览<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
+<h3 id="_7">已经实际跑过的报表<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>报表</th>
+<th>当前状态</th>
+<th>区间情况</th>
+<th>直接经营价值</th>
+<th>当前判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>店铺零售清单</td>
+<td>成功</td>
+<td>已明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code>，抓到 <code>83877</code> 行</td>
+<td>很高</td>
+<td>立即引入</td>
+</tr>
+<tr>
+<td>销售清单</td>
+<td>超时</td>
+<td>还没稳定拿到全量</td>
+<td>很高</td>
+<td>优先继续攻克</td>
+</tr>
+<tr>
+<td>库存综合分析</td>
+<td>有样本，但最新批量扫描超时</td>
+<td>更像当前库存结构快照，不适合当历史明细</td>
+<td>很高</td>
+<td>保留引入，但不要误当全年历史表</td>
+</tr>
+<tr>
+<td>出入库单据</td>
+<td>有样本，但最新批量扫描超时</td>
+<td>当前样本更像短窗口，<code>2025-03</code> 到现在的全量还没证实</td>
+<td>高</td>
+<td>继续攻克后再加权使用</td>
+</tr>
+<tr>
+<td>商品销售情况</td>
+<td>超时</td>
+<td>还没稳定拿到全量</td>
+<td>很高</td>
+<td>优先继续攻克</td>
+</tr>
+<tr>
+<td>零售明细统计</td>
+<td>页面能打开，但当前 <code>queryRows=0</code></td>
+<td>还没拿到真实结果集</td>
+<td>中</td>
+<td>暂缓引入</td>
+</tr>
+<tr>
+<td>库存明细统计</td>
+<td>页面能打开，但当前 <code>queryRows=0</code></td>
+<td>还没拿到真实结果集</td>
+<td>中</td>
+<td>暂缓引入</td>
+</tr>
+<tr>
+<td>库存零售统计</td>
+<td>页面能打开，但当前 <code>queryRows=0</code></td>
+<td>还没拿到真实结果集</td>
+<td>中</td>
+<td>暂缓引入</td>
+</tr>
+<tr>
+<td>每日流水单</td>
+<td>成功拿到 API 样本</td>
+<td>当前更适合当天经营，不适合拿来推整年趋势</td>
+<td>很高</td>
+<td>立即引入，但只作为日流水</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_8">按老板价值分级<a class="headerlink" href="#_8" title="Permanent link">¶</a></h2>
+<h2 id="a">A 类：值得直接进老板看板<a class="headerlink" href="#a" title="Permanent link">¶</a></h2>
+<h3 id="1">1. 店铺零售清单<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
+<p>当前导出结果：</p>
+<ul>
+<li>成功</li>
+<li>明确带了 <code>BeginDate=2025-03-01</code></li>
+<li>明确带了 <code>EndDate=2026-03-14</code></li>
+<li>当前返回行数 <code>83877</code></li>
+</ul>
+<p>为什么值得引入：</p>
+<ul>
+<li>它是现在最接近“主店真实零售全量”的一张</li>
+<li>可以区分 <code>郭文攀主店</code> 和其他输入人参考店</li>
+<li>能直接支撑销售、会员、店员、主店经营判断</li>
+</ul>
+<p>建议接入位置：</p>
+<ul>
+<li>首页：<code>核心经营指标</code></li>
+<li>首页：<code>会员经营</code></li>
+<li>详细页：<code>总览</code></li>
+<li>详细页：<code>会员 / 店员</code></li>
+</ul>
+<h3 id="2">2. 库存综合分析<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<p>当前导出结果：</p>
+<ul>
+<li>已经确认菜单和直连接口</li>
+<li>已经抓到真实样本</li>
+<li>但它更像“当前库存结构快照”，不是完整历史明细</li>
+</ul>
+<p>为什么值得引入：</p>
+<ul>
+<li>能直接告诉老板库存主要压在哪些年季、季节</li>
+<li>适合判断 <code>先补什么</code>、<code>先停补什么</code>、<code>先去什么</code></li>
+</ul>
+<p>使用边界：</p>
+<ul>
+<li>可以进老板看板</li>
+<li>但不要把它误解成 <code>2025-03 到现在的完整历史销售趋势</code></li>
+</ul>
+<p>建议接入位置：</p>
+<ul>
+<li>首页：<code>库存风险</code></li>
+<li>首页：<code>补货机会</code></li>
+<li>详细页：<code>补货 / 去化</code></li>
+</ul>
+<h3 id="3">3. 每日流水单<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
+<p>当前导出结果：</p>
+<ul>
+<li>已经确认菜单和直连接口</li>
+<li>已经抓到真实 API 样本</li>
+<li>当前更适合 <code>当天流水 / 当天支付结构 / 当天件单数</code></li>
+</ul>
+<p>为什么值得引入：</p>
+<ul>
+<li>最适合老板判断“今天营业节奏好不好”</li>
+<li>能帮助利润与保本更像经营驾驶舱，而不是月末记账</li>
+</ul>
+<p>使用边界：</p>
+<ul>
+<li>适合做当天经营</li>
+<li>不建议当前直接拿它做全年趋势结论</li>
+</ul>
+<p>建议接入位置：</p>
+<ul>
+<li>首页：<code>今日经营重点</code></li>
+<li>首页：<code>利润与保本</code></li>
+<li>详细页：<code>总览</code></li>
+</ul>
+<h2 id="b">B 类：有价值，但要先把抓取链路打稳<a class="headerlink" href="#b" title="Permanent link">¶</a></h2>
+<h3 id="1_1">1. 销售清单<a class="headerlink" href="#1_1" title="Permanent link">¶</a></h3>
+<p>当前情况：</p>
+<ul>
+<li>菜单、Grid 结构已识别</li>
+<li>当前批量扫描仍然超时</li>
+</ul>
+<p>为什么它重要：</p>
+<ul>
+<li>它最适合看日销趋势、订单变化、活动前后波动</li>
+<li>如果能稳定抓全量，对首页结论帮助会非常大</li>
+</ul>
+<p>为什么现在不直接重接入：</p>
+<ul>
+<li>当前抓取不稳</li>
+<li>强行接入会让首页判断受不完整数据影响</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>放在下一批优先攻克名单第一位</li>
+</ul>
+<h3 id="2_1">2. 商品销售情况<a class="headerlink" href="#2_1" title="Permanent link">¶</a></h3>
+<p>当前情况：</p>
+<ul>
+<li>菜单已确认</li>
+<li>当前批量扫描超时</li>
+</ul>
+<p>为什么它重要：</p>
+<ul>
+<li>它更适合看长周期累计销售</li>
+<li>对判断“哪些品类长期值得补、哪些只是短期起量”很关键</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>适合作为第二批重点接入</li>
+<li>稳定后优先放到 <code>详细页总览</code> 和 <code>经营策略</code></li>
+</ul>
+<h3 id="3_1">3. 出入库单据<a class="headerlink" href="#3_1" title="Permanent link">¶</a></h3>
+<p>当前情况：</p>
+<ul>
+<li>菜单和直连接口已确认</li>
+<li>有真实样本</li>
+<li>但当前样本更像短窗口，不足以确认 <code>2025-03</code> 到现在的全量已稳定导出</li>
+</ul>
+<p>为什么它重要：</p>
+<ul>
+<li>它直接决定库存准不准</li>
+<li>对负库存、调拨、补货、退货异常判断非常重要</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>继续优先攻克</li>
+<li>稳定后放到 <code>详细页补货 / 去化</code></li>
+<li>在完全稳定前，只把它作为辅助判断，不作为首页主结论来源</li>
+</ul>
+<h3 id="4">4. 会员综合分析<a class="headerlink" href="#4" title="Permanent link">¶</a></h3>
+<p>当前情况：</p>
+<ul>
+<li>菜单已确认</li>
+<li>还没有稳定样本</li>
+</ul>
+<p>为什么它有价值：</p>
+<ul>
+<li>它比单纯会员消费排行更适合判断活跃度、复购和沉睡会员</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>放到第二梯队</li>
+<li>稳定后优先接到 <code>会员经营</code></li>
+</ul>
+<h3 id="5">5. 会员消费排行<a class="headerlink" href="#5" title="Permanent link">¶</a></h3>
+<p>当前情况：</p>
+<ul>
+<li>菜单已知</li>
+<li>还没拿到稳定样本</li>
+</ul>
+<p>为什么它有价值：</p>
+<ul>
+<li>对老板很直观</li>
+<li>很适合今天就去联系高价值会员</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>作为 <code>会员经营</code> 的补充，不必比 <code>会员综合分析</code> 更早</li>
+</ul>
+<h2 id="c">C 类：当前收益不高，先不优先投入<a class="headerlink" href="#c" title="Permanent link">¶</a></h2>
+<h3 id="_9">零售明细统计<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<p>问题：</p>
+<ul>
+<li>当前能打开页面，但没拿到真实结果集</li>
+<li>就算拿到，也更适合排查细项，不适合老板首页</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>暂不优先</li>
+</ul>
+<h3 id="_10">库存明细统计<a class="headerlink" href="#_10" title="Permanent link">¶</a></h3>
+<p>问题：</p>
+<ul>
+<li>当前能打开页面，但没拿到真实结果集</li>
+<li>更像执行层下钻，不是老板第一屏需要的信息</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>暂不优先</li>
+</ul>
+<h3 id="_11">库存零售统计<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
+<p>问题：</p>
+<ul>
+<li>对分析有帮助</li>
+<li>但在老板视角里，不如 <code>库存综合分析</code> 直接</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>暂放详细页候选，不抢前排</li>
+</ul>
+<h3 id="_12">导购员统计<a class="headerlink" href="#_12" title="Permanent link">¶</a></h3>
+<p>问题：</p>
+<ul>
+<li>适合做员工复盘</li>
+<li>但对老板当天补货、利润、库存判断帮助有限</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>后面如要强化店员绩效再接入</li>
+</ul>
+<h3 id="_13">零售缴款单<a class="headerlink" href="#_13" title="Permanent link">¶</a></h3>
+<p>问题：</p>
+<ul>
+<li>对对账有用</li>
+<li>但日常经营收益不如流水、销售、库存结构高</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>暂缓</li>
+</ul>
+<h3 id="_14">储值按店汇总 / 储值卡汇总 / 储值卡明细<a class="headerlink" href="#_14" title="Permanent link">¶</a></h3>
+<p>问题：</p>
+<ul>
+<li>有经营价值，但前提是你们当前门店真的在高频使用储值体系</li>
+<li>如果储值规模不大，这批表对老板首页的收益偏低</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>先不优先</li>
+<li>等会员线成熟后再决定是否补</li>
+</ul>
+<h2 id="_15">截图里有，但当前还没形成稳定结果的报表<a class="headerlink" href="#_15" title="Permanent link">¶</a></h2>
+<p>这批报表我建议先记在二期候选，不要现在就都往看板里塞：</p>
+<ul>
+<li><code>库存多维分析</code></li>
+<li><code>日进销存</code></li>
+<li><code>退货明细</code></li>
+<li><code>商品品类分析</code></li>
+<li><code>门店销售月报</code></li>
+</ul>
+<p>原因：</p>
+<ul>
+<li>现在还没有稳定抓取样本</li>
+<li>其中一部分和现有报表存在信息重叠</li>
+<li>先把 A 类和高价值 B 类做稳，收益更高</li>
+</ul>
+<h2 id="_16">最终建议：你现在怎么拍板最划算<a class="headerlink" href="#_16" title="Permanent link">¶</a></h2>
+<h3 id="_17">现在就引入<a class="headerlink" href="#_17" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>店铺零售清单</code></li>
+<li><code>库存综合分析</code></li>
+<li><code>每日流水单</code></li>
+</ul>
+<h3 id="_18">下一批重点攻克<a class="headerlink" href="#_18" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>销售清单</code></li>
+<li><code>商品销售情况</code></li>
+<li><code>出入库单据</code></li>
+</ul>
+<h3 id="_19">先不投入<a class="headerlink" href="#_19" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>零售明细统计</code></li>
+<li><code>库存明细统计</code></li>
+<li><code>库存零售统计</code></li>
+<li><code>导购员统计</code></li>
+<li><code>零售缴款单</code></li>
+<li><code>储值相关</code></li>
+</ul>
+<h2 id="_20">一句话版本<a class="headerlink" href="#_20" title="Permanent link">¶</a></h2>
+<p>如果只看投入产出比，当前最值得继续引入老板看板的，是：</p>
+<p><code>店铺零售清单 + 库存综合分析 + 每日流水单</code></p>
+<p>如果只看下一步最值得攻克的，是：</p>
+<p><code>销售清单 + 商品销售情况 + 出入库单据</code></p>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="28-月度成本快照维护说明.html">月度成本快照维护说明</a><p>Pages 与发布</p></div><div class="footer-card"><div class="label">下一篇</div><a href="dashboard/report.html">咸阳沣西吾悦专卖店 库存销售分析报告</a><p>仪表盘输出</p></div><div class="footer-card"><div class="label">源文件</div><a href="../29-POS报表导出结果与引入决策.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#pos">POS 报表导出结果与引入决策</a><ul>
+<li><a href="#_1">这份文档解决什么问题</a></li>
+<li><a href="#_2">当前结论先看这里</a><ul>
+<li><a href="#_3">建议立即引入</a></li>
+<li><a href="#_4">建议优先继续攻克</a></li>
+<li><a href="#_5">建议暂缓引入</a></li>
+</ul>
+</li>
+<li><a href="#_6">导出结果总览</a><ul>
+<li><a href="#_7">已经实际跑过的报表</a></li>
+</ul>
+</li>
+<li><a href="#_8">按老板价值分级</a></li>
+<li><a href="#a">A 类：值得直接进老板看板</a><ul>
+<li><a href="#1">1. 店铺零售清单</a></li>
+<li><a href="#2">2. 库存综合分析</a></li>
+<li><a href="#3">3. 每日流水单</a></li>
+</ul>
+</li>
+<li><a href="#b">B 类：有价值，但要先把抓取链路打稳</a><ul>
+<li><a href="#1_1">1. 销售清单</a></li>
+<li><a href="#2_1">2. 商品销售情况</a></li>
+<li><a href="#3_1">3. 出入库单据</a></li>
+<li><a href="#4">4. 会员综合分析</a></li>
+<li><a href="#5">5. 会员消费排行</a></li>
+</ul>
+</li>
+<li><a href="#c">C 类：当前收益不高，先不优先投入</a><ul>
+<li><a href="#_9">零售明细统计</a></li>
+<li><a href="#_10">库存明细统计</a></li>
+<li><a href="#_11">库存零售统计</a></li>
+<li><a href="#_12">导购员统计</a></li>
+<li><a href="#_13">零售缴款单</a></li>
+<li><a href="#_14">储值按店汇总 / 储值卡汇总 / 储值卡明细</a></li>
+</ul>
+</li>
+<li><a href="#_15">截图里有，但当前还没形成稳定结果的报表</a></li>
+<li><a href="#_16">最终建议：你现在怎么拍板最划算</a><ul>
+<li><a href="#_17">现在就引入</a></li>
+<li><a href="#_18">下一批重点攻克</a></li>
+<li><a href="#_19">先不投入</a></li>
+</ul>
+</li>
+<li><a href="#_20">一句话版本</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

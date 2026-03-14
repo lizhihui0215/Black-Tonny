@@ -58,9 +58,9 @@ def main() -> int:
 
     results.extend(
         [
-            text_contains(docs_index, "./dashboard/", "Pages homepage links to dashboard"),
-            text_contains(docs_index, "./manuals/", "Pages homepage links to manuals center"),
-            text_contains(docs_index, "./costs/", "Pages homepage links to cost maintenance"),
+            text_contains(docs_index, "./dashboard/index.html", "Pages homepage links to dashboard"),
+            text_contains(docs_index, "./manuals/index.html", "Pages homepage links to manuals center"),
+            text_contains(docs_index, "./costs/index.html", "Pages homepage links to cost maintenance"),
             text_contains(docs_index, "./manuals/dashboard/summary.html", "Pages homepage links to summary html"),
             text_contains(docs_index, "./manuals/dashboard/report.html", "Pages homepage links to report html"),
             text_contains(readme, "docs/index.html", "README links to Pages homepage"),

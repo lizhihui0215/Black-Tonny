@@ -4,6 +4,8 @@ import { fileURLToPath } from "url";
 import { chromium } from "playwright";
 
 const SITE_URL = process.env.YEU_SITE_URL || "https://jypos.yeusoft.net/";
+const ERP_API_URL = process.env.YEU_ERP_API_URL || "https://erpapistaging.yeusoft.net";
+const JY_API_URL = process.env.YEU_JY_API_URL || "https://jyapistaging.yeusoft.net";
 const USERNAME = process.env.YEU_USERNAME || "";
 const PASSWORD = process.env.YEU_PASSWORD || "";
 const REPORT_NAME = process.env.YEU_REPORT_NAME || "店铺零售清单";
@@ -148,6 +150,108 @@ async function extractAuth(page) {
     apiUrl: localStorage.getItem("yisapiurl") || localStorage.getItem("YIS_API_ERP_TEMP") || "",
     token: localStorage.getItem("yis_pc_token") || "",
   }));
+}
+
+function compactDate(value) {
+  return String(value || "").replace(/-/g, "");
+}
+
+function buildDirectReportRequest(reportName, startDate, endDate) {
+  if (reportName === "店铺零售清单") {
+    return {
+      url: `${ERP_API_URL}/FxErpApi/FXDIYReport/GetDIYReportData`,
+      body: {
+        menuid: "E004001007",
+        gridid: "E004001007_main",
+        parameter: {
+          WareClause: "",
+          Depart: "  ",
+          EndDate: endDate,
+          BeginDate: startDate,
+          Operater: "",
+          Tiem: "",
+        },
+      },
+    };
+  }
+
+  if (reportName === "出入库单据") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelOutInStockReport`,
+      body: {
+        edate: compactDate(endDate),
+        bdate: compactDate(startDate),
+        datetype: "1",
+        type: "已出库,已入库,在途",
+        spenum: "",
+        doctype: "1,2,3,4,5,6,7",
+        warecause: "",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (reportName === "每日流水单") {
+    return {
+      url: `${JY_API_URL}/JyApi/ReconciliationAnalysis/SelectRetailDocPaymentSlip`,
+      body: {
+        MenuID: "E004006001",
+        SearchType: "1",
+        Search: "",
+        LastDate: "",
+        BeginDate: startDate,
+        EndDate: endDate,
+      },
+    };
+  }
+
+  return null;
+}
+
+async function enrichReportWithDirectApi(session, reportName, captureLog, options = {}) {
+  const requestPlan = buildDirectReportRequest(
+    reportName,
+    options.startDate || session.startDate || START_DATE,
+    options.endDate || session.endDate || END_DATE,
+  );
+  if (!requestPlan) {
+    return false;
+  }
+
+  const headers = {
+    "content-type": "application/json;charset=UTF-8",
+  };
+  if (session.auth?.token) {
+    headers.token = session.auth.token;
+  }
+
+  const response = await session.context.request.post(requestPlan.url, {
+    data: requestPlan.body,
+    headers,
+    failOnStatusCode: false,
+  });
+
+  let body;
+  try {
+    body = await response.json();
+  } catch {
+    body = summarizeText(await response.text(), 3000);
+  }
+
+  captureLog.requests.push({
+    method: "POST",
+    url: requestPlan.url,
+    postData: requestPlan.body,
+    source: "direct-api",
+  });
+  captureLog.responses.push({
+    status: response.status(),
+    url: requestPlan.url,
+    body,
+    source: "direct-api",
+  });
+  return response.ok();
 }
 
 function flattenMenu(items, bucket = []) {
@@ -455,6 +559,7 @@ export async function createYeusoftSession(options = {}) {
   console.log(`[STEP] app ready jump:${appState.hasJumpPage} addTab:${appState.hasAddTab} reportArr:${appState.hasReportArrList}`);
   const menuList = await fetchMenuList(page).catch(() => []);
   console.log(`[STEP] menu list loaded ${menuList.length}`);
+  const auth = await extractAuth(page).catch(() => ({ apiUrl: "", token: "" }));
   const menuLookup = Object.fromEntries(
     menuList
       .filter((item) => item && item.FuncName)
@@ -471,6 +576,7 @@ export async function createYeusoftSession(options = {}) {
     startDate: options.startDate || START_DATE,
     endDate: options.endDate || END_DATE,
     appState,
+    auth,
     menuList,
     menuLookup,
   };
@@ -485,7 +591,7 @@ export async function captureReportInSession(session, reportName, options = {}) 
   await ensureDir(outputDir);
   console.log(`[STEP] start ${reportName}`);
 
-  session.collector.start(reportName);
+  const captureLog = session.collector.start(reportName);
   const menuItem = session.menuLookup?.[reportName] || null;
   const openResult = await tryOpenReportByMenuItem(session.frame, session.page, reportName, menuItem);
   if (openResult?.ok) {
@@ -540,12 +646,18 @@ export async function captureReportInSession(session, reportName, options = {}) 
   });
 
   await clickQueryButton(session.frame, session.page);
+  await enrichReportWithDirectApi(session, reportName, captureLog, {
+    startDate: options.startDate || session.startDate || START_DATE,
+    endDate: options.endDate || session.endDate || END_DATE,
+  }).catch((error) => {
+    console.log(`[STEP] direct api skipped: ${String(error)}`);
+  });
 
   const screenshotPath = path.join(outputDir, `${sanitizeName(reportName)}.png`);
   console.log("[STEP] screenshot");
   await session.page.screenshot({ path: screenshotPath, fullPage: true });
 
-  const captureLog = session.collector.stop();
+  const finalCaptureLog = session.collector.stop();
   const payload = {
     capturedAt: new Date().toISOString(),
     siteUrl: SITE_URL,
@@ -558,8 +670,8 @@ export async function captureReportInSession(session, reportName, options = {}) 
       start: options.startDate || session.startDate || START_DATE,
       end: options.endDate || session.endDate || END_DATE,
     },
-    requests: captureLog.requests,
-    responses: captureLog.responses,
+    requests: finalCaptureLog.requests,
+    responses: finalCaptureLog.responses,
     screenshotPath,
   };
 

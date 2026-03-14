@@ -2819,7 +2819,7 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
           <div class="card-title">返回老板仪表盘</div>
           <p class="table-tip">回到短版首页，快速看今天最该做什么。</p>
           <div class="chip-row">
-            <a class="download-link" href="./">返回首页</a>
+            <a class="download-link" href="./index.html">返回首页</a>
           </div>
         </div>
         <div class="opportunity-card">
@@ -3069,6 +3069,95 @@ def build_html(metrics: dict) -> str:
       max-width: 1320px;
       margin: 0 auto;
       padding: 24px;
+    }}
+    .top-nav {{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin-bottom: 18px;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }}
+    .top-nav-links {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+    }}
+    .top-nav-link {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      text-decoration: none;
+    }}
+    .top-nav-link.is-active {{
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }}
+    .page-shell {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 18px;
+    }}
+    .main-column {{
+      min-width: 0;
+    }}
+    .side-rail {{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }}
+    .rail-card {{
+      position: sticky;
+      top: 88px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }}
+    .rail-card h3 {{
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #0f172a;
+    }}
+    .rail-card p {{
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #64748b;
+    }}
+    .rail-links {{
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }}
+    .rail-links a {{
+      display: block;
+      text-decoration: none;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }}
+    .rail-links a.current {{
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
     }}
     .hero {{
       background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
@@ -3439,6 +3528,16 @@ def build_html(metrics: dict) -> str:
       .page {{
         padding: 16px;
       }}
+      .page-shell {{
+        grid-template-columns: 1fr;
+      }}
+      .rail-card {{
+        position: static;
+      }}
+      .rail-links {{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }}
       .focus-wrap {{
         grid-template-columns: 1fr;
       }}
@@ -3453,6 +3552,12 @@ def build_html(metrics: dict) -> str:
     @media (max-width: 640px) {{
       .page {{
         padding: 12px;
+      }}
+      .top-nav-links {{
+        width: 100%;
+      }}
+      .top-nav-link {{
+        width: 100%;
       }}
       .hero {{
         padding: 18px;
@@ -3497,6 +3602,9 @@ def build_html(metrics: dict) -> str:
         padding: 6px 10px;
         white-space: normal;
       }}
+      .rail-links {{
+        grid-template-columns: 1fr;
+      }}
       .card-title {{
         font-size: 16px;
       }}
@@ -3514,6 +3622,15 @@ def build_html(metrics: dict) -> str:
 </head>
 <body>
   <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
     <section class="hero">
       <h1>{cards['store_name']} 老板经营仪表盘</h1>
       <p>首页只保留老板 10 秒内最该知道的事情。总览、经营策略、图表和明细已经拆到详细页，首页更适合每天快速拍板。</p>
@@ -3524,6 +3641,8 @@ def build_html(metrics: dict) -> str:
       </div>
     </section>
 
+    <div class="page-shell">
+      <div class="main-column">
     <nav class="quick-nav">
       <a href="#focus">今日重点</a>
       <a href="#core-metrics">核心指标</a>
@@ -3622,6 +3741,33 @@ def build_html(metrics: dict) -> str:
       </div>
       <ul class="task-list">{action_today_html}</ul>
     </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>老板每天最常用的入口都固定在这里，不用回头找按钮。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a class="current" href="./index.html">当前仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a href="../manuals/index.html">进入文档中心</a>
+            <a href="../costs/index.html">进入成本维护台</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速跳到某一块，直接点右边，不用整页来回找。</p>
+          <div class="rail-links">
+            <a href="#focus">今日重点</a>
+            <a href="#core-metrics">核心指标</a>
+            <a href="#money-opportunities">赚钱机会</a>
+            <a href="#inventory-risks">库存风险</a>
+            <a href="#replenish-opportunities">补货机会</a>
+            <a href="#member-ops">会员经营</a>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
 </body>
 </html>
@@ -4120,7 +4266,7 @@ def build_detail_html(metrics: dict) -> str:
           <div class="card-title">老板仪表盘</div>
           <p class="table-tip">适合老板每天直接打开，先看今日重点和执行任务。</p>
           <div class="chip-row">
-            <a class="download-link" href="./">打开当前页</a>
+            <a class="download-link" href="./index.html">打开当前页</a>
           </div>
         </div>
         <div class="opportunity-card">
@@ -4155,7 +4301,7 @@ def build_detail_html(metrics: dict) -> str:
     """
     detail_quick_nav_html = "".join(
         [
-            "<a href='./'>返回首页</a>",
+            "<a href='./index.html'>返回首页</a>",
             "<a href='#overview-section'>总览</a>",
             "<a href='#strategy-section'>经营策略</a>",
             "<a href='#charts-section'>图表</a>",
@@ -4190,6 +4336,95 @@ def build_detail_html(metrics: dict) -> str:
       max-width: 1380px;
       margin: 0 auto;
       padding: 24px;
+    }}
+    .top-nav {{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin-bottom: 18px;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }}
+    .top-nav-links {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+    }}
+    .top-nav-link {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      text-decoration: none;
+    }}
+    .top-nav-link.is-active {{
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }}
+    .page-shell {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 18px;
+    }}
+    .main-column {{
+      min-width: 0;
+    }}
+    .side-rail {{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }}
+    .rail-card {{
+      position: sticky;
+      top: 88px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }}
+    .rail-card h3 {{
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #0f172a;
+    }}
+    .rail-card p {{
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #64748b;
+    }}
+    .rail-links {{
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }}
+    .rail-links a {{
+      display: block;
+      text-decoration: none;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }}
+    .rail-links a.current {{
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
     }}
     .hero {{
       background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
@@ -4885,6 +5120,16 @@ def build_detail_html(metrics: dict) -> str:
       .page {{
         padding: 16px;
       }}
+      .page-shell {{
+        grid-template-columns: 1fr;
+      }}
+      .rail-card {{
+        position: static;
+      }}
+      .rail-links {{
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }}
       .quick-nav {{
         position: sticky;
         top: 8px;
@@ -4924,6 +5169,12 @@ def build_detail_html(metrics: dict) -> str:
     @media (max-width: 640px) {{
       .page {{
         padding: 12px;
+      }}
+      .top-nav-links {{
+        width: 100%;
+      }}
+      .top-nav-link {{
+        width: 100%;
       }}
       .quick-nav {{
         flex-wrap: nowrap;
@@ -5003,6 +5254,9 @@ def build_detail_html(metrics: dict) -> str:
       .quick-nav a,
       .download-link {{
         font-size: 11px;
+      }}
+      .rail-links {{
+        grid-template-columns: 1fr;
       }}
       .detail-sidebar-card:last-child {{
         display: none;
@@ -5100,6 +5354,15 @@ def build_detail_html(metrics: dict) -> str:
 </head>
 <body>
   <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="./index.html">仪表盘</a>
+        <a class="top-nav-link is-active" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
     <section class="hero">
       <h1>{cards['store_name']} 详细经营页</h1>
       <p>这是长版详细页。总览和经营策略放在最上面，后面依次看图表、补货去化、会员店员和下载区，更适合复盘和细看。</p>
@@ -5110,6 +5373,8 @@ def build_detail_html(metrics: dict) -> str:
       </div>
     </section>
 
+    <div class="page-shell">
+      <div class="main-column">
     <nav class="quick-nav">{detail_quick_nav_html}</nav>
 
     <section class="module" id="overview-section">
@@ -5159,6 +5424,33 @@ def build_detail_html(metrics: dict) -> str:
       </div>
       {download_cards_html}
     </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>老板和店员在任何细节页里，都能从这里直接回到常用页面。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="./index.html">回仪表盘</a>
+            <a class="current" href="./details.html">当前详细页</a>
+            <a href="../manuals/index.html">进入文档中心</a>
+            <a href="../costs/index.html">进入成本维护台</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只是看某一块，直接在右边跳，不用回到顶部重新找。</p>
+          <div class="rail-links">
+            <a href="#overview-section">总览</a>
+            <a href="#strategy-section">经营策略</a>
+            <a href="#charts-section">图表</a>
+            <a href="#inventory-section">补货 / 去化</a>
+            <a href="#people-section">会员 / 店员</a>
+            <a href="#downloads-section">下载</a>
+          </div>
+        </section>
+      </aside>
+    </div>
   </div>
   <script>
     (function () {{
