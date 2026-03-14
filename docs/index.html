@@ -111,6 +111,59 @@
       padding: 20px;
       box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     }
+    .priority-section {
+      margin-top: 18px;
+      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+      border: 1px solid #fed7aa;
+    }
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .priority-card {
+      background: #ffffff;
+      border: 1px solid #fde68a;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);
+    }
+    .priority-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .priority-title {
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: #0f172a;
+    }
+    .priority-text {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .priority-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+    .priority-card button.priority-link {
+      border: 0;
+      cursor: pointer;
+    }
     .section h2 {
       margin: 0 0 8px;
       font-size: 22px;
@@ -337,6 +390,31 @@
       </div>
     </section>
 
+    <section class="section priority-section">
+      <h2>老板娘最常用 3 步</h2>
+      <p>如果今天只想做最常用的动作，优先点这 3 个，不需要先判断该从哪个页面进。</p>
+      <div class="priority-grid">
+        <article class="priority-card">
+          <div class="priority-label">第 1 步</div>
+          <h3 class="priority-title">先看仪表盘</h3>
+          <p class="priority-text">这是每天先看的页面，先看今日重点、库存风险和补货机会，再决定今天怎么安排。</p>
+          <a class="priority-link" href="./dashboard/index.html">直接进入仪表盘</a>
+        </article>
+        <article class="priority-card">
+          <div class="priority-label">第 2 步</div>
+          <h3 class="priority-title">再看详细页</h3>
+          <p class="priority-text">如果要看总览、经营策略、图表、补货去化和会员细节，就直接进详细页，不用在首页慢慢找。</p>
+          <a class="priority-link" href="./dashboard/details.html">直接进入详细页</a>
+        </article>
+        <article class="priority-card">
+          <div class="priority-label">第 3 步</div>
+          <h3 class="priority-title">最后一键同步</h3>
+          <p class="priority-text">如果店里电脑已经开了本地服务，就直接点同步，把最新报表和仪表盘一起刷新。</p>
+          <button class="priority-link btn-accent" type="button" id="refresh-dashboard-btn-priority">直接一键同步</button>
+        </article>
+      </div>
+    </section>
+
     <div class="page-shell">
       <div class="main-column">
     <section class="section local-console" id="local-console">
@@ -461,6 +539,7 @@
       const SERVICE_BASE = 'http://127.0.0.1:8765';
       const refreshButtons = [
         document.getElementById('refresh-dashboard-btn'),
+        document.getElementById('refresh-dashboard-btn-priority'),
         document.getElementById('refresh-dashboard-btn-secondary'),
       ].filter(Boolean);
       const checkButton = document.getElementById('check-local-service-btn');

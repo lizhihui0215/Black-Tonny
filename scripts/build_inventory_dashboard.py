@@ -3202,6 +3202,55 @@ def build_html(metrics: dict) -> str:
       font-weight: 700;
       line-height: 1.5;
     }}
+    .action-strip {{
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+      border: 1px solid #fed7aa;
+    }}
+    .action-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }}
+    .action-card {{
+      background: #ffffff;
+      border: 1px solid #fde68a;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);
+    }}
+    .action-kicker {{
+      font-size: 12px;
+      font-weight: 800;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }}
+    .action-title {{
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: #0f172a;
+    }}
+    .action-text {{
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }}
+    .action-link {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      background: #1d4ed8;
+      color: #ffffff;
+    }}
     .quick-nav {{
       display: flex;
       gap: 10px;
@@ -3638,6 +3687,33 @@ def build_html(metrics: dict) -> str:
       <div class="hero-status">
         <div class="hero-status-chip">最近抓取日期：{capture_date}（北京时间）</div>
         <div class="hero-status-chip">数据导入日期：{capture_date}（北京时间）</div>
+      </div>
+    </section>
+
+    <section class="module action-strip">
+      <div class="module-header">
+        <h2 class="module-title">老板娘最常用 3 步</h2>
+        <p class="module-note">如果今天只做最常用的动作，先点这 3 个，不用在模块里慢慢找。</p>
+      </div>
+      <div class="action-grid">
+        <article class="action-card">
+          <div class="action-kicker">第 1 步</div>
+          <h3 class="action-title">回首页</h3>
+          <p class="action-text">如果要重新选入口、打开文档中心，或者让别人从最清楚的地方开始，就先回首页。</p>
+          <a class="action-link" href="../index.html">直接回首页</a>
+        </article>
+        <article class="action-card">
+          <div class="action-kicker">第 2 步</div>
+          <h3 class="action-title">看详细页</h3>
+          <p class="action-text">如果你已经看完首页结论，下一步通常就是去详细页看总览、经营策略和补货去化明细。</p>
+          <a class="action-link" href="./details.html">直接看详细页</a>
+        </article>
+        <article class="action-card">
+          <div class="action-kicker">第 3 步</div>
+          <h3 class="action-title">一键同步</h3>
+          <p class="action-text">如果店里电脑已经开了本地服务，回首页同步区直接一键抓取，就能刷新今天最新报表。</p>
+          <a class="action-link" href="../index.html#local-console">去同步区</a>
+        </article>
       </div>
     </section>
 
@@ -4466,6 +4542,55 @@ def build_detail_html(metrics: dict) -> str:
       font-size: 12px;
       font-weight: 700;
       line-height: 1.5;
+    }}
+    .action-strip {{
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+      border: 1px solid #fed7aa;
+    }}
+    .action-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }}
+    .action-card {{
+      background: #ffffff;
+      border: 1px solid #fde68a;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);
+    }}
+    .action-kicker {{
+      font-size: 12px;
+      font-weight: 800;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }}
+    .action-title {{
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: #0f172a;
+    }}
+    .action-text {{
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }}
+    .action-link {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      background: #1d4ed8;
+      color: #ffffff;
     }}
     .quick-nav {{
       display: flex;
@@ -5370,6 +5495,33 @@ def build_detail_html(metrics: dict) -> str:
       <div class="hero-status">
         <div class="hero-status-chip">最近抓取日期：{capture_date}（北京时间）</div>
         <div class="hero-status-chip">数据导入日期：{capture_date}（北京时间）</div>
+      </div>
+    </section>
+
+    <section class="module action-strip">
+      <div class="module-header">
+        <h2 class="module-title">老板娘最常用 3 步</h2>
+        <p class="module-note">如果你已经在详细页里了，最常见的动作通常还是这 3 个。</p>
+      </div>
+      <div class="action-grid">
+        <article class="action-card">
+          <div class="action-kicker">第 1 步</div>
+          <h3 class="action-title">回仪表盘</h3>
+          <p class="action-text">如果只是想重新看今天结论和重点，不要在详细页里绕，直接回仪表盘首页最快。</p>
+          <a class="action-link" href="./index.html">直接回仪表盘</a>
+        </article>
+        <article class="action-card">
+          <div class="action-kicker">第 2 步</div>
+          <h3 class="action-title">回首页</h3>
+          <p class="action-text">如果要重新选入口、打开文档中心或交给别人从最简单的地方开始，就先回首页。</p>
+          <a class="action-link" href="../index.html">直接回首页</a>
+        </article>
+        <article class="action-card">
+          <div class="action-kicker">第 3 步</div>
+          <h3 class="action-title">一键同步</h3>
+          <p class="action-text">如果店里电脑已经开了本地服务，回首页同步区一键抓取，今天的数据会重新刷一遍。</p>
+          <a class="action-link" href="../index.html#local-console">去同步区</a>
+        </article>
       </div>
     </section>
 
