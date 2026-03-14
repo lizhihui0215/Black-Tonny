@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>内容、经营与数据看板下一步优化建议 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .toc-panel {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>内容、经营与数据看板下一步优化建议</h1>
+      <p>现在这套仓库已经有 3 条比较完整的主线：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">内容、经营与数据看板下一步优化建议</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">看板与数据</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-13</span><span class="meta-chip">适用对象：老板 / 老板娘、门店协作人员</span>
+      </div>
+    </section>
+
+    <div class="doc-layout" style="margin-top:22px;">
+      <article class="doc-article">
+        <h1 id="_1">内容、经营与数据看板下一步优化建议<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-13<br />
+适用对象：老板 / 老板娘、门店协作人员</p>
+<h2 id="_2">当前整体判断<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<p>现在这套仓库已经有 3 条比较完整的主线：</p>
+<ol>
+<li><code>内容增长线</code></li>
+<li><code>店铺经营线</code></li>
+<li><code>小团队管理线</code></li>
+</ol>
+<p>同时，库存销售看板工具也已经从“能出图”走到了“能给经营判断”的阶段。<br />
+下一步不建议再继续横向铺太多新主题，而是建议把重点收成：</p>
+<ol>
+<li>数据口径稳定</li>
+<li>周复盘固定</li>
+<li>角色执行落地</li>
+<li>季节经营决策固定</li>
+</ol>
+<h2 id="review">Review 结论<a class="headerlink" href="#review" title="Permanent link">¶</a></h2>
+<h3 id="_3">已经比较完整的部分<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<ol>
+<li>门店经营框架已经覆盖 <code>营业额、库存、进货、复购、会员、扩品</code></li>
+<li>小团队管理已经覆盖 <code>分工、排班、培训、检查、接待</code></li>
+<li>内容侧已经覆盖 <code>起号、老号优化、AI 协同</code></li>
+<li>数据工具已经能输出 <code>看板、摘要、分析报告、补货清单、去化清单</code></li>
+</ol>
+<h3 id="_4">当前最明显的缺口<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<ol>
+<li>
+<p><code>文档很多，但周度执行闭环还不够强</code>
+   现在方法很多，但还缺一份真正把 <code>内容、经营、库存、人员</code> 拉到一张周会表上的文档。</p>
+</li>
+<li>
+<p><code>数据口径已经开始形成，但还没有统一词典</code>
+   比如 <code>库存覆盖天数、连带、动销率、建议补货 SKU</code>，虽然看板里开始有解释，但还缺一份完整的数据口径词典。</p>
+</li>
+<li>
+<p><code>时间维度刚起步，还缺固定节点打法</code>
+   现在已经能按北京时间和季节给建议，但还没有做成 <code>月初 / 月中 / 月末 / 换季 / 节假日</code> 的固定经营动作库。</p>
+</li>
+<li>
+<p><code>角色化输出还不够</code>
+   老板、店员、导购、内容负责人看到的重点其实不一样，后面值得做“老板版 / 店员版”简版看板。</p>
+</li>
+</ol>
+<h2 id="_5">最推荐的下一步优化顺序<a class="headerlink" href="#_5" title="Permanent link">¶</a></h2>
+<h3 id="_6">第一优先级：把周复盘和周决策固定下来<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<p>建议新增：</p>
+<ul>
+<li><code>25-门店周经营会议包.md</code></li>
+</ul>
+<p>重点内容：</p>
+<ol>
+<li>本周营业额变化</li>
+<li>本周高压货品类</li>
+<li>本周优先补货清单</li>
+<li>本周优先去化清单</li>
+<li>本周会员回访动作</li>
+<li>下周陈列、补货、活动安排</li>
+</ol>
+<p>原因：</p>
+<p>现在最缺的不是再多一份策略，而是把已有策略固定成每周会开的动作。</p>
+<h3 id="_7">第二优先级：把数据口径统一成词典<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<p>建议新增：</p>
+<ul>
+<li><code>26-门店数据口径词典.md</code></li>
+</ul>
+<p>重点内容：</p>
+<ol>
+<li>经营销售额</li>
+<li>客单价</li>
+<li>连带</li>
+<li>库存覆盖天数</li>
+<li>负库存 SKU</li>
+<li>动销率</li>
+<li>高压货品类</li>
+<li>建议补货 SKU</li>
+<li>建议去化 SKU</li>
+</ol>
+<p>原因：</p>
+<p>只要这份词典固定下来，老板、员工、导购、做内容的人对同一组数字的理解就会一致。</p>
+<h3 id="_8">第三优先级：把季节动作做成固定模板<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
+<p>建议新增：</p>
+<ul>
+<li><code>27-门店季节经营动作表.md</code></li>
+</ul>
+<p>重点内容：</p>
+<ol>
+<li>春季怎么做换季</li>
+<li>夏季怎么保主销</li>
+<li>秋季怎么控尾货和预热冬季</li>
+<li>冬季怎么抓主销和做春季试水</li>
+<li>月初 / 月中 / 月末固定动作</li>
+<li>节假日和商场活动联动动作</li>
+</ol>
+<p>原因：</p>
+<p>你已经明确提出“按时间优化”，那下一步最值的是把时间打法固定下来，而不是每次临时判断。</p>
+<h3 id="_9">第四优先级：做角色化简版看板<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<p>建议新增：</p>
+<ul>
+<li><code>28-老板版与店员版看板说明.md</code></li>
+</ul>
+<p>重点内容：</p>
+<ol>
+<li>老板每天先看什么</li>
+<li>店员每天先看什么</li>
+<li>哪些数据只给老板看</li>
+<li>哪些动作店员可以当天执行</li>
+</ol>
+<p>原因：</p>
+<p>同一份看板内容完整是好事，但角色化简版更容易落地。</p>
+<h2 id="_10">数据看板下一步最值得升级的内容<a class="headerlink" href="#_10" title="Permanent link">¶</a></h2>
+<h3 id="1">1. 月初 / 月中 / 月末经营提示<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
+<p>让看板自动根据日期给不同提醒：</p>
+<ol>
+<li>月初：看目标和补货计划</li>
+<li>月中：看成交和去化是否偏离</li>
+<li>月末：看库存和会员回访收口</li>
+</ol>
+<h3 id="2">2. 节假日和商场节点提醒<a class="headerlink" href="#2" title="Permanent link">¶</a></h3>
+<p>后续可以加入：</p>
+<ol>
+<li>清明</li>
+<li>五一</li>
+<li>六一</li>
+<li>暑期</li>
+<li>开学季</li>
+<li>国庆</li>
+<li>双旦 / 春节前</li>
+</ol>
+<h3 id="3">3. 更适合非专业人员的“只看结果版”<a class="headerlink" href="#3" title="Permanent link">¶</a></h3>
+<p>建议后面加一层简版输出：</p>
+<ol>
+<li>今天先补什么</li>
+<li>今天先清什么</li>
+<li>今天先联系谁</li>
+<li>今天先纠正什么</li>
+</ol>
+<h2 id="_11">结论<a class="headerlink" href="#_11" title="Permanent link">¶</a></h2>
+<p>下一阶段不建议把仓库继续扩成更大的知识库。<br />
+最值得做的是把已经有的东西往“固定复盘、固定口径、固定时间动作、固定角色输出”去收。</p>
+<p>如果只选 3 件事，最推荐：</p>
+<ol>
+<li>做 <code>门店周经营会议包</code></li>
+<li>做 <code>门店数据口径词典</code></li>
+<li>做 <code>门店季节经营动作表</code></li>
+</ol>
+        <div class="doc-footer">
+          <div class="footer-card"><div class="label">上一篇</div><a href="23-全量历史数据导出与看板升级清单.html">全量历史数据导出与看板升级清单</a><p>看板与数据</p></div><div class="footer-card"><div class="label">下一篇</div><a href="25-GitHub Pages开启清单.html">GitHub Pages 开启清单</a><p>Pages 与发布</p></div><div class="footer-card"><div class="label">源文件</div><a href="../24-内容经营与数据看板下一步优化建议.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+        </div>
+        <div class="footer-note">
+          这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+        </div>
+      </article>
+      <aside class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">内容、经营与数据看板下一步优化建议</a><ul>
+<li><a href="#_2">当前整体判断</a></li>
+<li><a href="#review">Review 结论</a><ul>
+<li><a href="#_3">已经比较完整的部分</a></li>
+<li><a href="#_4">当前最明显的缺口</a></li>
+</ul>
+</li>
+<li><a href="#_5">最推荐的下一步优化顺序</a><ul>
+<li><a href="#_6">第一优先级：把周复盘和周决策固定下来</a></li>
+<li><a href="#_7">第二优先级：把数据口径统一成词典</a></li>
+<li><a href="#_8">第三优先级：把季节动作做成固定模板</a></li>
+<li><a href="#_9">第四优先级：做角色化简版看板</a></li>
+</ul>
+</li>
+<li><a href="#_10">数据看板下一步最值得升级的内容</a><ul>
+<li><a href="#1">1. 月初 / 月中 / 月末经营提示</a></li>
+<li><a href="#2">2. 节假日和商场节点提醒</a></li>
+<li><a href="#3">3. 更适合非专业人员的“只看结果版”</a></li>
+</ul>
+</li>
+<li><a href="#_11">结论</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside>
+    </div>
+  </div>
+</body>
+</html>

@@ -156,11 +156,12 @@
   <div class="page">
     <section class="hero">
       <h1>小黑托昵门店经营入口</h1>
-      <p>这是 GitHub Pages 的首页入口。老板和店员日常优先打开在线经营仪表盘；摘要、分析报告和 CSV 明细保留在下面，方便复盘和下载。</p>
+      <p>这是 GitHub Pages 的首页入口。老板和店员日常优先打开在线经营仪表盘；如果要系统阅读经营、库存、培训和执行手册，直接进入文档中心。</p>
       <div class="hero-actions">
         <a class="btn-primary" href="./dashboard/">进入在线经营仪表盘</a>
-        <a class="btn-secondary" href="./dashboard/summary.md">查看文字摘要</a>
-        <a class="btn-secondary" href="./dashboard/report.md">查看分析报告</a>
+        <a class="btn-secondary" href="./manuals/">进入文档中心</a>
+        <a class="btn-secondary" href="./manuals/dashboard/summary.html">查看文字摘要</a>
+        <a class="btn-secondary" href="./manuals/dashboard/report.html">查看分析报告</a>
       </div>
     </section>
 
@@ -193,7 +194,13 @@
           <div class="card-kicker">复盘版</div>
           <h3>分析报告</h3>
           <p>适合老板自己看或者周会讨论，包含经营判断、趋势和风险拆解。</p>
-          <a href="./dashboard/report.md">打开分析报告</a>
+          <a href="./manuals/dashboard/report.html">打开分析报告</a>
+        </article>
+        <article class="card">
+          <div class="card-kicker">手册版</div>
+          <h3>文档中心</h3>
+          <p>把 `docs/` 下的 Markdown 手册整理成了网页阅读版，适合老板、店员和协作人员直接在手机上看。</p>
+          <a href="./manuals/">打开文档中心</a>
         </article>
       </div>
     </section>
@@ -223,7 +230,7 @@
     </section>
 
     <div class="footer">
-      Pages 根目录建议使用 `docs/`。在线仪表盘固定入口是 `./dashboard/`。如果你在仓库里更新了数据，只要重新运行生成脚本并 push，老板访问的入口地址不需要更换。
+      Pages 根目录建议使用 `docs/`。在线仪表盘固定入口是 `./dashboard/`，文档中心入口是 `./manuals/`。如果你在仓库里更新了数据，只要重新运行生成脚本并 push，老板访问的入口地址不需要更换。
     </div>
   </div>
 </body>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵商场引流与营业额增长方法 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .toc-panel {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>小黑托昵商场引流与营业额增长方法</h1>
+      <p>适用场景说明：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵商场引流与营业额增长方法</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">引流与成交</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-12</span><span class="meta-chip">适用对象：商场店、儿童贴身棉品门店、1 个老板 / 老板娘 + 2 位员工</span>
+      </div>
+    </section>
+
+    <div class="doc-layout" style="margin-top:22px;">
+      <article class="doc-article">
+        <h1 id="_1">小黑托昵商场引流与营业额增长方法<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-12<br />
+适用对象：商场店、儿童贴身棉品门店、1 个老板 / 老板娘 + 2 位员工<br />
+适用场景说明：
+- 默认按 <code>西安西咸吾悦广场</code> 这类家庭消费明显、儿童业态存在的商场环境来理解
+- 不默认你有额外大预算
+- 不默认你能随意跨大类扩品，涉及商场限制的部分先按 <code>低冲突</code> 原则处理
+配套文档：
+- <code>docs/06-店铺经营基础框架.md</code>
+- <code>docs/12-门店接待话术SOP.md</code>
+- <code>docs/13-抖音到店承接SOP.md</code></p>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>商场门店怎么把现成客流变成进店和营业额</code>。</li>
+<li>重点不是做大活动，而是把：</li>
+<li>路过的人停下来</li>
+<li>停下来的人进店</li>
+<li>进店的人更容易成交</li>
+<li>成交的人顺手多带一类</li>
+</ul>
+<h2 id="1">1. 商场店引流的第一原则<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<p>在商场里，最有效的引流不是“凭空找流量”，而是先吃透商场已经存在的流量。</p>
+<p>对你们来说，先按这 4 条理解：</p>
+<ol>
+<li>商场客流已经有了，关键是 <code>有没有停</code></li>
+<li>停了不代表进店，关键是 <code>门口有没有明确价值</code></li>
+<li>进店不代表成交，关键是 <code>3 分钟内能不能帮顾客缩范围</code></li>
+<li>成交不代表营业额最大，关键是 <code>有没有顺手连带</code></li>
+</ol>
+<h2 id="2-6">2. 最有效的 6 种商场引流方法<a class="headerlink" href="#2-6" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 跟商场官方活动走<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>最值得做的不是自己单独办重活动，而是借商场现成活动流量。</p>
+<p>适合你们的动作：</p>
+<ol>
+<li>商场有亲子 / 少儿 / 会员活动时，门店同步做 <code>到店3分钟缩尺码 / 厚薄</code></li>
+<li>活动前 3 天，门口提前放清楚引导牌</li>
+<li>活动当天不拼大折扣，拼 <code>进店后能不能快速解决问题</code></li>
+</ol>
+<h3 id="22-3">2.2 把门口 3 米做成停留区<a class="headerlink" href="#22-3" title="Permanent link">¶</a></h3>
+<p>很多店流量差，不是没人路过，是没人停。</p>
+<p>门口固定建议做这 3 组东西：</p>
+<ol>
+<li><code>厚薄对比架</code>
+   两类或三类不同厚薄直接摆出来</li>
+<li><code>尺码提示牌</code>
+   写清 <code>很多宝妈买错不是不会买，是卡在尺码</code></li>
+<li><code>一句价值话术</code>
+   例如：<code>3分钟帮你把孩子厚薄和尺码先缩一轮</code></li>
+</ol>
+<h3 id="23">2.3 用低门槛引流品把人带进来<a class="headerlink" href="#23" title="Permanent link">¶</a></h3>
+<p>不是所有类目都适合做引流品。</p>
+<p>对你们更适合的低门槛引流品：</p>
+<ol>
+<li>袜品</li>
+<li>内裤</li>
+<li>基础打底</li>
+<li>单裤</li>
+</ol>
+<p>这些类目的作用不是赚最多，而是：</p>
+<ol>
+<li>更容易让顾客先停</li>
+<li>更容易顺手进店</li>
+<li>更容易带后面的秋衣秋裤、家居服</li>
+</ol>
+<h3 id="24">2.4 做同客群、低冲突异业联动<a class="headerlink" href="#24" title="Permanent link">¶</a></h3>
+<p>在商场里，最值得联动的不是“所有店”，而是同一批宝妈会去、但不直接抢你主类目的店。</p>
+<p>优先联动方向：</p>
+<ol>
+<li>儿童摄影</li>
+<li>儿童游乐</li>
+<li>少儿培训</li>
+<li>亲子手作</li>
+<li>家庭型餐饮</li>
+</ol>
+<p>联动动作先轻量化：</p>
+<ol>
+<li>互放小卡片</li>
+<li>联名到店小礼</li>
+<li>同一天同主题引流</li>
+</ol>
+<h3 id="25">2.5 做轻会员和企业微信承接<a class="headerlink" href="#25" title="Permanent link">¶</a></h3>
+<p>商场店最怕的不是今天没成交，而是所有路过流量都只发生一次。</p>
+<p>门店要做的不是复杂私域，而是轻承接：</p>
+<ol>
+<li>到店后留下孩子年龄段</li>
+<li>记住她主要看哪一类</li>
+<li>加 1 个门店微信</li>
+<li>后续只发有价值的提醒，不天天群发</li>
+</ol>
+<h3 id="26">2.6 用“场景 + 轻优惠”，不要只用优惠<a class="headerlink" href="#26" title="Permanent link">¶</a></h3>
+<p>真正能提高营业额的不是长期大折扣，而是：</p>
+<ol>
+<li>先给场景</li>
+<li>再给轻优惠</li>
+</ol>
+<p>适合你们的场景：</p>
+<ol>
+<li>换季</li>
+<li>开学</li>
+<li>早晚温差</li>
+<li>孩子爱出汗</li>
+<li>居家 / 通勤切换</li>
+</ol>
+<p>适合你们的轻优惠：</p>
+<ol>
+<li>第二件更合适价</li>
+<li>同类两件组合价</li>
+<li>低门槛到店礼</li>
+<li>会员顺手带一类更划算</li>
+</ol>
+<h2 id="3">3. 对儿童贴身棉品门店最有效的引流路径<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<p>优先路径建议按这个顺序跑：</p>
+<ol>
+<li><code>商场自然客流</code></li>
+<li><code>门口停留</code></li>
+<li><code>低门槛进店</code></li>
+<li><code>3分钟缩范围</code></li>
+<li><code>主品成交</code></li>
+<li><code>顺手连带</code></li>
+</ol>
+<p>一句话说：</p>
+<p>不是先想“怎么卖更多”，而是先想“怎么让顾客先愿意停 10 秒，再愿意进店 3 分钟”。</p>
+<h2 id="4-1-2">4. 1 个老板 + 2 位员工怎么配合引流<a class="headerlink" href="#4-1-2" title="Permanent link">¶</a></h2>
+<h3 id="41">4.1 老板 / 老板娘<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<p>主要负责：</p>
+<ol>
+<li>商场活动节点判断</li>
+<li>门口价值点设计</li>
+<li>重点顾客成交</li>
+<li>连带和组合逻辑</li>
+</ol>
+<h3 id="42-a">4.2 员工 A<a class="headerlink" href="#42-a" title="Permanent link">¶</a></h3>
+<p>主要负责：</p>
+<ol>
+<li>门口第一接触</li>
+<li>引导顾客进店</li>
+<li>低门槛问题承接</li>
+<li>把顾客带到正确类目</li>
+</ol>
+<h3 id="43-b">4.3 员工 B<a class="headerlink" href="#43-b" title="Permanent link">¶</a></h3>
+<p>主要负责：</p>
+<ol>
+<li>门口陈列维持</li>
+<li>补货和试穿区状态</li>
+<li>连带推荐补位</li>
+<li>现场记录哪种引流最有效</li>
+</ol>
+<h2 id="5">5. 每周最小引流动作<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<p>如果你现在不想搞复杂，先要求门店每周做到这 5 件事：</p>
+<ol>
+<li>每周做 1 次门口停留点更新</li>
+<li>每周选 1 类低门槛引流品做主推</li>
+<li>每周观察 1 次商场活动或中庭节点</li>
+<li>每周积累 1 个异业联动对象</li>
+<li>每周统计 1 次哪种引流动作最能进店</li>
+</ol>
+<h2 id="6">6. 什么方式不建议优先做<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<p>下面这些方式，不是完全不能做，而是现阶段优先级不高：</p>
+<ol>
+<li>长期大力度打折</li>
+<li>单纯发传单</li>
+<li>自己单独办重活动</li>
+<li>只做抖音投流，不做门口承接</li>
+<li>门口只写活动，不写顾客价值</li>
+</ol>
+<h2 id="7-3">7. 现在最值得先执行的 3 个动作<a class="headerlink" href="#7-3" title="Permanent link">¶</a></h2>
+<p>如果你今天就开始做，先做这 3 件：</p>
+<ol>
+<li>门口固定一组 <code>厚薄 / 尺码 / 场景</code> 停留点</li>
+<li>选 <code>袜品 / 内裤 / 基础打底</code> 做低门槛引流品</li>
+<li>每天统计一次：<code>路过停下多少人、进店多少人、成交多少人</code></li>
+</ol>
+<p>先把这 3 条跑顺，再去做更复杂的会员、异业和活动承接。</p>
+        <div class="doc-footer">
+          <div class="footer-card"><div class="label">上一篇</div><a href="13-抖音到店承接SOP.html">小黑托昵抖音到店承接SOP</a><p>引流与成交</p></div><div class="footer-card"><div class="label">下一篇</div><a href="15-门店营业额增长框架.html">小黑托昵门店营业额增长框架</a><p>引流与成交</p></div><div class="footer-card"><div class="label">源文件</div><a href="../14-商场引流与营业额增长方法.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+        </div>
+        <div class="footer-note">
+          这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+        </div>
+      </article>
+      <aside class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">小黑托昵商场引流与营业额增长方法</a><ul>
+<li><a href="#_2">使用说明</a></li>
+<li><a href="#1">1. 商场店引流的第一原则</a></li>
+<li><a href="#2-6">2. 最有效的 6 种商场引流方法</a><ul>
+<li><a href="#21">2.1 跟商场官方活动走</a></li>
+<li><a href="#22-3">2.2 把门口 3 米做成停留区</a></li>
+<li><a href="#23">2.3 用低门槛引流品把人带进来</a></li>
+<li><a href="#24">2.4 做同客群、低冲突异业联动</a></li>
+<li><a href="#25">2.5 做轻会员和企业微信承接</a></li>
+<li><a href="#26">2.6 用“场景 + 轻优惠”，不要只用优惠</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 对儿童贴身棉品门店最有效的引流路径</a></li>
+<li><a href="#4-1-2">4. 1 个老板 + 2 位员工怎么配合引流</a><ul>
+<li><a href="#41">4.1 老板 / 老板娘</a></li>
+<li><a href="#42-a">4.2 员工 A</a></li>
+<li><a href="#43-b">4.3 员工 B</a></li>
+</ul>
+</li>
+<li><a href="#5">5. 每周最小引流动作</a></li>
+<li><a href="#6">6. 什么方式不建议优先做</a></li>
+<li><a href="#7-3">7. 现在最值得先执行的 3 个动作</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside>
+    </div>
+  </div>
+</body>
+</html>

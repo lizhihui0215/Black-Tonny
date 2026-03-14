@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵门店营业额增长框架 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .toc-panel {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>小黑托昵门店营业额增长框架</h1>
+      <p>配套文档：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵门店营业额增长框架</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">引流与成交</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-12</span><span class="meta-chip">适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店</span>
+      </div>
+    </section>
+
+    <div class="doc-layout" style="margin-top:22px;">
+      <article class="doc-article">
+        <h1 id="_1">小黑托昵门店营业额增长框架<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-12<br />
+适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店<br />
+配套文档：
+- <code>docs/14-商场引流与营业额增长方法.md</code>
+- <code>docs/07-店铺日常经营复盘表.md</code>
+- <code>docs/11-员工日常检查清单.md</code></p>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>营业额到底怎么拆、怎么算、怎么提升</code>。</li>
+<li>目标不是做财务课，而是让门店知道：</li>
+<li>营业额是怎么来的</li>
+<li>该先拉哪个指标</li>
+<li>老板和员工分别该对哪部分结果负责</li>
+</ul>
+<h2 id="1">1. 营业额最核心的总公式<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<p>先记住这一条：</p>
+<p><code>营业额 = 进店人数 × 成交率 × 连带件数 × 平均件单价</code></p>
+<p>解释：</p>
+<ol>
+<li><code>进店人数</code>
+   真正走进店里看的人</li>
+<li><code>成交率</code>
+   进店后最后买单的人占比</li>
+<li><code>连带件数</code>
+   每单平均买几件</li>
+<li><code>平均件单价</code>
+   每件商品的平均销售价格</li>
+</ol>
+<p>这条公式的好处是：</p>
+<ul>
+<li>不会只盯营业额总数</li>
+<li>能直接看出是 <code>没人进店</code>，还是 <code>进店不成交</code></li>
+<li>能看出问题在引流、接待还是连带</li>
+</ul>
+<h2 id="2">2. 商场店再往前拆一层<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
+<p>如果你是在商场里，营业额最好再往前拆一层：</p>
+<p><code>营业额 = 路过人数 × 停留率 × 进店率 × 成交率 × 连带件数 × 平均件单价</code></p>
+<p>解释：</p>
+<ol>
+<li><code>路过人数</code>
+   门口经过的人</li>
+<li><code>停留率</code>
+   路过后愿意停下看的人比例</li>
+<li><code>进店率</code>
+   停下来后真正走进店的人比例</li>
+</ol>
+<p>这条式子能直接告诉你：</p>
+<ol>
+<li>是门口没价值，没人停</li>
+<li>还是停了但没人进</li>
+<li>还是进店了却没人买</li>
+</ol>
+<h2 id="3-4">3. 最值得优先拉的 4 个指标<a class="headerlink" href="#3-4" title="Permanent link">¶</a></h2>
+<p>如果资源有限，不要 6 个指标一起抓，优先顺序建议是：</p>
+<ol>
+<li><code>进店率</code>
+   最容易通过门口价值点和员工开口改善</li>
+<li><code>成交率</code>
+   最容易通过接待顺序和老板补位改善</li>
+<li><code>连带件数</code>
+   最容易通过搭配和顺手带一类改善</li>
+<li><code>平均件单价</code>
+   最后再优化，不建议一上来就靠提价</li>
+</ol>
+<h2 id="4">4. 每个指标具体怎么拉<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
+<h3 id="41">4.1 进店率怎么拉<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<p>动作优先级：</p>
+<ol>
+<li>门口 3 米停留点</li>
+<li>一句话价值说明</li>
+<li>低门槛引流品</li>
+<li>员工门口开口更自然</li>
+</ol>
+<h3 id="42">4.2 成交率怎么拉<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>动作优先级：</p>
+<ol>
+<li>顾客进店 1 分钟内有人接</li>
+<li>先缩范围，不先堆款</li>
+<li>老板接关键顾客</li>
+<li>尺码和厚薄先定，再选具体款</li>
+</ol>
+<h3 id="43">4.3 连带件数怎么拉<a class="headerlink" href="#43" title="Permanent link">¶</a></h3>
+<p>动作优先级：</p>
+<ol>
+<li>主品成交后顺手带一类</li>
+<li>同场景推荐，不乱带</li>
+<li>组合逻辑固定化</li>
+</ol>
+<p>适合你们的连带方向：</p>
+<ol>
+<li>秋衣秋裤 + 袜品</li>
+<li>家居服 + 基础打底</li>
+<li>内裤 + 袜品</li>
+</ol>
+<h3 id="44">4.4 平均件单价怎么拉<a class="headerlink" href="#44" title="Permanent link">¶</a></h3>
+<p>动作优先级：</p>
+<ol>
+<li>优化产品结构</li>
+<li>减少低价值无效折扣</li>
+<li>把更适合的类目先带出来</li>
+</ol>
+<h2 id="5-1-2">5. 1 个老板 + 2 位员工分别该对什么负责<a class="headerlink" href="#5-1-2" title="Permanent link">¶</a></h2>
+<h3 id="51">5.1 老板 / 老板娘<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>优先对这 3 个结果负责：</p>
+<ol>
+<li>成交率</li>
+<li>连带件数</li>
+<li>高价值顾客承接</li>
+</ol>
+<h3 id="52-a">5.2 员工 A<a class="headerlink" href="#52-a" title="Permanent link">¶</a></h3>
+<p>优先对这 2 个结果负责：</p>
+<ol>
+<li>停留率</li>
+<li>进店率</li>
+</ol>
+<h3 id="53-b">5.3 员工 B<a class="headerlink" href="#53-b" title="Permanent link">¶</a></h3>
+<p>优先对这 2 个结果负责：</p>
+<ol>
+<li>现场补位效率</li>
+<li>连带补位和记录</li>
+</ol>
+<h2 id="6">6. 每天最小营业额看板<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<p>每天至少记这 6 个数字：</p>
+<table>
+<thead>
+<tr>
+<th>日期</th>
+<th>路过人数</th>
+<th>进店人数</th>
+<th>成交人数</th>
+<th>连带件数</th>
+<th>营业额</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>例如 2026-03-12</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>如果暂时没法记完整，至少先记：</p>
+<ol>
+<li>进店人数</li>
+<li>成交人数</li>
+<li>营业额</li>
+<li>今天最常卖出的 2 类产品</li>
+</ol>
+<h2 id="7">7. 每周营业额复盘怎么做<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<p>每周只回答这 5 个问题：</p>
+<ol>
+<li>这周营业额主要靠什么拉起来</li>
+<li>是进店率更强，还是成交率更强</li>
+<li>哪类产品最容易顺手带单</li>
+<li>哪个时段最容易出营业额</li>
+<li>下周最该先拉哪个指标</li>
+</ol>
+<h2 id="8">8. 一套最实用的计算方法<a class="headerlink" href="#8" title="Permanent link">¶</a></h2>
+<p>对小团队门店，最实用的是这 4 条：</p>
+<h3 id="81">8.1 成交率<a class="headerlink" href="#81" title="Permanent link">¶</a></h3>
+<p><code>成交率 = 成交人数 ÷ 进店人数</code></p>
+<h3 id="82">8.2 连带件数<a class="headerlink" href="#82" title="Permanent link">¶</a></h3>
+<p><code>连带件数 = 销售总件数 ÷ 成交单数</code></p>
+<h3 id="83">8.3 平均件单价<a class="headerlink" href="#83" title="Permanent link">¶</a></h3>
+<p><code>平均件单价 = 营业额 ÷ 销售总件数</code></p>
+<h3 id="84">8.4 客单价<a class="headerlink" href="#84" title="Permanent link">¶</a></h3>
+<p><code>客单价 = 营业额 ÷ 成交单数</code></p>
+<p>这 4 条放一起看时：</p>
+<p><code>客单价 = 连带件数 × 平均件单价</code></p>
+<h2 id="9">9. 一个简单例子<a class="headerlink" href="#9" title="Permanent link">¶</a></h2>
+<p>如果某天：</p>
+<ol>
+<li>进店人数 = 20</li>
+<li>成交人数 = 8</li>
+<li>销售总件数 = 16</li>
+<li>营业额 = 1600</li>
+</ol>
+<p>那么：</p>
+<ol>
+<li><code>成交率 = 8 ÷ 20 = 40%</code></li>
+<li><code>连带件数 = 16 ÷ 8 = 2</code></li>
+<li><code>平均件单价 = 1600 ÷ 16 = 100</code></li>
+<li><code>客单价 = 1600 ÷ 8 = 200</code></li>
+</ol>
+<p>这时营业额增长的方向就很清楚：</p>
+<ul>
+<li>如果进店少，先拉进店率</li>
+<li>如果进店够但只成交 8 单，先拉成交率</li>
+<li>如果只能卖 1 件多，先拉连带</li>
+</ul>
+<h2 id="10-4">10. 当前最先执行的 4 件事<a class="headerlink" href="#10-4" title="Permanent link">¶</a></h2>
+<p>如果你今天就要开始管营业额，先只做这 4 条：</p>
+<ol>
+<li>每天记 <code>进店人数、成交人数、营业额</code></li>
+<li>每天算 <code>成交率</code></li>
+<li>每天看 <code>哪两类最容易连带</code></li>
+<li>每周只选 1 个指标重点拉</li>
+</ol>
+<p>先把这 4 条跑顺，营业额增长就会从“凭感觉”变成“有抓手”。</p>
+        <div class="doc-footer">
+          <div class="footer-card"><div class="label">上一篇</div><a href="14-商场引流与营业额增长方法.html">小黑托昵商场引流与营业额增长方法</a><p>引流与成交</p></div><div class="footer-card"><div class="label">下一篇</div><a href="16-库存预警与补货计算手册.html">小黑托昵库存预警与补货计算手册</a><p>库存与进货</p></div><div class="footer-card"><div class="label">源文件</div><a href="../15-门店营业额增长框架.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+        </div>
+        <div class="footer-note">
+          这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+        </div>
+      </article>
+      <aside class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">小黑托昵门店营业额增长框架</a><ul>
+<li><a href="#_2">使用说明</a></li>
+<li><a href="#1">1. 营业额最核心的总公式</a></li>
+<li><a href="#2">2. 商场店再往前拆一层</a></li>
+<li><a href="#3-4">3. 最值得优先拉的 4 个指标</a></li>
+<li><a href="#4">4. 每个指标具体怎么拉</a><ul>
+<li><a href="#41">4.1 进店率怎么拉</a></li>
+<li><a href="#42">4.2 成交率怎么拉</a></li>
+<li><a href="#43">4.3 连带件数怎么拉</a></li>
+<li><a href="#44">4.4 平均件单价怎么拉</a></li>
+</ul>
+</li>
+<li><a href="#5-1-2">5. 1 个老板 + 2 位员工分别该对什么负责</a><ul>
+<li><a href="#51">5.1 老板 / 老板娘</a></li>
+<li><a href="#52-a">5.2 员工 A</a></li>
+<li><a href="#53-b">5.3 员工 B</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 每天最小营业额看板</a></li>
+<li><a href="#7">7. 每周营业额复盘怎么做</a></li>
+<li><a href="#8">8. 一套最实用的计算方法</a><ul>
+<li><a href="#81">8.1 成交率</a></li>
+<li><a href="#82">8.2 连带件数</a></li>
+<li><a href="#83">8.3 平均件单价</a></li>
+<li><a href="#84">8.4 客单价</a></li>
+</ul>
+</li>
+<li><a href="#9">9. 一个简单例子</a></li>
+<li><a href="#10-4">10. 当前最先执行的 4 件事</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside>
+    </div>
+  </div>
+</body>
+</html>

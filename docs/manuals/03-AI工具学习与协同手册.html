@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵 AI 工具学习与协同手册 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .toc-panel {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>小黑托昵 AI 工具学习与协同手册</h1>
+      <p>默认推荐组合：`Kimi + 即梦AI + 剪映手机版`</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵 AI 工具学习与协同手册</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">内容增长线</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-11</span><span class="meta-chip">适用对象：门店老板娘本人出镜、手机为主、目标是同城到店成交</span>
+      </div>
+    </section>
+
+    <div class="doc-layout" style="margin-top:22px;">
+      <article class="doc-article">
+        <h1 id="ai">小黑托昵 AI 工具学习与协同手册<a class="headerlink" href="#ai" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-11<br />
+适用对象：门店老板娘本人出镜、手机为主、目标是同城到店成交<br />
+默认推荐组合：<code>Kimi + 即梦AI + 剪映手机版</code></p>
+<h2 id="_1">使用说明<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份手册不是泛泛推荐 AI 软件，而是给你一套能直接上手的 <code>工具组合 + 学习路径 + 协同流程</code>。</li>
+<li>当前默认你不需要最复杂的团队化流程，而是先把 <code>老号低流量重整</code> 跑顺。</li>
+<li>所以这套方案优先考虑：</li>
+<li>中文使用顺手</li>
+<li>手机工作流友好</li>
+<li>能直接服务短视频日更</li>
+<li>学习成本可控</li>
+</ul>
+<h2 id="1-3">1. 为什么当前最推荐这 3 个工具<a class="headerlink" href="#1-3" title="Permanent link">¶</a></h2>
+<h3 id="11">1.1 推荐组合<a class="headerlink" href="#11" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>Kimi</code></li>
+<li><code>即梦AI</code></li>
+<li><code>剪映手机版</code></li>
+</ol>
+<h3 id="12">1.2 分工逻辑<a class="headerlink" href="#12" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>主要负责</th>
+<th>你什么时候用它</th>
+<th>不能让它替你做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kimi</td>
+<td>选题、脚本、直播提纲、评论归类、复盘表</td>
+<td>开拍前、发完后、每周复盘时</td>
+<td>不能替你提供真实门店经验</td>
+</tr>
+<tr>
+<td>即梦AI</td>
+<td>封面灵感、直播预告图、统一视觉参考</td>
+<td>拍之前或发之前</td>
+<td>不能替代真实门店和真人出镜</td>
+</tr>
+<tr>
+<td>剪映手机版</td>
+<td>剪辑、字幕、封面、简单提词、一键成片</td>
+<td>拍完立刻用</td>
+<td>不能替你决定内容方向</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13">1.3 为什么不建议你现在学更多<a class="headerlink" href="#13" title="Permanent link">¶</a></h3>
+<ul>
+<li>你当前的问题不是“工具太少”，而是“内容、主页和承接没有形成稳定系统”。</li>
+<li>所以现在最重要的是：</li>
+<li>先学会用 <code>Kimi</code> 想清楚拍什么</li>
+<li>再学会用 <code>剪映</code> 快速出片</li>
+<li>最后用 <code>即梦AI</code> 统一封面和视觉</li>
+<li>现在不建议把主要精力放在：</li>
+<li>AI 数字人</li>
+<li>AI 分身频繁代替真人出镜</li>
+<li>复杂桌面剪辑软件</li>
+<li>太多工具来回切换</li>
+</ul>
+<h3 id="14">1.4 哪些工具值得优先付费<a class="headerlink" href="#14" title="Permanent link">¶</a></h3>
+<p>当前更推荐的付费顺序是：</p>
+<ol>
+<li><code>先买剪映</code></li>
+<li><code>再买 Kimi</code></li>
+<li><code>即梦AI 先免费用</code></li>
+<li><code>豆包 暂时不列入优先付费</code></li>
+</ol>
+<p>判断原则：</p>
+<ul>
+<li>离成片越近，越值得先付费</li>
+<li>越能每天使用，越值得先付费</li>
+<li>越能直接提升 <code>选题效率 + 出片效率</code>，越值得先付费</li>
+</ul>
+<h3 id="15">1.5 付费优先级与理由<a class="headerlink" href="#15" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>是否建议优先付费</th>
+<th>原因</th>
+<th>当前建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>剪映手机版</td>
+<td>是，优先级最高</td>
+<td>每天都用，直接影响剪辑、字幕、封面、导出效率</td>
+<td>最先买</td>
+</tr>
+<tr>
+<td>Kimi</td>
+<td>是，第二优先级</td>
+<td>直接提升选题、脚本、评论整理和复盘效率</td>
+<td>剪映之后买</td>
+</tr>
+<tr>
+<td>即梦AI</td>
+<td>可后置付费</td>
+<td>主要是封面灵感和直播预告，当前属于加分项</td>
+<td>先免费用</td>
+</tr>
+<tr>
+<td>豆包</td>
+<td>当前不建议优先付费</td>
+<td>现阶段不是你这套工作流里的刚需核心位</td>
+<td>暂时不买</td>
+</tr>
+</tbody>
+</table>
+<h3 id="16">1.6 买完立刻怎么用<a class="headerlink" href="#16" title="Permanent link">¶</a></h3>
+<h4 id="_2">剪映买完当天<a class="headerlink" href="#_2" title="Permanent link">¶</a></h4>
+<p>当天只做 1 件事：</p>
+<ul>
+<li>剪出 1 条 20-35 秒完整视频</li>
+</ul>
+<p>只练这 4 个点：</p>
+<ol>
+<li>自动字幕</li>
+<li>手改字幕</li>
+<li>统一封面</li>
+<li>导出成片</li>
+</ol>
+<h4 id="kimi">Kimi 买完当天<a class="headerlink" href="#kimi" title="Permanent link">¶</a></h4>
+<p>当天只做 3 件事：</p>
+<ol>
+<li>让它给你 <code>3 个今天可拍的选题</code></li>
+<li>让它写 <code>1 条完整脚本</code></li>
+<li>把昨天评论丢进去，让它整理出 <code>明天最该拍什么</code></li>
+</ol>
+<h4 id="ai_1">即梦AI 免费阶段<a class="headerlink" href="#ai_1" title="Permanent link">¶</a></h4>
+<p>暂时只做：</p>
+<ol>
+<li>1 张封面灵感图</li>
+<li>1 张直播预告图</li>
+</ol>
+<p>不要一开始就拿即梦AI做复杂视频生成。<br />
+现阶段它的主要价值是 <code>统一视觉方向</code>，不是替你生产主内容。</p>
+<h2 id="2-3">2. 这 3 个工具之间到底怎么配合<a class="headerlink" href="#2-3" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 每天的标准协同流程<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>每天按这个顺序走：</p>
+<ol>
+<li><code>Kimi</code> 定今天拍什么</li>
+<li>你在门店真实拍摄</li>
+<li><code>剪映</code> 把素材剪成短视频</li>
+<li><code>即梦AI</code> 只补封面灵感或直播预告图</li>
+<li>发完后把评论丢回 <code>Kimi</code> 做整理</li>
+</ol>
+<h3 id="22">2.2 最小闭环<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<h4 id="kimi_1">第一步：Kimi 负责“想清楚”<a class="headerlink" href="#kimi_1" title="Permanent link">¶</a></h4>
+<p>你先让它给你：</p>
+<ul>
+<li>3 个可拍选题</li>
+<li>1 条最推荐脚本</li>
+<li>镜头顺序</li>
+<li>结尾 CTA</li>
+</ul>
+<p>你不需要一开始就让它写很长。<br />
+你需要的是：<code>够短、够口语、够像老板娘在店里说的话。</code></p>
+<h4 id="_3">第二步：你本人真实拍<a class="headerlink" href="#_3" title="Permanent link">¶</a></h4>
+<ul>
+<li>按脚本拍 5-8 段镜头</li>
+<li>真实门店、真实货架、真实实物、真实口播</li>
+<li>不让 AI 替代核心内容</li>
+</ul>
+<h4 id="_4">第三步：剪映负责“快速成片”<a class="headerlink" href="#_4" title="Permanent link">¶</a></h4>
+<ul>
+<li>剪停顿</li>
+<li>上字幕</li>
+<li>补封面</li>
+<li>保留真实门店感</li>
+</ul>
+<h4 id="ai_2">第四步：即梦AI负责“统一视觉”<a class="headerlink" href="#ai_2" title="Permanent link">¶</a></h4>
+<ul>
+<li>不拿它生成整条视频</li>
+<li>只拿它做：</li>
+<li>封面参考图</li>
+<li>直播预告图</li>
+<li>系列栏目风格草图</li>
+</ul>
+<h4 id="kimi_2">第五步：Kimi负责“收评论、做复盘”<a class="headerlink" href="#kimi_2" title="Permanent link">¶</a></h4>
+<ul>
+<li>把评论区问题分成：</li>
+<li>地址</li>
+<li>尺码 / 年龄段</li>
+<li>最近适不适合来</li>
+<li>其他</li>
+<li>再告诉你明天最值得继续拍什么</li>
+</ul>
+<h3 id="23">2.3 一句话记忆法<a class="headerlink" href="#23" title="Permanent link">¶</a></h3>
+<ul>
+<li><code>Kimi 想内容</code></li>
+<li><code>你拍真实</code></li>
+<li><code>剪映出成片</code></li>
+<li><code>即梦做视觉</code></li>
+<li><code>Kimi 再复盘</code></li>
+</ul>
+<h2 id="3">3. 工具学习优先级<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<h3 id="31">3.1 先学什么<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
+<p>先学顺序固定为：</p>
+<ol>
+<li><code>Kimi</code></li>
+<li><code>剪映手机版</code></li>
+<li><code>即梦AI</code></li>
+</ol>
+<p>原因：</p>
+<ul>
+<li>先不会选题和脚本，拍得再漂亮也没用</li>
+<li>先不会快速剪辑，日更就很容易断</li>
+<li>视觉统一是加分项，不是第一优先级</li>
+</ul>
+<h3 id="32">3.2 每个工具的学习目标<a class="headerlink" href="#32" title="Permanent link">¶</a></h3>
+<h4 id="kimi_3">Kimi 学到什么算过关<a class="headerlink" href="#kimi_3" title="Permanent link">¶</a></h4>
+<ul>
+<li>能稳定生成 20-30 秒短视频脚本</li>
+<li>能把一句大白话改成更顺的口播</li>
+<li>能把评论区问题整理成次日选题</li>
+<li>能帮你做每周复盘表</li>
+</ul>
+<h4 id="_5">剪映学到什么算过关<a class="headerlink" href="#_5" title="Permanent link">¶</a></h4>
+<ul>
+<li>能独立剪一条 20-35 秒视频</li>
+<li>能自动字幕后快速手改</li>
+<li>能做统一风格封面</li>
+<li>能从直播里剪 1-2 条切片</li>
+</ul>
+<h4 id="ai_3">即梦AI 学到什么算过关<a class="headerlink" href="#ai_3" title="Permanent link">¶</a></h4>
+<ul>
+<li>能做门店风格封面灵感图</li>
+<li>能做直播预告图</li>
+<li>能把风格控制在“真实、生活化、干净”，不跑成广告片</li>
+</ul>
+<h2 id="4-14">4. 14 天学习路径<a class="headerlink" href="#4-14" title="Permanent link">¶</a></h2>
+<h2 id="day-1-4-kimi">Day 1-4：先学 Kimi<a class="headerlink" href="#day-1-4-kimi" title="Permanent link">¶</a></h2>
+<h3 id="day-1-1-3">Day 1：只学 1 件事，产出 3 个选题<a class="headerlink" href="#day-1-1-3" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>注册并熟悉 Kimi 基础界面</li>
+<li>学会给 Kimi 一个完整任务背景</li>
+<li>让 Kimi 给你 3 个可拍选题</li>
+</ul>
+<p>练习任务：</p>
+<pre><code class="language-text">你现在是[城市]小黑托昵老板娘的短视频助手。账号目标是同城到店成交，人设是“替宝妈先把儿童贴身棉品筛一遍的老板娘”。请给我今天能在门店拍的3个短视频选题，每个都要围绕宝妈决策，优先落在内裤、背心、秋衣秋裤、家居服、袜品这 5 类上，不要写成品牌宣传，不要写成泛童装内容。
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>你能看懂它给的 3 个选题</li>
+<li>你能选出 1 个最适合今天拍的</li>
+</ul>
+<h3 id="day-2-kimi-1">Day 2：学会让 Kimi 出 1 条完整脚本<a class="headerlink" href="#day-2-kimi-1" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>给 Kimi 一个题目</li>
+<li>让它输出 <code>开头 + 镜头顺序 + 口播 + CTA</code></li>
+</ul>
+<p>练习任务：</p>
+<pre><code class="language-text">请把“换季别先给孩子买最厚的”写成1条20-30秒门店短视频脚本，包含前3秒钩子、门店镜头顺序、老板娘口播、最后一句评论引导。要求口语化，像老板娘在店里真实讲话，不要绝对化承诺。
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>你能拿着它的脚本直接开拍</li>
+<li>你能删掉多余句子，把脚本压到 20-30 秒</li>
+</ul>
+<h3 id="day-3-kimi-ai">Day 3：学会让 Kimi 改口播，不让它写“AI腔”<a class="headerlink" href="#day-3-kimi-ai" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>学会把太书面的内容改成门店口语</li>
+</ul>
+<p>练习任务：</p>
+<pre><code class="language-text">下面这段口播太像方案稿，不像门店老板娘讲话。请改成真实、自然、短句、口语化的说法，每句不要太长，要像我站在货架前直接说出来的感觉。
+[把你的原口播贴进去]
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>你能分辨什么叫“AI腔”</li>
+<li>你能让它改成你愿意说出口的话</li>
+</ul>
+<h3 id="day-4-kimi">Day 4：学会让 Kimi 做复盘和选题延续<a class="headerlink" href="#day-4-kimi" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>把评论区问题重新变成第二天选题</li>
+</ul>
+<p>练习任务：</p>
+<pre><code class="language-text">请把下面这些评论，分成“地址”“尺码/年龄段”“最近适不适合来店”“其他”四类，并告诉我明天最应该继续拍的两个选题方向。优先保留能带来咨询的问题。
+[把评论贴进去]
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>你能从评论里看出真实意向问题</li>
+<li>你能知道第二天拍什么不是凭感觉</li>
+</ul>
+<h2 id="day-5-9">Day 5-9：重点学剪映手机版<a class="headerlink" href="#day-5-9" title="Permanent link">¶</a></h2>
+<h3 id="day-5">Day 5：只学最小剪辑流程<a class="headerlink" href="#day-5" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>从手机素材剪出 1 条完整视频</li>
+</ul>
+<p>只练这 5 步：</p>
+<ol>
+<li>导入素材</li>
+<li>删除停顿和口误</li>
+<li>调整镜头顺序</li>
+<li>自动字幕</li>
+<li>导出视频</li>
+</ol>
+<p>当天标准：</p>
+<ul>
+<li>不追求花哨效果</li>
+<li>先做到能快速出片</li>
+</ul>
+<h3 id="day-6">Day 6：学字幕和节奏<a class="headerlink" href="#day-6" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>让字幕不出错</li>
+<li>让视频节奏更紧</li>
+</ul>
+<p>练习重点：</p>
+<ul>
+<li>自动字幕后手改 1 遍</li>
+<li>把废话、停顿、重复句都剪掉</li>
+<li>前 3 秒一定保留问题句</li>
+</ul>
+<p>当天标准：</p>
+<ul>
+<li>20-35 秒内讲清一个问题</li>
+<li>字幕基本不影响理解</li>
+</ul>
+<h3 id="day-7">Day 7：学封面统一<a class="headerlink" href="#day-7" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>做出统一风格的封面</li>
+</ul>
+<p>封面固定规则：</p>
+<ul>
+<li>只做 3 类标题：</li>
+<li><code>换季怎么选</code></li>
+<li><code>尺码怎么判断</code></li>
+<li><code>来店能解决什么</code></li>
+<li>画面优先：</li>
+<li>老板娘</li>
+<li>实物对比</li>
+<li>门店真实场景</li>
+</ul>
+<p>当天标准：</p>
+<ul>
+<li>最近 3 条视频封面一眼能看出是一套</li>
+</ul>
+<h3 id="day-8-1">Day 8：学 1 条直播切片<a class="headerlink" href="#day-8-1" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>从长素材里剪出短视频</li>
+</ul>
+<p>练习任务：</p>
+<ul>
+<li>从一段较长口播或直播片段中，截出一个完整问答</li>
+<li>保留：</li>
+<li>问题</li>
+<li>实物</li>
+<li>结论</li>
+<li>CTA</li>
+</ul>
+<p>当天标准：</p>
+<ul>
+<li>你能把“长话”剪成“可发的短内容”</li>
+</ul>
+<h3 id="day-9">Day 9：做一条从脚本到成片的完整练习<a class="headerlink" href="#day-9" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>第一次把 <code>Kimi + 你拍 + 剪映</code> 串起来</li>
+</ul>
+<p>执行顺序：</p>
+<ol>
+<li>Kimi 出脚本</li>
+<li>你拍</li>
+<li>剪映剪</li>
+<li>发出去</li>
+</ol>
+<p>当天标准：</p>
+<ul>
+<li>你知道流程已经跑通</li>
+<li>哪怕不完美，也能完整执行一轮</li>
+</ul>
+<h2 id="day-10-12ai">Day 10-12：加入即梦AI，统一视觉<a class="headerlink" href="#day-10-12ai" title="Permanent link">¶</a></h2>
+<h3 id="day-10">Day 10：学会做封面灵感图<a class="headerlink" href="#day-10" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>用即梦AI生成 3 张门店风格封面参考图</li>
+</ul>
+<p>练习提示词：</p>
+<pre><code class="language-text">请生成一张抖音短视频封面灵感图，场景是中国城市儿童贴身棉品门店，真实货架背景，老板娘手里拿着两件不同厚薄的儿童秋衣或家居服，整体气质真实、生活化、干净，不要广告大片感，不要奢侈风，不要夸张灯光，预留中文标题空间。
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>你能区分“适合门店”与“太广告”的画面</li>
+</ul>
+<h3 id="day-11">Day 11：学会做直播预告图<a class="headerlink" href="#day-11" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>为直播做一张统一风格预告图</li>
+</ul>
+<p>练习提示词：</p>
+<pre><code class="language-text">请生成一张直播预告图灵感，主题是“老板娘聊儿童贴身棉品怎么选”，场景是温暖真实的儿童贴身棉品门店，画面留出上方标题位置，风格真实、接地气、适合同城门店，不要夸张营销感。
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>预告图一眼看得出是门店账号，不像海报模板</li>
+</ul>
+<h3 id="day-12">Day 12：建立你自己的视觉模板<a class="headerlink" href="#day-12" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>固定 2-3 套最适合你的封面样式</li>
+</ul>
+<p>最终保留：</p>
+<ol>
+<li><code>老板娘 + 问题句</code></li>
+<li><code>实物对比 + 结论句</code></li>
+<li><code>门店场景 + 来店理由</code></li>
+</ol>
+<p>当天标准：</p>
+<ul>
+<li>以后封面不需要从 0 想</li>
+<li>只在固定样式里换标题</li>
+</ul>
+<h2 id="day-13-14">Day 13-14：做完整协同和复盘<a class="headerlink" href="#day-13-14" title="Permanent link">¶</a></h2>
+<h3 id="day-13-">Day 13：完整跑一条“脚本-拍摄-剪辑-封面-发布”<a class="headerlink" href="#day-13-" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>把三工具真正连起来</li>
+</ul>
+<p>执行顺序：</p>
+<ol>
+<li>Kimi 出 3 个选题</li>
+<li>你选 1 条</li>
+<li>Kimi 出完整脚本</li>
+<li>你在门店拍</li>
+<li>剪映剪片</li>
+<li>即梦AI给封面灵感</li>
+<li>发出视频</li>
+</ol>
+<p>当天标准：</p>
+<ul>
+<li>不求复杂，只求完整</li>
+</ul>
+<h3 id="day-14-ai">Day 14：第一次做 AI 辅助复盘<a class="headerlink" href="#day-14-ai" title="Permanent link">¶</a></h3>
+<p>当天目标：</p>
+<ul>
+<li>学会把 <code>评论 + 私信 + 视频表现</code> 再喂回 Kimi</li>
+</ul>
+<p>练习任务：</p>
+<pre><code class="language-text">请根据这条视频的评论和私信，告诉我：
+1. 哪类问题最强购买意向
+2. 我下一条最该继续拍什么
+3. 哪句话最值得保留成系列开场
+[把评论和私信内容贴进去]
+</code></pre>
+<p>当天标准：</p>
+<ul>
+<li>你不再只是“发完看一眼”</li>
+<li>你开始让 AI 帮你沉淀方法</li>
+</ul>
+<h2 id="5">5. 你最常用的提示词模板<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<h3 id="51-kimi">5.1 Kimi 选题模板<a class="headerlink" href="#51-kimi" title="Permanent link">¶</a></h3>
+<pre><code class="language-text">你现在是[城市]小黑托昵老板娘的内容策划助手。账号目标是同城到店成交，人设是“替宝妈筛选儿童贴身棉品的老板娘”。请给我今天能在门店拍的3个短视频选题，每个都要包含：适合拍的门店场景、前3秒钩子、核心结论、结尾评论引导，优先落在内裤、背心、秋衣秋裤、家居服、袜品这 5 类上。不要写成品牌宣传，不要写成泛童装内容。
+</code></pre>
+<h3 id="52-kimi">5.2 Kimi 脚本模板<a class="headerlink" href="#52-kimi" title="Permanent link">¶</a></h3>
+<pre><code class="language-text">请把这个选题写成1条20-30秒短视频脚本，必须包含：
+1. 前3秒问题开场
+2. 门店镜头顺序
+3. 老板娘口播
+4. 一句话结论
+5. 评论区或私信CTA
+要求：口语化、短句、像门店老板娘站在货架前直接说出来，不要绝对化承诺。
+选题是：[填你的题目]
+</code></pre>
+<h3 id="53-kimi">5.3 Kimi 改口播模板<a class="headerlink" href="#53-kimi" title="Permanent link">¶</a></h3>
+<pre><code class="language-text">把下面这段话改成更像门店老板娘口播的版本。要求：更短、更自然、更生活化，删掉书面表达，保留“怎么帮宝妈选”的核心逻辑。
+[贴原文]
+</code></pre>
+<h3 id="54-kimi">5.4 Kimi 复盘模板<a class="headerlink" href="#54-kimi" title="Permanent link">¶</a></h3>
+<pre><code class="language-text">请把下面这些评论和私信，整理成：
+1. 地址问题
+2. 尺码/年龄段问题
+3. 最近适不适合来店
+4. 其他
+然后告诉我：
+- 明天最该继续拍什么
+- 哪种开场最值得继续放大
+- 哪类内容该停掉
+[贴评论和私信]
+</code></pre>
+<h3 id="55-ai">5.5 即梦AI 封面模板<a class="headerlink" href="#55-ai" title="Permanent link">¶</a></h3>
+<pre><code class="language-text">请生成一张抖音短视频封面灵感图，主题是“儿童贴身棉品怎么选”，中国城市门店环境，真实货架背景，老板娘真实感形象，整体生活化、干净、有亲和力，预留中文标题位置，不要广告大片感，不要奢侈风，不要夸张灯光。
+</code></pre>
+<h3 id="56-ai">5.6 即梦AI 直播预告模板<a class="headerlink" href="#56-ai" title="Permanent link">¶</a></h3>
+<pre><code class="language-text">请生成一张门店直播预告图灵感，主题是“老板娘聊换季厚薄怎么选 / 尺码怎么缩 / 最近适不适合来店”，风格真实、接地气、适合同城门店，画面要有儿童贴身棉品货架元素，留标题空间。
+</code></pre>
+<h2 id="6">6. 什么时候该用哪个工具<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<h3 id="_6">开拍前<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<ul>
+<li>想题：<code>Kimi</code></li>
+<li>改标题：<code>Kimi</code></li>
+<li>想封面方向：<code>即梦AI</code></li>
+</ul>
+<h3 id="_7">拍摄中<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<ul>
+<li>不开太多工具</li>
+<li>你只管按脚本真实拍</li>
+</ul>
+<h3 id="_8">拍完后<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
+<ul>
+<li>剪辑：<code>剪映</code></li>
+<li>字幕：<code>剪映</code></li>
+<li>封面：<code>剪映 + 即梦AI参考</code></li>
+</ul>
+<h3 id="_9">发完后<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<ul>
+<li>评论归类：<code>Kimi</code></li>
+<li>明天选题：<code>Kimi</code></li>
+</ul>
+<h2 id="7-7">7. 现阶段不要踩的 7 个坑<a class="headerlink" href="#7-7" title="Permanent link">¶</a></h2>
+<ol>
+<li>刚学工具就想做很复杂的 AI 内容</li>
+<li>还没拍稳就到处换工具</li>
+<li>让 AI 写很长很假的口播</li>
+<li>用 AI 图替代真实门店场景</li>
+<li>剪映模板用太重，视频越来越像平台套版</li>
+<li>不复盘评论，只看播放量</li>
+<li>以为工具多就一定能把账号做起来</li>
+</ol>
+<h2 id="8-14">8. 14 天之后的升级路线<a class="headerlink" href="#8-14" title="Permanent link">¶</a></h2>
+<h3 id="14_1">如果 14 天后已经跑顺<a class="headerlink" href="#14_1" title="Permanent link">¶</a></h3>
+<p>你再升级下面 2 件事：</p>
+<ol>
+<li>用 <code>Kimi</code> 做每周复盘表和系列选题表</li>
+<li>用 <code>剪映</code> 固定 2-3 套工程模板</li>
+</ol>
+<h3 id="14_2">如果 14 天后还没跑顺<a class="headerlink" href="#14_2" title="Permanent link">¶</a></h3>
+<p>不要急着学新工具。<br />
+先回头检查：</p>
+<ul>
+<li>选题是不是还不够收窄</li>
+<li>脚本是不是还太像 AI 写的</li>
+<li>前 3 秒是不是没有问题感</li>
+<li>评论区是不是没有主动承接</li>
+</ul>
+<h2 id="_10">参考来源<a class="headerlink" href="#_10" title="Permanent link">¶</a></h2>
+<p>以下能力描述、会员入口判断和学习安排参考的是 2026-03-11 可见的官方公开页。具体价格和包月金额以各工具购买页当天显示为准：</p>
+<ul>
+<li><a href="https://www.kimi.com/features">Kimi Features</a></li>
+<li><a href="https://www.kimi.com/features/docs">Kimi Docs</a></li>
+<li><a href="https://www.kimi.com/features/sheets">Kimi Sheets</a></li>
+<li><a href="https://www.kimi.com/code/docs/benefits.html">Kimi Code 会员权益说明</a></li>
+<li><a href="https://jimeng.jianying.com/">即梦AI</a></li>
+<li><a href="https://jimeng.jianying.com/features/resource/ai-generated-profile-picture">即梦AI 资源页：免费上手示例</a></li>
+<li><a href="https://jimeng.jianying.com/features/resource/photos-into-art">即梦AI 资源页：积分与 Pro 计划示例</a></li>
+<li><a href="https://www.jianying.com/web">剪映</a></li>
+<li><a href="https://www.jianying.com/zh-hans/">剪映网页版</a></li>
+<li><a href="https://www.doubao.com/legal/feature_intro">豆包功能介绍</a></li>
+<li><a href="https://www.doubao.com/legal/ai_space">豆包云盘使用须知</a></li>
+<li><a href="https://yuanbao.tencent.com/AI">腾讯元宝</a></li>
+</ul>
+        <div class="doc-footer">
+          <div class="footer-card"><div class="label">上一篇</div><a href="02-抖音老号低流量优化手册.html">小黑托昵抖音老号低流量优化手册</a><p>内容增长线</p></div><div class="footer-card"><div class="label">下一篇</div><a href="04-项目推进路线图.html">小黑托昵项目推进路线图（未来 90 天）</a><p>内容增长线</p></div><div class="footer-card"><div class="label">源文件</div><a href="../03-AI工具学习与协同手册.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+        </div>
+        <div class="footer-note">
+          这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+        </div>
+      </article>
+      <aside class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#ai">小黑托昵 AI 工具学习与协同手册</a><ul>
+<li><a href="#_1">使用说明</a></li>
+<li><a href="#1-3">1. 为什么当前最推荐这 3 个工具</a><ul>
+<li><a href="#11">1.1 推荐组合</a></li>
+<li><a href="#12">1.2 分工逻辑</a></li>
+<li><a href="#13">1.3 为什么不建议你现在学更多</a></li>
+<li><a href="#14">1.4 哪些工具值得优先付费</a></li>
+<li><a href="#15">1.5 付费优先级与理由</a></li>
+<li><a href="#16">1.6 买完立刻怎么用</a><ul>
+<li><a href="#_2">剪映买完当天</a></li>
+<li><a href="#kimi">Kimi 买完当天</a></li>
+<li><a href="#ai_1">即梦AI 免费阶段</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-3">2. 这 3 个工具之间到底怎么配合</a><ul>
+<li><a href="#21">2.1 每天的标准协同流程</a></li>
+<li><a href="#22">2.2 最小闭环</a><ul>
+<li><a href="#kimi_1">第一步：Kimi 负责“想清楚”</a></li>
+<li><a href="#_3">第二步：你本人真实拍</a></li>
+<li><a href="#_4">第三步：剪映负责“快速成片”</a></li>
+<li><a href="#ai_2">第四步：即梦AI负责“统一视觉”</a></li>
+<li><a href="#kimi_2">第五步：Kimi负责“收评论、做复盘”</a></li>
+</ul>
+</li>
+<li><a href="#23">2.3 一句话记忆法</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 工具学习优先级</a><ul>
+<li><a href="#31">3.1 先学什么</a></li>
+<li><a href="#32">3.2 每个工具的学习目标</a><ul>
+<li><a href="#kimi_3">Kimi 学到什么算过关</a></li>
+<li><a href="#_5">剪映学到什么算过关</a></li>
+<li><a href="#ai_3">即梦AI 学到什么算过关</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-14">4. 14 天学习路径</a></li>
+<li><a href="#day-1-4-kimi">Day 1-4：先学 Kimi</a><ul>
+<li><a href="#day-1-1-3">Day 1：只学 1 件事，产出 3 个选题</a></li>
+<li><a href="#day-2-kimi-1">Day 2：学会让 Kimi 出 1 条完整脚本</a></li>
+<li><a href="#day-3-kimi-ai">Day 3：学会让 Kimi 改口播，不让它写“AI腔”</a></li>
+<li><a href="#day-4-kimi">Day 4：学会让 Kimi 做复盘和选题延续</a></li>
+</ul>
+</li>
+<li><a href="#day-5-9">Day 5-9：重点学剪映手机版</a><ul>
+<li><a href="#day-5">Day 5：只学最小剪辑流程</a></li>
+<li><a href="#day-6">Day 6：学字幕和节奏</a></li>
+<li><a href="#day-7">Day 7：学封面统一</a></li>
+<li><a href="#day-8-1">Day 8：学 1 条直播切片</a></li>
+<li><a href="#day-9">Day 9：做一条从脚本到成片的完整练习</a></li>
+</ul>
+</li>
+<li><a href="#day-10-12ai">Day 10-12：加入即梦AI，统一视觉</a><ul>
+<li><a href="#day-10">Day 10：学会做封面灵感图</a></li>
+<li><a href="#day-11">Day 11：学会做直播预告图</a></li>
+<li><a href="#day-12">Day 12：建立你自己的视觉模板</a></li>
+</ul>
+</li>
+<li><a href="#day-13-14">Day 13-14：做完整协同和复盘</a><ul>
+<li><a href="#day-13-">Day 13：完整跑一条“脚本-拍摄-剪辑-封面-发布”</a></li>
+<li><a href="#day-14-ai">Day 14：第一次做 AI 辅助复盘</a></li>
+</ul>
+</li>
+<li><a href="#5">5. 你最常用的提示词模板</a><ul>
+<li><a href="#51-kimi">5.1 Kimi 选题模板</a></li>
+<li><a href="#52-kimi">5.2 Kimi 脚本模板</a></li>
+<li><a href="#53-kimi">5.3 Kimi 改口播模板</a></li>
+<li><a href="#54-kimi">5.4 Kimi 复盘模板</a></li>
+<li><a href="#55-ai">5.5 即梦AI 封面模板</a></li>
+<li><a href="#56-ai">5.6 即梦AI 直播预告模板</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 什么时候该用哪个工具</a><ul>
+<li><a href="#_6">开拍前</a></li>
+<li><a href="#_7">拍摄中</a></li>
+<li><a href="#_8">拍完后</a></li>
+<li><a href="#_9">发完后</a></li>
+</ul>
+</li>
+<li><a href="#7-7">7. 现阶段不要踩的 7 个坑</a></li>
+<li><a href="#8-14">8. 14 天之后的升级路线</a><ul>
+<li><a href="#14_1">如果 14 天后已经跑顺</a></li>
+<li><a href="#14_2">如果 14 天后还没跑顺</a></li>
+</ul>
+</li>
+<li><a href="#_10">参考来源</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside>
+    </div>
+  </div>
+</body>
+</html>

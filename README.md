@@ -7,6 +7,7 @@
 - 总导航：看 [00-文档阅读导航](docs/00-文档阅读导航.md)
 - 想直接打开最新在线经营仪表盘入口文件：看 [docs/dashboard/index.html](docs/dashboard/index.html)
 - 想先看 GitHub Pages 首页入口：看 [docs/index.html](docs/index.html)
+- 想直接网页阅读全部手册：看 [docs/manuals/index.html](docs/manuals/index.html)
 - 想直接看怎么开启 GitHub Pages：看 [GitHub Pages开启清单](docs/25-GitHub%20Pages开启清单.md)
 - 想先做 GitHub Pages 上线前自检：看 [GitHub Pages上线前最后检查](docs/26-GitHub%20Pages上线前最后检查.md)
 - 想先搭整体经营盘：看 [店铺经营基础框架](docs/06-店铺经营基础框架.md)
@@ -30,6 +31,7 @@
 | 库存销售看板工具 | [22-库存销售看板工具使用说明](docs/22-库存销售看板工具使用说明.md) |
 | GitHub Pages 在线仪表盘入口 | [docs/dashboard/index.html](docs/dashboard/index.html) |
 | GitHub Pages 首页入口 | [docs/index.html](docs/index.html) |
+| GitHub Pages 文档中心 | [docs/manuals/index.html](docs/manuals/index.html) |
 | GitHub Pages 开启步骤 | [25-GitHub Pages开启清单](docs/25-GitHub%20Pages开启清单.md) |
 | GitHub Pages 上线前最后检查 | [26-GitHub Pages上线前最后检查](docs/26-GitHub%20Pages上线前最后检查.md) |
 | 历史数据补齐 | [23-全量历史数据导出与看板升级清单](docs/23-全量历史数据导出与看板升级清单.md) |
@@ -49,6 +51,7 @@
 
 - GitHub Pages 固定入口文件：[`docs/dashboard/index.html`](docs/dashboard/index.html)
 - GitHub Pages 首页入口：[`docs/index.html`](docs/index.html)
+- GitHub Pages 文档中心入口：[`docs/manuals/index.html`](docs/manuals/index.html)
 - Pages 开启后，建议固定访问路径：`/dashboard/`
 - GitHub Pages 开启说明：[`docs/25-GitHub Pages开启清单.md`](docs/25-GitHub%20Pages开启清单.md)
 - GitHub Pages 上线前最后检查：[`docs/26-GitHub Pages上线前最后检查.md`](docs/26-GitHub%20Pages上线前最后检查.md)
