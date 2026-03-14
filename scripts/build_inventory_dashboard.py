@@ -1918,6 +1918,13 @@ def build_html(metrics: dict) -> str:
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{cards['store_name']} 老板经营仪表盘</title>
   <style>
+    html, body {{
+      max-width: 100%;
+      overflow-x: hidden;
+    }}
+    * {{
+      box-sizing: border-box;
+    }}
     body {{
       margin: 0;
       padding: 0;
@@ -1957,6 +1964,8 @@ def build_html(metrics: dict) -> str:
       gap: 10px;
       flex-wrap: wrap;
       margin: 14px 0 18px;
+      max-width: 100%;
+      overscroll-behavior-x: contain;
     }}
     .quick-nav a {{
       text-decoration: none;
@@ -2066,6 +2075,7 @@ def build_html(metrics: dict) -> str:
       border-radius: 16px;
       border: 1px solid #e2e8f0;
       padding: 16px;
+      min-width: 0;
     }}
     .metric-card {{
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
@@ -2235,6 +2245,7 @@ def build_html(metrics: dict) -> str:
       grid-template-columns: 280px minmax(0, 1fr);
       gap: 16px;
       align-items: start;
+      min-width: 0;
     }}
     .detail-sidebar {{
       position: sticky;
@@ -2264,6 +2275,8 @@ def build_html(metrics: dict) -> str:
       display: grid;
       gap: 10px;
       margin-top: 12px;
+      max-width: 100%;
+      overscroll-behavior-x: contain;
     }}
     .detail-nav-btn {{
       appearance: none;
@@ -2275,6 +2288,7 @@ def build_html(metrics: dict) -> str:
       text-align: left;
       cursor: pointer;
       transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+      min-width: 0;
     }}
     .detail-nav-btn:hover {{
       border-color: #93c5fd;
@@ -2301,10 +2315,15 @@ def build_html(metrics: dict) -> str:
     }}
     .detail-content {{
       min-width: 0;
+      max-width: 100%;
+      overflow-x: hidden;
     }}
     .detail-pane {{
       display: none;
       animation: fadeIn 0.18s ease;
+      min-width: 0;
+      max-width: 100%;
+      overflow-x: hidden;
     }}
     .detail-pane.is-active {{
       display: block;
@@ -2335,6 +2354,8 @@ def build_html(metrics: dict) -> str:
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 14px;
       margin-top: 14px;
+      min-width: 0;
+      max-width: 100%;
     }}
     .health-red {{
       background: #fff1f2;
@@ -2424,6 +2445,24 @@ def build_html(metrics: dict) -> str:
     }}
     .table-card {{
       overflow-x: auto;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }}
+    .chart-card {{
+      overflow: hidden;
+      max-width: 100%;
+    }}
+    .chart-card .js-plotly-plot,
+    .chart-card .plot-container,
+    .chart-card .plotly,
+    .chart-card .svg-container {{
+      width: 100% !important;
+      max-width: 100% !important;
+    }}
+    .chart-card .modebar {{
+      max-width: calc(100% - 8px);
+      right: 4px !important;
     }}
     @keyframes fadeIn {{
       from {{
@@ -2463,6 +2502,11 @@ def build_html(metrics: dict) -> str:
       .detail-nav {{
         grid-template-columns: repeat(3, minmax(160px, 1fr));
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+      }}
+      .detail-nav-btn {{
+        scroll-snap-align: start;
       }}
       .module-header {{
         flex-direction: column;
@@ -2484,6 +2528,11 @@ def build_html(metrics: dict) -> str:
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         margin: 10px 0 14px;
+        padding-bottom: 2px;
+        scroll-snap-type: x proximity;
+      }}
+      .quick-nav a {{
+        scroll-snap-align: start;
       }}
       .hero {{
         padding: 18px;
@@ -2519,21 +2568,36 @@ def build_html(metrics: dict) -> str:
         -webkit-overflow-scrolling: touch;
         margin-right: -2px;
         padding-bottom: 2px;
+        scroll-snap-type: x proximity;
       }}
       .detail-nav-btn {{
-        min-width: 154px;
-        padding: 10px 11px;
+        width: auto;
+        min-width: 112px;
+        padding: 9px 10px;
         flex: 0 0 auto;
+        scroll-snap-align: start;
       }}
       .detail-nav-label {{
-        font-size: 13px;
+        font-size: 12px;
+        margin-bottom: 0;
       }}
-      .detail-nav-note,
+      .detail-nav-note {{
+        display: none;
+      }}
       .detail-pane-note,
       .detail-sidebar-note {{
         font-size: 11px;
         line-height: 1.7;
       }}
+      .quick-nav a,
+      .download-link {{
+        font-size: 11px;
+      }}
+      .detail-sidebar-card:last-child {{
+        display: none;
+      }}
+      .detail-nav-note,
+      .detail-pane-note,
       .detail-pane-title {{
         font-size: 18px;
       }}
