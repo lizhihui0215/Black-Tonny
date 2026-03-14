@@ -1573,6 +1573,18 @@ def safe_cell_html(value: object) -> str:
     return html.escape(text)
 
 
+def chip_html(label: str, tone: str = "neutral") -> str:
+    safe_label = html.escape(str(label))
+    tip = infer_action_tip(label)
+    attrs = ""
+    classes = f"mini-chip mini-chip-{tone}"
+    if tip:
+        safe_tip = html.escape(tip, quote=True)
+        classes += " tooltip-badge"
+        attrs = f' title="{safe_tip}" data-tip="{safe_tip}" tabindex="0" role="note"'
+    return f"<span class='{classes}'{attrs}>{safe_label}</span>"
+
+
 def table_html(df: pd.DataFrame, title: str, rows: int = 10, tip: str | None = None) -> str:
     preview = df.head(rows).copy()
     preview = decorate_table(preview)
@@ -1619,6 +1631,64 @@ def table_html(df: pd.DataFrame, title: str, rows: int = 10, tip: str | None = N
     """
 
 
+def compact_stat_row(label: str, value: object, is_badge: bool = False, tone: str = "soft") -> str:
+    content = chip_html(str(value), tone) if is_badge else f"<strong>{html.escape(str(value))}</strong>"
+    return f"<div class='compact-stat'><span>{html.escape(label)}</span>{content}</div>"
+
+
+def compact_list_html(
+    df: pd.DataFrame,
+    title: str,
+    rows: int,
+    tip: str,
+    title_fn,
+    subtitle_fn,
+    stats_fn,
+    detail_fn=None,
+) -> str:
+    preview = df.head(rows).copy()
+    if preview.empty:
+        return render_empty(f"{title} 当前没有可展示数据。")
+
+    items_html: list[str] = []
+    for _, row in preview.iterrows():
+        stats = "".join(stats_fn(row))
+        detail_html = ""
+        if detail_fn is not None:
+            details = [item for item in detail_fn(row) if item]
+            if details:
+                detail_html = (
+                    "<details class='compact-more'>"
+                    "<summary>查看补充信息</summary>"
+                    f"<ul class='compact-detail-list'>{''.join(f'<li>{html.escape(str(item))}</li>' for item in details)}</ul>"
+                    "</details>"
+                )
+        items_html.append(
+            f"""
+            <article class="compact-item">
+              <div class="compact-item-head">
+                <div class="compact-item-title">{html.escape(str(title_fn(row)))}</div>
+                <div class="compact-item-subtitle">{html.escape(str(subtitle_fn(row)))}</div>
+              </div>
+              <div class="compact-stats">{stats}</div>
+              {detail_html}
+            </article>
+            """
+        )
+
+    return f"""
+    <section class="table-card compact-card">
+      <div class="table-header">
+        <h3>{title}</h3>
+      </div>
+      <p class="table-tip">{tip}</p>
+      <div class="compact-list">
+        {''.join(items_html)}
+      </div>
+    </section>
+    """
+
+
 def build_html(metrics: dict) -> str:
     cards = metrics["summary_cards"]
     charts = build_charts(metrics)
@@ -1634,15 +1704,7 @@ def build_html(metrics: dict) -> str:
     other_references = metrics["other_references"]
 
     def chip(label: str, tone: str = "neutral") -> str:
-        safe_label = html.escape(str(label))
-        tip = infer_action_tip(label)
-        attrs = ""
-        classes = f"mini-chip mini-chip-{tone}"
-        if tip:
-            safe_tip = html.escape(tip, quote=True)
-            classes += " tooltip-badge"
-            attrs = f' title="{safe_tip}" data-tip="{safe_tip}" tabindex="0" role="note"'
-        return f"<span class='{classes}'{attrs}>{safe_label}</span>"
+        return chip_html(label, tone)
 
     def render_empty(message: str) -> str:
         return f"<div class='empty-card'>{html.escape(message)}</div>"
@@ -1914,12 +1976,116 @@ def build_html(metrics: dict) -> str:
     """
     inventory_tables_html = "".join(
         [
-            table_html(metrics["replenish_categories"], "补货重点品类", 10, "先按品类定补货优先级，再下钻到单款。"),
-            table_html(metrics["seasonal_categories"], "跨季处理重点品类", 10, "先看哪些品类已经跨季。"),
-            table_html(metrics["clearance_categories"], "去化重点品类", 10, "先按品类看库存压力。"),
-            table_html(metrics["replenish"], "补货 SKU 明细", 12, "确定品类要补后，再来这里挑具体款。"),
-            table_html(metrics["seasonal_actions"], "跨季处理 SKU 明细", 12, "老板做二次判断时使用。"),
-            table_html(metrics["clearance"], "去化 SKU 明细", 12, "执行去化时再下钻到具体款。"),
+            compact_list_html(
+                metrics["replenish_categories"],
+                "补货重点品类",
+                8,
+                "先按品类定补货优先级，再下钻到单款。",
+                lambda row: row["中类"],
+                lambda row: f"{row['季节策略']} / 建议补货 SKU {format_num(row['SKU数'])}",
+                lambda row: [
+                    compact_stat_row("销售额", f"{format_num(row['销售额'], 2)} 元"),
+                    compact_stat_row("当前库存", format_num(row["库存"])),
+                    compact_stat_row("建议补货量", format_num(row["建议补货量"])),
+                ],
+                lambda row: [
+                    f"季节策略：{row['季节策略']}",
+                    f"建议补货 SKU：{format_num(row['SKU数'])}",
+                ],
+            ),
+            compact_list_html(
+                metrics["seasonal_categories"],
+                "跨季处理重点品类",
+                8,
+                "先看哪些品类已经跨季，再决定暂缓还是去化。",
+                lambda row: row["中类"],
+                lambda row: f"{row['季节策略']} / {row['建议动作']}",
+                lambda row: [
+                    compact_stat_row("库存", format_num(row["库存"])),
+                    compact_stat_row("SKU数", format_num(row["SKU数"])),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
+                ],
+                lambda row: [
+                    f"季节策略：{row['季节策略']}",
+                    f"建议动作：{row['建议动作']}",
+                ],
+            ),
+            compact_list_html(
+                metrics["clearance_categories"],
+                "去化重点品类",
+                8,
+                "先按品类看库存压力，再安排陈列和促销动作。",
+                lambda row: row["大类"],
+                lambda row: f"{row['建议动作']} / 高库存低动销",
+                lambda row: [
+                    compact_stat_row("实际库存", format_num(row["实际库存"])),
+                    compact_stat_row("近期零售", format_num(row["近期零售"])),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
+                ],
+                lambda row: [
+                    f"SKU数：{format_num(row['SKU数'])}",
+                ],
+            ),
+            compact_list_html(
+                metrics["replenish"],
+                "补货 SKU 明细",
+                10,
+                "确定品类要补后，再来这里挑具体款。",
+                lambda row: row["款号"],
+                lambda row: f"{row['中类']} / {row['颜色']}",
+                lambda row: [
+                    compact_stat_row("库存", format_num(row["库存"])),
+                    compact_stat_row("周均销量", format_num(row["周均销量"], 1)),
+                    compact_stat_row("建议补货", format_num(row["建议补货量"])),
+                ],
+                lambda row: [
+                    f"销售金额：{format_num(row['销售金额'], 2)} 元",
+                    f"库存周数：{format_num(row['库存周数'], 2)}",
+                    f"建议动作：{row['建议动作']}",
+                ],
+            ),
+            compact_list_html(
+                metrics["seasonal_actions"],
+                "跨季处理 SKU 明细",
+                10,
+                "老板做二次判断时使用，先看库存，再看建议动作。",
+                lambda row: row["款号"],
+                lambda row: f"{row['中类']} / {row['颜色']} / {row['季节']}",
+                lambda row: [
+                    compact_stat_row("库存", format_num(row["库存"])),
+                    compact_stat_row("销售金额", f"{format_num(row['销售金额'], 2)} 元"),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
+                ],
+                lambda row: [
+                    f"季节策略：{row['季节策略']}",
+                    f"库存周数：{format_num(row['库存周数'], 2)}",
+                ],
+            ),
+            compact_list_html(
+                metrics["clearance"],
+                "去化 SKU 明细",
+                10,
+                "执行去化时再下钻到具体款，优先看库存深但近期零售弱的款。",
+                lambda row: row["商品款号"],
+                lambda row: " / ".join(
+                    [
+                        str(part)
+                        for part in [row.get("商品名称", ""), row.get("商品颜色", "")]
+                        if str(part).strip()
+                    ]
+                ),
+                lambda row: [
+                    compact_stat_row("实际库存", format_num(row["实际库存"])),
+                    compact_stat_row("近期零售", format_num(row["近期零售"])),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
+                ],
+                lambda row: [
+                    f"大类：{row['大类']}",
+                    f"中类：{row['中类']}" if row.get("中类") else "",
+                    f"小类：{row['小类']}" if row.get("小类") else "",
+                    f"零售价：{format_num(row['零售价'], 2)} 元" if row.get("零售价") is not None else "",
+                ],
+            ),
             table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨。"),
         ]
     )
@@ -2558,6 +2724,96 @@ def build_html(metrics: dict) -> str:
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
     }}
+    .compact-card {{
+      overflow: hidden;
+    }}
+    .compact-list {{
+      display: grid;
+      gap: 12px;
+      margin-top: 6px;
+    }}
+    .compact-item {{
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }}
+    .compact-item-head {{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }}
+    .compact-item-title {{
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      word-break: break-word;
+    }}
+    .compact-item-subtitle {{
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.7;
+      word-break: break-word;
+    }}
+    .compact-stats {{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }}
+    .compact-stat {{
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }}
+    .compact-stat span {{
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      line-height: 1.5;
+    }}
+    .compact-stat strong {{
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.4;
+      word-break: break-word;
+    }}
+    .compact-stat .mini-chip {{
+      align-self: flex-start;
+      max-width: 100%;
+      white-space: normal;
+      word-break: break-word;
+    }}
+    .compact-more {{
+      margin-top: 10px;
+      border-top: 1px dashed #dbe4f0;
+      padding-top: 10px;
+    }}
+    .compact-more summary {{
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1d4ed8;
+      list-style: none;
+    }}
+    .compact-more summary::-webkit-details-marker {{
+      display: none;
+    }}
+    .compact-detail-list {{
+      margin: 8px 0 0 18px;
+      padding: 0;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.8;
+    }}
     .chart-card {{
       overflow: hidden;
       max-width: 100%;
@@ -2716,6 +2972,31 @@ def build_html(metrics: dict) -> str:
         display: inline-flex;
         align-items: center;
         justify-content: center;
+      }}
+      .compact-item {{
+        padding: 12px;
+      }}
+      .compact-item-head {{
+        margin-bottom: 8px;
+      }}
+      .compact-item-title {{
+        font-size: 15px;
+      }}
+      .compact-item-subtitle {{
+        font-size: 11px;
+      }}
+      .compact-stats {{
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }}
+      .compact-stat {{
+        padding: 9px 10px;
+      }}
+      .compact-stat strong {{
+        font-size: 15px;
+      }}
+      .compact-detail-list {{
+        font-size: 11px;
       }}
       .table-card.is-compact [data-mobile-hidden="1"] {{
         display: none;
