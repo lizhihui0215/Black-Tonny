@@ -1,1 +1,8 @@
 .codex/
+.DS_Store
+node_modules/
+reports/yeusoft_inspect/
+reports/yeusoft_explore/
+reports/yeusoft_report_capture/
+data/store_cost_snapshot.json
+data/yeusoft_local_config.json

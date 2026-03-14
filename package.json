@@ -1,0 +1,26 @@
+{
+  "name": "black-tony",
+  "version": "1.0.0",
+  "description": "这个仓库按 `纯文档` 方式维护，目标不是只做抖音号，而是把 `儿童贴身棉品门店` 的 `内容增长 + 店铺经营 + 1个老板2个员工的小团队管理` 放在一个总文档仓里持续推进。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lizhihui0215/Black-Tonny.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lizhihui0215/Black-Tonny/issues"
+  },
+  "homepage": "https://github.com/lizhihui0215/Black-Tonny#readme",
+  "dependencies": {
+    "playwright": "^1.58.2"
+  }
+}

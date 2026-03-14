@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import calendar
 import html
+import json
 import math
 import tempfile
 import zipfile
@@ -23,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INPUT_DIR = ROOT / "data" / "inventory_zip_extract"
 DEFAULT_OUTPUT_DIR = ROOT / "reports" / "inventory_dashboard"
 DEFAULT_PAGES_DIR = ROOT / "docs" / "dashboard"
+DEFAULT_COST_FILE = ROOT / "data" / "store_cost_snapshot.json"
 BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 PRIMARY_INPUT = "郭文攀"
 SEASON_STRATEGY_TOOLTIPS = {
@@ -316,6 +319,107 @@ def get_beijing_now() -> datetime:
     return datetime.now(BEIJING_TZ)
 
 
+def load_cost_snapshot(cost_file: Path | None) -> dict | None:
+    if not cost_file or not cost_file.exists():
+        return None
+    return json.loads(cost_file.read_text(encoding="utf-8"))
+
+
+def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
+    if not raw_snapshot:
+        return None
+
+    snapshot_at = pd.to_datetime(raw_snapshot.get("snapshot_datetime"), errors="coerce")
+    if pd.isna(snapshot_at):
+        snapshot_dt = get_beijing_now()
+    else:
+        snapshot_dt = snapshot_at.to_pydatetime()
+        if snapshot_dt.tzinfo is None:
+            snapshot_dt = snapshot_dt.replace(tzinfo=BEIJING_TZ)
+        else:
+            snapshot_dt = snapshot_dt.astimezone(BEIJING_TZ)
+
+    sales_amount = float(raw_snapshot.get("sales_amount", 0) or 0)
+    purchase_cost = float(raw_snapshot.get("purchase_cost", 0) or 0)
+    gross_profit = float(raw_snapshot.get("gross_profit", sales_amount - purchase_cost) or 0)
+    gross_margin_rate = float(raw_snapshot.get("gross_margin_rate", safe_ratio(gross_profit, sales_amount)) or 0)
+
+    expense_snapshot = raw_snapshot.get("expense_snapshot", {})
+    expense_items = raw_snapshot.get("expense_items", [])
+    salary_items = raw_snapshot.get("salary_items", [])
+
+    monthly_operating_expense = float(
+        expense_snapshot.get(
+            "monthly_operating_expense",
+            sum(float(item.get("amount", 0) or 0) for item in expense_items),
+        )
+        or 0
+    )
+    salary_total = float(
+        expense_snapshot.get(
+            "salary_total",
+            sum(float(item.get("amount", 0) or 0) for item in salary_items),
+        )
+        or 0
+    )
+    total_expense = float(expense_snapshot.get("total_expense", monthly_operating_expense + salary_total) or 0)
+    net_profit = float(raw_snapshot.get("net_profit", gross_profit - total_expense) or 0)
+
+    month_days = calendar.monthrange(snapshot_dt.year, snapshot_dt.month)[1]
+    elapsed_days = snapshot_dt.day + safe_ratio(snapshot_dt.hour * 60 + snapshot_dt.minute, 1440)
+    remaining_days = max(month_days - elapsed_days, 0)
+
+    breakeven_sales = safe_ratio(total_expense, gross_margin_rate)
+    breakeven_daily_sales = safe_ratio(breakeven_sales, month_days)
+    average_daily_sales = safe_ratio(sales_amount, elapsed_days)
+    remaining_sales_to_breakeven = max(0.0, breakeven_sales - sales_amount)
+    remaining_daily_sales_needed = safe_ratio(remaining_sales_to_breakeven, remaining_days)
+    passed_breakeven = sales_amount >= breakeven_sales if breakeven_sales else False
+    net_margin_rate = safe_ratio(net_profit, sales_amount)
+    expense_ratio = safe_ratio(total_expense, sales_amount)
+    salary_ratio = safe_ratio(salary_total, sales_amount)
+    operating_expense_ratio = safe_ratio(monthly_operating_expense, sales_amount)
+
+    if passed_breakeven and net_profit > 0:
+        status = "green"
+        headline = "已过保本线"
+    elif gross_profit >= total_expense * 0.9:
+        status = "yellow"
+        headline = "接近保本线"
+    else:
+        status = "red"
+        headline = "未过保本线"
+
+    return {
+        "snapshot_name": raw_snapshot.get("snapshot_name", "成本快照"),
+        "snapshot_datetime": snapshot_dt,
+        "sales_amount": sales_amount,
+        "purchase_cost": purchase_cost,
+        "gross_profit": gross_profit,
+        "gross_margin_rate": gross_margin_rate,
+        "monthly_operating_expense": monthly_operating_expense,
+        "salary_total": salary_total,
+        "total_expense": total_expense,
+        "net_profit": net_profit,
+        "net_margin_rate": net_margin_rate,
+        "expense_ratio": expense_ratio,
+        "salary_ratio": salary_ratio,
+        "operating_expense_ratio": operating_expense_ratio,
+        "breakeven_sales": breakeven_sales,
+        "breakeven_daily_sales": breakeven_daily_sales,
+        "average_daily_sales": average_daily_sales,
+        "remaining_days": remaining_days,
+        "remaining_sales_to_breakeven": remaining_sales_to_breakeven,
+        "remaining_daily_sales_needed": remaining_daily_sales_needed,
+        "passed_breakeven": passed_breakeven,
+        "status": status,
+        "headline": headline,
+        "expense_items": expense_items,
+        "salary_items": salary_items,
+        "notes": raw_snapshot.get("notes", []),
+    }
+
+
 def infer_season(now: datetime) -> tuple[str, str, str]:
     month = now.month
     day = now.day
@@ -427,7 +531,7 @@ def build_health_lights(cards: dict, actions: dict) -> list[dict[str, str]]:
     return [inventory_level, accuracy_level, category_level, replenish_level, member_level]
 
 
-def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
+def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot: dict | None = None) -> dict:
     now = get_beijing_now()
     current_season_name, phase_name, next_season_name = infer_season(now)
     current_season_key = current_season_name[0]
@@ -442,6 +546,7 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
     product_sales = data["product_sales"].copy()
     movement = data["movement"].copy()
     store_retail = data.get("store_retail", pd.DataFrame()).copy()
+    profit_snapshot = build_profit_snapshot(cost_snapshot)
     stock_flow = stock_flow[stock_flow["商品款号"].notna()].copy()
     stock_flow["近期零售"] = stock_flow["零售数量"].abs()
     stock_flow["动销率"] = stock_flow.apply(
@@ -517,6 +622,15 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         "phase_name": phase_name,
         "next_season_name": next_season_name,
     }
+
+    capture_candidates = [
+        summary_cards["sales_detail_end"],
+        movement["发货时间"].max() if not movement.empty else pd.NaT,
+        store_retail["销售日期"].max() if not store_retail.empty and "销售日期" in store_retail.columns else pd.NaT,
+    ]
+    valid_capture_dates = [pd.Timestamp(item) for item in capture_candidates if pd.notna(item)]
+    summary_cards["data_capture_at"] = max(valid_capture_dates) if valid_capture_dates else pd.Timestamp(now.date())
+    summary_cards["profit_snapshot"] = profit_snapshot
 
     sales_daily = (
         sales_no_props.groupby(sales_no_props["销售日期"].dt.date)
@@ -758,6 +872,16 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
         f"{action_summary['seasonal_hold_count']} 个跨季不建议补货、应转去化或暂缓的 SKU，"
         f"{action_summary['clearance_count']} 个建议先去化的高库存低动销 SKU。",
     ]
+    if profit_snapshot:
+        insights.append(
+            f"按最近一版成本快照，毛利约 {format_num(profit_snapshot['gross_profit'], 2)} 元，"
+            f"总费用约 {format_num(profit_snapshot['total_expense'], 2)} 元，"
+            f"净利润约 {format_num(profit_snapshot['net_profit'], 2)} 元。"
+        )
+        insights.append(
+            f"当前保本销售额约 {format_num(profit_snapshot['breakeven_sales'], 2)} 元，"
+            f"平均每天至少要卖 {format_num(profit_snapshot['breakeven_daily_sales'], 2)} 元。"
+        )
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         insights.append(
@@ -934,7 +1058,7 @@ def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_dashboard_tips(cards: dict, actions: dict) -> list[dict[str, str]]:
-    return [
+    tips = [
         {
             "term": "经营销售额",
             "meaning": "只看正常商品销售，不包含道具，更接近门店真实营业额。",
@@ -986,6 +1110,28 @@ def build_dashboard_tips(cards: dict, actions: dict) -> list[dict[str, str]]:
             "watch": "不要拿道具数值去判断真实商品卖得好不好。",
         },
     ]
+    profit = cards.get("profit_snapshot")
+    if profit:
+        tips.extend(
+            [
+                {
+                    "term": "毛利额",
+                    "meaning": "销售额减去进货成本后的余额，还没扣房租、工资、电费这些经营费用。",
+                    "watch": "毛利高不代表真正赚钱，还要继续看总费用和净利润。",
+                },
+                {
+                    "term": "净利润",
+                    "meaning": "毛利扣掉房租、工资、电费和其他月费用之后，真正剩下的钱。",
+                    "watch": "净利润为负时，重点不是继续压货，而是先提高毛利和控制费用。",
+                },
+                {
+                    "term": "保本销售额",
+                    "meaning": "按当前毛利率估算，本月至少卖到这个数，才够覆盖总费用。",
+                    "watch": "如果当前销售额还没过保本线，就先保主销、提客单、控库存。",
+                },
+            ]
+        )
+    return tips
 
 
 def top_label_from_series(series: pd.Series, fallback: str) -> str:
@@ -1261,6 +1407,7 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
     cards = metrics["summary_cards"]
     actions = metrics["action_summary"]
     time_strategy = build_time_strategy(metrics)
+    profit = cards.get("profit_snapshot")
     category_risks = metrics["category_risks"]
     top_members = metrics["top_members"].head(3)
     seasonal_categories = metrics["seasonal_categories"].head(3)
@@ -1273,6 +1420,37 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
     )
 
     playbooks: list[dict] = []
+
+    if profit and not profit["passed_breakeven"]:
+        playbooks.append(
+            {
+                "level": "red" if profit["status"] == "red" else "yellow",
+                "title": "还没过保本线，先盯利润而不是只看销售",
+                "trigger": (
+                    f"当前净利润 {format_num(profit['net_profit'], 2)} 元，"
+                    f"保本销售额约 {format_num(profit['breakeven_sales'], 2)} 元，"
+                    f"还差 {format_num(profit['remaining_sales_to_breakeven'], 2)} 元。"
+                ),
+                "goal": "先让本月销售和毛利覆盖固定费用与工资，再决定促销和扩品动作。",
+                "schemes": [
+                    {
+                        "name": "先保高毛利主销",
+                        "detail": "今天优先卖动高毛利、当季主销和高连带组合，不用低价促销去换低质量营业额。",
+                    },
+                    {
+                        "name": "盯保本日销",
+                        "detail": (
+                            f"本月平均每天至少要卖 {format_num(profit['breakeven_daily_sales'], 2)} 元；"
+                            f"如果剩余天数不多，后面每天至少要卖 {format_num(profit['remaining_daily_sales_needed'], 2)} 元。"
+                        ),
+                    },
+                    {
+                        "name": "先控费用和压货",
+                        "detail": "在没过保本线前，先收紧补货、减少非必要促销和低效率支出，把现金留给主销款。",
+                    },
+                ],
+            }
+        )
 
     if cards["estimated_inventory_days"] >= 120:
         playbooks.append(
@@ -1399,6 +1577,7 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
 
 def build_boss_action_board(metrics: dict) -> dict[str, object]:
     cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
     decision = build_decision_engine(metrics)
     time_strategy = build_time_strategy(metrics)
     seasonal_categories = metrics["seasonal_categories"].head(3)
@@ -1410,6 +1589,11 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         f"{decision['summary']} 当前阶段：{decision['stage']}；"
         f"最近日销均值 {format_num(decision['sales_trend']['recent_avg'], 2)} 元。"
     )
+    if profit:
+        summary += (
+            f" 当前净利润 {format_num(profit['net_profit'], 2)} 元，"
+            f"{'已过' if profit['passed_breakeven'] else '尚未过'}保本线。"
+        )
 
     actions_today = [
         {
@@ -1469,6 +1653,7 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
 
 def build_today_focus(metrics: dict) -> dict[str, object]:
     cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
     actions = metrics["action_summary"]
     decision = build_decision_engine(metrics)
     replenish_categories = metrics["replenish_categories"]
@@ -1494,6 +1679,8 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         conclusions.append("处理跨季品类")
     if cards["member_sales_ratio"] >= 0.6:
         conclusions.append("联系高价值会员")
+    if profit and not profit["passed_breakeven"]:
+        conclusions.append("先冲保本线")
     if decision["mode"] == "保畅销优先":
         conclusions.append(trim_text(f"优先补{top_replenish}", 12))
     if decision["mode"] == "换季切换":
@@ -1525,6 +1712,8 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         tasks.append("确认跨季处理")
     if not top_members.empty:
         tasks.append("联系高价值会员")
+    if profit and not profit["passed_breakeven"]:
+        tasks.append("对齐保本日销")
     tasks = dedupe_preserve_order(tasks)[:5]
 
     return {
@@ -1691,6 +1880,7 @@ def compact_list_html(
 
 def build_html(metrics: dict) -> str:
     cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
     charts = build_charts(metrics)
     actions = metrics["action_summary"]
     health_lights = build_health_lights(cards, actions)
@@ -1753,8 +1943,48 @@ def build_html(metrics: dict) -> str:
     else:
         store_note = f"主店铺：{cards['store_name']}"
         reference_intro = "未读取到可用的输入人参考表。"
-    deployed_at = time_strategy["beijing_time"]
-    import_date = cards["sales_detail_end"].strftime("%Y-%m-%d")
+    capture_date = pd.Timestamp(cards["data_capture_at"]).strftime("%Y-%m-%d")
+
+    profit_cards_html = ""
+    if profit:
+        profit_cards_html = f"""
+        <div class="submodule-header">
+          <h3 class="submodule-title">利润与保本</h3>
+          <p class="submodule-note">按你维护的成本快照计算，帮助老板判断本月到底赚了没有、还差多少过保本线。</p>
+        </div>
+        <div class="metrics-grid profit-grid">
+          <div class="metric-card metric-{profit['status']}">
+            <div class="metric-title">净利润</div>
+            <div class="metric-value">{format_num(profit['net_profit'], 2)} 元</div>
+            <div class="metric-note">{profit['headline']}</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">毛利额</div>
+            <div class="metric-value">{format_num(profit['gross_profit'], 2)} 元</div>
+            <div class="metric-note">毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">总费用</div>
+            <div class="metric-value">{format_num(profit['total_expense'], 2)} 元</div>
+            <div class="metric-note">含房租、工资、电费等月费用</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">保本销售额</div>
+            <div class="metric-value">{format_num(profit['breakeven_sales'], 2)} 元</div>
+            <div class="metric-note">当前毛利率下本月至少要卖到这里</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">保本日销</div>
+            <div class="metric-value">{format_num(profit['breakeven_daily_sales'], 2)} 元</div>
+            <div class="metric-note">按整月平均每天至少要卖这么多</div>
+          </div>
+          <div class="metric-card metric-{'green' if profit['passed_breakeven'] else 'yellow'}">
+            <div class="metric-title">剩余保本压力</div>
+            <div class="metric-value">{format_num(profit['remaining_sales_to_breakeven'], 2)} 元</div>
+            <div class="metric-note">剩余每天约 {format_num(profit['remaining_daily_sales_needed'], 2)} 元</div>
+          </div>
+        </div>
+        """
 
     core_metric_html = "".join(
         f"""
@@ -2244,6 +2474,20 @@ def build_html(metrics: dict) -> str:
       color: #0f172a;
     }}
     .module-note {{
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.7;
+    }}
+    .submodule-header {{
+      margin: 18px 0 10px;
+    }}
+    .submodule-title {{
+      margin: 0 0 6px;
+      font-size: 18px;
+      color: #0f172a;
+    }}
+    .submodule-note {{
       margin: 0;
       font-size: 13px;
       color: #64748b;
@@ -3063,8 +3307,8 @@ def build_html(metrics: dict) -> str:
       <p>老板打开 10 秒内先看今日结论，再看今天执行任务。复杂图表和原始明细都保留在页面下方的“详细数据与图表”。</p>
       <div class="hero-note">{store_note} · 当前季节：{time_strategy['season']} / {time_strategy['phase']} · 日销趋势：{decision['sales_trend']['label']}</div>
       <div class="hero-status">
-        <div class="hero-status-chip">最近部署时间：{deployed_at}（北京时间）</div>
-        <div class="hero-status-chip">数据导入日期：{import_date}（北京时间）</div>
+        <div class="hero-status-chip">最近抓取日期：{capture_date}（北京时间）</div>
+        <div class="hero-status-chip">数据导入日期：{capture_date}（北京时间）</div>
       </div>
     </section>
 
@@ -3096,6 +3340,7 @@ def build_html(metrics: dict) -> str:
         <p class="module-note">只保留 4 个最关键指标，方便老板先判断大方向。</p>
       </div>
       <div class="metrics-grid">{core_metric_html}</div>
+      {profit_cards_html}
     </section>
 
     <section class="module" id="money-opportunities">
@@ -3741,9 +3986,11 @@ def main() -> int:
     parser.add_argument("--input-dir", type=Path, default=DEFAULT_INPUT_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--pages-dir", type=Path, default=DEFAULT_PAGES_DIR)
+    parser.add_argument("--cost-file", type=Path, default=DEFAULT_COST_FILE)
     parser.add_argument("--store", default=None, help="Optional store name override")
     parser.add_argument("--zip-file", type=Path, default=None, help="Optional zip export to extract and analyze")
     args = parser.parse_args()
+    cost_snapshot = load_cost_snapshot(args.cost_file)
 
     if args.zip_file:
         with tempfile.TemporaryDirectory(prefix="inventory_zip_") as temp_dir:
@@ -3755,14 +4002,14 @@ def main() -> int:
             raw = load_data(reports)
             store_name = infer_store_name(raw, args.store)
             cleaned = clean_data(raw, store_name)
-            metrics = build_metrics(cleaned, store_name)
+            metrics = build_metrics(cleaned, store_name, cost_snapshot=cost_snapshot)
             outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
     else:
         reports = resolve_reports(args.input_dir)
         raw = load_data(reports)
         store_name = infer_store_name(raw, args.store)
         cleaned = clean_data(raw, store_name)
-        metrics = build_metrics(cleaned, store_name)
+        metrics = build_metrics(cleaned, store_name, cost_snapshot=cost_snapshot)
         outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
 
     print(f"Store: {store_name}")
