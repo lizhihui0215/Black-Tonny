@@ -373,6 +373,8 @@
         <a class="top-nav-link is-active" href="./index.html">首页</a>
         <a class="top-nav-link" href="./dashboard/index.html">仪表盘</a>
         <a class="top-nav-link" href="./dashboard/details.html">详细页</a>
+        <a class="top-nav-link" href="./dashboard/monthly.html">月度页</a>
+        <a class="top-nav-link" href="./dashboard/quarterly.html">季度页</a>
         <a class="top-nav-link" href="./manuals/index.html">文档中心</a>
         <a class="top-nav-link" href="./costs/index.html">成本维护台</a>
       </div>
@@ -382,6 +384,8 @@
       <p>这是 GitHub Pages 的首页入口。老板和店员日常优先打开在线经营仪表盘；如果要系统阅读经营、库存、培训和执行手册，直接进入文档中心。</p>
       <div class="hero-actions">
         <a class="btn-primary" href="./dashboard/index.html">进入在线经营仪表盘</a>
+        <a class="btn-secondary" href="./dashboard/monthly.html">查看月度页</a>
+        <a class="btn-secondary" href="./dashboard/quarterly.html">查看季度页</a>
         <a class="btn-secondary" href="./manuals/index.html">进入文档中心</a>
         <a class="btn-secondary" href="./costs/index.html">进入月度成本维护台</a>
         <a class="btn-secondary" href="./manuals/dashboard/summary.html">查看文字摘要</a>
@@ -455,6 +459,18 @@
           <a href="./dashboard/index.html">打开仪表盘</a>
         </article>
         <article class="card">
+          <div class="card-kicker">趋势版</div>
+          <h3>月度经营页</h3>
+          <p>适合看每个月销售、客单价、会员贡献和库存节奏，重点判断这个月整体方向对不对。</p>
+          <a href="./dashboard/monthly.html">打开月度页</a>
+        </article>
+        <article class="card">
+          <div class="card-kicker">趋势版</div>
+          <h3>季度经营页</h3>
+          <p>适合看季度销售结构、库存健康度和跨季风险，判断季度策略该偏补货还是偏去化。</p>
+          <a href="./dashboard/quarterly.html">打开季度页</a>
+        </article>
+        <article class="card">
           <div class="card-kicker">文字版</div>
           <h3>经营摘要</h3>
           <p>适合在群里转发或做日报，内容更短，先看老板一分钟结论和当前经营阶段。</p>
@@ -517,6 +533,8 @@
             <a class="current" href="./index.html">当前首页</a>
             <a href="./dashboard/index.html">进入仪表盘</a>
             <a href="./dashboard/details.html">进入详细页</a>
+            <a href="./dashboard/monthly.html">进入月度页</a>
+            <a href="./dashboard/quarterly.html">进入季度页</a>
             <a href="./manuals/index.html">进入文档中心</a>
             <a href="./costs/index.html">进入成本维护台</a>
           </div>
@@ -566,8 +584,11 @@
         statusBox.innerHTML = `
           <p class="status-line"><strong>当前状态：</strong>${payload.message || fallbackMessage || '已连接本地服务。'}</p>
           <p class="status-line"><strong>任务状态：</strong>${payload.status || 'unknown'}${payload.running ? '（执行中）' : ''}</p>
+          ${payload.sync_mode ? `<p class="status-line"><strong>同步模式：</strong>${payload.sync_mode === 'full' ? '全量同步' : payload.sync_mode}</p>` : ''}
+          ${payload.sync_start_date || payload.sync_end_date ? `<p class="status-line"><strong>同步范围：</strong>${payload.sync_start_date || '-'} 到 ${payload.sync_end_date || '-'}</p>` : ''}
           ${payload.started_at ? `<p class="status-line"><strong>开始时间：</strong>${payload.started_at}</p>` : ''}
           ${payload.finished_at ? `<p class="status-line"><strong>完成时间：</strong>${payload.finished_at}</p>` : ''}
+          ${payload.total_reports ? `<p class="status-line"><strong>报表结果：</strong>总计 ${payload.total_reports} 张，成功 ${payload.ok_reports || 0} 张，部分成功 ${payload.partial_reports || 0} 张，仅打开未取数 ${payload.opened_only_reports || 0} 张，失败 ${payload.error_reports || 0} 张</p>` : ''}
           ${payload.last_dashboard ? `<p class="status-line"><strong>最新仪表盘：</strong>${payload.last_dashboard}</p>` : ''}
           ${stepsHtml}
         `;
@@ -611,7 +632,11 @@
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ source: 'pages-home' })
+            body: JSON.stringify({
+              source: 'pages-home',
+              mode: 'full',
+              start_date: '2025-03-01'
+            })
           });
           const payload = await response.json();
           renderStatus(payload, payload.message || '已开始抓取。');

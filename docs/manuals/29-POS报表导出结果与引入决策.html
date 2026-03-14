@@ -463,42 +463,50 @@ body {
 <h3 id="_3">建议立即引入<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
 <ol>
 <li><code>店铺零售清单</code></li>
+<li><code>销售清单</code></li>
+<li><code>商品销售情况</code></li>
 <li><code>库存综合分析</code></li>
+<li><code>出入库单据</code></li>
+<li><code>会员消费排行</code></li>
+</ol>
+<p>原因：</p>
+<ul>
+<li>这一批已经通过你提供的 <code>curl</code> 直连接口验证</li>
+<li>都已经确认了请求口径，能明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code></li>
+<li>其中 <code>店铺零售清单</code> 和 <code>销售清单</code> 已经拿到明显的全量结果，适合直接做主数据源</li>
+<li>其余几张虽然部分返回结构还需要继续拆字段，但已经值得接入详细页或辅助决策</li>
+</ul>
+<h3 id="_4">建议优先继续攻克<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>日进销存</code></li>
+<li><code>会员综合分析</code></li>
+<li><code>门店销售月报</code></li>
 <li><code>每日流水单</code></li>
 </ol>
 <p>原因：</p>
 <ul>
-<li>这三张表最贴近老板每天要做的判断</li>
-<li>已经有真实抓取样本</li>
-<li>能直接提升首页和详细页的经营建议</li>
-</ul>
-<h3 id="_4">建议优先继续攻克<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
-<ol>
-<li><code>销售清单</code></li>
-<li><code>商品销售情况</code></li>
-<li><code>出入库单据</code></li>
-</ol>
-<p>原因：</p>
-<ul>
-<li>这三张表一旦稳定拿到，会显著提升历史趋势、库存纠偏和长期结构判断</li>
-<li>但当前抓取还不够稳，直接强接入会让看板判断带噪音</li>
+<li>不是拿不到接口，而是还有 <code>超时 / 返回空数据 / 返回结构待拆</code> 这类问题</li>
+<li>一旦这几张稳定，老板看板会更完整，尤其是 <code>趋势 / 月度 / 当日流水</code></li>
+<li>但现在直接强接入，会让看板对“真实经营结果”的表达变得混乱</li>
 </ul>
 <h3 id="_5">建议暂缓引入<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
 <ol>
 <li><code>零售明细统计</code></li>
+<li><code>导购员报表</code></li>
 <li><code>库存明细统计</code></li>
 <li><code>库存零售统计</code></li>
-<li><code>导购员统计</code></li>
-<li><code>零售缴款单</code></li>
+<li><code>库存多维分析</code></li>
+<li><code>进销存统计</code></li>
 <li><code>储值按店汇总 / 储值卡汇总 / 储值卡明细</code></li>
 </ol>
 <p>原因：</p>
 <ul>
-<li>不是没价值，而是对老板首页的直接决策收益不高</li>
-<li>更适合详细页、复盘页或后续专项分析</li>
+<li>这批大多已经能抓到，但对老板首页的直接收益不高</li>
+<li>更适合详细页下钻、复盘分析或后续专项页</li>
+<li>现在先接进去，反而会让首页更吵</li>
 </ul>
 <h2 id="_6">导出结果总览<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
-<h3 id="_7">已经实际跑过的报表<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<h3 id="curl">已经按 <code>curl</code> 实际验证过的报表<a class="headerlink" href="#curl" title="Permanent link">¶</a></h3>
 <table>
 <thead>
 <tr>
@@ -513,69 +521,146 @@ body {
 <tr>
 <td>店铺零售清单</td>
 <td>成功</td>
-<td>已明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code>，抓到 <code>83877</code> 行</td>
+<td>明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code>，当前抓到 <code>83877</code> 行</td>
 <td>很高</td>
 <td>立即引入</td>
 </tr>
 <tr>
 <td>销售清单</td>
-<td>超时</td>
-<td>还没稳定拿到全量</td>
+<td>成功</td>
+<td>明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code>，当前抓到 <code>9697</code> 行</td>
 <td>很高</td>
-<td>优先继续攻克</td>
-</tr>
-<tr>
-<td>库存综合分析</td>
-<td>有样本，但最新批量扫描超时</td>
-<td>更像当前库存结构快照，不适合当历史明细</td>
-<td>很高</td>
-<td>保留引入，但不要误当全年历史表</td>
-</tr>
-<tr>
-<td>出入库单据</td>
-<td>有样本，但最新批量扫描超时</td>
-<td>当前样本更像短窗口，<code>2025-03</code> 到现在的全量还没证实</td>
-<td>高</td>
-<td>继续攻克后再加权使用</td>
+<td>立即引入</td>
 </tr>
 <tr>
 <td>商品销售情况</td>
-<td>超时</td>
-<td>还没稳定拿到全量</td>
+<td>成功</td>
+<td>明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code>，当前抓到 <code>1337</code> 行</td>
 <td>很高</td>
-<td>优先继续攻克</td>
+<td>立即引入</td>
+</tr>
+<tr>
+<td>出入库单据</td>
+<td>成功</td>
+<td>已确认全量日期参数，当前响应结构已拿到</td>
+<td>高</td>
+<td>立即引入到详细页</td>
+</tr>
+<tr>
+<td>会员消费排行</td>
+<td>成功</td>
+<td>明确传 <code>2025-03-01</code> 到 <code>2026-03-14</code>，当前抓到 <code>1186</code> 行</td>
+<td>高</td>
+<td>立即引入到会员模块</td>
+</tr>
+<tr>
+<td>库存综合分析</td>
+<td>成功</td>
+<td>当前属于库存结构快照类，不是历史区间明细</td>
+<td>很高</td>
+<td>立即引入，但按快照使用</td>
+</tr>
+<tr>
+<td>库存多维分析</td>
+<td>成功</td>
+<td>明确传全量区间，但更适合下钻</td>
+<td>中</td>
+<td>暂缓接首页</td>
 </tr>
 <tr>
 <td>零售明细统计</td>
-<td>页面能打开，但当前 <code>queryRows=0</code></td>
-<td>还没拿到真实结果集</td>
+<td>成功</td>
+<td>已传全量区间，但当前返回结构更适合明细排查</td>
 <td>中</td>
-<td>暂缓引入</td>
+<td>暂缓接首页</td>
+</tr>
+<tr>
+<td>导购员报表</td>
+<td>成功</td>
+<td>已传全量区间，但更适合员工复盘</td>
+<td>中</td>
+<td>暂缓接首页</td>
 </tr>
 <tr>
 <td>库存明细统计</td>
-<td>页面能打开，但当前 <code>queryRows=0</code></td>
-<td>还没拿到真实结果集</td>
+<td>成功</td>
+<td>已传全量区间，但更适合库存下钻</td>
 <td>中</td>
-<td>暂缓引入</td>
+<td>暂缓接首页</td>
 </tr>
 <tr>
 <td>库存零售统计</td>
-<td>页面能打开，但当前 <code>queryRows=0</code></td>
-<td>还没拿到真实结果集</td>
+<td>成功</td>
+<td>已传全量区间，但更适合库存下钻</td>
 <td>中</td>
-<td>暂缓引入</td>
+<td>暂缓接首页</td>
+</tr>
+<tr>
+<td>进销存统计</td>
+<td>成功</td>
+<td>已传全量区间，但对首页收益一般</td>
+<td>中</td>
+<td>暂缓接首页</td>
+</tr>
+<tr>
+<td>会员综合分析</td>
+<td>部分成功</td>
+<td>原始请求已带全量区间，当前需要继续稳定解析</td>
+<td>高</td>
+<td>优先继续攻克</td>
+</tr>
+<tr>
+<td>日进销存</td>
+<td>失败</td>
+<td>接口仍然超时</td>
+<td>中</td>
+<td>继续攻克</td>
+</tr>
+<tr>
+<td>门店销售月报</td>
+<td>成功但当前空结果</td>
+<td>已传全量区间，当前返回 0 行</td>
+<td>中高</td>
+<td>继续验证参数</td>
 </tr>
 <tr>
 <td>每日流水单</td>
-<td>成功拿到 API 样本</td>
-<td>当前更适合当天经营，不适合拿来推整年趋势</td>
-<td>很高</td>
-<td>立即引入，但只作为日流水</td>
+<td>成功但当前空结果</td>
+<td>已传全量区间，当前返回 0 行</td>
+<td>高</td>
+<td>继续验证适用时间窗</td>
+</tr>
+<tr>
+<td>储值按店汇总</td>
+<td>成功</td>
+<td>已传全量区间</td>
+<td>低到中</td>
+<td>暂缓引入</td>
+</tr>
+<tr>
+<td>储值卡汇总</td>
+<td>成功</td>
+<td>已传全量区间</td>
+<td>低到中</td>
+<td>暂缓引入</td>
+</tr>
+<tr>
+<td>储值卡明细</td>
+<td>成功</td>
+<td>已传全量区间</td>
+<td>低到中</td>
+<td>暂缓引入</td>
+</tr>
+<tr>
+<td>商品品类分析</td>
+<td>成功</td>
+<td>已传全量区间，但字段还需整理</td>
+<td>中高</td>
+<td>先放详细页备选</td>
 </tr>
 </tbody>
 </table>
-<h2 id="_8">按老板价值分级<a class="headerlink" href="#_8" title="Permanent link">¶</a></h2>
+<h2 id="_7">按老板价值分级<a class="headerlink" href="#_7" title="Permanent link">¶</a></h2>
 <h2 id="a">A 类：值得直接进老板看板<a class="headerlink" href="#a" title="Permanent link">¶</a></h2>
 <h3 id="1">1. 店铺零售清单<a class="headerlink" href="#1" title="Permanent link">¶</a></h3>
 <p>当前导出结果：</p>
@@ -730,7 +815,7 @@ body {
 <li>作为 <code>会员经营</code> 的补充，不必比 <code>会员综合分析</code> 更早</li>
 </ul>
 <h2 id="c">C 类：当前收益不高，先不优先投入<a class="headerlink" href="#c" title="Permanent link">¶</a></h2>
-<h3 id="_9">零售明细统计<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<h3 id="_8">零售明细统计<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
 <p>问题：</p>
 <ul>
 <li>当前能打开页面，但没拿到真实结果集</li>
@@ -740,7 +825,7 @@ body {
 <ul>
 <li>暂不优先</li>
 </ul>
-<h3 id="_10">库存明细统计<a class="headerlink" href="#_10" title="Permanent link">¶</a></h3>
+<h3 id="_9">库存明细统计<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
 <p>问题：</p>
 <ul>
 <li>当前能打开页面，但没拿到真实结果集</li>
@@ -750,7 +835,7 @@ body {
 <ul>
 <li>暂不优先</li>
 </ul>
-<h3 id="_11">库存零售统计<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
+<h3 id="_10">库存零售统计<a class="headerlink" href="#_10" title="Permanent link">¶</a></h3>
 <p>问题：</p>
 <ul>
 <li>对分析有帮助</li>
@@ -760,7 +845,7 @@ body {
 <ul>
 <li>暂放详细页候选，不抢前排</li>
 </ul>
-<h3 id="_12">导购员统计<a class="headerlink" href="#_12" title="Permanent link">¶</a></h3>
+<h3 id="_11">导购员统计<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
 <p>问题：</p>
 <ul>
 <li>适合做员工复盘</li>
@@ -770,7 +855,7 @@ body {
 <ul>
 <li>后面如要强化店员绩效再接入</li>
 </ul>
-<h3 id="_13">零售缴款单<a class="headerlink" href="#_13" title="Permanent link">¶</a></h3>
+<h3 id="_12">零售缴款单<a class="headerlink" href="#_12" title="Permanent link">¶</a></h3>
 <p>问题：</p>
 <ul>
 <li>对对账有用</li>
@@ -780,7 +865,7 @@ body {
 <ul>
 <li>暂缓</li>
 </ul>
-<h3 id="_14">储值按店汇总 / 储值卡汇总 / 储值卡明细<a class="headerlink" href="#_14" title="Permanent link">¶</a></h3>
+<h3 id="_13">储值按店汇总 / 储值卡汇总 / 储值卡明细<a class="headerlink" href="#_13" title="Permanent link">¶</a></h3>
 <p>问题：</p>
 <ul>
 <li>有经营价值，但前提是你们当前门店真的在高频使用储值体系</li>
@@ -791,7 +876,7 @@ body {
 <li>先不优先</li>
 <li>等会员线成熟后再决定是否补</li>
 </ul>
-<h2 id="_15">截图里有，但当前还没形成稳定结果的报表<a class="headerlink" href="#_15" title="Permanent link">¶</a></h2>
+<h2 id="_14">截图里有，但当前还没形成稳定结果的报表<a class="headerlink" href="#_14" title="Permanent link">¶</a></h2>
 <p>这批报表我建议先记在二期候选，不要现在就都往看板里塞：</p>
 <ul>
 <li><code>库存多维分析</code></li>
@@ -806,20 +891,20 @@ body {
 <li>其中一部分和现有报表存在信息重叠</li>
 <li>先把 A 类和高价值 B 类做稳，收益更高</li>
 </ul>
-<h2 id="_16">最终建议：你现在怎么拍板最划算<a class="headerlink" href="#_16" title="Permanent link">¶</a></h2>
-<h3 id="_17">现在就引入<a class="headerlink" href="#_17" title="Permanent link">¶</a></h3>
+<h2 id="_15">最终建议：你现在怎么拍板最划算<a class="headerlink" href="#_15" title="Permanent link">¶</a></h2>
+<h3 id="_16">现在就引入<a class="headerlink" href="#_16" title="Permanent link">¶</a></h3>
 <ul>
 <li><code>店铺零售清单</code></li>
 <li><code>库存综合分析</code></li>
 <li><code>每日流水单</code></li>
 </ul>
-<h3 id="_18">下一批重点攻克<a class="headerlink" href="#_18" title="Permanent link">¶</a></h3>
+<h3 id="_17">下一批重点攻克<a class="headerlink" href="#_17" title="Permanent link">¶</a></h3>
 <ul>
 <li><code>销售清单</code></li>
 <li><code>商品销售情况</code></li>
 <li><code>出入库单据</code></li>
 </ul>
-<h3 id="_19">先不投入<a class="headerlink" href="#_19" title="Permanent link">¶</a></h3>
+<h3 id="_18">先不投入<a class="headerlink" href="#_18" title="Permanent link">¶</a></h3>
 <ul>
 <li><code>零售明细统计</code></li>
 <li><code>库存明细统计</code></li>
@@ -828,7 +913,7 @@ body {
 <li><code>零售缴款单</code></li>
 <li><code>储值相关</code></li>
 </ul>
-<h2 id="_20">一句话版本<a class="headerlink" href="#_20" title="Permanent link">¶</a></h2>
+<h2 id="_19">一句话版本<a class="headerlink" href="#_19" title="Permanent link">¶</a></h2>
 <p>如果只看投入产出比，当前最值得继续引入老板看板的，是：</p>
 <p><code>店铺零售清单 + 库存综合分析 + 每日流水单</code></p>
 <p>如果只看下一步最值得攻克的，是：</p>
@@ -855,10 +940,10 @@ body {
 </ul>
 </li>
 <li><a href="#_6">导出结果总览</a><ul>
-<li><a href="#_7">已经实际跑过的报表</a></li>
+<li><a href="#curl">已经按 curl 实际验证过的报表</a></li>
 </ul>
 </li>
-<li><a href="#_8">按老板价值分级</a></li>
+<li><a href="#_7">按老板价值分级</a></li>
 <li><a href="#a">A 类：值得直接进老板看板</a><ul>
 <li><a href="#1">1. 店铺零售清单</a></li>
 <li><a href="#2">2. 库存综合分析</a></li>
@@ -874,22 +959,22 @@ body {
 </ul>
 </li>
 <li><a href="#c">C 类：当前收益不高，先不优先投入</a><ul>
-<li><a href="#_9">零售明细统计</a></li>
-<li><a href="#_10">库存明细统计</a></li>
-<li><a href="#_11">库存零售统计</a></li>
-<li><a href="#_12">导购员统计</a></li>
-<li><a href="#_13">零售缴款单</a></li>
-<li><a href="#_14">储值按店汇总 / 储值卡汇总 / 储值卡明细</a></li>
+<li><a href="#_8">零售明细统计</a></li>
+<li><a href="#_9">库存明细统计</a></li>
+<li><a href="#_10">库存零售统计</a></li>
+<li><a href="#_11">导购员统计</a></li>
+<li><a href="#_12">零售缴款单</a></li>
+<li><a href="#_13">储值按店汇总 / 储值卡汇总 / 储值卡明细</a></li>
 </ul>
 </li>
-<li><a href="#_15">截图里有，但当前还没形成稳定结果的报表</a></li>
-<li><a href="#_16">最终建议：你现在怎么拍板最划算</a><ul>
-<li><a href="#_17">现在就引入</a></li>
-<li><a href="#_18">下一批重点攻克</a></li>
-<li><a href="#_19">先不投入</a></li>
+<li><a href="#_14">截图里有，但当前还没形成稳定结果的报表</a></li>
+<li><a href="#_15">最终建议：你现在怎么拍板最划算</a><ul>
+<li><a href="#_16">现在就引入</a></li>
+<li><a href="#_17">下一批重点攻克</a></li>
+<li><a href="#_18">先不投入</a></li>
 </ul>
 </li>
-<li><a href="#_20">一句话版本</a></li>
+<li><a href="#_19">一句话版本</a></li>
 </ul>
 </li>
 </ul>

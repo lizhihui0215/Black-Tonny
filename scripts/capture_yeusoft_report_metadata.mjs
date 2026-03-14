@@ -12,9 +12,18 @@ const REPORT_NAME = process.env.YEU_REPORT_NAME || "店铺零售清单";
 const OUTPUT_DIR = process.env.YEU_OUTPUT_DIR || path.resolve("reports/yeusoft_report_capture");
 const START_DATE = process.env.YEU_START_DATE || "2025-03-01";
 const END_DATE = process.env.YEU_END_DATE || new Date().toISOString().slice(0, 10);
+const REPORT_ROOT_NAME = "报表管理";
+const REPORT_GROUPS = new Set(["零售报表", "库存报表", "进出报表", "会员报表", "综合分析", "对账报表"]);
+const REPORT_ALIAS_MAP = {
+  销售明细统计: "零售明细统计",
+  导购员统计: "导购员报表",
+};
+const SNAPSHOT_REPORTS = new Set(["库存综合分析"]);
 const REPORT_GROUP_MAP = {
   零售明细统计: "零售报表",
+  销售明细统计: "零售报表",
   导购员报表: "零售报表",
+  导购员统计: "零售报表",
   店铺零售清单: "零售报表",
   销售清单: "零售报表",
   库存明细统计: "库存报表",
@@ -36,10 +45,10 @@ const REPORT_GROUP_MAP = {
   每日流水单: "对账报表",
 };
 const REPORT_INTERNAL_NAME_MAP = {
-  销售明细统计: "report01",
+  零售明细统计: "report01",
   零售缴款单: "report02",
-  导购员统计: "report03",
-  门店销售日报: "report09",
+  导购员报表: "report03",
+  门店销售月报: "salesMonthlyReport",
   库存明细统计: "report04",
   库存零售统计: "report05",
   库存综合分析: "report10",
@@ -55,8 +64,45 @@ const INTERESTING_ENDPOINTS = [
   "GetControlData",
   "GetViewGridList",
   "GetDIYReportData",
+  "SelDeptSaleList",
+  "SelPersonSale",
+  "SelDeptStockWaitList",
+  "SelDeptStockSaleList",
   "SelStockAnalysisList",
+  "SelDeptStockAnalysis",
+  "SelInSalesReport",
   "SelOutInStockReport",
+  "SelInSalesReportByDay",
+  "SelVipAnalysisReport",
+  "SelVipSaleRank",
+  "SelSaleReportData",
+  "SelWareTypeAnalysisList",
+  "DeptMonthSalesReport",
+  "SelectRetailDocPaymentSlip",
+];
+const NON_DATA_ENDPOINTS = new Set([
+  "GetMenuList",
+  "GetConfiguration",
+  "GetFilterContentData",
+  "GetControlData",
+  "GetViewGridList",
+]);
+const DATA_ENDPOINT_HINTS = [
+  "GetDIYReportData",
+  "SelDeptSaleList",
+  "SelPersonSale",
+  "SelDeptStockWaitList",
+  "SelDeptStockSaleList",
+  "SelStockAnalysisList",
+  "SelDeptStockAnalysis",
+  "SelInSalesReport",
+  "SelOutInStockReport",
+  "SelInSalesReportByDay",
+  "SelVipAnalysisReport",
+  "SelVipSaleRank",
+  "SelSaleReportData",
+  "SelWareTypeAnalysisList",
+  "DeptMonthSalesReport",
   "SelectRetailDocPaymentSlip",
 ];
 
@@ -89,6 +135,155 @@ function summarizeText(value, limit = 500) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, limit);
 }
 
+export function normalizeReportName(reportName) {
+  return REPORT_ALIAS_MAP[reportName] || reportName;
+}
+
+function compactDateValue(value) {
+  return String(value || "").replace(/[^0-9]/g, "");
+}
+
+function extractRowCount(body) {
+  if (!body || typeof body !== "object") {
+    return null;
+  }
+
+  if (Array.isArray(body)) {
+    return body.length;
+  }
+
+  const directCandidates = ["retdata", "data", "Data", "list", "List", "rows", "Rows"];
+  for (const key of directCandidates) {
+    if (Array.isArray(body[key])) {
+      return body[key].length;
+    }
+  }
+
+  const retdata = body.retdata;
+  if (Array.isArray(retdata)) {
+    return retdata.length;
+  }
+  if (retdata && typeof retdata === "object") {
+    for (const key of directCandidates) {
+      if (Array.isArray(retdata[key])) {
+        return retdata[key].length;
+      }
+    }
+  }
+
+  return null;
+}
+
+function findDateRangeCandidate(payload) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const startKeys = ["BeginDate", "beginDate", "StartDate", "startDate", "bdate", "BDate", "salebdate", "SaleBeginDate"];
+  const endKeys = ["EndDate", "endDate", "FinishDate", "finishDate", "edate", "EDate", "saleedate", "SaleEndDate"];
+  const stack = [payload];
+
+  while (stack.length) {
+    const current = stack.pop();
+    if (!current || typeof current !== "object") {
+      continue;
+    }
+
+    const startValue = startKeys.find((key) => current[key] !== undefined && current[key] !== null);
+    const endValue = endKeys.find((key) => current[key] !== undefined && current[key] !== null);
+    if (startValue || endValue) {
+      return {
+        start: startValue ? String(current[startValue]) : "",
+        end: endValue ? String(current[endValue]) : "",
+      };
+    }
+
+    for (const value of Object.values(current)) {
+      if (value && typeof value === "object") {
+        stack.push(value);
+      }
+    }
+  }
+
+  return null;
+}
+
+function isIgnoredEndpoint(url) {
+  return Array.from(NON_DATA_ENDPOINTS).some((keyword) => url.includes(keyword));
+}
+
+function isLikelyDataEndpoint(url) {
+  if (!url) {
+    return false;
+  }
+  if (DATA_ENDPOINT_HINTS.some((keyword) => url.includes(keyword))) {
+    return true;
+  }
+  if (isIgnoredEndpoint(url)) {
+    return false;
+  }
+  return /report|analysis|slip|customreport|vip|member|sale|stock|inout/i.test(url);
+}
+
+function summarizeCapture(reportName, captureLog, requestedRange) {
+  const responses = captureLog.responses.map((item) => ({
+    ...item,
+    rowCount: extractRowCount(item.body),
+  }));
+  const dataResponses = responses.filter((item) => isLikelyDataEndpoint(item.url) || (item.rowCount ?? 0) > 0);
+  const preferredResponse =
+    dataResponses.find((item) => (item.rowCount ?? 0) > 0) ||
+    dataResponses.find((item) => DATA_ENDPOINT_HINTS.some((keyword) => item.url.includes(keyword))) ||
+    dataResponses[0] ||
+    null;
+
+  const matchingRequest =
+    [...captureLog.requests]
+      .reverse()
+      .find((item) => preferredResponse && item.url === preferredResponse.url) ||
+    [...captureLog.requests]
+      .reverse()
+      .find((item) => isLikelyDataEndpoint(item.url)) ||
+    null;
+
+  const requestRange = matchingRequest ? findDateRangeCandidate(matchingRequest.postData) : null;
+  const requestedStart = compactDateValue(requestedRange.start);
+  const requestedEnd = compactDateValue(requestedRange.end);
+  const requestStart = compactDateValue(requestRange?.start || "");
+  const requestEnd = compactDateValue(requestRange?.end || "");
+  const isSnapshotReport = SNAPSHOT_REPORTS.has(reportName);
+  const rangeMatched = isSnapshotReport
+    ? true
+    : Boolean(requestStart && requestEnd && requestStart === requestedStart && requestEnd === requestedEnd);
+  const rowCount = preferredResponse?.rowCount ?? 0;
+
+  let captureQuality = "opened-only";
+  if (preferredResponse && isSnapshotReport) {
+    captureQuality = "snapshot-data";
+  } else if (preferredResponse && rangeMatched && rowCount > 0) {
+    captureQuality = "full-range-data";
+  } else if (preferredResponse && rangeMatched && rowCount === 0) {
+    captureQuality = "full-range-empty";
+  } else if (preferredResponse && !rangeMatched) {
+    captureQuality = "partial-range-data";
+  } else if (matchingRequest) {
+    captureQuality = "query-sent-no-data";
+  }
+
+  return {
+    captureQuality,
+    reportMode: isSnapshotReport ? "snapshot" : "date-range",
+    requestedRange,
+    requestRange: requestRange || { start: "", end: "" },
+    rangeMatched,
+    requestFound: Boolean(matchingRequest),
+    responseFound: Boolean(preferredResponse),
+    recordCount: rowCount,
+    dataEndpoint: preferredResponse?.url || matchingRequest?.url || "",
+    requestMethod: matchingRequest?.method || "",
+  };
+}
+
 async function login(page) {
   let lastError;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
@@ -115,7 +310,7 @@ async function login(page) {
 }
 
 async function waitForPosFrame(page) {
-  for (let i = 0; i < 30; i += 1) {
+  for (let i = 0; i < 60; i += 1) {
     const frame = page.frames().find((item) => item.url().includes("/pos_internal/"));
     if (frame) {
       return frame;
@@ -145,19 +340,93 @@ async function waitForOperationalApp(frame, page) {
   return { hasApp: false, hasJumpPage: false, hasAddTab: false, hasReportArrList: false };
 }
 
+function decodeJwtPayload(token) {
+  try {
+    const [, payload] = String(token || "").split(".");
+    if (!payload) {
+      return {};
+    }
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const decoded = Buffer.from(normalized, "base64").toString("utf8");
+    return JSON.parse(decoded);
+  } catch {
+    return {};
+  }
+}
+
 async function extractAuth(page) {
-  return page.evaluate(() => ({
+  const auth = await page.evaluate(() => ({
     apiUrl: localStorage.getItem("yisapiurl") || localStorage.getItem("YIS_API_ERP_TEMP") || "",
     token: localStorage.getItem("yis_pc_token") || "",
   }));
+  const tokenPayload = decodeJwtPayload(auth.token);
+  return {
+    ...auth,
+    deptCode: tokenPayload.DeptCode || "",
+    companyCode: tokenPayload.ComCode || "",
+  };
 }
 
 function compactDate(value) {
   return String(value || "").replace(/-/g, "");
 }
 
-function buildDirectReportRequest(reportName, startDate, endDate) {
-  if (reportName === "店铺零售清单") {
+function shiftDate(dateText, yearDelta = 0, monthDelta = 0) {
+  const date = new Date(`${dateText}T00:00:00+08:00`);
+  if (Number.isNaN(date.getTime())) {
+    return dateText;
+  }
+  date.setFullYear(date.getFullYear() + yearDelta);
+  date.setMonth(date.getMonth() + monthDelta);
+  return date.toISOString().slice(0, 10);
+}
+
+function buildDirectReportRequest(reportName, startDate, endDate, auth = {}) {
+  const resolvedReportName = normalizeReportName(reportName);
+  const compactStart = compactDate(startDate);
+  const compactEnd = compactDate(endDate);
+  const quotedDeptCode = auth.deptCode ? `'${auth.deptCode}'` : "";
+
+  if (resolvedReportName === "库存综合分析") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelStockAnalysisList`,
+      body: {
+        rtype: 1,
+        spenum: "",
+        warecause: "",
+      },
+    };
+  }
+
+  if (resolvedReportName === "零售明细统计") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelDeptSaleList`,
+      body: {
+        edate: compactEnd,
+        bdate: compactStart,
+        depts: "",
+        spenum: "",
+        warecause: "",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "导购员报表") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposPerson/SelPersonSale`,
+      body: {
+        edate: compactEnd,
+        bdate: compactStart,
+        name: "",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "店铺零售清单") {
     return {
       url: `${ERP_API_URL}/FxErpApi/FXDIYReport/GetDIYReportData`,
       body: {
@@ -175,12 +444,92 @@ function buildDirectReportRequest(reportName, startDate, endDate) {
     };
   }
 
-  if (reportName === "出入库单据") {
+  if (resolvedReportName === "销售清单") {
+    return {
+      url: `${ERP_API_URL}/FxErpApi/FXDIYReport/GetDIYReportData`,
+      body: {
+        menuid: "E004001008",
+        gridid: "E004001008_2",
+        parameter: {
+          BeginDate: compactStart,
+          Depart: quotedDeptCode,
+          EndDate: compactEnd,
+          Operater: "",
+          Tiem: "1",
+          WareClause: "",
+        },
+      },
+    };
+  }
+
+  if (resolvedReportName === "库存明细统计") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelDeptStockWaitList`,
+      body: {
+        edate: compactEnd,
+        bdate: compactStart,
+        depts: "",
+        spenum: "",
+        warecause: "",
+        stockflag: "0",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "库存零售统计") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelDeptStockSaleList`,
+      body: {
+        edate: compactEnd,
+        bdate: compactStart,
+        depts: "",
+        spenum: "",
+        warecause: "",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "库存多维分析") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelDeptStockAnalysis`,
+      body: {
+        bdate: compactStart,
+        edate: compactEnd,
+        warecause: "",
+        spenum: "",
+        depts: "",
+        stockflag: "0",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "进销存统计") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelInSalesReport`,
+      body: {
+        edate: compactEnd,
+        bdate: compactStart,
+        sort: "",
+        spenum: "",
+        warecause: "",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "出入库单据") {
     return {
       url: `${ERP_API_URL}/eposapi/YisEposReport/SelOutInStockReport`,
       body: {
-        edate: compactDate(endDate),
-        bdate: compactDate(startDate),
+        edate: compactEnd,
+        bdate: compactStart,
         datetype: "1",
         type: "已出库,已入库,在途",
         spenum: "",
@@ -192,7 +541,138 @@ function buildDirectReportRequest(reportName, startDate, endDate) {
     };
   }
 
-  if (reportName === "每日流水单") {
+  if (resolvedReportName === "日进销存") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelInSalesReportByDay`,
+      body: {
+        bdate: compactStart,
+        edate: compactEnd,
+        warecause: "",
+        spenum: "",
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "会员综合分析") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelVipAnalysisReport`,
+      body: {
+        salebdate: compactStart,
+        saleedate: compactEnd,
+        birthbdate: "",
+        birthedate: "",
+        page: 0,
+        pagesize: 0,
+        salemoney1: "0",
+        salemoney2: "0",
+        tag: "",
+        type: "",
+      },
+    };
+  }
+
+  if (resolvedReportName === "会员消费排行") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelVipSaleRank`,
+      body: {
+        bdate: compactStart,
+        edate: compactEnd,
+        page: 0,
+        pagesize: 0,
+      },
+    };
+  }
+
+  if (resolvedReportName === "储值按店汇总") {
+    return {
+      url: `${ERP_API_URL}/FxErpApi/FXDIYReport/GetDIYReportData`,
+      body: {
+        menuid: "E004004003",
+        gridid: "E004004003_main",
+        parameter: {
+          EndDate: endDate,
+          BeginDate: startDate,
+        },
+      },
+    };
+  }
+
+  if (resolvedReportName === "储值卡汇总") {
+    return {
+      url: `${ERP_API_URL}/FxErpApi/FXDIYReport/GetDIYReportData`,
+      body: {
+        menuid: "E004004004",
+        gridid: "E004004004_main",
+        parameter: {
+          EndDate: endDate,
+          BeginDate: startDate,
+          Search: "",
+        },
+      },
+    };
+  }
+
+  if (resolvedReportName === "储值卡明细") {
+    return {
+      url: `${ERP_API_URL}/FxErpApi/FXDIYReport/GetDIYReportData`,
+      body: {
+        menuid: "E004004005",
+        gridid: "E004004005_main",
+        parameter: {
+          EndDate: endDate,
+          BeginDate: startDate,
+          Search: "",
+        },
+      },
+    };
+  }
+
+  if (resolvedReportName === "商品销售情况") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposReport/SelSaleReportData`,
+      body: {
+        edate: compactEnd,
+        bdate: compactStart,
+        warecause: "",
+        spenum: "",
+      },
+    };
+  }
+
+  if (resolvedReportName === "商品品类分析") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposWareTypeAnalysis/SelWareTypeAnalysisList`,
+      body: {
+        menuid: "E004005002",
+        gridid: "E004005002_1",
+        warecause: "",
+        type: 3,
+        bdate: compactStart,
+        edate: compactEnd,
+      },
+    };
+  }
+
+  if (resolvedReportName === "门店销售月报") {
+    return {
+      url: `${JY_API_URL}/JyApi/DeptMonthSalesReport/DeptMonthSalesReport`,
+      body: {
+        Type: "1",
+        BeginDate: startDate,
+        EndDate: endDate,
+        YBeginDate: shiftDate(startDate, -1, 0),
+        YEndDate: shiftDate(endDate, -1, 0),
+        MBeginDate: shiftDate(startDate, 0, -1),
+        MEndDate: shiftDate(endDate, 0, -1),
+        PageIndex: 1,
+        PageSize: 2000,
+      },
+    };
+  }
+
+  if (resolvedReportName === "每日流水单") {
     return {
       url: `${JY_API_URL}/JyApi/ReconciliationAnalysis/SelectRetailDocPaymentSlip`,
       body: {
@@ -214,6 +694,7 @@ async function enrichReportWithDirectApi(session, reportName, captureLog, option
     reportName,
     options.startDate || session.startDate || START_DATE,
     options.endDate || session.endDate || END_DATE,
+    session.auth || {},
   );
   if (!requestPlan) {
     return false;
@@ -224,6 +705,7 @@ async function enrichReportWithDirectApi(session, reportName, captureLog, option
   };
   if (session.auth?.token) {
     headers.token = session.auth.token;
+    headers.authorization = `Bearer ${session.auth.token}`;
   }
 
   const response = await session.context.request.post(requestPlan.url, {
@@ -254,14 +736,43 @@ async function enrichReportWithDirectApi(session, reportName, captureLog, option
   return response.ok();
 }
 
-function flattenMenu(items, bucket = []) {
+function flattenMenu(items, bucket = [], parents = []) {
   for (const item of items || []) {
-    bucket.push(item);
+    const current = {
+      ...item,
+      _parents: parents,
+      _reportGroup: parents[1] || "",
+    };
+    bucket.push(current);
     if (item.SubList && item.SubList.length) {
-      flattenMenu(item.SubList, bucket);
+      flattenMenu(item.SubList, bucket, [...parents, item.FuncName]);
     }
   }
   return bucket;
+}
+
+export function listReportMenuItems(menuList) {
+  return flattenMenu(menuList)
+    .filter((item) => item.FuncLID?.startsWith("E004") && item.FuncUrl && item._parents?.[0] === REPORT_ROOT_NAME)
+    .map((item) => ({
+      ...item,
+      canonicalName: normalizeReportName(item.FuncName),
+      groupName: item._reportGroup || REPORT_GROUP_MAP[item.FuncName] || "",
+    }));
+}
+
+function buildMenuLookup(menuList) {
+  const lookup = {};
+  for (const item of listReportMenuItems(menuList)) {
+    lookup[item.FuncName] = item;
+    lookup[item.canonicalName] = item;
+  }
+  for (const [alias, canonical] of Object.entries(REPORT_ALIAS_MAP)) {
+    if (lookup[canonical] && !lookup[alias]) {
+      lookup[alias] = lookup[canonical];
+    }
+  }
+  return lookup;
 }
 
 async function fetchMenuList(page) {
@@ -278,7 +789,7 @@ async function fetchMenuList(page) {
     body: JSON.stringify({ isaution: "E" }),
   });
   const payload = await response.json();
-  return flattenMenu(payload.retdata || []);
+  return payload.retdata || [];
 }
 
 async function revealReportMenu(frame, page) {
@@ -376,7 +887,7 @@ async function tryOpenReportByMenuItem(frame, page, reportName, menuItem) {
 }
 
 async function ensureReportGroup(frame, page, reportName) {
-  const groupName = REPORT_GROUP_MAP[reportName];
+  const groupName = REPORT_GROUPS.has(reportName) ? reportName : REPORT_GROUP_MAP[reportName];
   if (!groupName) {
     return;
   }
@@ -436,6 +947,7 @@ function createNetworkCollector(page) {
       method: request.method(),
       url,
       postData: safeJsonParse(request.postData() || ""),
+      capturedAt: new Date().toISOString(),
     });
   });
 
@@ -458,13 +970,16 @@ function createNetworkCollector(page) {
       status: response.status(),
       url,
       body,
+      capturedAt: new Date().toISOString(),
     });
   });
 
   return {
-    start(reportName) {
+    start(reportName, metadata = {}) {
       activeCapture = {
         reportName,
+        startedAt: new Date().toISOString(),
+        ...metadata,
         requests: [],
         responses: [],
       };
@@ -473,6 +988,7 @@ function createNetworkCollector(page) {
     stop() {
       const snapshot = activeCapture || {
         reportName: "",
+        startedAt: "",
         requests: [],
         responses: [],
       };
@@ -558,13 +1074,10 @@ export async function createYeusoftSession(options = {}) {
   const appState = await waitForOperationalApp(frame, page);
   console.log(`[STEP] app ready jump:${appState.hasJumpPage} addTab:${appState.hasAddTab} reportArr:${appState.hasReportArrList}`);
   const menuList = await fetchMenuList(page).catch(() => []);
-  console.log(`[STEP] menu list loaded ${menuList.length}`);
+  console.log(`[STEP] menu list loaded ${listReportMenuItems(menuList).length} reports`);
   const auth = await extractAuth(page).catch(() => ({ apiUrl: "", token: "" }));
-  const menuLookup = Object.fromEntries(
-    menuList
-      .filter((item) => item && item.FuncName)
-      .map((item) => [item.FuncName, item]),
-  );
+  const menuLookup = buildMenuLookup(menuList);
+  const reportMenuItems = listReportMenuItems(menuList);
 
   return {
     browser,
@@ -579,6 +1092,7 @@ export async function createYeusoftSession(options = {}) {
     auth,
     menuList,
     menuLookup,
+    reportMenuItems,
   };
 }
 
@@ -589,14 +1103,18 @@ export async function closeYeusoftSession(session) {
 export async function captureReportInSession(session, reportName, options = {}) {
   const outputDir = options.outputDir ? path.resolve(options.outputDir) : session.outputDir;
   await ensureDir(outputDir);
-  console.log(`[STEP] start ${reportName}`);
+  const resolvedReportName = normalizeReportName(reportName);
+  const requestedRange = {
+    start: options.startDate || session.startDate || START_DATE,
+    end: options.endDate || session.endDate || END_DATE,
+  };
+  console.log(`[STEP] start ${resolvedReportName}`);
 
-  const captureLog = session.collector.start(reportName);
-  const menuItem = session.menuLookup?.[reportName] || null;
-  const openResult = await tryOpenReportByMenuItem(session.frame, session.page, reportName, menuItem);
+  const menuItem = session.menuLookup?.[resolvedReportName] || session.menuLookup?.[reportName] || null;
+  const openResult = await tryOpenReportByMenuItem(session.frame, session.page, resolvedReportName, menuItem);
   if (openResult?.ok) {
     console.log(
-      `[STEP] opened by menu item ${menuItem?.FuncUrl || REPORT_INTERNAL_NAME_MAP[reportName] || "unknown"} via ${openResult.method || "unknown"}`,
+      `[STEP] opened by menu item ${menuItem?.FuncUrl || REPORT_INTERNAL_NAME_MAP[resolvedReportName] || "unknown"} via ${openResult.method || "unknown"}`,
     );
   } else {
     if (openResult?.reason) {
@@ -604,21 +1122,25 @@ export async function captureReportInSession(session, reportName, options = {}) 
     }
     await revealReportMenu(session.frame, session.page);
     console.log("[STEP] report menu open");
-    await ensureReportGroup(session.frame, session.page, reportName);
-    await clickReportMenuItem(session.frame, reportName);
-    console.log(`[STEP] clicked ${reportName}`);
+    await ensureReportGroup(session.frame, session.page, menuItem?.groupName || resolvedReportName);
+    await clickReportMenuItem(session.frame, resolvedReportName);
+    console.log(`[STEP] clicked ${resolvedReportName}`);
   }
   await session.page.waitForTimeout(2500);
 
   const dateRangeApplied = await trySetDateRange(
     session.frame,
-    options.startDate || session.startDate || START_DATE,
-    options.endDate || session.endDate || END_DATE,
+    requestedRange.start,
+    requestedRange.end,
   );
   if (dateRangeApplied) {
     console.log("[STEP] date range updated");
     await session.page.waitForTimeout(800);
   }
+
+  const captureLog = session.collector.start(resolvedReportName, {
+    requestedRange,
+  });
 
   const tabState = await session.frame.evaluate(() => {
     const app = document.querySelector("#app")?.__vue__?.$children?.[0];
@@ -645,37 +1167,43 @@ export async function captureReportInSession(session, reportName, options = {}) 
       .slice(0, 100);
   });
 
-  await clickQueryButton(session.frame, session.page);
-  await enrichReportWithDirectApi(session, reportName, captureLog, {
-    startDate: options.startDate || session.startDate || START_DATE,
-    endDate: options.endDate || session.endDate || END_DATE,
+  let directApiCaptured = false;
+  directApiCaptured = await enrichReportWithDirectApi(session, resolvedReportName, captureLog, {
+    startDate: requestedRange.start,
+    endDate: requestedRange.end,
   }).catch((error) => {
     console.log(`[STEP] direct api skipped: ${String(error)}`);
+    return false;
   });
+  const queryTriggered = directApiCaptured ? false : await clickQueryButton(session.frame, session.page);
+  await session.page.waitForTimeout(2000);
 
-  const screenshotPath = path.join(outputDir, `${sanitizeName(reportName)}.png`);
+  const screenshotPath = path.join(outputDir, `${sanitizeName(resolvedReportName)}.png`);
   console.log("[STEP] screenshot");
   await session.page.screenshot({ path: screenshotPath, fullPage: true });
 
   const finalCaptureLog = session.collector.stop();
+  const captureSummary = summarizeCapture(resolvedReportName, finalCaptureLog, requestedRange);
   const payload = {
     capturedAt: new Date().toISOString(),
     siteUrl: SITE_URL,
-    reportName,
+    reportName: resolvedReportName,
+    requestedReportName: reportName,
     menuItem: menuItem || null,
     tabState,
     filterLabels,
     dateRangeApplied,
-    appliedDateRange: {
-      start: options.startDate || session.startDate || START_DATE,
-      end: options.endDate || session.endDate || END_DATE,
-    },
+    requestedDateRange: requestedRange,
+    appliedDateRange: requestedRange,
+    queryTriggered,
+    directApiCaptured,
+    captureSummary,
     requests: finalCaptureLog.requests,
     responses: finalCaptureLog.responses,
     screenshotPath,
   };
 
-  const jsonPath = path.join(outputDir, `${sanitizeName(reportName)}.json`);
+  const jsonPath = path.join(outputDir, `${sanitizeName(resolvedReportName)}.json`);
   await fs.writeFile(jsonPath, JSON.stringify(payload, null, 2), "utf8");
   console.log("[STEP] write done");
 

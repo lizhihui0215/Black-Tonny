@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 月度经营页</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .page { max-width: 1440px; margin: 0 auto; padding: 18px; }
+    .top-nav { display:flex; justify-content:flex-start; margin-bottom:16px; }
+    .top-nav-links { display:flex; gap:10px; flex-wrap:wrap; }
+    .top-nav-link { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:800; color:#334155; background:#fff; border:1px solid #dbe4f0; text-decoration:none; }
+    .top-nav-link.is-active { background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }
+    .hero { background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%); color:#fff; padding:24px; border-radius:22px; box-shadow:0 18px 48px rgba(15, 23, 42, 0.18); margin-bottom:18px; }
+    .hero h1 { margin:0 0 10px; font-size:30px; line-height:1.25; }
+    .hero p { margin:0; line-height:1.8; opacity:0.95; }
+    .hero-note { margin-top:12px; font-size:13px; opacity:0.9; }
+    .hero-status { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .hero-status-chip { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); }
+    .page-shell { display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:18px; }
+    .main-column { min-width:0; }
+    .side-rail { display:flex; flex-direction:column; gap:16px; align-self:start; }
+    .rail-card { position:sticky; top:88px; background:#fff; border-radius:18px; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); }
+    .rail-card h3 { margin:0 0 8px; font-size:17px; }
+    .rail-card p { margin:0 0 12px; font-size:12px; line-height:1.8; color:#64748b; }
+    .rail-links { display:flex; flex-direction:column; gap:8px; }
+    .rail-links a { display:block; text-decoration:none; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:10px 12px; font-size:13px; font-weight:700; }
+    .rail-links a.current { background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }
+    .quick-nav { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px; }
+    .quick-nav a { text-decoration:none; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }
+    .module { background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(15,23,42,0.08); padding:18px; margin-bottom:18px; }
+    .module-header { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+    .module-title { margin:0; font-size:22px; }
+    .module-note { margin:0; font-size:13px; color:#64748b; line-height:1.8; }
+    .metrics-grid, .cards-grid, .support-grid, .period-card-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }
+    .metric-card, .support-card, .period-card, .chart-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }
+    .metric-card { box-shadow:0 8px 24px rgba(15,23,42,0.06); }
+    .metric-title { font-size:14px; color:#64748b; margin-bottom:8px; }
+    .metric-value { font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }
+    .metric-note { font-size:13px; color:#64748b; line-height:1.7; }
+    .metric-green { border-color:#bbf7d0; background:#f0fdf4; }
+    .metric-green .metric-value { color:#166534; }
+    .metric-yellow { border-color:#fde68a; background:#fffbeb; }
+    .metric-yellow .metric-value { color:#92400e; }
+    .metric-red { border-color:#fecaca; background:#fff7f7; }
+    .metric-red .metric-value { color:#991b1b; }
+    .overview-card { background:#fffdf7; border:1px solid #fde68a; border-radius:16px; padding:18px; }
+    .overview-headline { font-size:26px; font-weight:800; color:#92400e; margin:0 0 10px; line-height:1.35; }
+    .overview-summary { margin:0; font-size:14px; line-height:1.8; color:#5b4636; }
+    .guidance-list { margin:0; padding-left:18px; line-height:1.9; color:#334155; font-size:14px; }
+    .chart-card { overflow:hidden; }
+    .period-card-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+    .period-card-title { font-size:18px; font-weight:800; color:#0f172a; }
+    .period-card-note { margin-top:10px; font-size:12px; color:#64748b; line-height:1.7; }
+    .period-stat-grid { display:grid; gap:8px; }
+    .period-stat { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; color:#475569; }
+    .period-stat strong { color:#0f172a; }
+    .support-card h3 { margin:0 0 8px; font-size:16px; }
+    .support-value { font-size:22px; font-weight:800; margin-bottom:8px; color:#0f172a; line-height:1.35; }
+    .support-card p { margin:0; font-size:13px; line-height:1.8; color:#64748b; }
+    .mini-chip { display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; white-space:nowrap; }
+    .mini-chip-neutral, .mini-chip-soft { background:#f1f5f9; color:#334155; }
+    .mini-chip-green { background:#dcfce7; color:#166534; }
+    .mini-chip-yellow { background:#fef3c7; color:#92400e; }
+    .mini-chip-red { background:#fee2e2; color:#991b1b; }
+    .empty-card { border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }
+    @media (max-width: 960px) {
+      .page-shell { grid-template-columns:1fr; }
+      .rail-card { position:static; }
+      .rail-links { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .page { padding:12px; }
+      .hero { padding:18px; border-radius:16px; }
+      .hero h1 { font-size:24px; }
+      .hero-status-chip, .top-nav-link { width:100%; }
+      .top-nav-links { width:100%; }
+      .quick-nav { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+      .module { padding:14px; margin-bottom:14px; }
+      .overview-headline { font-size:22px; }
+      .metric-value { font-size:24px; }
+      .rail-links { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link is-active" href="./monthly.html">月度页</a>
+        <a class="top-nav-link " href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 月度经营页</h1>
+      <p>这里专门看 月度趋势、结构和建议。首页负责今天先做什么，这里负责判断这个月或这个季度整体方向对不对。</p>
+      <div class="hero-note">最近13个月已纳入统计；最新周期 2026-03 销售额 19,565.18 元，较上月回落 65.1%。</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最近抓取日期：2026-03-14（北京时间）</div>
+        <div class="hero-status-chip">当前季节：春季 / 春夏换季期</div>
+      </div>
+    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <nav class="quick-nav">
+          <a href="#period-overview">总览</a>
+          <a href="#period-metrics">核心统计</a>
+          <a href="#period-charts">趋势图表</a>
+          <a href="#period-cards">阶段明细</a>
+          <a href="#period-guidance">经营建议</a>
+        </nav>
+        <section class="module" id="period-overview">
+          <div class="module-header">
+            <h2 class="module-title">月度总览</h2>
+            <p class="module-note">根据全量销售、当前库存结构、会员贡献和利润保本状态，自动给出这一阶段的经营判断。</p>
+          </div>
+          <div class="overview-card">
+            <div class="overview-headline">较上月回落 65.1%</div>
+            <p class="overview-summary">最近13个月已纳入统计；最新周期 2026-03 销售额 19,565.18 元，较上月回落 65.1%。</p>
+          </div>
+        </section>
+        <section class="module" id="period-metrics">
+          <div class="module-header">
+            <h2 class="module-title">核心统计</h2>
+            <p class="module-note">先看这一阶段卖得怎么样、会员贡献如何、库存压力有没有跟着变化。</p>
+          </div>
+          <div class="metrics-grid">
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">最新月度销售额</div>
+          <div class="metric-value">19,565.18 元</div>
+          <div class="metric-note">2026-03</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">最新月度客单价</div>
+          <div class="metric-value">170.13 元</div>
+          <div class="metric-note">销售额 / 订单数</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-title">最新月度会员占比</div>
+          <div class="metric-value">77.1%</div>
+          <div class="metric-note">会员贡献</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">平均月度销售额</div>
+          <div class="metric-value">65,935.77 元</div>
+          <div class="metric-note">共 13 个月度周期</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-title">峰值月度</div>
+          <div class="metric-value">2025-10 / 144,492.01 元</div>
+          <div class="metric-note">当前统计范围内最高</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">月环比</div>
+          <div class="metric-value">较上月回落 65.1%</div>
+          <div class="metric-note">和上一周期相比</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">跨季库存占比</div>
+          <div class="metric-value">56.2%</div>
+          <div class="metric-note">库存主要压在 2025秋、2026夏、2025夏</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">前10会员销额占比</div>
+          <div class="metric-value">6.6%</div>
+          <div class="metric-note">妞宝、年年、史振尧</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-title">当前保本进度</div>
+          <div class="metric-value">144.0%</div>
+          <div class="metric-note">按当前节奏月底大概率还能赚钱</div>
+        </div>
+        </div>
+        </section>
+        <section class="module" id="period-charts">
+          <div class="module-header">
+            <h2 class="module-title">趋势图表</h2>
+            <p class="module-note">销售额、订单数、客单价和会员占比放在一起看，更容易判断阶段节奏。</p>
+          </div>
+          <div class="cards-grid"><section class='chart-card'><div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="015f8b56-a94e-4d10-bdd4-c5c1d7a4acdb" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("015f8b56-a94e-4d10-bdd4-c5c1d7a4acdb")) {                    Plotly.newPlot(                        "015f8b56-a94e-4d10-bdd4-c5c1d7a4acdb",                        [{"marker":{"color":"#1d4ed8"},"name":"\u9500\u552e\u989d","x":["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03"],"y":{"dtype":"f8","bdata":"16NwPYoI3kCamZmZnWrxQMP1KFwzLPJAAAAAAMDd6EAUrkfhQtnjQB+F61FYl+tAexSuR4F49EBI4XoUYKMBQVyPwvXQQfVAexSuR5168EAUrkfhTg7yQK5H4Xq8Z+tAUrgehUsb00A="},"type":"bar"},{"line":{"color":"#f97316","width":3},"mode":"lines+markers","name":"\u8ba2\u5355\u6570","x":["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03"],"y":{"dtype":"i2","bdata":"hgA6AY4BGgHVADkBlgHtATkBGgEkASYBcwA="},"yaxis":"y2","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u8ba2\u5355\u6570"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u6708\u5ea6\u9500\u552e\u989d\u4e0e\u8ba2\u5355\u6570"},"height":400,"yaxis":{"title":{"text":"\u9500\u552e\u989d"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="a3bcd4ca-d7c5-44f6-a3f6-b0cfa006ab86" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("a3bcd4ca-d7c5-44f6-a3f6-b0cfa006ab86")) {                    Plotly.newPlot(                        "a3bcd4ca-d7c5-44f6-a3f6-b0cfa006ab86",                        [{"line":{"color":"#0f766e","width":3},"mode":"lines+markers","name":"\u5ba2\u5355\u4ef7","x":["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03"],"y":{"dtype":"f8","bdata":"+zxz6kawbECledtvGWZsQBGakpG9YGdA0QG7PdaSZkCfUD9HDttnQIVctIcMkWZArrPSNbfQaUDvbzdXZVFyQE\u002fckofQYnFAcXGuBlTrbUC6LXp53qhvQB7ilr7w3GdATmIQWDlEZUA="},"type":"scatter"},{"marker":{"color":"#a855f7"},"name":"\u4f1a\u5458\u5360\u6bd4","opacity":0.45,"x":["2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03"],"y":{"dtype":"f8","bdata":"VXA5NsdWU0D4EpH7s7xPQOjFu2bfh1FAedUp+ZesUEDOSJVyjQpSQCN\u002fgLGOSFNAeQaAjmjSVEBxwndNC4hUQAkUX8Lz6VRAZ54KmtamVEA49clV6DRRQNHrXqSaQE9ADZ46bPJIU0A="},"yaxis":"y2","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u4f1a\u5458\u5360\u6bd4(%)"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u6708\u5ea6\u5ba2\u5355\u4ef7\u4e0e\u4f1a\u5458\u5360\u6bd4"},"height":400,"yaxis":{"title":{"text":"\u5ba2\u5355\u4ef7"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section></div>
+        </section>
+        <section class="module" id="period-cards">
+          <div class="module-header">
+            <h2 class="module-title">阶段明细</h2>
+            <p class="module-note">最近 6 个月放成卡片，更方便快速对比。</p>
+          </div>
+          <div class='period-card-grid'>
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2026-03</div>
+                <div class="mini-chip mini-chip-red">回落 65.1%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>19,565.18 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>115</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>170.13 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>77.1%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：衣类</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2026-02</div>
+                <div class="mini-chip mini-chip-red">回落 24.1%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>56,125.89 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>294</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>190.90 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>62.5%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：家居服</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2026-01</div>
+                <div class="mini-chip mini-chip-green">增长 9.6%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>73,956.93 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>292</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>253.28 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>68.8%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：儿童内衣套装</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025-12</div>
+                <div class="mini-chip mini-chip-red">回落 22.5%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>67,497.83 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>282</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>239.35 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>82.6%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：儿童内衣套装</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025-11</div>
+                <div class="mini-chip mini-chip-red">回落 39.7%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>87,069.06 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>313</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>278.18 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>83.7%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：羽绒系列</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025-10</div>
+                <div class="mini-chip mini-chip-green">增长 72.3%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>144,492.01 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>493</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>293.09 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>82.1%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：衣类</div>
+            </article>
+            </div>
+        </section>
+        <section class="module" id="period-guidance">
+          <div class="module-header">
+            <h2 class="module-title">经营建议</h2>
+            <p class="module-note">建议会结合销售趋势、库存动态、会员贡献和利润保本状态自动变化。</p>
+          </div>
+          <ul class="guidance-list"><li>最近一个月销售回落，先收紧平均补货，把预算集中到仍在跑量的 衣类。</li><li>会员贡献高，这个阶段更适合做定向回访和到店试穿，而不是全场硬促销。</li><li>当前跨季库存占比约 56.2%，这个阶段要先去跨季库存，再决定深补。</li><li>当前还有 144 个积压风险款，陈列和组合促销要优先围绕这些款做。</li><li>当前月度已过保本线，可以在不伤毛利的前提下做轻促销放大营业额。</li></ul>
+          <div class="support-grid" style="margin-top:16px;">
+            <article class="support-card">
+              <h3>最新月度主销中类</h3>
+              <div class="support-value">衣类</div>
+              <p>最新周期里，这个中类贡献最大，通常优先保障它的核心尺码和主色。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>商品动销提醒</h3>
+              <div class="support-value">快销 559 / 积压 144</div>
+              <p>售罄率 62.8%，库存结构主要压在 2025秋、2026夏、2025夏。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>会员经营提醒</h3>
+              <div class="support-value">妞宝、年年、史振尧</div>
+              <p>前 10 位会员贡献 6.6% 销额，适合做重点回访。</p>
+            </article>
+            </div>
+        </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>固定入口放这里，老板看完趋势页可以直接跳回首页、仪表盘或详细页。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="./index.html">进入仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a class="current" href="./monthly.html">当前月度页</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速看某一块，点这里直接跳，不用整页来回找。</p>
+          <div class="rail-links">
+            <a href="#period-overview">月度总览</a>
+            <a href="#period-metrics">核心统计</a>
+            <a href="#period-charts">趋势图表</a>
+            <a href="#period-cards">阶段明细</a>
+            <a href="#period-guidance">经营建议</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

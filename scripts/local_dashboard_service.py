@@ -24,6 +24,8 @@ CONFIG_FILE = ROOT / "data" / "yeusoft_local_config.json"
 COST_FILE = ROOT / "data" / "store_cost_snapshot.json"
 COST_HISTORY_FILE = ROOT / "data" / "store_cost_history.json"
 SCAN_OUTPUT = ROOT / "reports" / "yeusoft_report_capture"
+DEFAULT_SYNC_MODE = "full"
+DEFAULT_SYNC_START_DATE = "2025-03-01"
 
 
 def now_text() -> str:
@@ -104,6 +106,14 @@ class JobState:
     last_error_at: str | None = None
     last_error: str | None = None
     run_count: int = 0
+    sync_mode: str = DEFAULT_SYNC_MODE
+    sync_start_date: str = DEFAULT_SYNC_START_DATE
+    sync_end_date: str = datetime.now(BEIJING_TZ).strftime("%Y-%m-%d")
+    total_reports: int = 0
+    ok_reports: int = 0
+    partial_reports: int = 0
+    opened_only_reports: int = 0
+    error_reports: int = 0
 
 
 STATE = JobState()
@@ -132,6 +142,14 @@ def snapshot_state() -> dict[str, Any]:
             "last_error_at": STATE.last_error_at,
             "last_error": STATE.last_error,
             "run_count": STATE.run_count,
+            "sync_mode": STATE.sync_mode,
+            "sync_start_date": STATE.sync_start_date,
+            "sync_end_date": STATE.sync_end_date,
+            "total_reports": STATE.total_reports,
+            "ok_reports": STATE.ok_reports,
+            "partial_reports": STATE.partial_reports,
+            "opened_only_reports": STATE.opened_only_reports,
+            "error_reports": STATE.error_reports,
         }
 
 
@@ -151,13 +169,25 @@ def run_command(cmd: list[str], env: dict[str, str] | None = None) -> subprocess
     )
 
 
-def refresh_job(source: str = "unknown") -> None:
+def load_scan_index() -> dict[str, Any]:
+    index_path = SCAN_OUTPUT / "index.json"
+    if not index_path.exists():
+        return {}
+    return json.loads(index_path.read_text(encoding="utf-8"))
+
+
+def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_date: str | None = None, end_date: str | None = None) -> None:
     config = load_local_config()
+    sync_start_date = str(start_date or config.get("start_date") or DEFAULT_SYNC_START_DATE)
+    sync_end_date = str(end_date or config.get("end_date") or datetime.now(BEIJING_TZ).strftime("%Y-%m-%d"))
     env = {
         **os.environ,
         "YEU_SITE_URL": str(config.get("site_url") or "https://jypos.yeusoft.net/"),
         "YEU_USERNAME": str(config.get("username") or ""),
         "YEU_PASSWORD": str(config.get("password") or ""),
+        "YEU_START_DATE": sync_start_date,
+        "YEU_END_DATE": sync_end_date,
+        "YEU_SYNC_MODE": mode,
     }
 
     update_state(
@@ -165,9 +195,17 @@ def refresh_job(source: str = "unknown") -> None:
         started_at=now_text(),
         finished_at=None,
         status="running",
-        message="正在抓取 Yeusoft 报表并重建仪表盘。",
+        message="正在执行 Yeusoft 全量同步并重建仪表盘。",
         steps=[],
         last_source=source,
+        sync_mode=mode,
+        sync_start_date=sync_start_date,
+        sync_end_date=sync_end_date,
+        total_reports=0,
+        ok_reports=0,
+        partial_reports=0,
+        opened_only_reports=0,
+        error_reports=0,
     )
 
     try:
@@ -179,7 +217,24 @@ def refresh_job(source: str = "unknown") -> None:
         scan = run_command(["node", "scripts/scan_yeusoft_useful_reports.mjs"], env=env)
         if scan.returncode != 0:
             raise RuntimeError(f"关键报表扫描失败：{scan.stderr.strip() or scan.stdout.strip()}")
-        append_step("扫描关键报表", "ok", "已抓取关键报表结构与查询返回，用于后续优化看板。")
+        scan_index = load_scan_index()
+        counts = scan_index.get("counts", {}) if isinstance(scan_index, dict) else {}
+        update_state(
+            total_reports=int(scan_index.get("totalReports") or 0) if isinstance(scan_index, dict) else 0,
+            ok_reports=int(counts.get("ok") or 0),
+            partial_reports=int(counts.get("partial") or 0),
+            opened_only_reports=int(counts.get("opened-only") or 0),
+            error_reports=int(counts.get("error") or 0),
+        )
+        append_step(
+            "执行全量同步",
+            "ok",
+            (
+                f"已按 {sync_start_date} 到 {sync_end_date} 运行全量同步。"
+                f" 成功 {counts.get('ok', 0)} 张，部分成功 {counts.get('partial', 0)} 张，"
+                f"仅打开未取数 {counts.get('opened-only', 0)} 张，失败 {counts.get('error', 0)} 张。"
+            ),
+        )
 
         build_cmd = [
             "python3",
@@ -205,7 +260,7 @@ def refresh_job(source: str = "unknown") -> None:
             running=False,
             finished_at=now_text(),
             status="success",
-            message="抓取和重建已完成，可以刷新首页和仪表盘查看最新结果。",
+            message="全量同步和重建已完成，可以刷新首页和仪表盘查看最新结果。",
             last_scan_index=last_scan_index,
             last_dashboard=last_dashboard,
             last_success_at=now_text(),
@@ -296,7 +351,7 @@ class Handler(BaseHTTPRequestHandler):
                     200,
                     {
                         "ok": True,
-                        "message": "成本快照已保存到本地文件。",
+                "message": "成本快照已保存到本地文件。",
                         "path": str(COST_FILE),
                         "history_path": str(COST_HISTORY_FILE),
                         "snapshot": snapshot,
@@ -313,18 +368,21 @@ class Handler(BaseHTTPRequestHandler):
 
         payload = self._read_json_body()
         source = str(payload.get("source") or "unknown")
+        mode = str(payload.get("mode") or DEFAULT_SYNC_MODE)
+        start_date = str(payload.get("start_date") or "").strip() or None
+        end_date = str(payload.get("end_date") or "").strip() or None
         current = snapshot_state()
         if current["running"]:
             self._send(409, {"ok": False, "message": "已有抓取任务正在执行。", **current})
             return
 
-        thread = threading.Thread(target=refresh_job, args=(source,), daemon=True)
+        thread = threading.Thread(target=refresh_job, args=(source, mode, start_date, end_date), daemon=True)
         thread.start()
         self._send(
             202,
             {
                 "ok": True,
-                "message": "已开始抓取关键报表并重建仪表盘。",
+                "message": "已开始执行全量同步并重建仪表盘。",
                 **snapshot_state(),
             },
         )

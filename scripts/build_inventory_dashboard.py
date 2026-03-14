@@ -389,7 +389,7 @@ def load_yeusoft_capture_bundle(capture_dir: Path | None) -> dict[str, dict]:
         return {}
 
     bundle: dict[str, dict] = {}
-    for report_name in ("库存综合分析", "出入库单据", "每日流水单"):
+    for report_name in ("销售清单", "商品销售情况", "会员消费排行", "库存综合分析", "出入库单据", "每日流水单"):
         capture_path = capture_dir / f"{report_name}.json"
         if capture_path.exists():
             try:
@@ -397,6 +397,320 @@ def load_yeusoft_capture_bundle(capture_dir: Path | None) -> dict[str, dict]:
             except json.JSONDecodeError:
                 continue
     return bundle
+
+
+def extract_capture_rows(capture_payload: dict | None, url_keyword: str) -> tuple[list[dict], dict]:
+    body = extract_capture_response(capture_payload, url_keyword)
+    request_payload = extract_capture_request(capture_payload, url_keyword) or {}
+    if not body:
+        return [], request_payload
+
+    retdata = body.get("retdata")
+    if isinstance(retdata, dict):
+        data_rows = retdata.get("Data") or []
+        columns = retdata.get("ColumnsList") or []
+        if columns and data_rows and isinstance(data_rows[0], list):
+            return [dict(zip(columns, row)) for row in data_rows], request_payload
+        if data_rows and isinstance(data_rows[0], dict):
+            return data_rows, request_payload
+        return [], request_payload
+
+    if isinstance(retdata, list) and retdata:
+        payload = retdata[0] if isinstance(retdata[0], dict) else {}
+        data_rows = payload.get("Data") or []
+        columns = payload.get("ColumnsList") or []
+        if columns and data_rows and isinstance(data_rows[0], list):
+            return [dict(zip(columns, row)) for row in data_rows], request_payload
+        if data_rows and isinstance(data_rows[0], dict):
+            return data_rows, request_payload
+    return [], request_payload
+
+
+def normalize_yeusoft_frame(frame: pd.DataFrame, numeric_columns: Iterable[str]) -> pd.DataFrame:
+    if frame.empty:
+        return frame
+
+    cleaned = frame.copy()
+    for column in cleaned.columns:
+        if cleaned[column].dtype == object:
+            cleaned[column] = cleaned[column].apply(lambda value: decode_yeusoft_text(value).strip())
+    for column in numeric_columns:
+        if column in cleaned.columns:
+            cleaned[column] = pd.to_numeric(cleaned[column], errors="coerce").fillna(0.0)
+    return cleaned
+
+
+def parse_yeusoft_sales_overview(capture_payload: dict | None) -> dict | None:
+    rows, request_payload = extract_capture_rows(capture_payload, "GetDIYReportData")
+    if not rows:
+        return None
+
+    df = normalize_yeusoft_frame(
+        pd.DataFrame(rows),
+        ["数量", "金额", "单价", "吊牌价", "吊牌金额", "折扣"],
+    )
+    if df.empty:
+        return None
+
+    if "销售日期" in df.columns:
+        df["销售日期"] = pd.to_datetime(df["销售日期"], errors="coerce")
+    if "会员卡号" in df.columns:
+        df["是否会员"] = df["会员卡号"].astype(str).str.strip().ne("")
+    else:
+        df["是否会员"] = False
+
+    non_props = df.copy()
+    if "商品大类" in non_props.columns:
+        non_props = non_props[non_props["商品大类"].ne("道具")]
+    if "商品中类" in non_props.columns:
+        non_props = non_props[non_props["商品中类"].ne("道具")]
+
+    if non_props.empty:
+        return None
+
+    dated = non_props[non_props["销售日期"].notna()].copy() if "销售日期" in non_props.columns else pd.DataFrame()
+    monthly_rows: list[dict[str, object]] = []
+    quarterly_rows: list[dict[str, object]] = []
+    if not dated.empty:
+        dated["month_period"] = dated["销售日期"].dt.to_period("M")
+        dated["quarter_period"] = dated["销售日期"].dt.to_period("Q")
+
+        monthly_group = (
+            dated.groupby("month_period")
+            .agg(
+                销售额=("金额", "sum"),
+                销量=("数量", "sum"),
+                单数=("零售单号", "nunique"),
+                会员销额=("金额", lambda series: series[dated.loc[series.index, "是否会员"]].sum()),
+            )
+            .reset_index()
+            .sort_values("month_period")
+        )
+        monthly_cat = (
+            dated.groupby(["month_period", "商品中类"], dropna=False)
+            .agg(销售额=("金额", "sum"))
+            .reset_index()
+            .sort_values(["month_period", "销售额"], ascending=[True, False])
+            .drop_duplicates("month_period")
+        )
+        monthly_group = monthly_group.merge(monthly_cat[["month_period", "商品中类", "销售额"]].rename(columns={"商品中类": "主销中类", "销售额": "主销中类销售额"}), on="month_period", how="left")
+        for _, row in monthly_group.iterrows():
+            period = row["month_period"]
+            monthly_rows.append(
+                {
+                    "label": period.strftime("%Y-%m"),
+                    "sales_amount": float(row["销售额"]),
+                    "sales_qty": float(row["销量"]),
+                    "order_count": int(row["单数"]),
+                    "avg_order_value": safe_ratio(row["销售额"], row["单数"]),
+                    "member_ratio": safe_ratio(row["会员销额"], row["销售额"]),
+                    "top_category": row.get("主销中类") or "未标记中类",
+                    "top_category_sales": float(row.get("主销中类销售额") or 0),
+                }
+            )
+
+        quarterly_group = (
+            dated.groupby("quarter_period")
+            .agg(
+                销售额=("金额", "sum"),
+                销量=("数量", "sum"),
+                单数=("零售单号", "nunique"),
+                会员销额=("金额", lambda series: series[dated.loc[series.index, "是否会员"]].sum()),
+            )
+            .reset_index()
+            .sort_values("quarter_period")
+        )
+        quarterly_cat = (
+            dated.groupby(["quarter_period", "商品中类"], dropna=False)
+            .agg(销售额=("金额", "sum"))
+            .reset_index()
+            .sort_values(["quarter_period", "销售额"], ascending=[True, False])
+            .drop_duplicates("quarter_period")
+        )
+        quarterly_group = quarterly_group.merge(
+            quarterly_cat[["quarter_period", "商品中类", "销售额"]].rename(columns={"商品中类": "主销中类", "销售额": "主销中类销售额"}),
+            on="quarter_period",
+            how="left",
+        )
+        for _, row in quarterly_group.iterrows():
+            period = row["quarter_period"]
+            quarterly_rows.append(
+                {
+                    "label": f"{period.year}Q{period.quarter}",
+                    "sales_amount": float(row["销售额"]),
+                    "sales_qty": float(row["销量"]),
+                    "order_count": int(row["单数"]),
+                    "avg_order_value": safe_ratio(row["销售额"], row["单数"]),
+                    "member_ratio": safe_ratio(row["会员销额"], row["销售额"]),
+                    "top_category": row.get("主销中类") or "未标记中类",
+                    "top_category_sales": float(row.get("主销中类销售额") or 0),
+                }
+            )
+
+    top_categories_df = (
+        non_props.groupby("商品中类", dropna=False)
+        .agg(销售额=("金额", "sum"), 销量=("数量", "sum"), 单数=("零售单号", "nunique"))
+        .reset_index()
+        .sort_values(["销售额", "销量"], ascending=[False, False])
+    )
+    top_categories = [
+        {
+            "name": row["商品中类"] or "未标记中类",
+            "sales_amount": float(row["销售额"]),
+            "sales_qty": float(row["销量"]),
+            "order_count": int(row["单数"]),
+        }
+        for _, row in top_categories_df.head(3).iterrows()
+    ]
+
+    top_guides = []
+    if "导购员" in non_props.columns:
+        guide_df = (
+            non_props.groupby("导购员", dropna=False)
+            .agg(销售额=("金额", "sum"), 单数=("零售单号", "nunique"))
+            .reset_index()
+            .sort_values(["销售额", "单数"], ascending=[False, False])
+        )
+        top_guides = [
+            {
+                "name": row["导购员"] or "未标记导购",
+                "sales_amount": float(row["销售额"]),
+                "order_count": int(row["单数"]),
+            }
+            for _, row in guide_df.head(3).iterrows()
+            if str(row["导购员"]).strip()
+        ]
+
+    top_category_labels = "、".join(item["name"] for item in top_categories) if top_categories else "暂无明显主力中类"
+    top_guide_name = top_guides[0]["name"] if top_guides else ""
+    store_name = ""
+    if "店铺名称" in non_props.columns and not non_props["店铺名称"].dropna().empty:
+        store_name = str(non_props["店铺名称"].mode().iloc[0]).strip()
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": pd.to_datetime(request_payload.get("parameter", {}).get("BeginDate"), format="%Y%m%d", errors="coerce"),
+        "window_end": pd.to_datetime(request_payload.get("parameter", {}).get("EndDate"), format="%Y%m%d", errors="coerce"),
+        "store_name": store_name,
+        "sales_amount": float(non_props["金额"].sum()),
+        "sales_qty": float(non_props["数量"].sum()),
+        "order_count": int(non_props["零售单号"].nunique()) if "零售单号" in non_props.columns else int(len(non_props)),
+        "avg_order_value": safe_ratio(non_props["金额"].sum(), non_props["零售单号"].nunique()) if "零售单号" in non_props.columns else 0.0,
+        "member_sales_ratio": safe_ratio(non_props.loc[non_props["是否会员"], "金额"].sum(), non_props["金额"].sum()),
+        "top_categories": top_categories,
+        "top_category_labels": top_category_labels,
+        "top_guides": top_guides,
+        "top_guide_name": top_guide_name,
+        "monthly_rows": monthly_rows,
+        "quarterly_rows": quarterly_rows,
+        "latest_month": monthly_rows[-1] if monthly_rows else None,
+        "previous_month": monthly_rows[-2] if len(monthly_rows) >= 2 else None,
+        "latest_quarter": quarterly_rows[-1] if quarterly_rows else None,
+        "previous_quarter": quarterly_rows[-2] if len(quarterly_rows) >= 2 else None,
+    }
+
+
+def parse_yeusoft_product_sales(capture_payload: dict | None, current_season: str, next_season: str) -> dict | None:
+    rows, request_payload = extract_capture_rows(capture_payload, "SelSaleReportData")
+    if not rows:
+        return None
+
+    df = normalize_yeusoft_frame(
+        pd.DataFrame(rows),
+        ["SaleAmount", "SaleMoney", "SumSaleAmount", "SumSaleMoney", "SumArrival", "WeekSellOut", "SumSellOut", "StockNum", "SumReturn"],
+    )
+    if df.empty:
+        return None
+
+    df = df[df["WareCode"].astype(str).str.strip().ne("")]
+    non_props = df[df["MType"].ne("道具")].copy() if "MType" in df.columns else df.copy()
+    if non_props.empty:
+        return None
+
+    non_props["Season"] = non_props["Season"].apply(normalize_product_season)
+    non_props["season_strategy"] = non_props["Season"].apply(
+        lambda season: classify_season_action(current_season, next_season, season)
+    )
+    non_props["season_label"] = (
+        non_props["Year"].astype(str).str.strip().replace({"": "未标记年份"}) + non_props["Season"].replace({"": "未标记季节"})
+    )
+
+    season_stock_df = (
+        non_props.groupby("season_label", dropna=False)
+        .agg(库存件数=("StockNum", "sum"), 累计销额=("SumSaleMoney", "sum"))
+        .reset_index()
+        .sort_values(["库存件数", "累计销额"], ascending=[False, False])
+    )
+    top_stock_labels = "、".join(
+        row["season_label"] for _, row in season_stock_df.head(3).iterrows() if str(row["season_label"]).strip()
+    ) or "暂无明显库存季节结构"
+
+    current_rows = non_props[non_props["Season"].eq(current_season)]
+    next_rows = non_props[non_props["Season"].eq(next_season)]
+    cross_rows = non_props[non_props["season_strategy"].isin({"跨季去化", "暂缓补货"})]
+
+    fast_sellout_count = int(((non_props["SumSellOut"] >= 0.8) & (non_props["StockNum"] <= 2)).sum())
+    backlog_count = int(((non_props["SumSellOut"] <= 0.35) & (non_props["StockNum"] >= 5)).sum())
+    current_stock_qty = float(non_props["StockNum"].sum())
+    current_sellout_rate = safe_ratio(non_props["SumSaleAmount"].sum(), non_props["SumArrival"].sum())
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": pd.to_datetime(request_payload.get("bdate"), format="%Y%m%d", errors="coerce"),
+        "window_end": pd.to_datetime(request_payload.get("edate"), format="%Y%m%d", errors="coerce"),
+        "style_count": int(len(non_props)),
+        "cumulative_sales_qty": float(non_props["SumSaleAmount"].sum()),
+        "cumulative_sales_amount": float(non_props["SumSaleMoney"].sum()),
+        "cumulative_arrival_qty": float(non_props["SumArrival"].sum()),
+        "current_stock_qty": current_stock_qty,
+        "sellout_rate": current_sellout_rate,
+        "current_season_stock_share": safe_ratio(current_rows["StockNum"].sum(), current_stock_qty),
+        "next_season_stock_share": safe_ratio(next_rows["StockNum"].sum(), current_stock_qty),
+        "cross_season_stock_share": safe_ratio(cross_rows["StockNum"].sum(), current_stock_qty),
+        "top_stock_labels": top_stock_labels,
+        "fast_sellout_count": fast_sellout_count,
+        "backlog_count": backlog_count,
+    }
+
+
+def parse_yeusoft_member_rank(capture_payload: dict | None) -> dict | None:
+    rows, request_payload = extract_capture_rows(capture_payload, "SelVipSaleRank")
+    if not rows:
+        return None
+
+    df = normalize_yeusoft_frame(pd.DataFrame(rows), ["TM", "TN", "WareCnt", "N", "P"])
+    if df.empty:
+        return None
+
+    # 第一行通常是合计行，用户名和卡号都为空。
+    members = df[(df["UserName"].astype(str).str.strip().ne("")) | (df["VipCardID"].astype(str).str.strip().ne(""))].copy()
+    if members.empty:
+        return None
+
+    members = members.sort_values(["TM", "TN"], ascending=[False, False]).reset_index(drop=True)
+    total_amount = float(members["TM"].sum())
+    top_members = [
+        {
+            "name": row["UserName"] or "未命名会员",
+            "vip_card": row["VipCardID"],
+            "amount": float(row["TM"]),
+        }
+        for _, row in members.head(5).iterrows()
+    ]
+    top_names = "、".join(item["name"] for item in top_members[:3]) if top_members else "暂无高价值会员"
+    top10_amount = float(members.head(10)["TM"].sum())
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": pd.to_datetime(request_payload.get("bdate"), format="%Y%m%d", errors="coerce"),
+        "window_end": pd.to_datetime(request_payload.get("edate"), format="%Y%m%d", errors="coerce"),
+        "member_count": int(len(members)),
+        "total_amount": total_amount,
+        "top10_amount": top10_amount,
+        "top10_share": safe_ratio(top10_amount, total_amount),
+        "top_members": top_members,
+        "top_names": top_names,
+    }
 
 
 def parse_yeusoft_stock_analysis(capture_payload: dict | None, current_season: str, next_season: str) -> dict | None:
@@ -603,6 +917,11 @@ def build_yeusoft_report_highlights(
     if not capture_bundle:
         return None
 
+    sales_overview = parse_yeusoft_sales_overview(capture_bundle.get("销售清单"))
+    product_sales = parse_yeusoft_product_sales(
+        capture_bundle.get("商品销售情况"), current_season, next_season
+    )
+    member_rank = parse_yeusoft_member_rank(capture_bundle.get("会员消费排行"))
     stock_analysis = parse_yeusoft_stock_analysis(
         capture_bundle.get("库存综合分析"), current_season, next_season
     )
@@ -611,11 +930,14 @@ def build_yeusoft_report_highlights(
 
     capture_dates = [
         value.get("capture_at")
-        for value in (stock_analysis, movement, daily_flow)
+        for value in (sales_overview, product_sales, member_rank, stock_analysis, movement, daily_flow)
         if value and pd.notna(value.get("capture_at"))
     ]
 
     return {
+        "sales_overview": sales_overview,
+        "product_sales": product_sales,
+        "member_rank": member_rank,
         "stock_analysis": stock_analysis,
         "movement": movement,
         "daily_flow": daily_flow,
@@ -1296,9 +1618,29 @@ def build_metrics(
         f"{action_summary['clearance_count']} 个建议先去化的高库存低动销 SKU。",
     ]
     if yeusoft_highlights:
+        sales_overview = yeusoft_highlights.get("sales_overview")
+        product_sales_highlight = yeusoft_highlights.get("product_sales")
+        member_rank_highlight = yeusoft_highlights.get("member_rank")
         stock_analysis = yeusoft_highlights.get("stock_analysis")
         movement_highlight = yeusoft_highlights.get("movement")
         daily_flow = yeusoft_highlights.get("daily_flow")
+        if sales_overview:
+            latest_month = sales_overview.get("latest_month")
+            if latest_month:
+                insights.append(
+                    f"POS 销售清单全量显示，最近月份 {latest_month['label']} 销售额约 "
+                    f"{format_num(latest_month['sales_amount'], 2)} 元，主销中类是 {latest_month['top_category']}。"
+                )
+        if product_sales_highlight:
+            insights.append(
+                f"POS 商品销售情况显示，累计售罄率约 {format_num(product_sales_highlight['sellout_rate'] * 100, 1)}%，"
+                f"当前库存主要压在 {product_sales_highlight['top_stock_labels']}。"
+            )
+        if member_rank_highlight:
+            insights.append(
+                f"POS 会员消费排行显示，高价值会员主要是 {member_rank_highlight['top_names']}，"
+                f"前 10 位会员贡献约 {format_num(member_rank_highlight['top10_share'] * 100, 1)}% 销额。"
+            )
         if stock_analysis:
             top_labels = stock_analysis["top_labels"]
             cross_share = stock_analysis["cross_season_inventory_share"] * 100
@@ -2410,6 +2752,47 @@ def build_yeusoft_highlight_cards(pos_highlights: dict | None) -> list[dict[str,
         return []
 
     cards: list[dict[str, str]] = []
+    sales_overview = pos_highlights.get("sales_overview")
+    if sales_overview:
+        top_category_labels = sales_overview.get("top_category_labels") or "暂无明显主销中类"
+        cards.append(
+            {
+                "title": "POS 全期零售",
+                "value": f"{format_num(sales_overview['sales_amount'], 2)} 元",
+                "note": (
+                    f"主销中类 {top_category_labels}，会员销售占比 "
+                    f"{format_num(sales_overview['member_sales_ratio'] * 100, 1)}%。"
+                ),
+            }
+        )
+
+    product_sales = pos_highlights.get("product_sales")
+    if product_sales:
+        cards.append(
+            {
+                "title": "POS 商品动销",
+                "value": f"售罄率 {format_num(product_sales['sellout_rate'] * 100, 1)}%",
+                "note": (
+                    f"当前库存 {format_num(product_sales['current_stock_qty'])} 件，快销潜力款 "
+                    f"{format_num(product_sales['fast_sellout_count'])} 个，积压风险款 "
+                    f"{format_num(product_sales['backlog_count'])} 个。"
+                ),
+            }
+        )
+
+    member_rank = pos_highlights.get("member_rank")
+    if member_rank:
+        cards.append(
+            {
+                "title": "POS 会员排行",
+                "value": member_rank["top_names"],
+                "note": (
+                    f"前 10 位会员贡献 {format_num(member_rank['top10_share'] * 100, 1)}% 销额，"
+                    f"适合做定向复购。"
+                ),
+            }
+        )
+
     stock_analysis = pos_highlights.get("stock_analysis")
     if stock_analysis:
         top_rows = stock_analysis.get("top_rows") or []
@@ -3676,6 +4059,8 @@ def build_html(metrics: dict) -> str:
         <a class="top-nav-link" href="../index.html">首页</a>
         <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
         <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="./monthly.html">月度页</a>
+        <a class="top-nav-link" href="./quarterly.html">季度页</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
         <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
       </div>
@@ -3826,6 +4211,8 @@ def build_html(metrics: dict) -> str:
             <a href="../index.html">返回首页</a>
             <a class="current" href="./index.html">当前仪表盘</a>
             <a href="./details.html">进入详细页</a>
+            <a href="./monthly.html">进入月度页</a>
+            <a href="./quarterly.html">进入季度页</a>
             <a href="../manuals/index.html">进入文档中心</a>
             <a href="../costs/index.html">进入成本维护台</a>
           </div>
@@ -5484,6 +5871,8 @@ def build_detail_html(metrics: dict) -> str:
         <a class="top-nav-link" href="../index.html">首页</a>
         <a class="top-nav-link" href="./index.html">仪表盘</a>
         <a class="top-nav-link is-active" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="./monthly.html">月度页</a>
+        <a class="top-nav-link" href="./quarterly.html">季度页</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
         <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
       </div>
@@ -5585,6 +5974,8 @@ def build_detail_html(metrics: dict) -> str:
             <a href="../index.html">返回首页</a>
             <a href="./index.html">回仪表盘</a>
             <a class="current" href="./details.html">当前详细页</a>
+            <a href="./monthly.html">进入月度页</a>
+            <a href="./quarterly.html">进入季度页</a>
             <a href="../manuals/index.html">进入文档中心</a>
             <a href="../costs/index.html">进入成本维护台</a>
           </div>
@@ -5621,6 +6012,553 @@ def build_detail_html(metrics: dict) -> str:
 </body>
 </html>
 """
+
+
+def build_period_rows(metrics: dict, period_type: str) -> list[dict[str, object]]:
+    pos_highlights = metrics.get("yeusoft_highlights") or {}
+    sales_overview = pos_highlights.get("sales_overview") or {}
+    key = "monthly_rows" if period_type == "monthly" else "quarterly_rows"
+    rows = list(sales_overview.get(key) or [])
+    if rows:
+        return rows
+
+    daily = metrics.get("sales_daily", pd.DataFrame()).copy()
+    if daily.empty:
+        return []
+    daily = daily[daily["日期"].notna()].copy()
+    if daily.empty:
+        return []
+
+    freq = "M" if period_type == "monthly" else "Q"
+    daily["period"] = daily["日期"].dt.to_period(freq)
+    grouped = (
+        daily.groupby("period")
+        .agg(销售额=("销售额", "sum"), 订单数=("订单数", "sum"))
+        .reset_index()
+        .sort_values("period")
+    )
+    rows = []
+    for _, row in grouped.iterrows():
+        period = row["period"]
+        label = period.strftime("%Y-%m") if period_type == "monthly" else f"{period.year}Q{period.quarter}"
+        rows.append(
+            {
+                "label": label,
+                "sales_amount": float(row["销售额"]),
+                "sales_qty": 0.0,
+                "order_count": int(row["订单数"]),
+                "avg_order_value": safe_ratio(row["销售额"], row["订单数"]),
+                "member_ratio": 0.0,
+                "top_category": "待补全",
+                "top_category_sales": 0.0,
+            }
+        )
+    return rows
+
+
+def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights") or {}
+    product_sales = pos_highlights.get("product_sales")
+    member_rank = pos_highlights.get("member_rank")
+    rows = build_period_rows(metrics, period_type)
+    latest = rows[-1] if rows else None
+    previous = rows[-2] if len(rows) >= 2 else None
+    peak = max(rows, key=lambda item: item["sales_amount"], default=None)
+    avg_sales = safe_ratio(sum(item["sales_amount"] for item in rows), len(rows))
+
+    if latest and previous and previous["sales_amount"]:
+        delta_pct = safe_ratio(latest["sales_amount"] - previous["sales_amount"], previous["sales_amount"])
+    else:
+        delta_pct = 0.0
+    delta_tone = "green" if delta_pct >= 0.08 else "red" if delta_pct <= -0.08 else "yellow"
+    delta_text = (
+        f"较上{'月' if period_type == 'monthly' else '季度'}增长 {format_num(delta_pct * 100, 1)}%"
+        if delta_pct >= 0
+        else f"较上{'月' if period_type == 'monthly' else '季度'}回落 {format_num(abs(delta_pct) * 100, 1)}%"
+    )
+
+    guidance: list[str] = []
+    if latest:
+        if delta_pct >= 0.08:
+            guidance.append(
+                f"最近一{'个月' if period_type == 'monthly' else '个季度'}销售有抬升，主销中类是 {latest['top_category']}，优先保证这个中类不断码。"
+            )
+        elif delta_pct <= -0.08:
+            guidance.append(
+                f"最近一{'个月' if period_type == 'monthly' else '个季度'}销售回落，先收紧平均补货，把预算集中到仍在跑量的 {latest['top_category']}。"
+            )
+        else:
+            guidance.append(
+                f"最近一{'个月' if period_type == 'monthly' else '个季度'}销售相对平稳，适合用 {latest['top_category']} 做稳客流，再慢慢去化慢销库存。"
+            )
+        if latest.get("member_ratio", 0) >= 0.6:
+            guidance.append("会员贡献高，这个阶段更适合做定向回访和到店试穿，而不是全场硬促销。")
+
+    if product_sales:
+        cross_share = product_sales["cross_season_stock_share"]
+        if cross_share >= 0.35:
+            guidance.append(
+                f"当前跨季库存占比约 {format_num(cross_share * 100, 1)}%，这个阶段要先去跨季库存，再决定深补。"
+            )
+        elif product_sales["current_season_stock_share"] < 0.35:
+            guidance.append(
+                f"当季库存占比只有 {format_num(product_sales['current_season_stock_share'] * 100, 1)}%，补货预算要更多留给当季主销款。"
+            )
+        if product_sales["backlog_count"] >= 30:
+            guidance.append(
+                f"当前还有 {format_num(product_sales['backlog_count'])} 个积压风险款，陈列和组合促销要优先围绕这些款做。"
+            )
+
+    if member_rank and member_rank["top10_share"] >= 0.25:
+        guidance.append(
+            f"前 10 位会员贡献约 {format_num(member_rank['top10_share'] * 100, 1)}% 销额，优先回访 {member_rank['top_names']} 这类高价值会员。"
+        )
+
+    if profit:
+        if period_type == "monthly":
+            if profit["passed_breakeven"]:
+                guidance.append("当前月度已过保本线，可以在不伤毛利的前提下做轻促销放大营业额。")
+            else:
+                guidance.append("当前月度还没稳过保本线，先保客单、连带和主销中类，不要急着做深折扣。")
+        else:
+            guidance.append(
+                f"按当前利润口径，月末净利预测约 {format_num(profit['projected_month_net_profit'], 2)} 元，季度策略要兼顾利润和库存节奏。"
+            )
+
+    if not guidance:
+        guidance.append("当前还缺少足够的长时间数据，先保持主销品类不断码，再继续积累月度与季度记录。")
+
+    overview_text = (
+        f"最近{len(rows)}个{'月' if period_type == 'monthly' else '季度'}已纳入统计；"
+        f"最新周期 {latest['label']} 销售额 {format_num(latest['sales_amount'], 2)} 元，"
+        f"{delta_text if previous else '当前还没有可比周期'}。"
+        if latest
+        else "当前还没有足够的周期数据。"
+    )
+
+    return {
+        "rows": rows,
+        "latest": latest,
+        "previous": previous,
+        "peak": peak,
+        "avg_sales": avg_sales,
+        "delta_pct": delta_pct,
+        "delta_tone": delta_tone,
+        "delta_text": delta_text,
+        "guidance": guidance[:5],
+        "overview_text": overview_text,
+        "product_sales": product_sales,
+        "member_rank": member_rank,
+        "profit": profit,
+    }
+
+
+def build_period_charts(period_summary: dict[str, object], period_type: str) -> list[str]:
+    rows = period_summary["rows"]
+    if not rows:
+        return []
+    frame = pd.DataFrame(rows)
+    charts: list[str] = []
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            x=frame["label"],
+            y=frame["sales_amount"],
+            name="销售额",
+            marker_color="#1d4ed8",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=frame["label"],
+            y=frame["order_count"],
+            name="订单数",
+            mode="lines+markers",
+            yaxis="y2",
+            line=dict(color="#f97316", width=3),
+        )
+    )
+    fig.update_layout(
+        title=f"{'月度' if period_type == 'monthly' else '季度'}销售额与订单数",
+        height=400,
+        margin=dict(l=20, r=20, t=60, b=20),
+        yaxis=dict(title="销售额"),
+        yaxis2=dict(title="订单数", overlaying="y", side="right"),
+        legend=dict(orientation="h"),
+    )
+    charts.append(fig_to_html(fig, include_js=True))
+
+    fig2 = go.Figure()
+    fig2.add_trace(
+        go.Scatter(
+            x=frame["label"],
+            y=frame["avg_order_value"],
+            name="客单价",
+            mode="lines+markers",
+            line=dict(color="#0f766e", width=3),
+        )
+    )
+    fig2.add_trace(
+        go.Bar(
+            x=frame["label"],
+            y=frame["member_ratio"] * 100,
+            name="会员占比",
+            marker_color="#a855f7",
+            opacity=0.45,
+            yaxis="y2",
+        )
+    )
+    fig2.update_layout(
+        title=f"{'月度' if period_type == 'monthly' else '季度'}客单价与会员占比",
+        height=400,
+        margin=dict(l=20, r=20, t=60, b=20),
+        yaxis=dict(title="客单价"),
+        yaxis2=dict(title="会员占比(%)", overlaying="y", side="right"),
+        legend=dict(orientation="h"),
+    )
+    charts.append(fig_to_html(fig2))
+    return charts
+
+
+def build_period_cards(rows: list[dict[str, object]], period_type: str) -> str:
+    if not rows:
+        return render_empty(f"当前还没有可展示的{'月度' if period_type == 'monthly' else '季度'}数据。")
+
+    cards_html = []
+    for index, row in enumerate(reversed(rows[-6:])):
+        source_index = len(rows) - 1 - index
+        previous = rows[source_index - 1] if source_index - 1 >= 0 else None
+        if previous and previous["sales_amount"]:
+            change_pct = safe_ratio(row["sales_amount"] - previous["sales_amount"], previous["sales_amount"])
+            change_text = f"{'增长' if change_pct >= 0 else '回落'} {format_num(abs(change_pct) * 100, 1)}%"
+            change_tone = "green" if change_pct >= 0.08 else "red" if change_pct <= -0.08 else "yellow"
+        else:
+            change_text = "暂无可比"
+            change_tone = "neutral"
+        cards_html.append(
+            f"""
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">{html.escape(str(row['label']))}</div>
+                <div class="mini-chip mini-chip-{change_tone}">{html.escape(change_text)}</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>{format_num(row['sales_amount'], 2)} 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>{format_num(row['order_count'])}</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>{format_num(row['avg_order_value'], 2)} 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>{format_num(row['member_ratio'] * 100, 1)}%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：{html.escape(str(row['top_category']))}</div>
+            </article>
+            """
+        )
+    return f"<div class='period-card-grid'>{''.join(cards_html)}</div>"
+
+
+def build_period_page(metrics: dict, period_type: str) -> str:
+    cards = metrics["summary_cards"]
+    period_summary = build_period_summary(metrics, period_type)
+    latest = period_summary["latest"]
+    peak = period_summary["peak"]
+    product_sales = period_summary["product_sales"]
+    member_rank = period_summary["member_rank"]
+    profit = period_summary["profit"]
+    charts = build_period_charts(period_summary, period_type)
+    period_cards_html = build_period_cards(period_summary["rows"], period_type)
+    period_label = "月度" if period_type == "monthly" else "季度"
+    current_nav = "monthly.html" if period_type == "monthly" else "quarterly.html"
+
+    metric_cards: list[tuple[str, str, str, str]] = []
+    if latest:
+        metric_cards.extend(
+            [
+                (f"最新{period_label}销售额", f"{format_num(latest['sales_amount'], 2)} 元", latest["label"], "neutral"),
+                (f"最新{period_label}客单价", f"{format_num(latest['avg_order_value'], 2)} 元", "销售额 / 订单数", "neutral"),
+                (
+                    f"最新{period_label}会员占比",
+                    f"{format_num(latest['member_ratio'] * 100, 1)}%",
+                    "会员贡献",
+                    "green" if latest["member_ratio"] >= 0.6 else "yellow" if latest["member_ratio"] >= 0.4 else "neutral",
+                ),
+            ]
+        )
+    metric_cards.append((f"平均{period_label}销售额", f"{format_num(period_summary['avg_sales'], 2)} 元", f"共 {len(period_summary['rows'])} 个{period_label}周期", "neutral"))
+    if peak:
+        metric_cards.append((f"峰值{period_label}", f"{peak['label']} / {format_num(peak['sales_amount'], 2)} 元", "当前统计范围内最高", "green"))
+    metric_cards.append((f"{'月环比' if period_type == 'monthly' else '季环比'}", period_summary["delta_text"], "和上一周期相比", period_summary["delta_tone"]))
+
+    if product_sales:
+        metric_cards.append(
+            (
+                "跨季库存占比",
+                f"{format_num(product_sales['cross_season_stock_share'] * 100, 1)}%",
+                f"库存主要压在 {product_sales['top_stock_labels']}",
+                "red" if product_sales["cross_season_stock_share"] >= 0.35 else "yellow" if product_sales["cross_season_stock_share"] >= 0.2 else "green",
+            )
+        )
+    if member_rank:
+        metric_cards.append(
+            (
+                "前10会员销额占比",
+                f"{format_num(member_rank['top10_share'] * 100, 1)}%",
+                member_rank["top_names"],
+                "green" if member_rank["top10_share"] >= 0.25 else "neutral",
+            )
+        )
+    if profit and period_type == "monthly":
+        metric_cards.append(
+            (
+                "当前保本进度",
+                f"{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
+                profit["forecast_headline"],
+                "green" if profit["passed_breakeven"] else "yellow",
+            )
+        )
+
+    metric_html = "".join(
+        f"""
+        <div class="metric-card metric-{level}">
+          <div class="metric-title">{title}</div>
+          <div class="metric-value">{value}</div>
+          <div class="metric-note">{note}</div>
+        </div>
+        """
+        for title, value, note, level in metric_cards
+    )
+    charts_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts) if charts else render_empty(f"当前还没有可展示的{period_label}图表。")
+    guidance_html = "".join(f"<li>{html.escape(item)}</li>" for item in period_summary["guidance"])
+    support_cards: list[str] = []
+    if latest:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>最新{period_label}主销中类</h3>
+              <div class="support-value">{html.escape(str(latest['top_category']))}</div>
+              <p>最新周期里，这个中类贡献最大，通常优先保障它的核心尺码和主色。</p>
+            </article>
+            """
+        )
+    if product_sales:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>商品动销提醒</h3>
+              <div class="support-value">快销 {format_num(product_sales['fast_sellout_count'])} / 积压 {format_num(product_sales['backlog_count'])}</div>
+              <p>售罄率 {format_num(product_sales['sellout_rate'] * 100, 1)}%，库存结构主要压在 {html.escape(product_sales['top_stock_labels'])}。</p>
+            </article>
+            """
+        )
+    if member_rank:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>会员经营提醒</h3>
+              <div class="support-value">{html.escape(member_rank['top_names'])}</div>
+              <p>前 10 位会员贡献 {format_num(member_rank['top10_share'] * 100, 1)}% 销额，适合做重点回访。</p>
+            </article>
+            """
+        )
+    support_html = "".join(support_cards) if support_cards else render_empty("当前还没有足够的补充分析。")
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{cards['store_name']} {period_label}经营页</title>
+  <style>
+    :root {{
+      color-scheme: light;
+    }}
+    * {{ box-sizing: border-box; }}
+    html, body {{ margin: 0; padding: 0; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; }}
+    .page {{ max-width: 1440px; margin: 0 auto; padding: 18px; }}
+    .top-nav {{ display:flex; justify-content:flex-start; margin-bottom:16px; }}
+    .top-nav-links {{ display:flex; gap:10px; flex-wrap:wrap; }}
+    .top-nav-link {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:800; color:#334155; background:#fff; border:1px solid #dbe4f0; text-decoration:none; }}
+    .top-nav-link.is-active {{ background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }}
+    .hero {{ background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%); color:#fff; padding:24px; border-radius:22px; box-shadow:0 18px 48px rgba(15, 23, 42, 0.18); margin-bottom:18px; }}
+    .hero h1 {{ margin:0 0 10px; font-size:30px; line-height:1.25; }}
+    .hero p {{ margin:0; line-height:1.8; opacity:0.95; }}
+    .hero-note {{ margin-top:12px; font-size:13px; opacity:0.9; }}
+    .hero-status {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
+    .hero-status-chip {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); }}
+    .page-shell {{ display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:18px; }}
+    .main-column {{ min-width:0; }}
+    .side-rail {{ display:flex; flex-direction:column; gap:16px; align-self:start; }}
+    .rail-card {{ position:sticky; top:88px; background:#fff; border-radius:18px; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); }}
+    .rail-card h3 {{ margin:0 0 8px; font-size:17px; }}
+    .rail-card p {{ margin:0 0 12px; font-size:12px; line-height:1.8; color:#64748b; }}
+    .rail-links {{ display:flex; flex-direction:column; gap:8px; }}
+    .rail-links a {{ display:block; text-decoration:none; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:10px 12px; font-size:13px; font-weight:700; }}
+    .rail-links a.current {{ background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }}
+    .quick-nav {{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px; }}
+    .quick-nav a {{ text-decoration:none; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }}
+    .module {{ background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(15,23,42,0.08); padding:18px; margin-bottom:18px; }}
+    .module-header {{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }}
+    .module-title {{ margin:0; font-size:22px; }}
+    .module-note {{ margin:0; font-size:13px; color:#64748b; line-height:1.8; }}
+    .metrics-grid, .cards-grid, .support-grid, .period-card-grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }}
+    .metric-card, .support-card, .period-card, .chart-card {{ background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }}
+    .metric-card {{ box-shadow:0 8px 24px rgba(15,23,42,0.06); }}
+    .metric-title {{ font-size:14px; color:#64748b; margin-bottom:8px; }}
+    .metric-value {{ font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }}
+    .metric-note {{ font-size:13px; color:#64748b; line-height:1.7; }}
+    .metric-green {{ border-color:#bbf7d0; background:#f0fdf4; }}
+    .metric-green .metric-value {{ color:#166534; }}
+    .metric-yellow {{ border-color:#fde68a; background:#fffbeb; }}
+    .metric-yellow .metric-value {{ color:#92400e; }}
+    .metric-red {{ border-color:#fecaca; background:#fff7f7; }}
+    .metric-red .metric-value {{ color:#991b1b; }}
+    .overview-card {{ background:#fffdf7; border:1px solid #fde68a; border-radius:16px; padding:18px; }}
+    .overview-headline {{ font-size:26px; font-weight:800; color:#92400e; margin:0 0 10px; line-height:1.35; }}
+    .overview-summary {{ margin:0; font-size:14px; line-height:1.8; color:#5b4636; }}
+    .guidance-list {{ margin:0; padding-left:18px; line-height:1.9; color:#334155; font-size:14px; }}
+    .chart-card {{ overflow:hidden; }}
+    .period-card-head {{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }}
+    .period-card-title {{ font-size:18px; font-weight:800; color:#0f172a; }}
+    .period-card-note {{ margin-top:10px; font-size:12px; color:#64748b; line-height:1.7; }}
+    .period-stat-grid {{ display:grid; gap:8px; }}
+    .period-stat {{ display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; color:#475569; }}
+    .period-stat strong {{ color:#0f172a; }}
+    .support-card h3 {{ margin:0 0 8px; font-size:16px; }}
+    .support-value {{ font-size:22px; font-weight:800; margin-bottom:8px; color:#0f172a; line-height:1.35; }}
+    .support-card p {{ margin:0; font-size:13px; line-height:1.8; color:#64748b; }}
+    .mini-chip {{ display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; white-space:nowrap; }}
+    .mini-chip-neutral, .mini-chip-soft {{ background:#f1f5f9; color:#334155; }}
+    .mini-chip-green {{ background:#dcfce7; color:#166534; }}
+    .mini-chip-yellow {{ background:#fef3c7; color:#92400e; }}
+    .mini-chip-red {{ background:#fee2e2; color:#991b1b; }}
+    .empty-card {{ border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }}
+    @media (max-width: 960px) {{
+      .page-shell {{ grid-template-columns:1fr; }}
+      .rail-card {{ position:static; }}
+      .rail-links {{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }}
+    }}
+    @media (max-width: 640px) {{
+      .page {{ padding:12px; }}
+      .hero {{ padding:18px; border-radius:16px; }}
+      .hero h1 {{ font-size:24px; }}
+      .hero-status-chip, .top-nav-link {{ width:100%; }}
+      .top-nav-links {{ width:100%; }}
+      .quick-nav {{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }}
+      .module {{ padding:14px; margin-bottom:14px; }}
+      .overview-headline {{ font-size:22px; }}
+      .metric-value {{ font-size:24px; }}
+      .rail-links {{ grid-template-columns:1fr; }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link {'is-active' if period_type == 'monthly' else ''}" href="./monthly.html">月度页</a>
+        <a class="top-nav-link {'is-active' if period_type == 'quarterly' else ''}" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>{cards['store_name']} {period_label}经营页</h1>
+      <p>这里专门看 {period_label}趋势、结构和建议。首页负责今天先做什么，这里负责判断这个月或这个季度整体方向对不对。</p>
+      <div class="hero-note">{period_summary['overview_text']}</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最近抓取日期：{pd.Timestamp(cards['data_capture_at']).strftime('%Y-%m-%d')}（北京时间）</div>
+        <div class="hero-status-chip">当前季节：{cards['current_season_name']} / {cards['phase_name']}</div>
+      </div>
+    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <nav class="quick-nav">
+          <a href="#period-overview">总览</a>
+          <a href="#period-metrics">核心统计</a>
+          <a href="#period-charts">趋势图表</a>
+          <a href="#period-cards">阶段明细</a>
+          <a href="#period-guidance">经营建议</a>
+        </nav>
+        <section class="module" id="period-overview">
+          <div class="module-header">
+            <h2 class="module-title">{period_label}总览</h2>
+            <p class="module-note">根据全量销售、当前库存结构、会员贡献和利润保本状态，自动给出这一阶段的经营判断。</p>
+          </div>
+          <div class="overview-card">
+            <div class="overview-headline">{period_summary['delta_text'] if latest else '等待数据'}</div>
+            <p class="overview-summary">{period_summary['overview_text']}</p>
+          </div>
+        </section>
+        <section class="module" id="period-metrics">
+          <div class="module-header">
+            <h2 class="module-title">核心统计</h2>
+            <p class="module-note">先看这一阶段卖得怎么样、会员贡献如何、库存压力有没有跟着变化。</p>
+          </div>
+          <div class="metrics-grid">{metric_html}</div>
+        </section>
+        <section class="module" id="period-charts">
+          <div class="module-header">
+            <h2 class="module-title">趋势图表</h2>
+            <p class="module-note">销售额、订单数、客单价和会员占比放在一起看，更容易判断阶段节奏。</p>
+          </div>
+          <div class="cards-grid">{charts_html}</div>
+        </section>
+        <section class="module" id="period-cards">
+          <div class="module-header">
+            <h2 class="module-title">阶段明细</h2>
+            <p class="module-note">最近 6 个{'月' if period_type == 'monthly' else '季度'}放成卡片，更方便快速对比。</p>
+          </div>
+          {period_cards_html}
+        </section>
+        <section class="module" id="period-guidance">
+          <div class="module-header">
+            <h2 class="module-title">经营建议</h2>
+            <p class="module-note">建议会结合销售趋势、库存动态、会员贡献和利润保本状态自动变化。</p>
+          </div>
+          <ul class="guidance-list">{guidance_html}</ul>
+          <div class="support-grid" style="margin-top:16px;">{support_html}</div>
+        </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>固定入口放这里，老板看完趋势页可以直接跳回首页、仪表盘或详细页。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="./index.html">进入仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a class="current" href="./{current_nav}">当前{period_label}页</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速看某一块，点这里直接跳，不用整页来回找。</p>
+          <div class="rail-links">
+            <a href="#period-overview">{period_label}总览</a>
+            <a href="#period-metrics">核心统计</a>
+            <a href="#period-charts">趋势图表</a>
+            <a href="#period-cards">阶段明细</a>
+            <a href="#period-guidance">经营建议</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+
+def build_monthly_html(metrics: dict) -> str:
+    return build_period_page(metrics, "monthly")
+
+
+def build_quarterly_html(metrics: dict) -> str:
+    return build_period_page(metrics, "quarterly")
 
 
 def build_markdown_summary(metrics: dict) -> str:
@@ -6143,8 +7081,12 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     date_tag = pd.Timestamp.today().strftime("%Y-%m-%d")
     html_path = output_dir / f"库存销售看板_{date_tag}.html"
     detail_html_path = output_dir / f"库存销售详细页_{date_tag}.html"
+    monthly_html_path = output_dir / f"库存销售月度页_{date_tag}.html"
+    quarterly_html_path = output_dir / f"库存销售季度页_{date_tag}.html"
     latest_html_path = output_dir / "index.html"
     latest_detail_html_path = output_dir / "details.html"
+    latest_monthly_html_path = output_dir / "monthly.html"
+    latest_quarterly_html_path = output_dir / "quarterly.html"
     md_path = output_dir / f"库存销售摘要_{date_tag}.md"
     report_path = output_dir / f"库存销售分析报告_{date_tag}.md"
     replenish_csv = output_dir / f"补货建议清单_{date_tag}.csv"
@@ -6152,6 +7094,8 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     category_csv = output_dir / f"品类风险概览_{date_tag}.csv"
     pages_html_path = pages_dir / "index.html"
     pages_detail_html_path = pages_dir / "details.html"
+    pages_monthly_html_path = pages_dir / "monthly.html"
+    pages_quarterly_html_path = pages_dir / "quarterly.html"
     pages_md_path = pages_dir / "summary.md"
     pages_report_path = pages_dir / "report.md"
     pages_replenish_csv = pages_dir / "补货建议清单.csv"
@@ -6159,12 +7103,18 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     pages_category_csv = pages_dir / "品类风险概览.csv"
     html_output = build_html(metrics)
     detail_html_output = build_detail_html(metrics)
+    monthly_html_output = build_monthly_html(metrics)
+    quarterly_html_output = build_quarterly_html(metrics)
     markdown_output = build_markdown_summary(metrics)
     report_output = build_business_report(metrics)
     html_path.write_text(html_output, encoding="utf-8")
     detail_html_path.write_text(detail_html_output, encoding="utf-8")
+    monthly_html_path.write_text(monthly_html_output, encoding="utf-8")
+    quarterly_html_path.write_text(quarterly_html_output, encoding="utf-8")
     latest_html_path.write_text(html_output, encoding="utf-8")
     latest_detail_html_path.write_text(detail_html_output, encoding="utf-8")
+    latest_monthly_html_path.write_text(monthly_html_output, encoding="utf-8")
+    latest_quarterly_html_path.write_text(quarterly_html_output, encoding="utf-8")
     md_path.write_text(markdown_output, encoding="utf-8")
     report_path.write_text(report_output, encoding="utf-8")
     metrics["replenish"].to_csv(replenish_csv, index=False, encoding="utf-8-sig")
@@ -6172,6 +7122,8 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     metrics["category_risks"].to_csv(category_csv, index=False, encoding="utf-8-sig")
     pages_html_path.write_text(html_output, encoding="utf-8")
     pages_detail_html_path.write_text(detail_html_output, encoding="utf-8")
+    pages_monthly_html_path.write_text(monthly_html_output, encoding="utf-8")
+    pages_quarterly_html_path.write_text(quarterly_html_output, encoding="utf-8")
     pages_md_path.write_text(markdown_output, encoding="utf-8")
     pages_report_path.write_text(report_output, encoding="utf-8")
     metrics["replenish"].to_csv(pages_replenish_csv, index=False, encoding="utf-8-sig")
@@ -6182,8 +7134,14 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
         "detail_html": detail_html_path,
         "latest_html": latest_html_path,
         "latest_detail_html": latest_detail_html_path,
+        "monthly_html": monthly_html_path,
+        "quarterly_html": quarterly_html_path,
+        "latest_monthly_html": latest_monthly_html_path,
+        "latest_quarterly_html": latest_quarterly_html_path,
         "pages_html": pages_html_path,
         "pages_detail_html": pages_detail_html_path,
+        "pages_monthly_html": pages_monthly_html_path,
+        "pages_quarterly_html": pages_quarterly_html_path,
         "markdown": md_path,
         "pages_markdown": pages_md_path,
         "report": report_path,
@@ -6244,6 +7202,10 @@ def main() -> int:
     print(f"HTML dashboard: {outputs['html']}")
     print(f"Latest HTML dashboard: {outputs['latest_html']}")
     print(f"Pages HTML dashboard: {outputs['pages_html']}")
+    print(f"Monthly HTML dashboard: {outputs['monthly_html']}")
+    print(f"Quarterly HTML dashboard: {outputs['quarterly_html']}")
+    print(f"Pages monthly dashboard: {outputs['pages_monthly_html']}")
+    print(f"Pages quarterly dashboard: {outputs['pages_quarterly_html']}")
     print(f"Markdown summary: {outputs['markdown']}")
     print(f"Pages Markdown summary: {outputs['pages_markdown']}")
     print(f"Business report: {outputs['report']}")

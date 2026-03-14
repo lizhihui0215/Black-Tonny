@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a working catalog for Yeusoft reports and known API families."""
+"""Build a Yeusoft report catalog from captured menu metadata and report samples."""
 
 from __future__ import annotations
 
@@ -9,39 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPTURE_DIR = ROOT / "reports" / "yeusoft_report_capture"
-OUTPUT_JSON = ROOT / "reports" / "yeusoft_report_capture" / "catalog.json"
-OUTPUT_MD = ROOT / "reports" / "yeusoft_report_capture" / "catalog.md"
-
-
-QUICK_REPORTS = [
-    ("零售报表", "销售明细统计", "report01"),
-    ("零售报表", "零售缴款单", "report02"),
-    ("零售报表", "导购员统计", "report03"),
-    ("零售报表", "门店销售日报", "report09"),
-    ("库存报表", "库存明细统计", "report04"),
-    ("库存报表", "库存零售统计", "report05"),
-    ("库存报表", "库存综合分析", "report10"),
-    ("进出报表", "进销存统计", "report06"),
-    ("进出报表", "出入库单据", "report07"),
-    ("会员报表", "会员综合分析", "report08"),
-]
-
-KNOWN_MENU_META = {
-    "零售明细统计": {"func_lid": "E004001001", "func_url": "SaleList"},
-    "店铺零售清单": {"func_lid": "E004001007", "func_url": "customReport_49"},
-    "销售清单": {"func_lid": "E004001008", "func_url": "UnhiddenSaleList"},
-    "库存明细统计": {"func_lid": "E004002001", "func_url": "StockList"},
-    "库存零售统计": {"func_lid": "E004002002", "func_url": "StockSale"},
-    "库存综合分析": {"func_lid": "E004002003", "func_url": "StockAnalysis"},
-    "进销存统计": {"func_lid": "E004003001", "func_url": "InSaleReport"},
-    "出入库单据": {"func_lid": "E004003002", "func_url": "InOutDoc"},
-    "会员综合分析": {"func_lid": "E004004001", "func_url": "VipAnalysis"},
-    "商品销售情况": {"func_lid": "E004005001", "func_url": "wareSalesStatus"},
-    "商品品类分析": {"func_lid": "E004005002", "func_url": "wareCategoryReport"},
-    "门店销售月报": {"func_lid": "E004005003", "func_url": "salesMonthlyReport"},
-    "每日流水单": {"func_lid": "E004006001", "func_url": "dailyFlow"},
-}
-
+OUTPUT_JSON = CAPTURE_DIR / "catalog.json"
+OUTPUT_MD = CAPTURE_DIR / "catalog.md"
+REPORT_ROOT_LID = "E004"
 
 VALUE_LEVEL = {
     "店铺零售清单": "A",
@@ -52,41 +22,78 @@ VALUE_LEVEL = {
     "每日流水单": "A",
     "会员综合分析": "A",
     "会员消费排行": "A",
-    "销售明细统计": "B",
+    "零售明细统计": "B",
+    "导购员报表": "B",
     "库存明细统计": "B",
     "库存零售统计": "B",
+    "库存多维分析": "B",
     "进销存统计": "B",
+    "日进销存": "B",
+    "退货明细": "B",
     "商品品类分析": "B",
     "门店销售月报": "B",
-    "导购员统计": "B",
-    "零售缴款单": "C",
-    "门店销售日报": "B",
+    "储值按店汇总": "C",
+    "储值卡汇总": "C",
+    "储值卡明细": "C",
 }
 
 
-def infer_api_family(capture: dict) -> str:
-    requests = capture.get("requests", [])
-    urls = [item.get("url", "") for item in requests]
+def extract_menu_tree() -> list[dict]:
+    for path in sorted(CAPTURE_DIR.glob("*.json")):
+        if path.name in {"index.json", "catalog.json"}:
+            continue
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for response in payload.get("responses", []):
+            if "GetMenuList" in str(response.get("url", "")):
+                body = response.get("body", {})
+                retdata = body.get("retdata")
+                if isinstance(retdata, list):
+                    return retdata
+    return []
+
+
+def flatten_reports(menu_tree: list[dict], parents: list[str] | None = None) -> list[dict]:
+    parents = parents or []
+    rows: list[dict] = []
+    for item in menu_tree or []:
+        current_parents = [*parents, item.get("FuncName", "")]
+        sublist = item.get("SubList") or []
+        if sublist:
+            rows.extend(flatten_reports(sublist, current_parents))
+            continue
+        func_lid = str(item.get("FuncLID") or "")
+        func_url = str(item.get("FuncUrl") or "")
+        if not (func_lid.startswith(REPORT_ROOT_LID) and func_url):
+            continue
+        rows.append(
+            {
+                "group": parents[-1] if parents else "",
+                "report_name": item.get("FuncName", ""),
+                "func_lid": func_lid,
+                "func_url": func_url,
+                "func_type": item.get("FuncType", ""),
+            }
+        )
+    return rows
+
+
+def infer_api_family(capture: dict | None) -> str:
+    requests = capture.get("requests", []) if capture else []
+    urls = [str(item.get("url", "")) for item in requests]
     if any("GetDIYReportData" in url for url in urls):
         return "DIYReport"
     if any("SelectRetailDocPaymentSlip" in url for url in urls):
-        return "Grid + JyApi"
-    if any("SelStockAnalysisList" in url or "SelOutInStockReport" in url for url in urls):
-        return "ReportAPI"
+        return "JyApi"
+    if any("SelStockAnalysisList" in url for url in urls):
+        return "ReportAPI: SelStockAnalysisList"
+    if any("SelOutInStockReport" in url for url in urls):
+        return "ReportAPI: SelOutInStockReport"
     if any("GetViewGridList" in url for url in urls):
         return "Grid"
-    return "Unknown"
+    return "Pending"
 
 
-def extract_request_payload(capture: dict, keyword: str) -> dict | None:
-    for item in capture.get("requests", []):
-        if keyword in item.get("url", ""):
-            data = item.get("postData")
-            return data if isinstance(data, dict) else None
-    return None
-
-
-def extract_direct_api(capture: dict) -> str:
+def extract_direct_api(capture: dict | None) -> str:
     if not capture:
         return ""
     ignored = {
@@ -99,14 +106,11 @@ def extract_direct_api(capture: dict) -> str:
     }
     urls: list[str] = []
     for item in capture.get("requests", []):
-        url = item.get("url", "")
-        if not url:
-            continue
-        if any(keyword in url for keyword in ignored):
+        url = str(item.get("url", ""))
+        if not url or any(keyword in url for keyword in ignored):
             continue
         urls.append(url)
-    urls = list(dict.fromkeys(urls))
-    return " | ".join(urls)
+    return " | ".join(dict.fromkeys(urls))
 
 
 def load_capture_index() -> dict[str, dict]:
@@ -123,57 +127,27 @@ def load_capture_index() -> dict[str, dict]:
 
 def build_catalog() -> list[dict]:
     captures = load_capture_index()
+    menu_reports = flatten_reports(extract_menu_tree())
     catalog: list[dict] = []
 
-    for group, title, internal_name in QUICK_REPORTS:
-        capture = captures.get(title)
-        grid = extract_request_payload(capture, "GetViewGridList") if capture else None
-        diy = extract_request_payload(capture, "GetDIYReportData") if capture else None
-        item = {
-            "group": group,
-            "report_name": title,
-            "internal_name": internal_name,
-            "api_family": infer_api_family(capture) if capture else "Pending",
-            "menuid": (diy or grid or {}).get("menuid", "") or KNOWN_MENU_META.get(title, {}).get("func_lid", ""),
-            "gridid": (diy or grid or {}).get("gridid", ""),
-            "func_lid": KNOWN_MENU_META.get(title, {}).get("func_lid", ""),
-            "func_url": KNOWN_MENU_META.get(title, {}).get("func_url", "") or (capture.get("tabState", {}).get("titleTabsValue", "") if capture else ""),
-            "direct_api": extract_direct_api(capture),
-            "value_level": VALUE_LEVEL.get(title, "Pending"),
-            "capture_status": "captured" if capture else "pending",
-        }
-        catalog.append(item)
-
-    extra_reports = [
-        ("零售报表", "店铺零售清单", ""),
-        ("零售报表", "销售清单", ""),
-        ("综合分析", "商品销售情况", ""),
-        ("会员报表", "会员消费排行", ""),
-        ("对账报表", "每日流水单", ""),
-        ("综合分析", "商品品类分析", ""),
-        ("综合分析", "门店销售月报", ""),
-    ]
-    known_names = {item["report_name"] for item in catalog}
-    for group, title, internal_name in extra_reports:
-        if title in known_names:
-            continue
-        capture = captures.get(title)
-        grid = extract_request_payload(capture, "GetViewGridList") if capture else None
-        diy = extract_request_payload(capture, "GetDIYReportData") if capture else None
-        item = {
-            "group": group,
-            "report_name": title,
-            "internal_name": internal_name,
-            "api_family": infer_api_family(capture) if capture else "Pending",
-            "menuid": (diy or grid or {}).get("menuid", "") or KNOWN_MENU_META.get(title, {}).get("func_lid", ""),
-            "gridid": (diy or grid or {}).get("gridid", ""),
-            "func_lid": KNOWN_MENU_META.get(title, {}).get("func_lid", ""),
-            "func_url": KNOWN_MENU_META.get(title, {}).get("func_url", "") or (capture.get("tabState", {}).get("titleTabsValue", "") if capture else ""),
-            "direct_api": extract_direct_api(capture),
-            "value_level": VALUE_LEVEL.get(title, "Pending"),
-            "capture_status": "captured" if capture else "pending",
-        }
-        catalog.append(item)
+    for item in menu_reports:
+        capture = captures.get(item["report_name"])
+        capture_summary = capture.get("captureSummary", {}) if capture else {}
+        catalog.append(
+            {
+                "group": item["group"],
+                "report_name": item["report_name"],
+                "func_lid": item["func_lid"],
+                "func_url": item["func_url"],
+                "func_type": item["func_type"],
+                "api_family": infer_api_family(capture),
+                "direct_api": extract_direct_api(capture),
+                "value_level": VALUE_LEVEL.get(item["report_name"], "Pending"),
+                "capture_status": capture_summary.get("captureQuality", "pending"),
+                "record_count": capture_summary.get("recordCount", 0),
+                "report_mode": capture_summary.get("reportMode", ""),
+            }
+        )
 
     return catalog
 
@@ -182,27 +156,25 @@ def write_markdown(catalog: list[dict]) -> str:
     lines = [
         "# Yeusoft 报表目录与 API 家族",
         "",
-        "这份目录汇总当前已经识别到的报表分组、内部名、接口族和经营价值。",
+        "这份目录直接根据抓取样本里的 `GetMenuList` 结果生成，避免遗漏实际菜单里的报表。",
         "",
-        "| 分组 | 报表 | 内部名 | API 家族 | menuid | gridid | FuncLID | FuncUrl | 直连数据 API | 价值级别 | 状态 |",
+        "| 分组 | 报表 | FuncLID | FuncUrl | FuncType | API 家族 | 直连数据 API | 价值级别 | 抓取状态 | 记录数 | 模式 |",
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for item in catalog:
         lines.append(
-            f"| {item['group']} | {item['report_name']} | {item['internal_name'] or '-'} | {item['api_family']} | "
-            f"{item['menuid'] or '-'} | {item['gridid'] or '-'} | {item['func_lid'] or '-'} | {item['func_url'] or '-'} | "
-            f"{item['direct_api'] or '-'} | {item['value_level']} | {item['capture_status']} |"
+            f"| {item['group']} | {item['report_name']} | {item['func_lid'] or '-'} | {item['func_url'] or '-'} | "
+            f"{item['func_type'] or '-'} | {item['api_family']} | {item['direct_api'] or '-'} | {item['value_level']} | "
+            f"{item['capture_status']} | {item['record_count']} | {item['report_mode'] or '-'} |"
         )
     lines.extend(
         [
             "",
             "## 当前结论",
             "",
-            "- `GetMenuList` 已能稳定拿到报表的 `FuncLID / FuncUrl / FuncName`，后续不必再依赖左侧浮层菜单点击。",
-            "- `库存综合分析` 已确认可以直接走 `SelStockAnalysisList`。",
-            "- `出入库单据` 已确认可以直接走 `SelOutInStockReport`。",
-            "- `每日流水单` 已确认可以直接走 `SelectRetailDocPaymentSlip`。",
-            "- `店铺零售清单` 已确认属于 `DIYReport` 家族，`销售清单` 已确认属于 `Grid` 家族。",
+            "- 目录已经和真实 POS 菜单对齐，后续可以据此判断“哪些表值得继续接入老板看板”。",
+            "- `capture_status` 现在直接使用抓取质量，而不是简单的 `captured/pending`。",
+            "- `record_count` 和 `report_mode` 能帮助判断这张表是“全量区间”还是“快照类”。",
         ]
     )
     return "\n".join(lines)

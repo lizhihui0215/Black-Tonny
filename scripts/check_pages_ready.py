@@ -44,6 +44,8 @@ def main() -> int:
             file_exists(MANUALS_DIR / "28-月度成本快照维护说明.html", "docs/manuals/28-月度成本快照维护说明.html exists"),
             file_exists(DASHBOARD_DIR / "index.html", "docs/dashboard/index.html exists"),
             file_exists(DASHBOARD_DIR / "details.html", "docs/dashboard/details.html exists"),
+            file_exists(DASHBOARD_DIR / "monthly.html", "docs/dashboard/monthly.html exists"),
+            file_exists(DASHBOARD_DIR / "quarterly.html", "docs/dashboard/quarterly.html exists"),
             file_exists(DASHBOARD_DIR / "summary.md", "docs/dashboard/summary.md exists"),
             file_exists(DASHBOARD_DIR / "report.md", "docs/dashboard/report.md exists"),
             file_exists(DASHBOARD_DIR / "补货建议清单.csv", "docs/dashboard/补货建议清单.csv exists"),
@@ -59,6 +61,8 @@ def main() -> int:
     results.extend(
         [
             text_contains(docs_index, "./dashboard/index.html", "Pages homepage links to dashboard"),
+            text_contains(docs_index, "./dashboard/monthly.html", "Pages homepage links to monthly page"),
+            text_contains(docs_index, "./dashboard/quarterly.html", "Pages homepage links to quarterly page"),
             text_contains(docs_index, "./manuals/index.html", "Pages homepage links to manuals center"),
             text_contains(docs_index, "./costs/index.html", "Pages homepage links to cost maintenance"),
             text_contains(docs_index, "./manuals/dashboard/summary.html", "Pages homepage links to summary html"),
@@ -69,6 +73,8 @@ def main() -> int:
             text_contains(readme, "28-月度成本快照维护说明.md", "README links to monthly cost guide"),
             text_contains(readme, "docs/dashboard/index.html", "README links to dashboard entry"),
             text_contains(dashboard_index, "./details.html", "dashboard links to detail page"),
+            text_contains(dashboard_index, "./monthly.html", "dashboard links to monthly page"),
+            text_contains(dashboard_index, "./quarterly.html", "dashboard links to quarterly page"),
             text_contains(readme, "GitHub Pages开启清单", "README links to Pages checklist"),
         ]
     )

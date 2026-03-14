@@ -4,10 +4,15 @@ import {
   captureReportInSession,
   closeYeusoftSession,
   createYeusoftSession,
+  listReportMenuItems,
+  normalizeReportName,
 } from "./capture_yeusoft_report_metadata.mjs";
 
 const OUTPUT_DIR = process.env.YEU_OUTPUT_DIR || path.resolve("reports/yeusoft_report_capture");
-const DEFAULT_REPORTS = [
+const DEFAULT_START_DATE = process.env.YEU_START_DATE || "2025-03-01";
+const DEFAULT_END_DATE = process.env.YEU_END_DATE || new Date().toISOString().slice(0, 10);
+const DEFAULT_MODE = process.env.YEU_SYNC_MODE || "full";
+const QUICK_REPORTS = [
   "店铺零售清单",
   "销售清单",
   "库存综合分析",
@@ -21,9 +26,6 @@ const DEFAULT_REPORTS = [
   "会员消费排行",
   "每日流水单",
 ];
-const REPORTS = process.env.YEU_REPORT_LIST
-  ? process.env.YEU_REPORT_LIST.split(",").map((item) => item.trim()).filter(Boolean)
-  : DEFAULT_REPORTS;
 
 function withTimeout(promise, reportName, ms = 90000) {
   return Promise.race([
@@ -34,79 +36,127 @@ function withTimeout(promise, reportName, ms = 90000) {
   ]);
 }
 
-function extractEndpoint(payload, keyword) {
-  return payload.responses.find((item) => item.url.includes(keyword));
+function normalizeReportList(values) {
+  return [...new Set(values.map((item) => normalizeReportName(item)).filter(Boolean))];
 }
 
-function extractRequest(payload, keyword) {
-  return payload.requests.find((item) => item.url.includes(keyword));
+function pickReportNames(session, mode) {
+  const menuReports = normalizeReportList(listReportMenuItems(session.menuList).map((item) => item.FuncName));
+  if (process.env.YEU_REPORT_LIST) {
+    return normalizeReportList(process.env.YEU_REPORT_LIST.split(",").map((item) => item.trim()));
+  }
+  if (mode === "quick") {
+    return QUICK_REPORTS.filter((name) => menuReports.includes(name));
+  }
+  return menuReports;
 }
 
-function extractReportSummary(result) {
-  const configuration = extractEndpoint(result.payload, "GetConfiguration");
-  const grid = extractEndpoint(result.payload, "GetViewGridList");
-  const queryRequest = extractRequest(result.payload, "GetDIYReportData");
-  const queryResponse = extractEndpoint(result.payload, "GetDIYReportData");
+function classifyResult(summary) {
+  if (!summary) {
+    return "opened-only";
+  }
+  if (["full-range-data", "snapshot-data", "full-range-empty"].includes(summary.captureQuality)) {
+    return "ok";
+  }
+  if (["partial-range-data", "query-sent-no-data"].includes(summary.captureQuality)) {
+    return "partial";
+  }
+  return "opened-only";
+}
 
-  const configurationBody = configuration?.body || {};
-  const queryBody = queryResponse?.body || {};
-  const retData = queryBody?.retdata || {};
-  const dataRows = Array.isArray(retData?.Data) ? retData.Data.length : 0;
-  const firstRowKeys = dataRows && retData.Data[0] ? Object.keys(retData.Data[0]).slice(0, 30) : [];
+function summarizeCounts(reports) {
+  return reports.reduce(
+    (acc, item) => {
+      acc.total += 1;
+      acc[item.status] = (acc[item.status] || 0) + 1;
+      return acc;
+    },
+    { total: 0, ok: 0, partial: 0, "opened-only": 0, error: 0 },
+  );
+}
 
+function buildReportSummary(result, requestedRange) {
+  const captureSummary = result.payload.captureSummary || {};
   return {
+    status: classifyResult(captureSummary),
     reportName: result.payload.reportName,
+    requestedReportName: result.payload.requestedReportName || result.payload.reportName,
     capturedAt: result.payload.capturedAt,
-    tabValue: result.payload.tabState.titleTabsValue,
-    funcUrls: result.payload.tabState.editableTabs.map((item) => item.FuncUrl).filter(Boolean),
-    filterLabels: result.payload.filterLabels,
-    configurationUrl: configuration?.url || "",
-    configurationProc: configurationBody?.retdata?.Sql || configurationBody?.retdata?.sql || "",
-    gridUrl: grid?.url || "",
-    gridColumns:
-      Array.isArray(grid?.body?.retdata?.Columns) ? grid.body.retdata.Columns.map((item) => item.caption || item.field || item.prop).filter(Boolean) : [],
-    queryUrl: queryRequest?.url || "",
-    queryPayload: queryRequest?.postData || {},
-    queryRows: dataRows,
-    queryKeys: firstRowKeys,
+    requestedDateRange: requestedRange,
+    appliedDateRange: result.payload.appliedDateRange || requestedRange,
+    dateRangeApplied: Boolean(result.payload.dateRangeApplied),
+    queryTriggered: Boolean(result.payload.queryTriggered),
+    captureQuality: captureSummary.captureQuality || "opened-only",
+    reportMode: captureSummary.reportMode || "unknown",
+    rangeMatched: Boolean(captureSummary.rangeMatched),
+    requestFound: Boolean(captureSummary.requestFound),
+    responseFound: Boolean(captureSummary.responseFound),
+    recordCount: Number(captureSummary.recordCount || 0),
+    dataEndpoint: captureSummary.dataEndpoint || "",
+    requestMethod: captureSummary.requestMethod || "",
+    tabValue: result.payload.tabState?.titleTabsValue || "",
+    funcUrls: (result.payload.tabState?.editableTabs || []).map((item) => item.FuncUrl).filter(Boolean),
     jsonPath: result.jsonPath,
     screenshotPath: result.screenshotPath,
   };
 }
 
+async function writeIndex(outputPath, payload) {
+  await fs.writeFile(outputPath, JSON.stringify(payload, null, 2), "utf8");
+}
+
 async function main() {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
 
+  const requestedRange = {
+    start: DEFAULT_START_DATE,
+    end: DEFAULT_END_DATE,
+  };
+  const session = await createYeusoftSession({
+    outputDir: OUTPUT_DIR,
+    startDate: requestedRange.start,
+    endDate: requestedRange.end,
+  });
+  const mode = DEFAULT_MODE;
+  const reports = pickReportNames(session, mode);
   const summaries = [];
   const outputPath = path.join(OUTPUT_DIR, "index.json");
-  const session = await createYeusoftSession({ outputDir: OUTPUT_DIR });
+  const reportTimeoutMs = mode === "full" ? 120000 : 90000;
+
   try {
-    for (const reportName of REPORTS) {
+    for (const reportName of reports) {
       try {
-        const result = await withTimeout(captureReportInSession(session, reportName, { outputDir: OUTPUT_DIR }), reportName);
-        summaries.push({ status: "ok", ...extractReportSummary(result) });
+        const result = await withTimeout(
+          captureReportInSession(session, reportName, {
+            outputDir: OUTPUT_DIR,
+            startDate: requestedRange.start,
+            endDate: requestedRange.end,
+          }),
+          reportName,
+          reportTimeoutMs,
+        );
+        summaries.push(buildReportSummary(result, requestedRange));
         console.log(`[OK] ${reportName}`);
       } catch (error) {
         summaries.push({
           status: "error",
           reportName,
+          requestedDateRange: requestedRange,
+          captureQuality: "error",
           error: String(error),
         });
         console.error(`[ERROR] ${reportName}: ${error}`);
       }
 
-      await fs.writeFile(
-        outputPath,
-        JSON.stringify(
-          {
-            capturedAt: new Date().toISOString(),
-            reports: summaries,
-          },
-          null,
-          2,
-        ),
-        "utf8",
-      );
+      const partialPayload = {
+        capturedAt: new Date().toISOString(),
+        mode,
+        requestedDateRange: requestedRange,
+        counts: summarizeCounts(summaries),
+        totalReports: reports.length,
+        reports: summaries,
+      };
+      await writeIndex(outputPath, partialPayload);
     }
   } finally {
     await closeYeusoftSession(session);
@@ -114,10 +164,14 @@ async function main() {
 
   const payload = {
     capturedAt: new Date().toISOString(),
+    mode,
+    requestedDateRange: requestedRange,
+    counts: summarizeCounts(summaries),
+    totalReports: reports.length,
     reports: summaries,
   };
 
-  await fs.writeFile(outputPath, JSON.stringify(payload, null, 2), "utf8");
+  await writeIndex(outputPath, payload);
   console.log(`Saved summary index: ${outputPath}`);
 }
 

@@ -722,7 +722,11 @@
           const response = await fetch(`${SERVICE_BASE}/api/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ source: 'cost-console' })
+            body: JSON.stringify({
+              source: 'cost-console',
+              mode: 'full',
+              start_date: '2025-03-01'
+            })
           });
           const payload = await response.json();
           if (!response.ok || !payload.ok) {
