@@ -31,44 +31,45 @@ DEFAULT_COST_FILE = ROOT / "data" / "store_cost_snapshot.json"
 DEFAULT_COST_HISTORY_FILE = ROOT / "data" / "store_cost_history.json"
 DEFAULT_YEU_CAPTURE_DIR = ROOT / "reports" / "yeusoft_report_capture"
 BEIJING_TZ = ZoneInfo("Asia/Shanghai")
+DEFAULT_MONTHLY_OPERATING_EXPENSE = 20000.0
 PRIMARY_INPUT = "郭文攀"
 SEASON_STRATEGY_TOOLTIPS = {
-    "当季主推": "这类商品现在正处于主销季，可以作为主补货方向。先看品类，再补销售高、库存低的具体款。",
-    "下一季试补": "这类商品接近主销季，可以小量试补。先补 1-2 个颜色或核心尺码，不要一次压深。",
-    "跨季去化": "这类商品已经偏离当前主销季。手里有库存就优先做去化，没有库存就先别追补。",
-    "暂缓补货": "这类商品当前不是重点，不建议马上追加。等季节、销售和陈列位置更合适时再看。",
+    "当季主推": "为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。",
+    "下一季试补": "为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。",
+    "跨季去化": "为什么：这类商品已经偏离当前主销季，再补货的成功率低。怎么做：有库存就先去化，没有库存就先停补。好处：能把预算腾给当季主销款。注意：不要把它和当季补货混在一起看。",
+    "暂缓补货": "为什么：当前不是重点投入方向。怎么做：先观察销售、陈列和季节节奏，再决定是否恢复补货。好处：能减少无效进货。注意：暂缓不等于永远不补，要定期复核。",
 }
 STATUS_TOOLTIPS = {
-    "高压货": "这个品类库存金额明显高于销售金额。先停补，再安排组合促销或清货位去化。",
-    "需关注": "这个品类已经有库存压力，但还没到最严重。建议连续观察 1-2 周，必要时先收紧补货。",
-    "相对健康": "这个品类的库存和销售关系还算正常，当前维持节奏即可。",
+    "高压货": "为什么：库存金额明显高于销售金额，说明货压得重。怎么做：先停补，再做组合促销、清货位和陈列前移。好处：能先释放库存压力。注意：不要一边去化一边继续深补。",
+    "需关注": "为什么：库存和销售开始失衡，但还没到最严重。怎么做：连续盯 1-2 周，必要时先收紧补货。好处：能更早止损。注意：不要因为短期一两天销量回升就放松。",
+    "相对健康": "为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。",
 }
 ACTION_TOOLTIPS = {
-    "立即补货": "这是当前主销且库存非常低的款。今天就补，优先补核心尺码和卖得快的颜色。",
-    "优先补货": "这类商品需要尽快补，但不一定要今天全部补完。先保最能带营业额的款。",
-    "先校库存再补货": "系统库存不准。先查盘点、调拨和销售回写，确认真实库存后再决定是否补货。",
-    "小量试补": "可以少量补货试销。先小批量补，不要一次压很多库存。",
-    "先停补再去化": "先暂停这个品类的新补货，把现有库存先卖掉。适合做组合价、第二件优惠或门口清货位。",
-    "观察并做组合去化": "先不要深补。可以用搭配销售、组合价和会员提醒慢慢去化。",
-    "优先去化": "这类库存当前更适合先卖掉，不适合继续补。先做陈列前移、组合促销、会员触达。",
-    "跨季不补货": "当前不是这个品类的主销季。即使历史卖过，现在也先别补，等回到主销季再判断。",
-    "暂缓补货": "先不要急着补，把预算和货位留给当前主销品类。",
+    "立即补货": "为什么：这是主销且库存已经很浅。怎么做：今天先补核心尺码、主销色和高频成交款。好处：能最快保住营业额。注意：先补最赚钱的款，不是全款平均补。",
+    "优先补货": "为什么：补货紧迫，但还没到必须当天清完。怎么做：先补最能带营业额的款，后续再补次重点。好处：预算利用率更高。注意：别被低销售款分走预算。",
+    "先校库存再补货": "为什么：系统库存不准时，任何补货结论都可能错。怎么做：先查盘点、调拨和销售回写，再决定要不要补。好处：能避免误补和重复补。注意：这一步必须优先于补货动作。",
+    "小量试补": "为什么：商品有机会，但信号还不够强。怎么做：少量补货试销，先看 1-2 周表现。好处：能控制风险。注意：不要直接压成深库存。",
+    "先停补再去化": "为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。",
+    "观察并做组合去化": "为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。",
+    "优先去化": "为什么：这类库存当前更需要卖掉而不是继续补。怎么做：陈列前移、组合促销、会员触达一起做。好处：能先降库存再释放预算。注意：不要和当季主销货抢主陈列位。",
+    "跨季不补货": "为什么：当前不是它的主销季。怎么做：有库存先去化，没库存先停。好处：避免新货变旧货。注意：等回到主销季再重新判断。",
+    "暂缓补货": "为什么：当前补货优先级不高。怎么做：先把预算和货位留给主销品类。好处：能减少无效投入。注意：后续要定期复核，不是永久冻结。",
 }
 HIGH_FREQUENCY_ACTION_TOOLTIPS = {
-    "先处理负库存": "今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。",
-    "先去库存": "先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。",
-    "控制库存量": "先收紧进货和补货节奏，把预算留给主销品类，避免继续压货。",
-    "处理跨季品类": "把已经跨季的品类单独拎出来。有库存先去化，没库存先别追补。",
-    "联系高价值会员": "优先联系购买金额高、消费次数多的会员，用换季提醒和到店试穿带动复购。",
-    "安排去库存动作": "今天要明确哪些品类先停补、哪些品类上清货位、哪些品类做组合促销。",
-    "确认跨季处理": "由老板拍板跨季品类是去化、暂缓还是等下季，不要混进当季补货里。",
-    "停止补货": "这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。",
-    "组合促销": "把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。",
-    "清货陈列": "把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。",
-    "控制补货": "补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。",
-    "组合去化": "不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。",
-    "调整陈列": "通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。",
-    "稳住会员复购": "用换季提醒、到店试穿和组合推荐，先把老客的复购频率稳住。",
+    "先处理负库存": "为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。",
+    "先去库存": "为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。",
+    "控制库存量": "为什么：继续进货会把压力推大。怎么做：收紧进货和补货节奏，把预算留给主销品类。好处：减少压货。注意：不能一刀切停补，要保主销不断码。",
+    "处理跨季品类": "为什么：跨季货在当前阶段周转效率低。怎么做：有库存先去化，没库存先别追补。好处：把货位和预算让给当季。注意：跨季货要单独管理。",
+    "联系高价值会员": "为什么：老客最容易贡献稳定销售。怎么做：优先联系购买金额高、消费次数多的会员，做换季提醒和试穿邀约。好处：提升复购最直接。注意：不要只群发无差别促销。",
+    "安排去库存动作": "为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。",
+    "确认跨季处理": "为什么：跨季货最容易越拖越难卖。怎么做：老板拍板是去化、暂缓还是等下季。好处：减少反复摇摆。注意：不要混进当季补货预算。",
+    "停止补货": "为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。",
+    "组合促销": "为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。",
+    "清货陈列": "为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。",
+    "控制补货": "为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。",
+    "组合去化": "为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。",
+    "调整陈列": "为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。",
+    "稳住会员复购": "为什么：复购比重新获客更省成本。怎么做：用换季提醒、到店试穿和组合推荐维持联系。好处：销售更稳。注意：不要打扰过频。",
 }
 
 
@@ -964,46 +965,38 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
     gross_profit = float(raw_snapshot.get("gross_profit", sales_amount - purchase_cost) or 0)
     gross_margin_rate = float(raw_snapshot.get("gross_margin_rate", safe_ratio(gross_profit, sales_amount)) or 0)
 
-    expense_snapshot = raw_snapshot.get("expense_snapshot", {})
-    expense_items = raw_snapshot.get("expense_items", [])
-    salary_items = raw_snapshot.get("salary_items", [])
-
-    monthly_operating_expense = float(
-        expense_snapshot.get(
-            "monthly_operating_expense",
-            sum(float(item.get("amount", 0) or 0) for item in expense_items),
-        )
-        or 0
-    )
-    salary_total = float(
-        expense_snapshot.get(
-            "salary_total",
-            sum(float(item.get("amount", 0) or 0) for item in salary_items),
-        )
-        or 0
-    )
-    total_expense = float(expense_snapshot.get("total_expense", monthly_operating_expense + salary_total) or 0)
+    (
+        monthly_operating_expense,
+        salary_total,
+        total_expense,
+        expense_items,
+        salary_items,
+        operating_expense_source,
+    ) = resolve_effective_expense_values(raw_snapshot)
     net_profit = float(raw_snapshot.get("net_profit", gross_profit - total_expense) or 0)
 
     month_days = calendar.monthrange(snapshot_dt.year, snapshot_dt.month)[1]
     elapsed_days = snapshot_dt.day + safe_ratio(snapshot_dt.hour * 60 + snapshot_dt.minute, 1440)
     remaining_days = max(month_days - elapsed_days, 0)
 
-    breakeven_sales = safe_ratio(total_expense, gross_margin_rate)
-    breakeven_daily_sales = safe_ratio(breakeven_sales, month_days)
+    breakeven_available = gross_margin_rate > 0
+    breakeven_sales = safe_ratio(total_expense, gross_margin_rate) if breakeven_available else 0.0
+    breakeven_daily_sales = safe_ratio(breakeven_sales, month_days) if breakeven_available else 0.0
     average_daily_sales = safe_ratio(sales_amount, elapsed_days)
     average_daily_gross_profit = safe_ratio(gross_profit, elapsed_days)
-    remaining_sales_to_breakeven = max(0.0, breakeven_sales - sales_amount)
-    remaining_daily_sales_needed = safe_ratio(remaining_sales_to_breakeven, remaining_days)
-    passed_breakeven = sales_amount >= breakeven_sales if breakeven_sales else False
+    remaining_sales_to_breakeven = max(0.0, breakeven_sales - sales_amount) if breakeven_available else 0.0
+    remaining_daily_sales_needed = safe_ratio(remaining_sales_to_breakeven, remaining_days) if breakeven_available else 0.0
+    passed_breakeven = sales_amount >= breakeven_sales if breakeven_available and breakeven_sales else False
     net_margin_rate = safe_ratio(net_profit, sales_amount)
     expense_ratio = safe_ratio(total_expense, sales_amount)
     salary_ratio = safe_ratio(salary_total, sales_amount)
     operating_expense_ratio = safe_ratio(monthly_operating_expense, sales_amount)
     expense_coverage_ratio = safe_ratio(gross_profit, total_expense)
     breakeven_progress_ratio = safe_ratio(sales_amount, breakeven_sales) if breakeven_sales else 0.0
-    projected_month_sales = average_daily_sales * month_days
-    projected_month_gross_profit = projected_month_sales * gross_margin_rate
+    projected_remaining_sales = average_daily_sales * remaining_days
+    projected_remaining_gross_profit = projected_remaining_sales * gross_margin_rate
+    projected_month_sales = sales_amount + projected_remaining_sales
+    projected_month_gross_profit = gross_profit + projected_remaining_gross_profit
     projected_month_net_profit = projected_month_gross_profit - total_expense
     projected_monthly_status = (
         "green" if projected_month_net_profit > 0 else "yellow" if projected_month_gross_profit >= total_expense * 0.9 else "red"
@@ -1012,6 +1005,11 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
     salary_daily_burden = safe_ratio(salary_total, month_days)
     top_expense_item = max(expense_items, key=lambda item: float(item.get("amount", 0) or 0), default=None)
     top_salary_item = max(salary_items, key=lambda item: float(item.get("amount", 0) or 0), default=None)
+    if (not top_expense_item or float(top_expense_item.get("amount", 0) or 0) <= 0) and monthly_operating_expense > 0:
+        top_expense_item = {
+            "name": "固定费用默认口径" if operating_expense_source != "当前成本快照" else "固定费用",
+            "amount": monthly_operating_expense,
+        }
 
     if passed_breakeven and net_profit > 0:
         status = "green"
@@ -1040,6 +1038,7 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
         "monthly_operating_expense": monthly_operating_expense,
         "salary_total": salary_total,
         "total_expense": total_expense,
+        "operating_expense_source": operating_expense_source,
         "net_profit": net_profit,
         "net_margin_rate": net_margin_rate,
         "average_daily_gross_profit": average_daily_gross_profit,
@@ -1050,12 +1049,15 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
         "breakeven_sales": breakeven_sales,
         "breakeven_daily_sales": breakeven_daily_sales,
         "breakeven_progress_ratio": breakeven_progress_ratio,
+        "breakeven_available": breakeven_available,
         "average_daily_sales": average_daily_sales,
         "remaining_days": remaining_days,
         "remaining_sales_to_breakeven": remaining_sales_to_breakeven,
         "remaining_daily_sales_needed": remaining_daily_sales_needed,
         "projected_month_sales": projected_month_sales,
+        "projected_remaining_sales": projected_remaining_sales,
         "projected_month_gross_profit": projected_month_gross_profit,
+        "projected_remaining_gross_profit": projected_remaining_gross_profit,
         "projected_month_net_profit": projected_month_net_profit,
         "projected_monthly_status": projected_monthly_status,
         "forecast_headline": forecast_headline,
@@ -1070,6 +1072,156 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
         "salary_items": salary_items,
         "notes": raw_snapshot.get("notes", []),
     }
+
+
+def extract_snapshot_margin_rate(raw_snapshot: dict | None) -> float:
+    if not raw_snapshot:
+        return 0.0
+
+    direct_rate = float(raw_snapshot.get("gross_margin_rate", 0) or 0)
+    if direct_rate > 0:
+        return direct_rate
+
+    sales_amount = float(raw_snapshot.get("sales_amount", 0) or 0)
+    gross_profit = float(raw_snapshot.get("gross_profit", 0) or 0)
+    if sales_amount > 0 and gross_profit > 0:
+        return safe_ratio(gross_profit, sales_amount)
+
+    return 0.0
+
+
+def resolve_effective_expense_values(
+    raw_snapshot: dict | None,
+) -> tuple[float, float, float, list[dict], list[dict], str]:
+    if not raw_snapshot:
+        return 0.0, 0.0, 0.0, [], [], "缺少成本快照"
+
+    expense_snapshot = raw_snapshot.get("expense_snapshot", {})
+    expense_items = raw_snapshot.get("expense_items", [])
+    salary_items = raw_snapshot.get("salary_items", [])
+
+    monthly_operating_expense = float(
+        expense_snapshot.get(
+            "monthly_operating_expense",
+            sum(float(item.get("amount", 0) or 0) for item in expense_items),
+        )
+        or 0
+    )
+    salary_total = float(
+        expense_snapshot.get(
+            "salary_total",
+            sum(float(item.get("amount", 0) or 0) for item in salary_items),
+        )
+        or 0
+    )
+
+    operating_expense_source = "当前成本快照"
+    if monthly_operating_expense <= 0:
+        monthly_operating_expense = DEFAULT_MONTHLY_OPERATING_EXPENSE
+        operating_expense_source = "默认固定成本（2w）"
+
+    total_expense_raw = float(expense_snapshot.get("total_expense", 0) or 0)
+    total_expense = total_expense_raw if total_expense_raw > 0 else monthly_operating_expense + salary_total
+    if total_expense <= salary_total and monthly_operating_expense > 0:
+        total_expense = monthly_operating_expense + salary_total
+
+    return (
+        monthly_operating_expense,
+        salary_total,
+        total_expense,
+        expense_items,
+        salary_items,
+        operating_expense_source,
+    )
+
+
+def resolve_effective_margin_rate(raw_snapshot: dict | None, raw_history: list[dict] | None) -> tuple[float, str]:
+    current_rate = extract_snapshot_margin_rate(raw_snapshot)
+    if current_rate > 0:
+        return current_rate, "当前成本快照"
+
+    for history_snapshot in reversed(list(raw_history or [])):
+        history_rate = extract_snapshot_margin_rate(history_snapshot)
+        if history_rate > 0:
+            snapshot_at = pd.to_datetime(history_snapshot.get("snapshot_datetime"), errors="coerce")
+            if pd.notna(snapshot_at):
+                return history_rate, f"历史成本快照（{snapshot_at.strftime('%Y-%m')}）"
+            return history_rate, "历史成本快照"
+
+    return 0.48, "默认毛利率（48%）"
+
+
+def resolve_live_month_sales_amount(
+    now: datetime,
+    summary_cards: dict[str, object],
+    yeusoft_highlights: dict | None,
+    raw_snapshot: dict | None,
+) -> tuple[float, str]:
+    target_label = now.strftime("%Y-%m")
+    sales_overview = (yeusoft_highlights or {}).get("sales_overview") if yeusoft_highlights else None
+    latest_month = sales_overview.get("latest_month") if sales_overview else None
+    if latest_month and str(latest_month.get("label")) == target_label:
+        sales_amount = float(latest_month.get("sales_amount", 0) or 0)
+        if sales_amount > 0:
+            return sales_amount, "POS销售清单（月累计）"
+
+    sales_detail_end = summary_cards.get("sales_detail_end")
+    if isinstance(sales_detail_end, pd.Timestamp) and sales_detail_end.strftime("%Y-%m") == target_label:
+        sales_amount = float(summary_cards.get("sales_amount", 0) or 0)
+        if sales_amount > 0:
+            return sales_amount, "本地销售明细"
+
+    snapshot_sales = float((raw_snapshot or {}).get("sales_amount", 0) or 0)
+    if snapshot_sales > 0:
+        return snapshot_sales, "成本快照"
+
+    return 0.0, "缺少实时销售额"
+
+
+def build_live_profit_snapshot(
+    raw_snapshot: dict | None,
+    raw_history: list[dict] | None,
+    now: datetime,
+    summary_cards: dict[str, object],
+    yeusoft_highlights: dict | None,
+) -> dict | None:
+    if not raw_snapshot:
+        return None
+
+    snapshot_input = json.loads(json.dumps(raw_snapshot))
+    margin_rate, margin_source = resolve_effective_margin_rate(raw_snapshot, raw_history)
+    live_sales_amount, sales_source = resolve_live_month_sales_amount(now, summary_cards, yeusoft_highlights, raw_snapshot)
+
+    if live_sales_amount > 0:
+        snapshot_input["sales_amount"] = live_sales_amount
+
+    if margin_rate > 0:
+        effective_gross_profit = live_sales_amount * margin_rate if live_sales_amount > 0 else float(
+            raw_snapshot.get("gross_profit", 0) or 0
+        )
+        effective_purchase_cost = max((live_sales_amount or 0) - effective_gross_profit, 0.0)
+        snapshot_input["gross_margin_rate"] = margin_rate
+        snapshot_input["gross_profit"] = effective_gross_profit
+        snapshot_input["purchase_cost"] = effective_purchase_cost
+        expense_snapshot = snapshot_input.setdefault("expense_snapshot", {})
+        monthly_operating_expense, salary_total, total_expense, _, _, _ = resolve_effective_expense_values(snapshot_input)
+        expense_snapshot["monthly_operating_expense"] = monthly_operating_expense
+        expense_snapshot["salary_total"] = salary_total
+        expense_snapshot["total_expense"] = total_expense
+        snapshot_input["net_profit"] = effective_gross_profit - total_expense
+
+    profit = build_profit_snapshot(snapshot_input)
+    if not profit:
+        return None
+
+    profit["sales_source"] = sales_source
+    profit["gross_margin_source"] = margin_source
+    profit["forecast_basis"] = "当前已实现销售 + 平均日销 x 剩余天数，再按毛利率和总费用折算"
+    if margin_rate <= 0:
+        profit["forecast_headline"] = "缺少有效毛利率，当前净利预测偏保守"
+        profit["projected_monthly_status"] = "yellow"
+
+    return profit
 
 
 def build_profit_history(raw_history: list[dict] | None, current_snapshot: dict | None) -> dict | None:
@@ -1284,7 +1436,6 @@ def build_metrics(
     product_sales = data["product_sales"].copy()
     movement = data["movement"].copy()
     store_retail = data.get("store_retail", pd.DataFrame()).copy()
-    profit_snapshot = build_profit_snapshot(cost_snapshot)
     profit_history = build_profit_history(cost_history_raw, cost_snapshot)
     yeusoft_highlights = build_yeusoft_report_highlights(
         yeusoft_capture_bundle or {}, current_season_key, next_season_key
@@ -1374,6 +1525,13 @@ def build_metrics(
         capture_candidates.append(yeusoft_highlights["capture_at"])
     valid_capture_dates = [normalize_compare_timestamp(item) for item in capture_candidates if pd.notna(item)]
     summary_cards["data_capture_at"] = max(valid_capture_dates) if valid_capture_dates else pd.Timestamp(now.date())
+    profit_snapshot = build_live_profit_snapshot(
+        cost_snapshot,
+        cost_history_raw,
+        now,
+        summary_cards,
+        yeusoft_highlights,
+    )
     summary_cards["profit_snapshot"] = profit_snapshot
     summary_cards["yeusoft_highlights"] = yeusoft_highlights
 
@@ -1600,22 +1758,45 @@ def build_metrics(
     }
 
     insights = [
-        f"近 {summary_cards['sales_days']} 天门店经营销售额为 {format_num(summary_cards['sales_amount'], 2)} 元，"
-        f"客单价约 {format_num(summary_cards['avg_order_value'], 2)} 元。",
-        f"当前日销趋势来自销售清单，时间范围是 {summary_cards['sales_detail_start'].strftime('%Y-%m-%d')} 到 "
-        f"{summary_cards['sales_detail_end'].strftime('%Y-%m-%d')}；所以趋势图只反映最近 {summary_cards['sales_days']} 天。",
-        f"历史累计口径在商品销售情况里可以看到，自 {summary_cards['history_first_sale'].strftime('%Y-%m-%d')} 以来累计销售额约 "
-        f"{format_num(summary_cards['cumulative_sales_amount'], 2)} 元。",
-        f"当前账面库存 {format_num(summary_cards['inventory_qty'])} 件，零售价口径库存额约 {format_num(summary_cards['inventory_amount'], 2)} 元；"
-        f"库存覆盖天数约 {format_num(summary_cards['estimated_inventory_days'], 1)} 天。",
-        f"会员销售额占比约 {format_num(summary_cards['member_sales_ratio'] * 100, 1)}%，说明会员经营已经是核心收入来源。",
-        f"存在 {summary_cards['negative_sku_count']} 个负库存 SKU，负库存金额合计 {format_num(summary_cards['negative_inventory_amount'], 2)} 元，"
-        "这部分需要优先纠偏，不然补货和动销判断会失真。",
-        f"道具已从主经营口径里单独剥离；当前仅作为参考值显示，道具销售额约 {format_num(summary_cards['props_sales_amount'], 2)} 元，"
-        f"道具库存额约 {format_num(summary_cards['props_inventory_amount'], 2)} 元。",
-        f"当前筛出 {action_summary['replenish_count']} 个建议优先补货的 SKU，"
-        f"{action_summary['seasonal_hold_count']} 个跨季不建议补货、应转去化或暂缓的 SKU，"
-        f"{action_summary['clearance_count']} 个建议先去化的高库存低动销 SKU。",
+        insight_item(
+            f"近 {summary_cards['sales_days']} 天经营销售额 {format_num(summary_cards['sales_amount'], 2)} 元，客单价 {format_num(summary_cards['avg_order_value'], 2)} 元。",
+        ),
+        insight_item(
+            f"日销趋势当前只覆盖最近 {summary_cards['sales_days']} 天。",
+            f"当前趋势来自销售清单，时间范围是 {summary_cards['sales_detail_start'].strftime('%Y-%m-%d')} 到 "
+            f"{summary_cards['sales_detail_end'].strftime('%Y-%m-%d')}。",
+            "时间范围",
+        ),
+        insight_item(
+            f"历史累计销售额约 {format_num(summary_cards['cumulative_sales_amount'], 2)} 元。",
+            f"这个口径来自商品销售情况，自 {summary_cards['history_first_sale'].strftime('%Y-%m-%d')} 以来累计计算。",
+            "口径",
+        ),
+        insight_item(
+            f"库存覆盖天数约 {format_num(summary_cards['estimated_inventory_days'], 1)} 天。",
+            f"当前账面库存 {format_num(summary_cards['inventory_qty'])} 件，零售价口径库存额约 {format_num(summary_cards['inventory_amount'], 2)} 元。",
+            "库存说明",
+        ),
+        insight_item(
+            f"会员销售额占比约 {format_num(summary_cards['member_sales_ratio'] * 100, 1)}%。",
+            "会员经营已经是核心收入来源，适合继续做回访和复购。",
+            "看法",
+        ),
+        insight_item(
+            f"负库存 SKU {summary_cards['negative_sku_count']} 个，需要优先纠偏。",
+            f"负库存金额合计 {format_num(summary_cards['negative_inventory_amount'], 2)} 元；不先纠偏会影响补货和动销判断。",
+            "原因",
+        ),
+        insight_item(
+            "道具已从主经营口径剥离，只保留参考值。",
+            f"当前道具销售额约 {format_num(summary_cards['props_sales_amount'], 2)} 元，道具库存额约 {format_num(summary_cards['props_inventory_amount'], 2)} 元。",
+            "参考值",
+        ),
+        insight_item(
+            f"补货/跨季/去化待处理 SKU：{action_summary['replenish_count']} / {action_summary['seasonal_hold_count']} / {action_summary['clearance_count']}。",
+            "建议优先补货的 SKU、跨季不建议补货的 SKU 和建议先去化的 SKU 已分别筛出，可继续下钻到补货去化区查看。",
+            "说明",
+        ),
     ]
     if yeusoft_highlights:
         sales_overview = yeusoft_highlights.get("sales_overview")
@@ -1628,26 +1809,38 @@ def build_metrics(
             latest_month = sales_overview.get("latest_month")
             if latest_month:
                 insights.append(
-                    f"POS 销售清单全量显示，最近月份 {latest_month['label']} 销售额约 "
-                    f"{format_num(latest_month['sales_amount'], 2)} 元，主销中类是 {latest_month['top_category']}。"
+                    insight_item(
+                        f"最近月份 {latest_month['label']} 销售额约 {format_num(latest_month['sales_amount'], 2)} 元。",
+                        f"数据来自 POS 销售清单全量；当前主销中类是 {latest_month['top_category']}。",
+                        "主销",
+                    )
                 )
         if product_sales_highlight:
             insights.append(
-                f"POS 商品销售情况显示，累计售罄率约 {format_num(product_sales_highlight['sellout_rate'] * 100, 1)}%，"
-                f"当前库存主要压在 {product_sales_highlight['top_stock_labels']}。"
+                insight_item(
+                    f"累计售罄率约 {format_num(product_sales_highlight['sellout_rate'] * 100, 1)}%。",
+                    f"当前库存主要压在 {product_sales_highlight['top_stock_labels']}。",
+                    "库存结构",
+                )
             )
         if member_rank_highlight:
             insights.append(
-                f"POS 会员消费排行显示，高价值会员主要是 {member_rank_highlight['top_names']}，"
-                f"前 10 位会员贡献约 {format_num(member_rank_highlight['top10_share'] * 100, 1)}% 销额。"
+                insight_item(
+                    f"前 10 位会员贡献约 {format_num(member_rank_highlight['top10_share'] * 100, 1)}% 销额。",
+                    f"高价值会员主要是 {member_rank_highlight['top_names']}。",
+                    "会员名单",
+                )
             )
         if stock_analysis:
             top_labels = stock_analysis["top_labels"]
             cross_share = stock_analysis["cross_season_inventory_share"] * 100
             current_share = stock_analysis["current_season_inventory_share"] * 100
             insights.append(
-                f"POS 库存综合分析显示，当前库存金额主要压在 {top_labels}；"
-                f"其中当季库存约占 {format_num(current_share, 1)}%，跨季库存约占 {format_num(cross_share, 1)}%。"
+                insight_item(
+                    f"库存金额主要压在 {top_labels}。",
+                    f"其中当季库存约占 {format_num(current_share, 1)}%，跨季库存约占 {format_num(cross_share, 1)}%。",
+                    "季节结构",
+                )
             )
         if movement_highlight:
             window_start = movement_highlight["window_start"]
@@ -1658,9 +1851,12 @@ def build_metrics(
                 else "最近一段时间"
             )
             insights.append(
-                f"POS 出入库单据显示 {window_label} 内入库 {format_num(movement_highlight['inbound_qty'])} 件 / "
-                f"{format_num(movement_highlight['inbound_amount'], 2)} 元，出库 {format_num(movement_highlight['outbound_qty'])} 件 / "
-                f"{format_num(movement_highlight['outbound_amount'], 2)} 元，净入库 {format_num(movement_highlight['net_qty'])} 件。"
+                insight_item(
+                    f"{window_label} 内净入库 {format_num(movement_highlight['net_qty'])} 件。",
+                    f"入库 {format_num(movement_highlight['inbound_qty'])} 件 / {format_num(movement_highlight['inbound_amount'], 2)} 元；"
+                    f"出库 {format_num(movement_highlight['outbound_qty'])} 件 / {format_num(movement_highlight['outbound_amount'], 2)} 元。",
+                    "出入库",
+                )
             )
         if daily_flow:
             dominant_payment = daily_flow.get("dominant_payment")
@@ -1670,41 +1866,81 @@ def build_metrics(
                 else "暂无明显支付方式集中"
             )
             insights.append(
-                f"POS 每日流水单显示，当日流水 {format_num(daily_flow['actual_money'], 2)} 元，"
-                f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。"
+                insight_item(
+                    f"当日流水 {format_num(daily_flow['actual_money'], 2)} 元。",
+                    f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。",
+                    "当日结构",
+                )
             )
     if profit_snapshot:
         insights.append(
-            f"按最近一版成本快照，毛利约 {format_num(profit_snapshot['gross_profit'], 2)} 元，"
-            f"总费用约 {format_num(profit_snapshot['total_expense'], 2)} 元，"
-            f"净利润约 {format_num(profit_snapshot['net_profit'], 2)} 元。"
+            insight_item(
+                f"当前毛利约 {format_num(profit_snapshot['gross_profit'], 2)} 元，净利润约 {format_num(profit_snapshot['net_profit'], 2)} 元。",
+                f"销售口径来自 {profit_snapshot.get('sales_source', '当前数据')}；"
+                f"毛利率口径来自 {profit_snapshot.get('gross_margin_source', '当前数据')}；"
+                f"总费用约 {format_num(profit_snapshot['total_expense'], 2)} 元。",
+                "利润口径",
+            )
         )
+        if profit_snapshot.get("breakeven_available"):
+            insights.append(
+                insight_item(
+                    f"保本销售额约 {format_num(profit_snapshot['breakeven_sales'], 2)} 元。",
+                    f"平均每天至少要卖 {format_num(profit_snapshot['breakeven_daily_sales'], 2)} 元。",
+                    "保本日销",
+                )
+            )
+            insights.append(
+                insight_item(
+                    f"当前保本进度约 {format_num(profit_snapshot['breakeven_progress_ratio'] * 100, 1)}%。",
+                    f"固定费用约 {format_num(profit_snapshot['monthly_operating_expense'], 2)} 元；"
+                    f"人工费用约 {format_num(profit_snapshot['salary_total'], 2)} 元。",
+                    "费用结构",
+                )
+            )
+        else:
+            insights.append(
+                insight_item(
+                    "当前保本线按保守口径展示。",
+                    f"固定费用约 {format_num(profit_snapshot['monthly_operating_expense'], 2)} 元；"
+                    f"人工费用约 {format_num(profit_snapshot['salary_total'], 2)} 元；"
+                    "当前缺少有效毛利率。",
+                    "原因",
+                )
+            )
         insights.append(
-            f"当前保本销售额约 {format_num(profit_snapshot['breakeven_sales'], 2)} 元，"
-            f"平均每天至少要卖 {format_num(profit_snapshot['breakeven_daily_sales'], 2)} 元。"
-        )
-        insights.append(
-            f"固定费用约 {format_num(profit_snapshot['monthly_operating_expense'], 2)} 元，"
-            f"人工费用约 {format_num(profit_snapshot['salary_total'], 2)} 元；"
-            f"目前保本进度约 {format_num(profit_snapshot['breakeven_progress_ratio'] * 100, 1)}%。"
-        )
-        insights.append(
-            f"按当前平均日销推算，月末销售约 {format_num(profit_snapshot['projected_month_sales'], 2)} 元，"
-            f"月末净利润约 {format_num(profit_snapshot['projected_month_net_profit'], 2)} 元。"
+            insight_item(
+                f"月末销售约 {format_num(profit_snapshot['projected_month_sales'], 2)} 元，净利约 {format_num(profit_snapshot['projected_month_net_profit'], 2)} 元。",
+                f"当前月已实现销售 {format_num(profit_snapshot['sales_amount'], 2)} 元；"
+                f"剩余 {format_num(profit_snapshot['remaining_days'], 1)} 天预计新增销售 {format_num(profit_snapshot['projected_remaining_sales'], 2)} 元。",
+                "预测拆解",
+            )
         )
     if profit_history:
         if profit_history["previous"]:
             insights.append(
-                f"成本历史显示，较上月净利润变化 {format_num(profit_history['delta_net_profit'], 2)} 元，"
-                f"总费用变化 {format_num(profit_history['delta_total_expense'], 2)} 元。"
+                insight_item(
+                    f"较上月净利润变化 {format_num(profit_history['delta_net_profit'], 2)} 元。",
+                    f"总费用变化 {format_num(profit_history['delta_total_expense'], 2)} 元。",
+                    "对比",
+                )
             )
         else:
-            insights.append("成本历史已开始累计，当前只有 1 个月快照，建议从下个月开始连续对比利润和费用。")
+            insights.append(
+                insight_item(
+                    "成本历史已开始累计。",
+                    "当前只有 1 个月快照，建议从下个月开始连续对比利润和费用。",
+                    "说明",
+                )
+            )
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         insights.append(
-            f"店铺零售清单已按输入人区分参考店铺；主逻辑只关注 {primary_input} / {row['店铺名称']}，"
-            f"其余输入人仅作为参考对比。"
+            insight_item(
+                f"主逻辑当前只关注 {primary_input} / {row['店铺名称']}。",
+                "店铺零售清单已按输入人区分参考店铺，其余输入人仅作为参考对比。",
+                "口径",
+            )
         )
 
     return {
@@ -1875,6 +2111,189 @@ def format_badge(value: str, level: str, tip: str | None = None) -> str:
         classes += " tooltip-badge"
         attrs = f' title="{safe_tip}" data-tip="{safe_tip}" tabindex="0" role="note"'
     return f"<span class='{classes}'{attrs}>{safe_value}</span>"
+
+
+def inline_tip(label: str, tip: str) -> str:
+    safe_label = html.escape(label)
+    safe_tip = html.escape(tip, quote=True)
+    return f"<span class='inline-tip tooltip-badge' title='{safe_tip}' data-tip='{safe_tip}' tabindex='0' role='note'>{safe_label}</span>"
+
+
+def floating_tooltip_css() -> str:
+    return """
+    .tooltip-badge::after,
+    .tooltip-badge::before {
+      display: none !important;
+      content: none !important;
+    }
+    .floating-tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      max-width: min(420px, calc(100vw - 24px));
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.7;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .floating-tooltip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    """
+
+
+def floating_tooltip_script() -> str:
+    return """
+  <script>
+    (function () {
+      if (window.__blackTonnyTooltipInit) return;
+      window.__blackTonnyTooltipInit = true;
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'floating-tooltip';
+      document.body.appendChild(tooltip);
+
+      let activeTarget = null;
+
+      function hideTooltip() {
+        activeTarget = null;
+        tooltip.classList.remove('is-visible');
+      }
+
+      function showTooltip(target) {
+        const message = target.getAttribute('data-tip') || target.getAttribute('title');
+        if (!message) return;
+        activeTarget = target;
+        tooltip.textContent = message;
+        tooltip.classList.add('is-visible');
+
+        const rect = target.getBoundingClientRect();
+        const ttRect = tooltip.getBoundingClientRect();
+        const margin = 12;
+        let left = rect.left + rect.width / 2 - ttRect.width / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - ttRect.width - margin));
+        let top = rect.top - ttRect.height - 12;
+        if (top < margin) {
+          top = rect.bottom + 12;
+        }
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      }
+
+      function attachTooltip(target) {
+        target.addEventListener('mouseenter', () => showTooltip(target));
+        target.addEventListener('mouseleave', hideTooltip);
+        target.addEventListener('focus', () => showTooltip(target));
+        target.addEventListener('blur', hideTooltip);
+        target.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (activeTarget === target && tooltip.classList.contains('is-visible')) {
+            hideTooltip();
+          } else {
+            showTooltip(target);
+          }
+        });
+      }
+
+      document.querySelectorAll('.tooltip-badge').forEach(attachTooltip);
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', () => {
+        if (activeTarget) showTooltip(activeTarget);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.tooltip-badge')) {
+          hideTooltip();
+        }
+      });
+    })();
+  </script>
+    """
+
+
+def note_with_tip(summary: str, tip: str, label: str = "查看说明") -> str:
+    return f"{html.escape(summary)} {inline_tip(label, tip)}"
+
+
+def insight_item(summary: str, detail: str | None = None, label: str = "说明") -> dict[str, str]:
+    item = {"summary": summary}
+    if detail:
+        item["detail"] = detail
+        item["label"] = label
+    return item
+
+
+def render_insights_html(items: list[dict[str, str] | str]) -> str:
+    rendered: list[str] = []
+    for item in items:
+        if isinstance(item, dict):
+            summary = item.get("summary", "")
+            detail = item.get("detail")
+            if detail:
+                rendered.append(f"<li>{note_with_tip(summary, detail, item.get('label', '说明'))}</li>")
+            else:
+                rendered.append(f"<li>{html.escape(summary)}</li>")
+        else:
+            rendered.append(f"<li>{html.escape(str(item))}</li>")
+    return "".join(rendered)
+
+
+def render_insights_markdown(items: list[dict[str, str] | str]) -> list[str]:
+    lines: list[str] = []
+    for item in items:
+        if isinstance(item, dict):
+            lines.append(item.get("summary", ""))
+        else:
+            lines.append(str(item))
+    return lines
+
+
+def compact_sentence_with_tip(text: str, label: str = "说明") -> str:
+    segments = [segment.strip() for segment in text.replace("；", "，").split("，") if segment.strip()]
+    if len(segments) <= 1:
+        return html.escape(text)
+    summary = segments[0]
+    if not summary.endswith(("。", "！", "？")):
+        summary += "。"
+    detail = "，".join(segments[1:])
+    return note_with_tip(summary, detail, label)
+
+
+def render_time_strategy_html(time_strategy: dict) -> str:
+    blocks = [
+        ("今天", time_strategy["daily_actions"]),
+        ("本周", time_strategy["weekly_actions"]),
+        ("本月", time_strategy["monthly_actions"]),
+    ]
+    rows: list[str] = [
+        f"<li>北京时间：{html.escape(time_strategy['beijing_time'])}</li>",
+        f"<li>当前判断：{html.escape(time_strategy['headline'])}</li>",
+    ]
+    for title, actions in blocks:
+        for action in actions:
+            rows.append(f"<li><strong>{title}</strong>：{compact_sentence_with_tip(action, '补充')}</li>")
+    return "".join(rows)
+
+
+def table_text_with_tip(value: object, max_len: int = 12, label: str = "详情") -> str:
+    if pd.isna(value):
+        return ""
+    text = str(value).strip()
+    if len(text) <= max_len:
+        return html.escape(text)
+    short = html.escape(text[:max_len].rstrip() + "…")
+    return f"{short} {inline_tip(label, text)}"
 
 
 def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
@@ -2431,6 +2850,577 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
     return playbooks
 
 
+def compute_change_ratio(current: float, previous: float) -> float:
+    if not previous:
+        return 0.0
+    return (float(current) - float(previous)) / float(previous)
+
+
+def judge_sales_driver(order_delta: float, aov_delta: float) -> str:
+    if abs(order_delta) >= abs(aov_delta) + 0.05:
+        return "单量变化"
+    if abs(aov_delta) >= abs(order_delta) + 0.05:
+        return "客单价变化"
+    return "单量和客单共同变化"
+
+
+def build_retail_consulting_analysis(metrics: dict, period_type: str | None = None) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    actions = metrics["action_summary"]
+    decision = build_decision_engine(metrics)
+    time_strategy = build_time_strategy(metrics)
+    profit = cards.get("profit_snapshot")
+    yeusoft = metrics.get("yeusoft_highlights") or {}
+    sales_overview = yeusoft.get("sales_overview") or {}
+    member_rank = yeusoft.get("member_rank") or {}
+    stock_analysis = yeusoft.get("stock_analysis") or {}
+
+    period_label = "本月" if period_type == "monthly" else "本季度" if period_type == "quarterly" else "当前阶段"
+    previous_label = "上月" if period_type == "monthly" else "上季度" if period_type == "quarterly" else "上一阶段"
+    focus_title = "本月最值得关注的 5 个问题" if period_type != "quarterly" else "本季度最值得关注的 5 个问题"
+    latest = (
+        sales_overview.get("latest_month")
+        if period_type in (None, "monthly")
+        else sales_overview.get("latest_quarter")
+    )
+    previous = (
+        sales_overview.get("previous_month")
+        if period_type in (None, "monthly")
+        else sales_overview.get("previous_quarter")
+    )
+
+    category_sales = metrics["sales_by_category_ex_props"].copy()
+    top_category_name = top_label_from_series(category_sales["商品大类"], "主营品类") if not category_sales.empty else "主营品类"
+    top_category_share = (
+        safe_ratio(float(category_sales.iloc[0]["销售额"]), float(category_sales["销售额"].sum()))
+        if not category_sales.empty
+        else 0.0
+    )
+    top_two_share = (
+        safe_ratio(float(category_sales.head(2)["销售额"].sum()), float(category_sales["销售额"].sum()))
+        if not category_sales.empty
+        else 0.0
+    )
+
+    category_risks = metrics["category_risks"].copy()
+    top_risk_category = top_label_from_series(category_risks["大类"], "高风险品类") if not category_risks.empty else "高风险品类"
+    top_replenish_category = top_label_from_series(metrics["replenish_categories"]["中类"], "补货重点") if not metrics["replenish_categories"].empty else "补货重点"
+    top_clearance_category = top_label_from_series(metrics["clearance_categories"]["大类"], "去化重点") if not metrics["clearance_categories"].empty else "去化重点"
+    top_seasonal_category = top_label_from_series(metrics["seasonal_categories"]["中类"], "跨季品类") if not metrics["seasonal_categories"].empty else "跨季品类"
+
+    best_sellers = metrics["low_stock_bestsellers"].head(3).copy()
+    replenishment_skus = metrics["replenish"].head(5).copy()
+    slow_skus = metrics["slow_moving"].head(5).copy()
+    clearance_skus = metrics["clearance"].head(5).copy()
+    top_members = metrics["top_members"].head(5).copy()
+    guide_perf = metrics["guide_perf"].copy()
+    avg_attachment = float(guide_perf["连带"].mean()) if not guide_perf.empty else 0.0
+    avg_guide_ticket = float(guide_perf["单效"].mean()) if not guide_perf.empty else cards["avg_order_value"]
+    sales_trend = decision["sales_trend"]
+
+    sales_analysis: list[str] = []
+    if latest and previous:
+        sales_delta = compute_change_ratio(latest["sales_amount"], previous["sales_amount"])
+        order_delta = compute_change_ratio(latest["order_count"], previous["order_count"])
+        aov_delta = compute_change_ratio(latest["avg_order_value"], previous["avg_order_value"])
+        driver = judge_sales_driver(order_delta, aov_delta)
+        direction = "增长" if sales_delta >= 0 else "下降"
+        sales_analysis.append(
+            f"【直接数据】{period_label}销售额 {format_num(latest['sales_amount'], 2)} 元，较{previous_label}{direction} {format_num(abs(sales_delta) * 100, 1)}%。"
+        )
+        if driver == "单量变化":
+            sales_analysis.append(
+                f"【直接数据】变化主要来自单量，订单数较{previous_label}{'增加' if order_delta >= 0 else '回落'} {format_num(abs(order_delta) * 100, 1)}%，客单价变化相对更小。"
+            )
+        elif driver == "客单价变化":
+            sales_analysis.append(
+                f"【直接数据】变化主要来自客单价，客单价较{previous_label}{'增加' if aov_delta >= 0 else '回落'} {format_num(abs(aov_delta) * 100, 1)}%，单量变化相对更小。"
+            )
+        else:
+            sales_analysis.append(
+                f"【直接数据】销售变化是单量和客单一起推动的，订单数变化 {format_num(order_delta * 100, 1)}%，客单价变化 {format_num(aov_delta * 100, 1)}%。"
+            )
+        sales_analysis.append(
+            f"【直接数据】当前主销中类是 {latest['top_category']}，说明阶段性增长/下滑主要先看这个中类有没有继续撑住。"
+        )
+    else:
+        sales_analysis.append(
+            f"【直接数据】当前短期销售窗口为最近 {cards['sales_days']} 天，经营销售额 {format_num(cards['sales_amount'], 2)} 元，日销趋势判断为 {sales_trend['label']}。"
+        )
+        sales_analysis.append(
+            "【经营推断】当前更像短期波动判断，还缺连续月度可对比数据；先用日销趋势判断流量和转化节奏。"
+        )
+
+    if top_category_share >= 0.45:
+        sales_analysis.append(
+            f"【经营判断】销售看起来不算差，但结构并不轻松，{top_category_name} 单类大约贡献了 {format_num(top_category_share * 100, 1)}% 销售，存在“靠少数品类硬撑”的风险。"
+        )
+    elif cards["estimated_inventory_days"] >= 180:
+        sales_analysis.append(
+            "【经营判断】销售额不是唯一问题，库存覆盖天数偏长，说明现在更像“卖得还行但结构不健康”，不适合继续平均进货。"
+        )
+    else:
+        sales_analysis.append("【经营判断】当前销售结构还算能打，但要继续盯主销品类是否稳定，不要让少数爆款突然断货。")
+
+    category_analysis: list[str] = []
+    if not category_sales.empty:
+        top_contributors = "、".join(
+            f"{row['商品大类']}({format_num(row['销售额'], 2)}元)"
+            for _, row in category_sales.head(3).iterrows()
+        )
+        category_analysis.append(f"【直接数据】品类贡献排序靠前的是：{top_contributors}。")
+    if not category_risks.empty:
+        top_risks = "、".join(
+            f"{row['大类']}({row['状态']})" for _, row in category_risks.head(3).iterrows()
+        )
+        category_analysis.append(f"【直接数据】品类风险排序靠前的是：{top_risks}。")
+    if not metrics["replenish_categories"].empty:
+        top_replenish_rank = "、".join(
+            f"{row['中类']}({format_num(row['建议补货量'])})"
+            for _, row in metrics["replenish_categories"].head(3).iterrows()
+        )
+        category_analysis.append(f"【直接数据】品类动作建议里，补货优先级靠前的是：{top_replenish_rank}。")
+    if not metrics["clearance_categories"].empty:
+        top_clear_rank = "、".join(
+            f"{row['大类']}({format_num(row['实际库存'])})"
+            for _, row in metrics["clearance_categories"].head(3).iterrows()
+        )
+        category_analysis.append(f"【直接数据】去化优先级靠前的是：{top_clear_rank}。")
+    if top_two_share >= 0.7:
+        category_analysis.append(
+            f"【经营判断】前两大品类大约贡献了 {format_num(top_two_share * 100, 1)}% 销售，结构偏集中。短期靠它们撑得住，长期要防一旦主力品类失速，整体营业额会一起掉。"
+        )
+    else:
+        category_analysis.append("【经营判断】品类结构不算单一，但库存风险和补货节奏已经开始分化，后面要按品类区别对待，而不是平均发力。")
+
+    sku_analysis: list[str] = []
+    if not best_sellers.empty:
+        hot_list = "、".join(f"{row['款号']}/{row['颜色']}" for _, row in best_sellers.head(3).iterrows())
+        sku_analysis.append(f"【直接数据】当前爆款/断货风险款主要集中在：{hot_list}。")
+        sku_analysis.append("【动作建议】这类款先保核心尺码和主销色，不建议一次补深，按 2-3 次小单快返来补最稳。")
+    if not replenishment_skus.empty:
+        sku_analysis.append(
+            f"【经营判断】有持续动销能力的 SKU 主要集中在 {top_replenish_category}，它们更适合稳补；如果只是一两周突然冲高，则先按小量试补处理。"
+        )
+    if not clearance_skus.empty:
+        slow_list = "、".join(f"{row['商品款号']}" for _, row in clearance_skus.head(3).iterrows())
+        sku_analysis.append(f"【直接数据】明显滞销或高库存低动销 SKU 主要有：{slow_list}。")
+        sku_analysis.append(
+            "【动作建议】这类货不要继续深补，优先判断是季节错了、陈列靠后、价格门槛高，还是尺码结构不对，再决定轻促销还是强去化。"
+        )
+    if not slow_skus.empty:
+        sku_analysis.append("【经营判断】连续慢销款更像结构问题，不只是单品问题。先调陈列和搭配，如果 1-2 周仍不改善，再升级到清货动作。")
+
+    inventory_actions = {
+        "立即补货": [],
+        "可观察补货": [],
+        "控制补货": [],
+        "尽快去化": [],
+        "暂缓处理": [],
+    }
+    if not metrics["replenish_categories"].empty:
+        for _, row in metrics["replenish_categories"].head(5).iterrows():
+            target = "立即补货" if row["季节策略"] == "当季主推" else "可观察补货"
+            inventory_actions[target].append(f"{row['中类']}（建议补货量 {format_num(row['建议补货量'])}）")
+    if not metrics["category_risks"].empty:
+        for _, row in metrics["category_risks"].head(5).iterrows():
+            if row["状态"] == "高压货":
+                inventory_actions["尽快去化"].append(f"{row['大类']}（库存金额/销售金额 {format_num(row['库存金额/销售金额'], 2)}）")
+            elif row["状态"] == "需关注":
+                inventory_actions["控制补货"].append(f"{row['大类']}（先控补货节奏）")
+    if not metrics["seasonal_categories"].empty:
+        for _, row in metrics["seasonal_categories"].head(5).iterrows():
+            target = "暂缓处理" if row["建议动作"] == "暂缓补货" else "尽快去化"
+            inventory_actions[target].append(f"{row['中类']}（{row['建议动作']}）")
+
+    inventory_analysis = [
+        f"【直接数据】当前经营库存覆盖天数约 {format_num(cards['estimated_inventory_days'], 1)} 天，库存压力判断为 {'偏重' if cards['estimated_inventory_days'] >= 120 else '可控'}。",
+        f"【直接数据】库存压力最大的品类先看 {top_risk_category}，而补货优先品类先看 {top_replenish_category}，说明库存结构已经出现“该补的不一定多、该去化的反而压得深”的失衡。",
+    ]
+    if cards["estimated_inventory_days"] >= 180:
+        inventory_analysis.append("【经营判断】当前更适合先去化再补货；如果先补，会把现金继续压进旧货和错季货里。")
+    else:
+        inventory_analysis.append("【经营判断】当前是补货和去化并行，但补货只补主销和缺码，不能平均补。")
+
+    member_analysis: list[str] = []
+    member_analysis.append(
+        f"【直接数据】会员销售额占比约 {format_num(cards['member_sales_ratio'] * 100, 1)}%，最近客单价约 {format_num(cards['avg_order_value'], 2)} 元。"
+    )
+    if avg_attachment > 0:
+        member_analysis.append(
+            f"【直接数据】店员平均连带约 {format_num(avg_attachment, 2)}，平均单效约 {format_num(avg_guide_ticket, 2)} 元。"
+        )
+    if cards["member_sales_ratio"] >= 0.6:
+        member_analysis.append("【经营判断】当前销售已经明显依赖会员，说明复购稳定性不错，下一步更该做的是把高价值会员的回访和搭配销售做深。")
+    else:
+        member_analysis.append("【经营判断】当前会员贡献不算稳，后面要补会员召回和老客复购，不然销售容易更多靠自然客流波动。")
+    if avg_attachment and avg_attachment < 1.5:
+        member_analysis.append("【经营判断】现在更像“有成交，但每单带得不够”，优先提高连带率，比单纯追客流更划算。")
+    else:
+        member_analysis.append("【经营判断】连带不算太差，但仍建议用基础打底 + 袜品 + 家居服组合继续放大客单。")
+    if top_members is not None and not top_members.empty:
+        top_member_names = "、".join(top_members["VIP姓名"].astype(str).head(3).tolist())
+        member_analysis.append(f"【动作建议】会员回访先盯 {top_member_names}，优先做换季提醒、到店试穿和组合推荐。")
+
+    rhythm_analysis: list[str] = []
+    stage_label = "去库存阶段" if cards["estimated_inventory_days"] >= 180 else "稳利润阶段" if profit and not profit["passed_breakeven"] else "冲销售阶段"
+    if not profit:
+        stage_label = decision["stage"]
+    rhythm_analysis.append(f"【经营判断】当前更像 {stage_label}，不是简单追销售额。")
+    if profit:
+        if profit["projected_month_net_profit"] < 0:
+            rhythm_analysis.append("【直接数据】按当前节奏月末仍有亏损风险，本周应该先保毛利、控补货、做去化，而不是盲目冲低价促销。")
+        elif profit["passed_breakeven"]:
+            rhythm_analysis.append("【直接数据】当前已经过保本线，后面可以在不伤毛利的前提下放大营业额。")
+        if profit["remaining_days"] > 0:
+            rhythm_analysis.append(
+                f"【直接数据】后面每天至少还要卖 {format_num(profit['remaining_daily_sales_needed'], 2)} 元才能过保本；如果继续慢半拍，月底就会靠最后几天硬冲。"
+            )
+    if sales_trend["direction"] == "down":
+        rhythm_analysis.append("【经营判断】当前节奏更像转化或结构问题，不只是客流问题。先看主销品类和连带，再看活动。")
+    else:
+        rhythm_analysis.append("【经营判断】当前节奏还能推进，但要防止销售做上去了，利润却被深补和清货拖掉。")
+
+    diagnosis_summary = (
+        f"当前门店最需要优先处理的是 {decision['headline']}。"
+        f"从数据看，销售主力仍集中在 {top_category_name}，但库存压力主要压在 {top_risk_category}，"
+        f"补货应优先给 {top_replenish_category}，去化则先盯 {top_clearance_category}。"
+    )
+    if profit:
+        diagnosis_summary += (
+            f" 按当前口径，本月净利预测约 {format_num(profit['projected_month_net_profit'], 2)} 元，"
+            f"{'还没有真正过保本线' if not profit['passed_breakeven'] else '已经过保本线，但还要防库存结构失衡'}。"
+        )
+
+    focus_issues = dedupe_preserve_order(
+        [
+            f"库存覆盖天数约 {format_num(cards['estimated_inventory_days'], 1)} 天，库存压力偏重。" if cards["estimated_inventory_days"] >= 120 else f"{top_replenish_category} 当前更需要防断货。",
+            f"负库存 SKU 还有 {format_num(cards['negative_sku_count'])} 个，库存口径还没完全干净。" if cards["negative_sku_count"] > 0 else f"当前库存口径基本可用，但仍要继续做周期盘点。",
+            f"{top_risk_category} 是当前压货最重的品类，继续补货会进一步拖慢周转。",
+            f"{top_category_name} 贡献占比较高，结构上仍有“靠少数品类撑销售”的风险。" if top_category_share >= 0.45 else f"品类结构不算失衡，但补货和去化节奏已经明显分化。",
+            "会员贡献已经很高，但连带和复购还可以继续放大。" if cards["member_sales_ratio"] >= 0.6 else "会员贡献还不够稳，销售容易受自然客流影响。",
+            "月末净利预测仍偏弱，销售和利润需要一起抓。" if profit and profit["projected_month_net_profit"] < 0 else "利润口径暂时可控，但不能因为销售回暖就放松库存管理。",
+        ]
+    )[:5]
+
+    weekly_actions = dedupe_preserve_order(
+        [
+            f"先把 {top_risk_category} 做成专项去化表，先停补、先前移陈列、先做组合价。",
+            f"把 {top_replenish_category} 的核心尺码和主销色列成补货清单，本周只补最能带营业额的那批。",
+            "先校正负库存，再安排补货；库存没校准前，不做深补。",
+            "把高价值会员分成 3 组：本周联系、下周联系、暂缓联系，避免群发式打扰。",
+            "店员统一搭配话术：先卖主销，再顺带袜品/基础打底/家居服，提高连带。",
+        ]
+    )[:3]
+
+    replenish_advice = dedupe_preserve_order(
+        inventory_actions["立即补货"] + inventory_actions["可观察补货"] or [f"{top_replenish_category} 先按小单快返补货。"]
+    )[:6]
+    clearance_advice = dedupe_preserve_order(
+        inventory_actions["尽快去化"] + inventory_actions["控制补货"] or [f"{top_clearance_category} 先停补，再做去化。"]
+    )[:6]
+    category_advice = dedupe_preserve_order(
+        [
+            f"{top_category_name} 继续做主销中轴，优先保不断码。",
+            f"{top_risk_category} 先控采购，再安排门口清货位和组合去化。",
+            f"{top_seasonal_category} 这类跨季品类要单独管理，不跟当季补货混预算。",
+            "儿童内衣 / 棉品 / 家居服要分清角色：主销、连带、去化，别放在一张表里平均看。",
+        ]
+    )
+
+    owner_advice = dedupe_preserve_order(
+        [
+            f"本周先盯 3 个数：保本进度、库存覆盖天数、{top_replenish_category} 的断码情况。",
+            f"需要你拍板的不是所有货，而是 {top_risk_category} 怎么去化、{top_seasonal_category} 是否暂缓、{top_replenish_category} 补货预算给多少。",
+            "如果这周只能做一个经营动作，就先把高库存慢销货位和清货策略定下来，不要让旧货继续占预算。",
+        ]
+    )
+    manager_advice = dedupe_preserve_order(
+        [
+            f"先把 {top_risk_category} 从正常主陈列里压缩出来，给 {top_replenish_category} 腾出更前的位置。",
+            "盯员工两件事：主销款不断推、每单至少带一件顺手连带商品。",
+            "把负库存、去化名单、补货名单分三张小表带晨会，不要让店员自己判断优先级。",
+            f"会员跟进先看 {top_members['VIP姓名'].head(3).tolist() if not top_members.empty else '高价值会员名单'}。",
+        ]
+    )
+    staff_advice = dedupe_preserve_order(
+        [
+            f"今天优先推 {top_replenish_category}，这是当前最值得先卖、也最该先保不断货的品类。",
+            f"带货顺序先主销，再顺带 {top_clearance_category if top_clearance_category != '去化重点' else '袜品/基础打底/家居服'} 这类更容易顺手带走的商品。",
+            "慢销款不要硬单推，改成组合推荐：基础款 + 袜品 / 家居服 / 第二件优惠。",
+            "顾客犹豫时，先问使用场景和孩子年龄，再推最稳的基础款，不要先推难卖的货。",
+        ]
+    )
+
+    risk_alerts = dedupe_preserve_order(
+        [
+            f"如果继续平均补货，{top_risk_category} 的压货会继续加重。",
+            "如果负库存不先纠偏，补货建议和库存健康判断都会继续失真。" if cards["negative_sku_count"] > 0 else "库存口径相对正常，但仍建议继续做周期盘点。",
+            "如果会员回访只做群发，不做分层，复购效率会继续偏低。",
+            "如果当前主销中类突然断码，销售额会很容易直接下滑。",
+            "如果跨季货不单独管理，到了下个季节会出现旧货、新货一起压的情况。",
+        ]
+    )
+
+    if_ignore = dedupe_preserve_order(
+        [
+            f"下周最可能先出现的是 {top_risk_category} 库存继续变重，但真正能卖的 {top_replenish_category} 反而更容易断。",
+            "店员会继续把时间花在介绍货，而不是推动组合成交，客单和连带抬不起来。",
+            "如果月底前还没压住慢销库存，利润会继续被固定费用和工资吃掉。",
+            "跨季货如果这周不处理，下周仍会占货位，影响春夏主销款出样和成交。",
+        ]
+    )
+
+    priority_matrix = {
+        "重要且紧急": dedupe_preserve_order(
+            [
+                "先纠偏负库存，再决定补货和去化。" if cards["negative_sku_count"] > 0 else f"先处理 {top_risk_category} 的高库存压力。",
+                f"先停补 {top_risk_category}，优先安排去化和货位调整。",
+                "如果净利预测为负，先盯保本日销和高毛利主销组合。" if profit and profit["projected_month_net_profit"] < 0 else f"优先保住 {top_replenish_category} 的主销不断码。",
+            ]
+        ),
+        "重要不紧急": dedupe_preserve_order(
+            [
+                "把高价值会员分层回访，做换季提醒和复购带连带。",
+                f"把 {top_seasonal_category} 这类跨季货单独管理，避免下一轮继续压货。",
+                "每周固定复盘一次品类贡献、补货效果和去化进度。",
+            ]
+        ),
+        "可观察": dedupe_preserve_order(
+            [
+                "下一季试补品类先小量试单，观察 1 周再决定是否放大。",
+                "继续跟踪店员连带率和客单价，判断是不是单量正常但带得少。",
+            ]
+        ),
+        "暂不处理": dedupe_preserve_order(
+            [
+                "暂不做非核心品类深补。",
+                "暂不为了冲营业额做全场重折扣。",
+                "暂不把预算投向还没验证的新扩品。",
+            ]
+        ),
+    }
+
+    direct_basis = [
+        f"{period_label}销售、订单、客单变化来自 POS 全量销售数据。"
+        if latest
+        else f"当前销售判断来自最近 {cards['sales_days']} 天经营销售窗口。"
+    ]
+    if not category_sales.empty:
+        direct_basis.append("品类贡献和库存风险来自当前销售、库存和进销存报表。")
+    if not metrics["replenish_categories"].empty or not metrics["clearance_categories"].empty:
+        direct_basis.append("补货和去化建议来自 SKU 动销、库存周数、季节策略和库存风险规则。")
+
+    inferred_basis = [
+        "哪些品类更适合继续放大，部分基于当前主销中类、库存结构和换季逻辑做经营推断。",
+        "滞销原因中的价格、陈列、尺码结构问题，属于结合零售经验的判断，不是系统直接字段。",
+    ]
+    need_more_basis = [
+        "如果要更准判断品类增长来源，最好再补连续月度的分品类销售明细。",
+        "如果要更准判断店员转化问题，最好补进店人数或试穿数据。",
+    ]
+
+    return {
+        "period_label": period_label,
+        "focus_title": focus_title,
+        "diagnosis_summary": diagnosis_summary,
+        "focus_issues": focus_issues,
+        "weekly_actions": weekly_actions,
+        "replenish_advice": replenish_advice,
+        "clearance_advice": clearance_advice,
+        "category_advice": category_advice,
+        "role_guidance": {
+            "老板娘": owner_advice,
+            "店长": manager_advice,
+            "店员": staff_advice,
+        },
+        "risk_alerts": risk_alerts,
+        "if_ignore": if_ignore,
+        "priority_matrix": priority_matrix,
+        "sales_analysis": sales_analysis,
+        "category_analysis": category_analysis,
+        "sku_analysis": sku_analysis,
+        "inventory_analysis": inventory_analysis,
+        "member_analysis": member_analysis,
+        "rhythm_analysis": rhythm_analysis,
+        "basis_notes": {
+            "direct": direct_basis,
+            "inferred": inferred_basis,
+            "need_more": need_more_basis,
+        },
+    }
+
+
+def render_consulting_analysis_html(
+    analysis: dict[str, object],
+    title: str = "经营分析与销售建议",
+    section_id: str = "consulting-analysis",
+) -> str:
+    sections = [
+        ("经营诊断总结", [analysis["diagnosis_summary"]]),
+        (analysis["focus_title"], analysis["focus_issues"]),
+        ("销售表现分析", analysis["sales_analysis"]),
+        ("品类结构分析", analysis["category_analysis"]),
+        ("SKU / 爆款 / 滞销分析", analysis["sku_analysis"]),
+        ("库存健康分析", analysis["inventory_analysis"]),
+        ("会员 / 客单价 / 连带率分析", analysis["member_analysis"]),
+        ("目标达成与节奏分析", analysis["rhythm_analysis"]),
+        ("本周优先动作建议", analysis["weekly_actions"]),
+        ("补货建议", analysis["replenish_advice"]),
+        ("去化 / 清货建议", analysis["clearance_advice"]),
+        ("品类经营建议", analysis["category_advice"]),
+        ("风险预警清单", analysis["risk_alerts"]),
+        ("如果下周不处理，最可能出现的问题", analysis["if_ignore"]),
+    ]
+
+    role_blocks = "".join(
+        f"""
+        <div class="analysis-card">
+          <h3>{html.escape(role)}建议</h3>
+          <ul class="analysis-list">
+            {"".join(f"<li>{html.escape(item)}</li>" for item in items)}
+          </ul>
+        </div>
+        """
+        for role, items in analysis["role_guidance"].items()
+    )
+
+    priority_blocks = "".join(
+        f"""
+        <div class="analysis-card priority-{tone}">
+          <h3>{html.escape(label)}</h3>
+          <ul class="analysis-list">
+            {"".join(f"<li>{html.escape(item)}</li>" for item in items)}
+          </ul>
+        </div>
+        """
+        for label, items, tone in (
+            ("重要且紧急", analysis["priority_matrix"]["重要且紧急"], "red"),
+            ("重要不紧急", analysis["priority_matrix"]["重要不紧急"], "yellow"),
+            ("可观察", analysis["priority_matrix"]["可观察"], "neutral"),
+            ("暂不处理", analysis["priority_matrix"]["暂不处理"], "green"),
+        )
+    )
+
+    basis_html = "".join(
+        f"""
+        <div class="analysis-card">
+          <h3>{html.escape(label)}</h3>
+          <ul class="analysis-list">
+            {"".join(f"<li>{html.escape(item)}</li>" for item in items)}
+          </ul>
+        </div>
+        """
+        for label, items in (
+            ("基于数据直接得出的", analysis["basis_notes"]["direct"]),
+            ("基于零售经验的判断", analysis["basis_notes"]["inferred"]),
+            ("还需要补数据确认的", analysis["basis_notes"]["need_more"]),
+        )
+    )
+
+    section_cards = "".join(
+        f"""
+        <div class="analysis-card">
+          <h3>{html.escape(section_title)}</h3>
+          <ul class="analysis-list">
+            {"".join(f"<li>{html.escape(item)}</li>" for item in items)}
+          </ul>
+        </div>
+        """
+        for section_title, items in sections
+    )
+
+    return f"""
+    <section class="module analysis-module" id="{html.escape(section_id)}">
+      <div class="module-header">
+        <h2 class="module-title">{html.escape(title)}</h2>
+        <p class="module-note">这部分不只描述数据，而是把“发生了什么、说明什么、现在最该做什么、谁来做”一起讲清楚。</p>
+      </div>
+      <div class="analysis-grid">
+        {section_cards}
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">老板娘 / 店长 / 店员分角色建议</h2>
+        <p class="module-note">同一份数据，三个角色的动作不一样，这里直接拆开给执行。</p>
+      </div>
+      <div class="analysis-grid">
+        {role_blocks}
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">经营动作优先级排序</h2>
+        <p class="module-note">今天先干什么、这周重点抓什么、本月不能忽视什么，都按轻重缓急排好了。</p>
+      </div>
+      <div class="analysis-grid">
+        {priority_blocks}
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">判断依据说明</h2>
+        <p class="module-note">哪些是直接数据，哪些是零售经验判断，哪些还需要后续补数据，这里单独说明。</p>
+      </div>
+      <div class="analysis-grid">
+        {basis_html}
+      </div>
+    </section>
+    """
+
+
+def append_consulting_analysis_markdown(lines: list[str], analysis: dict[str, object]) -> None:
+    lines.extend(
+        [
+            "## 经营诊断总结",
+            "",
+            f"- {analysis['diagnosis_summary']}",
+            "",
+            f"## {analysis['focus_title']}",
+        ]
+    )
+    lines.extend(f"- {item}" for item in analysis["focus_issues"])
+    lines.extend(["", "## 销售表现分析"])
+    lines.extend(f"- {item}" for item in analysis["sales_analysis"])
+    lines.extend(["", "## 品类结构分析"])
+    lines.extend(f"- {item}" for item in analysis["category_analysis"])
+    lines.extend(["", "## SKU / 爆款 / 滞销分析"])
+    lines.extend(f"- {item}" for item in analysis["sku_analysis"])
+    lines.extend(["", "## 库存健康分析"])
+    lines.extend(f"- {item}" for item in analysis["inventory_analysis"])
+    lines.extend(["", "## 会员 / 客单价 / 连带率分析"])
+    lines.extend(f"- {item}" for item in analysis["member_analysis"])
+    lines.extend(["", "## 目标达成与节奏分析"])
+    lines.extend(f"- {item}" for item in analysis["rhythm_analysis"])
+    lines.extend(["", "## 本周优先动作建议"])
+    lines.extend(f"- {item}" for item in analysis["weekly_actions"])
+    lines.extend(["", "## 补货建议"])
+    lines.extend(f"- {item}" for item in analysis["replenish_advice"])
+    lines.extend(["", "## 去化 / 清货建议"])
+    lines.extend(f"- {item}" for item in analysis["clearance_advice"])
+    lines.extend(["", "## 品类经营建议"])
+    lines.extend(f"- {item}" for item in analysis["category_advice"])
+    lines.extend(["", "## 老板娘 / 店长 / 店员分角色建议", "", "### 给老板娘的建议"])
+    lines.extend(f"- {item}" for item in analysis["role_guidance"]["老板娘"])
+    lines.extend(["", "### 给店长的建议"])
+    lines.extend(f"- {item}" for item in analysis["role_guidance"]["店长"])
+    lines.extend(["", "### 给店员的建议"])
+    lines.extend(f"- {item}" for item in analysis["role_guidance"]["店员"])
+    lines.extend(["", "## 风险预警清单"])
+    lines.extend(f"- {item}" for item in analysis["risk_alerts"])
+    lines.extend(["", "## 如果下周不处理，最可能出现的问题"])
+    lines.extend(f"- {item}" for item in analysis["if_ignore"])
+    lines.extend(["", "## 经营动作优先级排序", "", "### 重要且紧急"])
+    lines.extend(f"- {item}" for item in analysis["priority_matrix"]["重要且紧急"])
+    lines.extend(["", "### 重要不紧急"])
+    lines.extend(f"- {item}" for item in analysis["priority_matrix"]["重要不紧急"])
+    lines.extend(["", "### 可观察"])
+    lines.extend(f"- {item}" for item in analysis["priority_matrix"]["可观察"])
+    lines.extend(["", "### 暂不处理"])
+    lines.extend(f"- {item}" for item in analysis["priority_matrix"]["暂不处理"])
+    lines.extend(["", "## 判断依据说明", "", "### 基于数据直接得出的"])
+    lines.extend(f"- {item}" for item in analysis["basis_notes"]["direct"])
+    lines.extend(["", "### 基于零售经验做的判断"])
+    lines.extend(f"- {item}" for item in analysis["basis_notes"]["inferred"])
+    lines.extend(["", "### 还需要补充数据才能进一步确认"])
+    lines.extend(f"- {item}" for item in analysis["basis_notes"]["need_more"])
+
+
 def build_boss_action_board(metrics: dict) -> dict[str, object]:
     cards = metrics["summary_cards"]
     profit = cards.get("profit_snapshot")
@@ -2853,60 +3843,105 @@ def build_profit_card_defs(profit: dict | None) -> list[tuple[str, str, str, str
     if not profit:
         return []
 
+    breakeven_available = bool(profit.get("breakeven_available"))
     progress_text = (
         "已过保本线"
         if profit["passed_breakeven"]
         else f"还差 {format_num(profit['remaining_sales_to_breakeven'], 2)} 元"
-    )
+    ) if breakeven_available else "缺少有效毛利率，暂不显示保本进度"
     progress_tone = "green" if profit["passed_breakeven"] else "yellow"
     projection_tone = profit.get("projected_monthly_status", "neutral")
     top_expense = profit.get("top_expense_item") or {}
     top_salary = profit.get("top_salary_item") or {}
+    gross_profit_tip = (
+        f"销售口径：{profit.get('sales_source', '未标记')}；"
+        f"毛利率口径：{profit.get('gross_margin_source', '未标记')}；"
+        f"按当前口径估算毛利额 {format_num(profit['gross_profit'], 2)} 元。"
+    )
+    fixed_cost_tip = (
+        f"固定费用来源：{profit.get('operating_expense_source', '当前成本口径')}；"
+        f"本月固定费用 {format_num(profit['monthly_operating_expense'], 2)} 元；"
+        f"平均每天固定支出约 {format_num(profit['fixed_cost_daily_burden'], 2)} 元。"
+    )
+    salary_tip = (
+        f"当前人工费用按月计 {format_num(profit['salary_total'], 2)} 元；"
+        f"平均每天人工成本约 {format_num(profit['salary_daily_burden'], 2)} 元。"
+    )
+    breakeven_tip = (
+        f"公式：总费用 {format_num(profit['total_expense'], 2)} 元 / 毛利率 "
+        f"{format_num(profit['gross_margin_rate'] * 100, 1)}% = 保本销售额 "
+        f"{format_num(profit['breakeven_sales'], 2)} 元；"
+        f"对应保本日销约 {format_num(profit['breakeven_daily_sales'], 2)} 元。"
+    ) if breakeven_available else "当前缺少有效毛利率，先按保守口径展示，等补齐毛利率后再精确测算保本线。"
+    progress_tip = (
+        f"当前销售 {format_num(profit['sales_amount'], 2)} 元；"
+        f"保本销售额 {format_num(profit['breakeven_sales'], 2)} 元；"
+        f"距离保本还差 {format_num(profit['remaining_sales_to_breakeven'], 2)} 元；"
+        f"剩余每天至少要卖 {format_num(profit['remaining_daily_sales_needed'], 2)} 元。"
+    ) if breakeven_available else "当前缺少有效毛利率，先不强行给保本进度，避免误导判断。"
+    forecast_tip = (
+        f"计算过程：已实现销售 {format_num(profit['sales_amount'], 2)} 元；"
+        f"当前平均日销 {format_num(profit['average_daily_sales'], 2)} 元；"
+        f"剩余 {format_num(profit['remaining_days'], 1)} 天预计新增销售 {format_num(profit['projected_remaining_sales'], 2)} 元；"
+        f"月末销售约 {format_num(profit['projected_month_sales'], 2)} 元；"
+        f"按毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}% 预计月末毛利 {format_num(profit['projected_month_gross_profit'], 2)} 元；"
+        f"再减总费用 {format_num(profit['total_expense'], 2)} 元，得到月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+    )
 
     return [
         ("净利润", f"{format_num(profit['net_profit'], 2)} 元", profit["headline"], profit["status"]),
         (
             "毛利额",
             f"{format_num(profit['gross_profit'], 2)} 元",
-            f"毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+            note_with_tip(
+                f"毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+                gross_profit_tip,
+                "口径",
+            ),
             "neutral",
         ),
         (
             "固定费用",
             f"{format_num(profit['monthly_operating_expense'], 2)} 元",
-            (
-                f"每天固定支出约 {format_num(profit['fixed_cost_daily_burden'], 2)} 元"
-                if profit["monthly_operating_expense"]
-                else "当前没有固定费用数据"
+            note_with_tip(
+                profit.get("operating_expense_source", "当前成本口径") if profit["monthly_operating_expense"] else "当前没有固定费用数据",
+                fixed_cost_tip,
+                "说明",
             ),
             "neutral",
         ),
         (
             "人工费用",
             f"{format_num(profit['salary_total'], 2)} 元",
-            (
-                f"每天人工成本约 {format_num(profit['salary_daily_burden'], 2)} 元"
-                if profit["salary_total"]
-                else "当前没有人工成本数据"
+            note_with_tip(
+                "按当前工资口径" if profit["salary_total"] else "当前没有人工成本数据",
+                salary_tip,
+                "说明",
             ),
             "neutral",
         ),
         (
             "保本销售额",
-            f"{format_num(profit['breakeven_sales'], 2)} 元",
-            f"保本日销约 {format_num(profit['breakeven_daily_sales'], 2)} 元",
+            f"{format_num(profit['breakeven_sales'], 2)} 元" if breakeven_available else "待补毛利率",
+            note_with_tip(
+                f"保本日销约 {format_num(profit['breakeven_daily_sales'], 2)} 元"
+                if breakeven_available
+                else "先补有效毛利率",
+                breakeven_tip,
+                "公式",
+            ),
             "neutral",
         ),
         (
             "保本进度",
-            f"{format_num(min(profit['breakeven_progress_ratio'], 9.99) * 100, 1)}%",
-            progress_text,
+            f"{format_num(min(profit['breakeven_progress_ratio'], 9.99) * 100, 1)}%" if breakeven_available else "待补口径",
+            note_with_tip(progress_text, progress_tip, "说明"),
             progress_tone,
         ),
         (
             "月末净利预测",
             f"{format_num(profit['projected_month_net_profit'], 2)} 元",
-            profit["forecast_headline"],
+            note_with_tip(profit["forecast_headline"], forecast_tip, "公式"),
             projection_tone,
         ),
         (
@@ -2995,8 +4030,7 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
         """
         for item in playbooks
     )
-    insights_html = "".join(f"<li>{item}</li>" for item in metrics["insights"])
-    chart_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts)
+    insights_html = render_insights_html(metrics["insights"])
     reference_html = "".join(
         f"""
         <div class="metric-card">
@@ -3027,13 +4061,7 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
             <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
             <p class="module-note">今天 / 本周 / 本月的动作建议会根据日销趋势、库存覆盖和换季阶段自动切换。</p>
           </div>
-          <ul class="insight-list">
-            <li>北京时间：{time_strategy['beijing_time']}</li>
-            <li>当前判断：{time_strategy['headline']}</li>
-            {"".join(f"<li>{item}</li>" for item in time_strategy['daily_actions'])}
-            {"".join(f"<li>{item}</li>" for item in time_strategy['weekly_actions'])}
-            {"".join(f"<li>{item}</li>" for item in time_strategy['monthly_actions'])}
-          </ul>
+          <ul class="insight-list">{render_time_strategy_html(time_strategy)}</ul>
         </div>
       </div>
       <div class="detail-grid">
@@ -3071,118 +4099,29 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
       </div>
     """
 
+    replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量"]].copy()
+    seasonal_category_table = metrics["seasonal_categories"][["中类", "季节策略", "建议动作", "SKU数", "库存", "销售额"]].copy()
+    clearance_category_table = metrics["clearance_categories"][["大类", "建议动作", "SKU数", "实际库存", "近期零售"]].copy()
+
+    replenish_table = metrics["replenish"][["款号", "中类", "颜色", "季节策略", "库存", "周均销量", "库存周数", "销售金额", "建议补货量", "建议动作"]].copy()
+    seasonal_action_table = metrics["seasonal_actions"][["款号", "中类", "颜色", "季节", "季节策略", "库存", "库存周数", "销售金额", "建议动作"]].copy()
+    clearance_cols = ["商品款号", "商品名称", "商品颜色", "大类", "中类", "实际库存", "近期零售", "零售价", "建议动作"]
+    clearance_available_cols = [column for column in clearance_cols if column in metrics["clearance"].columns]
+    clearance_table = metrics["clearance"][clearance_available_cols].copy()
+
+    if not clearance_table.empty and "商品名称" in clearance_table.columns:
+        clearance_table["商品名称"] = clearance_table["商品名称"].apply(lambda value: table_text_with_tip(value, 10, "详情"))
+    if not clearance_table.empty and "商品颜色" in clearance_table.columns:
+        clearance_table["商品颜色"] = clearance_table["商品颜色"].apply(lambda value: table_text_with_tip(value, 8, "详情"))
+
     inventory_tables_html = "".join(
         [
-            compact_list_html(
-                metrics["replenish_categories"],
-                "补货重点品类",
-                8,
-                "先按品类定补货优先级，再下钻到单款。",
-                lambda row: row["中类"],
-                lambda row: f"{row['季节策略']} / 建议补货 SKU {format_num(row['SKU数'])}",
-                lambda row: [
-                    compact_stat_row("销售额", f"{format_num(row['销售额'], 2)} 元"),
-                    compact_stat_row("当前库存", format_num(row["库存"])),
-                    compact_stat_row("建议补货量", format_num(row["建议补货量"])),
-                ],
-                lambda row: [
-                    f"季节策略：{row['季节策略']}",
-                    f"建议补货 SKU：{format_num(row['SKU数'])}",
-                ],
-            ),
-            compact_list_html(
-                metrics["seasonal_categories"],
-                "跨季处理重点品类",
-                8,
-                "先看哪些品类已经跨季，再决定暂缓还是去化。",
-                lambda row: row["中类"],
-                lambda row: f"{row['季节策略']} / {row['建议动作']}",
-                lambda row: [
-                    compact_stat_row("库存", format_num(row["库存"])),
-                    compact_stat_row("SKU数", format_num(row["SKU数"])),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
-                ],
-                lambda row: [
-                    f"季节策略：{row['季节策略']}",
-                    f"建议动作：{row['建议动作']}",
-                ],
-            ),
-            compact_list_html(
-                metrics["clearance_categories"],
-                "去化重点品类",
-                8,
-                "先按品类看库存压力，再安排陈列和促销动作。",
-                lambda row: row["大类"],
-                lambda row: f"{row['建议动作']} / 高库存低动销",
-                lambda row: [
-                    compact_stat_row("实际库存", format_num(row["实际库存"])),
-                    compact_stat_row("近期零售", format_num(row["近期零售"])),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
-                ],
-                lambda row: [
-                    f"SKU数：{format_num(row['SKU数'])}",
-                ],
-            ),
-            compact_list_html(
-                metrics["replenish"],
-                "补货 SKU 明细",
-                10,
-                "确定品类要补后，再来这里挑具体款。",
-                lambda row: row["款号"],
-                lambda row: f"{row['中类']} / {row['颜色']}",
-                lambda row: [
-                    compact_stat_row("库存", format_num(row["库存"])),
-                    compact_stat_row("周均销量", format_num(row["周均销量"], 1)),
-                    compact_stat_row("建议补货", format_num(row["建议补货量"])),
-                ],
-                lambda row: [
-                    f"销售金额：{format_num(row['销售金额'], 2)} 元",
-                    f"库存周数：{format_num(row['库存周数'], 2)}",
-                    f"建议动作：{row['建议动作']}",
-                ],
-            ),
-            compact_list_html(
-                metrics["seasonal_actions"],
-                "跨季处理 SKU 明细",
-                10,
-                "老板做二次判断时使用，先看库存，再看建议动作。",
-                lambda row: row["款号"],
-                lambda row: f"{row['中类']} / {row['颜色']} / {row['季节']}",
-                lambda row: [
-                    compact_stat_row("库存", format_num(row["库存"])),
-                    compact_stat_row("销售金额", f"{format_num(row['销售金额'], 2)} 元"),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
-                ],
-                lambda row: [
-                    f"季节策略：{row['季节策略']}",
-                    f"库存周数：{format_num(row['库存周数'], 2)}",
-                ],
-            ),
-            compact_list_html(
-                metrics["clearance"],
-                "去化 SKU 明细",
-                10,
-                "执行去化时再下钻到具体款，优先看库存深但近期零售弱的款。",
-                lambda row: row["商品款号"],
-                lambda row: " / ".join(
-                    [
-                        str(part)
-                        for part in [row.get("商品名称", ""), row.get("商品颜色", "")]
-                        if str(part).strip()
-                    ]
-                ),
-                lambda row: [
-                    compact_stat_row("实际库存", format_num(row["实际库存"])),
-                    compact_stat_row("近期零售", format_num(row["近期零售"])),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
-                ],
-                lambda row: [
-                    f"大类：{row['大类']}",
-                    f"中类：{row['中类']}" if row.get("中类") else "",
-                    f"小类：{row['小类']}" if row.get("小类") else "",
-                    f"零售价：{format_num(row['零售价'], 2)} 元" if row.get("零售价") is not None else "",
-                ],
-            ),
+            table_html(replenish_category_table, "补货重点品类", 12, "按品类定补货优先级。电脑端适合横向比较，手机端可左右滑动表格。"),
+            table_html(seasonal_category_table, "跨季处理重点品类", 12, "先看哪些品类当前不该补，再决定暂缓还是去化。"),
+            table_html(clearance_category_table, "去化重点品类", 12, "先看库存压力最大的品类，再安排陈列和促销动作。"),
+            table_html(replenish_table, "补货 SKU 明细", 16, "确定品类要补后，再到这里挑具体款。长动作说明已收进标签提示。"),
+            table_html(seasonal_action_table, "跨季处理 SKU 明细", 16, "老板二次判断时使用，重点看季节策略、库存和建议动作。"),
+            table_html(clearance_table, "去化 SKU 明细", 16, "执行去化时再下钻到具体款，长商品名已收进提示。"),
             table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨。"),
         ]
     )
@@ -3853,6 +4792,22 @@ def build_html(metrics: dict) -> str:
       color: #64748b;
       line-height: 1.7;
     }}
+    .inline-tip {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 6px;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.6;
+      vertical-align: middle;
+      white-space: nowrap;
+    }}
     .metric-red {{
       border-color: #fecaca;
       background: #fff7f7;
@@ -4050,6 +5005,7 @@ def build_html(metrics: dict) -> str:
         align-items: flex-start;
       }}
     }}
+  {floating_tooltip_css()}
   </style>
 </head>
 <body>
@@ -4232,6 +5188,7 @@ def build_html(metrics: dict) -> str:
       </aside>
     </div>
   </div>
+{floating_tooltip_script()}
 </body>
 </html>
 """
@@ -4250,6 +5207,7 @@ def build_detail_html(metrics: dict) -> str:
     boss_board = build_boss_action_board(metrics)
     focus = build_today_focus(metrics)
     decision = build_decision_engine(metrics)
+    consulting_analysis = build_retail_consulting_analysis(metrics)
     profit_card_defs = build_profit_card_defs(profit)
     primary_reference = metrics["primary_reference"]
     other_references = metrics["other_references"]
@@ -4470,23 +5428,8 @@ def build_detail_html(metrics: dict) -> str:
         """
         for item in playbooks
     )
-    insights_html = "".join(f"<li>{item}</li>" for item in metrics["insights"])
+    insights_html = render_insights_html(metrics["insights"])
     chart_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts)
-    reference_html = "".join(
-        f"""
-        <div class="metric-card">
-          <div class="metric-title">{title}</div>
-          <div class="metric-value">{value}</div>
-          <div class="metric-note">{note}</div>
-        </div>
-        """
-        for title, value, note in [
-            ("道具销售额", f"{format_num(cards['props_sales_amount'], 2)} 元", "单独参考，不计入经营销售额"),
-            ("道具库存额", f"{format_num(cards['props_inventory_amount'], 2)} 元", "单独参考，不计入经营库存额"),
-            ("道具销量", format_num(cards["props_sales_qty"]), "单独参考"),
-            ("道具库存件数", format_num(cards["props_inventory_qty"]), "单独参考"),
-        ]
-    )
     pos_cards = build_yeusoft_highlight_cards(pos_highlights)
     expense_df, salary_df = build_cost_detail_frames(profit)
     pos_overview_html = ""
@@ -4503,59 +5446,97 @@ def build_detail_html(metrics: dict) -> str:
         )
     cost_breakdown_html = ""
     if profit:
-        cost_breakdown_html = "".join(
+        expense_table = pd.DataFrame()
+        salary_table = pd.DataFrame()
+        if not expense_df.empty:
+            expense_table = expense_df.copy()
+            expense_table["金额"] = expense_table["amount"].apply(lambda value: f"{format_num(value, 2)} 元")
+            expense_table["说明"] = expense_table["note"].apply(
+                lambda value: table_text_with_tip(value, 12, "说明") if value else "-"
+            )
+            expense_table = expense_table[["name", "金额", "说明"]].rename(columns={"name": "费用项"})
+        if not salary_df.empty:
+            salary_table = salary_df.copy()
+            salary_table["金额"] = salary_table["amount"].apply(lambda value: f"{format_num(value, 2)} 元")
+            salary_table["说明"] = salary_table["note"].apply(
+                lambda value: table_text_with_tip(value, 12, "说明") if value else "-"
+            )
+            salary_table = salary_table[["name", "金额", "说明"]].rename(columns={"name": "工资项"})
+        props_table = pd.DataFrame(
             [
-                compact_list_html(
-                    expense_df,
-                    "固定费用拆解",
-                    10,
-                    "这里放的是月固定或分摊后的费用，帮助老板知道利润为什么会被吃掉。",
-                    lambda row: row["name"],
-                    lambda row: row.get("note", "") or "固定费用项",
-                    lambda row: [
-                        compact_stat_row("金额", f"{format_num(row['amount'], 2)} 元"),
-                    ],
-                )
-                if not expense_df.empty
-                else render_empty("当前没有固定费用明细。"),
-                compact_list_html(
-                    salary_df,
-                    "工资拆解",
-                    10,
-                    "这里按人员拆工资，方便老板判断人工成本占比和排班压力。",
-                    lambda row: row["name"],
-                    lambda row: row.get("note", "") or "工资项",
-                    lambda row: [
-                        compact_stat_row("金额", f"{format_num(row['amount'], 2)} 元"),
-                    ],
-                )
-                if not salary_df.empty
-                else render_empty("当前没有工资明细。"),
+                {"参考项": "道具销售额", "数值": f"{format_num(cards['props_sales_amount'], 2)} 元", "说明": "单独参考，不计入经营销售额"},
+                {"参考项": "道具库存额", "数值": f"{format_num(cards['props_inventory_amount'], 2)} 元", "说明": "单独参考，不计入经营库存额"},
+                {"参考项": "道具销量", "数值": format_num(cards["props_sales_qty"]), "说明": "只作参考"},
+                {"参考项": "道具库存件数", "数值": format_num(cards["props_inventory_qty"]), "说明": "只作参考"},
             ]
         )
+        cost_tables_html = "".join(
+            [
+                table_html(
+                    expense_table,
+                    "固定费用拆解",
+                    20,
+                    "按月固定费用或分摊费用展示，默认收起，真正核利润时再展开。",
+                )
+                if not expense_table.empty
+                else render_empty("当前没有固定费用明细。"),
+                table_html(
+                    salary_table,
+                    "工资拆解",
+                    20,
+                    "工资当前按固定口径维护，默认收起，需要核人工成本时再看。",
+                )
+                if not salary_table.empty
+                else render_empty("当前没有工资明细。"),
+                table_html(
+                    props_table,
+                    "道具参考口径",
+                    10,
+                    "道具继续保留，但并入折叠区，避免占用总览长度。它只作参考，不参与主经营判断。",
+                ),
+            ]
+        )
+        cost_breakdown_html = f"""
+        <details class="detail-panel collapsible-panel">
+          <summary>固定费用 / 工资拆解（默认收起）</summary>
+          <p class="detail-intro">这里保留利润核算需要的费用底稿。平时默认收起，避免把总览页面拖得太长。</p>
+          <div class="tables tables-single tables-compact">{cost_tables_html}</div>
+        </details>
+        """
+
+    chart_sections_html = "".join(
+        f"""
+        <details class="detail-panel collapsible-panel chart-toggle-card" {'open' if index == 0 else ''}>
+          <summary>图表 {index + 1}</summary>
+          <p class="detail-intro">图表默认按一行一个展示，需要时再展开，避免详细页一上来太长。</p>
+          <section class="chart-card">{chart}</section>
+        </details>
+        """
+        for index, chart in enumerate(charts)
+    ) or render_empty("当前还没有可展示的图表。")
+
+    tips_panel_html = f"""
+      <details class="detail-panel collapsible-panel">
+        <summary>术语 Tips（默认收起）</summary>
+        <p class="detail-intro">页面里已经保留了关键短句和标签提示。这里放完整词典，需要时再展开看。</p>
+        <div class="tip-grid">{tips_html}</div>
+      </details>
+    """
 
     overview_panels_html = f"""
-      <div class="detail-grid">
-        <div class="module detail-module" style="margin:0;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
-            <p class="module-note">红色优先处理，黄色持续盯住，绿色维持节奏。</p>
-          </div>
-          <div class="health-grid">{health_html}</div>
+      <div class="module detail-module detail-module-flat" style="margin:0;">
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
+          <p class="module-note">红色优先处理，黄色持续盯住，绿色维持节奏。</p>
         </div>
-        <div class="module detail-module" style="margin:0;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
-            <p class="module-note">今天 / 本周 / 本月的季节动作参考。</p>
-          </div>
-          <ul class="insight-list">
-            <li>北京时间：{time_strategy['beijing_time']}</li>
-            <li>当前判断：{time_strategy['headline']}</li>
-            {"".join(f"<li>{item}</li>" for item in time_strategy['daily_actions'])}
-            {"".join(f"<li>{item}</li>" for item in time_strategy['weekly_actions'])}
-            {"".join(f"<li>{item}</li>" for item in time_strategy['monthly_actions'])}
-          </ul>
+        <div class="health-grid health-grid-inline">{health_html}</div>
+      </div>
+      <div class="module detail-module detail-module-flat" style="margin-top:14px;">
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
+          <p class="module-note">今天 / 本周 / 本月的季节动作参考。</p>
         </div>
+        <ul class="insight-list">{render_time_strategy_html(time_strategy)}</ul>
       </div>
       <div class="detail-grid">
         <div class="module detail-module" style="margin:0;">
@@ -4573,16 +5554,7 @@ def build_detail_html(metrics: dict) -> str:
           <ul class="insight-list">{insights_html}</ul>
         </div>
       </div>
-      <div class="detail-grid">
-        <div class="module detail-module" style="margin:0;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
-            <p class="module-note">道具已从主经营指标剥离，只保留为参考值。</p>
-          </div>
-          <div class="metrics-grid">{reference_html}</div>
-        </div>
-      </div>
-      {f"<div class='detail-grid'>{cost_breakdown_html}</div>" if cost_breakdown_html else ""}
+      {cost_breakdown_html if cost_breakdown_html else ""}
     """
     strategy_panels_html = f"""
       <div class="module detail-module" style="margin:0;">
@@ -4592,126 +5564,35 @@ def build_detail_html(metrics: dict) -> str:
         </div>
         <div class="playbook-grid">{playbooks_html}</div>
       </div>
-      <div class="module detail-module" style="margin-top:14px;">
-        <div class="module-header">
-          <h3 class="module-title" style="font-size:18px;">术语 Tips</h3>
-          <p class="module-note">鼠标悬浮或点按标签可看动作词解释；这里是完整词典。</p>
-        </div>
-        <div class="tip-grid">{tips_html}</div>
-      </div>
+      <div style="margin-top:14px;">{tips_panel_html}</div>
     """
+    consulting_panel_html = render_consulting_analysis_html(
+        consulting_analysis,
+        "经营分析与销售建议",
+        "consulting-analysis",
+    )
+    replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量"]].copy()
+    seasonal_category_table = metrics["seasonal_categories"][["中类", "季节策略", "建议动作", "SKU数", "库存", "销售额"]].copy()
+    clearance_category_table = metrics["clearance_categories"][["大类", "建议动作", "SKU数", "实际库存", "近期零售"]].copy()
+    replenish_table = metrics["replenish"][["款号", "中类", "颜色", "季节策略", "库存", "周均销量", "库存周数", "销售金额", "建议补货量", "建议动作"]].copy()
+    seasonal_action_table = metrics["seasonal_actions"][["款号", "中类", "颜色", "季节", "季节策略", "库存", "库存周数", "销售金额", "建议动作"]].copy()
+    clearance_cols = ["商品款号", "商品名称", "商品颜色", "大类", "中类", "实际库存", "近期零售", "零售价", "建议动作"]
+    clearance_available_cols = [column for column in clearance_cols if column in metrics["clearance"].columns]
+    clearance_table = metrics["clearance"][clearance_available_cols].copy()
+
+    if not clearance_table.empty and "商品名称" in clearance_table.columns:
+        clearance_table["商品名称"] = clearance_table["商品名称"].apply(lambda value: table_text_with_tip(value, 10, "详情"))
+    if not clearance_table.empty and "商品颜色" in clearance_table.columns:
+        clearance_table["商品颜色"] = clearance_table["商品颜色"].apply(lambda value: table_text_with_tip(value, 8, "详情"))
+
     inventory_tables_html = "".join(
         [
-            compact_list_html(
-                metrics["replenish_categories"],
-                "补货重点品类",
-                8,
-                "先按品类定补货优先级，再下钻到单款。",
-                lambda row: row["中类"],
-                lambda row: f"{row['季节策略']} / 建议补货 SKU {format_num(row['SKU数'])}",
-                lambda row: [
-                    compact_stat_row("销售额", f"{format_num(row['销售额'], 2)} 元"),
-                    compact_stat_row("当前库存", format_num(row["库存"])),
-                    compact_stat_row("建议补货量", format_num(row["建议补货量"])),
-                ],
-                lambda row: [
-                    f"季节策略：{row['季节策略']}",
-                    f"建议补货 SKU：{format_num(row['SKU数'])}",
-                ],
-            ),
-            compact_list_html(
-                metrics["seasonal_categories"],
-                "跨季处理重点品类",
-                8,
-                "先看哪些品类已经跨季，再决定暂缓还是去化。",
-                lambda row: row["中类"],
-                lambda row: f"{row['季节策略']} / {row['建议动作']}",
-                lambda row: [
-                    compact_stat_row("库存", format_num(row["库存"])),
-                    compact_stat_row("SKU数", format_num(row["SKU数"])),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
-                ],
-                lambda row: [
-                    f"季节策略：{row['季节策略']}",
-                    f"建议动作：{row['建议动作']}",
-                ],
-            ),
-            compact_list_html(
-                metrics["clearance_categories"],
-                "去化重点品类",
-                8,
-                "先按品类看库存压力，再安排陈列和促销动作。",
-                lambda row: row["大类"],
-                lambda row: f"{row['建议动作']} / 高库存低动销",
-                lambda row: [
-                    compact_stat_row("实际库存", format_num(row["实际库存"])),
-                    compact_stat_row("近期零售", format_num(row["近期零售"])),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
-                ],
-                lambda row: [
-                    f"SKU数：{format_num(row['SKU数'])}",
-                ],
-            ),
-            compact_list_html(
-                metrics["replenish"],
-                "补货 SKU 明细",
-                10,
-                "确定品类要补后，再来这里挑具体款。",
-                lambda row: row["款号"],
-                lambda row: f"{row['中类']} / {row['颜色']}",
-                lambda row: [
-                    compact_stat_row("库存", format_num(row["库存"])),
-                    compact_stat_row("周均销量", format_num(row["周均销量"], 1)),
-                    compact_stat_row("建议补货", format_num(row["建议补货量"])),
-                ],
-                lambda row: [
-                    f"销售金额：{format_num(row['销售金额'], 2)} 元",
-                    f"库存周数：{format_num(row['库存周数'], 2)}",
-                    f"建议动作：{row['建议动作']}",
-                ],
-            ),
-            compact_list_html(
-                metrics["seasonal_actions"],
-                "跨季处理 SKU 明细",
-                10,
-                "老板做二次判断时使用，先看库存，再看建议动作。",
-                lambda row: row["款号"],
-                lambda row: f"{row['中类']} / {row['颜色']} / {row['季节']}",
-                lambda row: [
-                    compact_stat_row("库存", format_num(row["库存"])),
-                    compact_stat_row("销售金额", f"{format_num(row['销售金额'], 2)} 元"),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
-                ],
-                lambda row: [
-                    f"季节策略：{row['季节策略']}",
-                    f"库存周数：{format_num(row['库存周数'], 2)}",
-                ],
-            ),
-            compact_list_html(
-                metrics["clearance"],
-                "去化 SKU 明细",
-                10,
-                "执行去化时再下钻到具体款，优先看库存深但近期零售弱的款。",
-                lambda row: row["商品款号"],
-                lambda row: " / ".join(
-                    [
-                        str(part)
-                        for part in [row.get("商品名称", ""), row.get("商品颜色", "")]
-                        if str(part).strip()
-                    ]
-                ),
-                lambda row: [
-                    compact_stat_row("实际库存", format_num(row["实际库存"])),
-                    compact_stat_row("近期零售", format_num(row["近期零售"])),
-                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
-                ],
-                lambda row: [
-                    f"大类：{row['大类']}",
-                    f"中类：{row['中类']}" if row.get("中类") else "",
-                    f"小类：{row['小类']}" if row.get("小类") else "",
-                    f"零售价：{format_num(row['零售价'], 2)} 元" if row.get("零售价") is not None else "",
-                ],
-            ),
+            table_html(replenish_category_table, "补货重点品类", 12, "按品类定补货优先级。电脑端适合横向比较，手机端可左右滑动表格。"),
+            table_html(seasonal_category_table, "跨季处理重点品类", 12, "先看哪些品类当前不该补，再决定暂缓还是去化。"),
+            table_html(clearance_category_table, "去化重点品类", 12, "先看库存压力最大的品类，再安排陈列和促销动作。"),
+            table_html(replenish_table, "补货 SKU 明细", 16, "确定品类要补后，再到这里挑具体款。长动作说明已收进标签提示。"),
+            table_html(seasonal_action_table, "跨季处理 SKU 明细", 16, "老板二次判断时使用，重点看季节策略、库存和建议动作。"),
+            table_html(clearance_table, "去化 SKU 明细", 16, "执行去化时再下钻到具体款，长商品名已收进提示。"),
             table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨。"),
         ]
     )
@@ -4767,6 +5648,7 @@ def build_detail_html(metrics: dict) -> str:
             "<a href='./index.html'>返回首页</a>",
             "<a href='#overview-section'>总览</a>",
             "<a href='#strategy-section'>经营策略</a>",
+            "<a href='#consulting-analysis'>经营分析</a>",
             "<a href='#charts-section'>图表</a>",
             "<a href='#inventory-section'>补货去化</a>",
             "<a href='#people-section'>会员店员</a>",
@@ -5129,6 +6011,22 @@ def build_detail_html(metrics: dict) -> str:
       font-size: 13px;
       color: #64748b;
     }}
+    .inline-tip {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 6px;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.6;
+      vertical-align: middle;
+      white-space: nowrap;
+    }}
     .metric-red {{
       border-color: #fecaca;
       background: #fff7f7;
@@ -5197,6 +6095,46 @@ def build_detail_html(metrics: dict) -> str:
       background: #f8fafc;
       font-size: 14px;
       line-height: 1.8;
+    }}
+    .analysis-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }}
+    .analysis-card {{
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+      min-width: 0;
+    }}
+    .analysis-card h3 {{
+      margin: 0 0 10px;
+      font-size: 17px;
+      color: #0f172a;
+    }}
+    .analysis-list {{
+      margin: 0;
+      padding-left: 18px;
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.9;
+    }}
+    .priority-red {{
+      background: #fff7f7;
+      border-color: #fecaca;
+    }}
+    .priority-yellow {{
+      background: #fffbeb;
+      border-color: #fde68a;
+    }}
+    .priority-neutral {{
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }}
+    .priority-green {{
+      background: #f0fdf4;
+      border-color: #bbf7d0;
     }}
     .tooltip-badge {{
       position: relative;
@@ -5383,13 +6321,36 @@ def build_detail_html(metrics: dict) -> str:
     .detail-module {{
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
     }}
-    .detail-grid, .health-grid, .tip-grid, .playbook-grid, .charts, .tables {{
+    .detail-grid, .tip-grid, .playbook-grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 14px;
       margin-top: 14px;
       min-width: 0;
       max-width: 100%;
+    }}
+    .charts,
+    .tables {{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+      min-width: 0;
+      max-width: 100%;
+    }}
+    .tables-compact {{
+      margin-top: 0;
+    }}
+    .health-grid {{
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+      min-width: 0;
+      max-width: 100%;
+    }}
+    .detail-module-flat {{
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
     }}
     .health-red {{
       background: #fff1f2;
@@ -5422,6 +6383,29 @@ def build_detail_html(metrics: dict) -> str:
       font-size: 15px;
       font-weight: 800;
       margin-bottom: 8px;
+    }}
+    .collapsible-panel {{
+      margin-bottom: 0;
+    }}
+    .collapsible-panel summary {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }}
+    .collapsible-panel summary::after {{
+      content: "展开";
+      font-size: 12px;
+      font-weight: 700;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 4px 10px;
+      flex-shrink: 0;
+    }}
+    .collapsible-panel[open] summary::after {{
+      content: "收起";
     }}
     .tip-meaning, .tip-watch, .playbook-trigger, .playbook-goal, .table-tip {{
       font-size: 13px;
@@ -5606,6 +6590,9 @@ def build_detail_html(metrics: dict) -> str:
     .chart-card {{
       overflow: hidden;
       max-width: 100%;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
     }}
     .chart-card .js-plotly-plot,
     .chart-card .plot-container,
@@ -5776,6 +6763,10 @@ def build_detail_html(metrics: dict) -> str:
       .detail-pane-title {{
         font-size: 18px;
       }}
+      .collapsible-panel summary::after {{
+        padding: 3px 8px;
+        font-size: 11px;
+      }}
       .table-toggle {{
         display: inline-flex;
         align-items: center;
@@ -5862,6 +6853,7 @@ def build_detail_html(metrics: dict) -> str:
         padding: 7px 8px;
       }}
     }}
+  {floating_tooltip_css()}
   </style>
 </head>
 <body>
@@ -5934,12 +6926,14 @@ def build_detail_html(metrics: dict) -> str:
       {strategy_panels_html}
     </section>
 
+    {consulting_panel_html}
+
     <section class="module" id="charts-section">
       <div class="module-header">
         <h2 class="module-title">图表</h2>
         <p class="module-note">适合看趋势、结构和变化，不适合第一眼就下结论。</p>
       </div>
-      <div class="charts">{chart_html}</div>
+      <div class="charts charts-single">{chart_sections_html}</div>
     </section>
 
     <section class="module" id="inventory-section">
@@ -5947,7 +6941,7 @@ def build_detail_html(metrics: dict) -> str:
         <h2 class="module-title">补货 / 去化</h2>
         <p class="module-note">先看品类，再看 SKU，再看负库存异常。执行时从这里往下钻。</p>
       </div>
-      <div class="tables">{inventory_tables_html}</div>
+      <div class="tables tables-single">{inventory_tables_html}</div>
     </section>
 
     <section class="module" id="people-section">
@@ -5955,7 +6949,7 @@ def build_detail_html(metrics: dict) -> str:
         <h2 class="module-title">会员 / 店员 / 参考店</h2>
         <p class="module-note">这一组适合复盘复购、导购执行和其他店铺对比，不参与主店第一页结论。</p>
       </div>
-      <div class="tables">{people_tables_html}</div>
+      <div class="tables tables-single">{people_tables_html}</div>
     </section>
 
     <section class="module" id="downloads-section">
@@ -5986,6 +6980,7 @@ def build_detail_html(metrics: dict) -> str:
           <div class="rail-links">
             <a href="#overview-section">总览</a>
             <a href="#strategy-section">经营策略</a>
+            <a href="#consulting-analysis">经营分析</a>
             <a href="#charts-section">图表</a>
             <a href="#inventory-section">补货 / 去化</a>
             <a href="#people-section">会员 / 店员</a>
@@ -6009,6 +7004,7 @@ def build_detail_html(metrics: dict) -> str:
       }});
     }})();
   </script>
+{floating_tooltip_script()}
 </body>
 </html>
 """
@@ -6080,6 +7076,10 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
     )
 
     guidance: list[str] = []
+    purchase_guidance: list[str] = []
+    replenish_categories = metrics.get("replenish_categories", pd.DataFrame())
+    seasonal_categories = metrics.get("seasonal_categories", pd.DataFrame())
+    clearance_categories = metrics.get("clearance_categories", pd.DataFrame())
     if latest:
         if delta_pct >= 0.08:
             guidance.append(
@@ -6130,6 +7130,55 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
     if not guidance:
         guidance.append("当前还缺少足够的长时间数据，先保持主销品类不断码，再继续积累月度与季度记录。")
 
+    top_replenish = replenish_categories.iloc[0] if not replenish_categories.empty else None
+    top_seasonal = seasonal_categories.iloc[0] if not seasonal_categories.empty else None
+    top_clearance = clearance_categories.iloc[0] if not clearance_categories.empty else None
+    period_name = "月度" if period_type == "monthly" else "季度"
+
+    if latest and top_replenish is not None:
+        if delta_pct >= 0.08:
+            purchase_guidance.append(
+                f"{period_name}进货优先放在 {latest['top_category']} 和 {top_replenish['中类']}。先补核心尺码和主销色，按 2-3 次小单快返来补，不要一次压深。"
+            )
+        elif delta_pct <= -0.08:
+            purchase_guidance.append(
+                f"{period_name}销售回落时，进货预算先收紧到 {latest['top_category']} 这类仍有成交的中类，其他中类只做保断码补货，不做平均备货。"
+            )
+        else:
+            purchase_guidance.append(
+                f"{period_name}销售相对平稳，进货以 {latest['top_category']} 为主，{top_replenish['中类']} 作为补充，维持小单多次的节奏最稳。"
+            )
+
+    if product_sales:
+        cross_share = product_sales["cross_season_stock_share"]
+        current_share = product_sales["current_season_stock_share"]
+        if cross_share >= 0.35:
+            purchase_guidance.append(
+                f"当前跨季库存占比约 {format_num(cross_share * 100, 1)}%，这期进货要明显收缩跨季和非主销货，预算优先留给当季货，先去库存再扩品。"
+            )
+        if current_share < 0.35:
+            purchase_guidance.append(
+                f"当季库存占比只有 {format_num(current_share * 100, 1)}%，这期新进货建议至少 60% 以上给当季主销中类，先保主销不断码。"
+            )
+
+    if top_replenish is not None:
+        purchase_guidance.append(
+            f"从补货信号看，当前最值得补的是 {top_replenish['中类']}，建议补货量约 {format_num(top_replenish['建议补货量'])}。做法上先保销量高的款和尺码，不建议整类平均补。"
+        )
+
+    if top_clearance is not None and top_clearance["实际库存"] > 0:
+        purchase_guidance.append(
+            f"{top_clearance['大类']} 当前库存压力还在，这期进货前要先给它让预算和货位。高库存品类先停补、先去化，避免新货和旧货一起压。"
+        )
+
+    if top_seasonal is not None and str(top_seasonal["季节策略"]) in {"跨季去化", "暂缓补货"}:
+        purchase_guidance.append(
+            f"{top_seasonal['中类']} 当前季节策略是 {top_seasonal['季节策略']}，这类货本期不适合深补。正确做法是有库存先处理，没库存先等回到主销季再判断。"
+        )
+
+    if not purchase_guidance:
+        purchase_guidance.append("当前还缺少足够的周期数据，进货先遵守两个原则：优先当季主销、避免平均补货。")
+
     overview_text = (
         f"最近{len(rows)}个{'月' if period_type == 'monthly' else '季度'}已纳入统计；"
         f"最新周期 {latest['label']} 销售额 {format_num(latest['sales_amount'], 2)} 元，"
@@ -6148,6 +7197,7 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         "delta_tone": delta_tone,
         "delta_text": delta_text,
         "guidance": guidance[:5],
+        "purchase_guidance": purchase_guidance[:5],
         "overview_text": overview_text,
         "product_sales": product_sales,
         "member_rank": member_rank,
@@ -6261,6 +7311,7 @@ def build_period_cards(rows: list[dict[str, object]], period_type: str) -> str:
 def build_period_page(metrics: dict, period_type: str) -> str:
     cards = metrics["summary_cards"]
     period_summary = build_period_summary(metrics, period_type)
+    consulting_analysis = build_retail_consulting_analysis(metrics, period_type)
     latest = period_summary["latest"]
     peak = period_summary["peak"]
     product_sales = period_summary["product_sales"]
@@ -6270,6 +7321,8 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     period_cards_html = build_period_cards(period_summary["rows"], period_type)
     period_label = "月度" if period_type == "monthly" else "季度"
     current_nav = "monthly.html" if period_type == "monthly" else "quarterly.html"
+    other_period_nav = "quarterly.html" if period_type == "monthly" else "monthly.html"
+    other_period_label = "季度" if period_type == "monthly" else "月度"
 
     metric_cards: list[tuple[str, str, str, str]] = []
     if latest:
@@ -6330,6 +7383,7 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     )
     charts_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts) if charts else render_empty(f"当前还没有可展示的{period_label}图表。")
     guidance_html = "".join(f"<li>{html.escape(item)}</li>" for item in period_summary["guidance"])
+    purchase_guidance_html = "".join(f"<li>{html.escape(item)}</li>" for item in period_summary["purchase_guidance"])
     support_cards: list[str] = []
     if latest:
         support_cards.append(
@@ -6362,6 +7416,11 @@ def build_period_page(metrics: dict, period_type: str) -> str:
             """
         )
     support_html = "".join(support_cards) if support_cards else render_empty("当前还没有足够的补充分析。")
+    consulting_html = render_consulting_analysis_html(
+        consulting_analysis,
+        f"{period_label}经营分析与销售建议",
+        "period-consulting",
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -6407,6 +7466,22 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     .metric-title {{ font-size:14px; color:#64748b; margin-bottom:8px; }}
     .metric-value {{ font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }}
     .metric-note {{ font-size:13px; color:#64748b; line-height:1.7; }}
+    .inline-tip {{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin-left:6px;
+      padding:1px 8px;
+      border-radius:999px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:800;
+      line-height:1.6;
+      vertical-align:middle;
+      white-space:nowrap;
+    }}
     .metric-green {{ border-color:#bbf7d0; background:#f0fdf4; }}
     .metric-green .metric-value {{ color:#166534; }}
     .metric-yellow {{ border-color:#fde68a; background:#fffbeb; }}
@@ -6433,6 +7508,14 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     .mini-chip-yellow {{ background:#fef3c7; color:#92400e; }}
     .mini-chip-red {{ background:#fee2e2; color:#991b1b; }}
     .empty-card {{ border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }}
+    .analysis-grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }}
+    .analysis-card {{ background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }}
+    .analysis-card h3 {{ margin:0 0 10px; font-size:17px; color:#0f172a; }}
+    .analysis-list {{ margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }}
+    .priority-red {{ background:#fff7f7; border-color:#fecaca; }}
+    .priority-yellow {{ background:#fffbeb; border-color:#fde68a; }}
+    .priority-neutral {{ background:#f8fafc; border-color:#cbd5e1; }}
+    .priority-green {{ background:#f0fdf4; border-color:#bbf7d0; }}
     @media (max-width: 960px) {{
       .page-shell {{ grid-template-columns:1fr; }}
       .rail-card {{ position:static; }}
@@ -6482,6 +7565,8 @@ def build_period_page(metrics: dict, period_type: str) -> str:
           <a href="#period-charts">趋势图表</a>
           <a href="#period-cards">阶段明细</a>
           <a href="#period-guidance">经营建议</a>
+          <a href="#period-consulting">经营分析</a>
+          <a href="#period-purchase">进货建议</a>
         </nav>
         <section class="module" id="period-overview">
           <div class="module-header">
@@ -6522,6 +7607,14 @@ def build_period_page(metrics: dict, period_type: str) -> str:
           <ul class="guidance-list">{guidance_html}</ul>
           <div class="support-grid" style="margin-top:16px;">{support_html}</div>
         </section>
+        {consulting_html}
+        <section class="module" id="period-purchase">
+          <div class="module-header">
+            <h2 class="module-title">{period_label}进货建议</h2>
+            <p class="module-note">这里专门看销售、补货和库存之间的关系，帮助老板决定这个月或这个季度该怎么进货。</p>
+          </div>
+          <ul class="guidance-list">{purchase_guidance_html}</ul>
+        </section>
       </div>
       <aside class="side-rail">
         <section class="rail-card">
@@ -6532,6 +7625,7 @@ def build_period_page(metrics: dict, period_type: str) -> str:
             <a href="./index.html">进入仪表盘</a>
             <a href="./details.html">进入详细页</a>
             <a class="current" href="./{current_nav}">当前{period_label}页</a>
+            <a href="./{other_period_nav}">进入{other_period_label}页</a>
           </div>
         </section>
         <section class="rail-card">
@@ -6543,6 +7637,8 @@ def build_period_page(metrics: dict, period_type: str) -> str:
             <a href="#period-charts">趋势图表</a>
             <a href="#period-cards">阶段明细</a>
             <a href="#period-guidance">经营建议</a>
+            <a href="#period-consulting">经营分析</a>
+            <a href="#period-purchase">进货建议</a>
           </div>
         </section>
       </aside>
@@ -6656,12 +7752,20 @@ def build_markdown_summary(metrics: dict) -> str:
     if profit:
         lines.extend([
             "## 利润与保本",
-            f"- 毛利额：{format_num(profit['gross_profit'], 2)} 元，毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+            f"- 毛利额：{format_num(profit['gross_profit'], 2)} 元，毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%，销售口径 {profit.get('sales_source', '未标记')}，毛利率口径 {profit.get('gross_margin_source', '未标记')}",
             f"- 固定费用：{format_num(profit['monthly_operating_expense'], 2)} 元，人工费用：{format_num(profit['salary_total'], 2)} 元",
             f"- 总费用：{format_num(profit['total_expense'], 2)} 元，净利润：{format_num(profit['net_profit'], 2)} 元",
-            f"- 保本销售额：{format_num(profit['breakeven_sales'], 2)} 元，保本进度：{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
-            f"- 保本日销：{format_num(profit['breakeven_daily_sales'], 2)} 元，当前平均日销：{format_num(profit['average_daily_sales'], 2)} 元",
+        ])
+        if profit.get("breakeven_available"):
+            lines.extend([
+                f"- 保本销售额：{format_num(profit['breakeven_sales'], 2)} 元，保本进度：{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
+                f"- 保本日销：{format_num(profit['breakeven_daily_sales'], 2)} 元，当前平均日销：{format_num(profit['average_daily_sales'], 2)} 元",
+            ])
+        else:
+            lines.append("- 当前缺少有效毛利率，保本销售额和保本进度先按保守口径处理。")
+        lines.extend([
             f"- 月末净利预测：{format_num(profit['projected_month_net_profit'], 2)} 元，判断：{profit['forecast_headline']}",
+            f"- 预测拆解：已实现销售 {format_num(profit['sales_amount'], 2)} 元 + 剩余 {format_num(profit['remaining_days'], 1)} 天预计销售 {format_num(profit['projected_remaining_sales'], 2)} 元",
             "",
         ])
 
@@ -6734,7 +7838,7 @@ def build_markdown_summary(metrics: dict) -> str:
         "",
         "## 自动提醒",
     ])
-    lines.extend(f"- {item}" for item in metrics["insights"])
+    lines.extend(f"- {item}" for item in render_insights_markdown(metrics["insights"]))
     lines.append("")
     lines.append("## 最值得先处理的表")
     lines.append("- 补货重点品类：先定补货优先级，再下钻具体款")
@@ -6802,6 +7906,7 @@ def build_business_report(metrics: dict) -> str:
     playbooks = build_operational_playbooks(metrics)
     boss_board = build_boss_action_board(metrics)
     decision = build_decision_engine(metrics)
+    consulting_analysis = build_retail_consulting_analysis(metrics)
     primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
 
@@ -6903,12 +8008,20 @@ def build_business_report(metrics: dict) -> str:
         lines.extend([
             "## 利润与保本",
             "",
-            f"- 毛利额：{format_num(profit['gross_profit'], 2)} 元，毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+            f"- 毛利额：{format_num(profit['gross_profit'], 2)} 元，毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%，销售口径 {profit.get('sales_source', '未标记')}，毛利率口径 {profit.get('gross_margin_source', '未标记')}",
             f"- 固定费用：{format_num(profit['monthly_operating_expense'], 2)} 元，人工费用：{format_num(profit['salary_total'], 2)} 元",
             f"- 总费用：{format_num(profit['total_expense'], 2)} 元，净利润：{format_num(profit['net_profit'], 2)} 元",
-            f"- 保本销售额：{format_num(profit['breakeven_sales'], 2)} 元，保本进度：{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
-            f"- 保本日销：{format_num(profit['breakeven_daily_sales'], 2)} 元，当前平均日销：{format_num(profit['average_daily_sales'], 2)} 元",
+        ])
+        if profit.get("breakeven_available"):
+            lines.extend([
+                f"- 保本销售额：{format_num(profit['breakeven_sales'], 2)} 元，保本进度：{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
+                f"- 保本日销：{format_num(profit['breakeven_daily_sales'], 2)} 元，当前平均日销：{format_num(profit['average_daily_sales'], 2)} 元",
+            ])
+        else:
+            lines.append("- 当前缺少有效毛利率，保本销售额和保本进度先按保守口径处理。")
+        lines.extend([
             f"- 月末销售预测：{format_num(profit['projected_month_sales'], 2)} 元，月末净利预测：{format_num(profit['projected_month_net_profit'], 2)} 元",
+            f"- 预测拆解：已实现销售 {format_num(profit['sales_amount'], 2)} 元 + 剩余 {format_num(profit['remaining_days'], 1)} 天预计销售 {format_num(profit['projected_remaining_sales'], 2)} 元",
             f"- 最大费用项：{(profit.get('top_expense_item') or {}).get('name', '未记录')} / {format_num(float((profit.get('top_expense_item') or {}).get('amount', 0) or 0), 2)} 元",
             f"- 最高工资项：{(profit.get('top_salary_item') or {}).get('name', '未记录')} / {format_num(float((profit.get('top_salary_item') or {}).get('amount', 0) or 0), 2)} 元",
             "",
@@ -6974,6 +8087,9 @@ def build_business_report(metrics: dict) -> str:
         for idx, scheme in enumerate(item["schemes"], 1):
             lines.append(f"- 方案{idx}：{scheme['name']}，{scheme['detail']}")
         lines.append("")
+
+    append_consulting_analysis_markdown(lines, consulting_analysis)
+    lines.append("")
 
     if not replenish_categories.empty:
         lines.append("## 补货重点品类 Top 5")
@@ -7161,11 +8277,13 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--pages-dir", type=Path, default=DEFAULT_PAGES_DIR)
     parser.add_argument("--cost-file", type=Path, default=DEFAULT_COST_FILE)
+    parser.add_argument("--cost-history-file", type=Path, default=DEFAULT_COST_HISTORY_FILE)
     parser.add_argument("--yeusoft-capture-dir", type=Path, default=DEFAULT_YEU_CAPTURE_DIR)
     parser.add_argument("--store", default=None, help="Optional store name override")
     parser.add_argument("--zip-file", type=Path, default=None, help="Optional zip export to extract and analyze")
     args = parser.parse_args()
     cost_snapshot = load_cost_snapshot(args.cost_file)
+    cost_history_raw = load_cost_history(args.cost_history_file)
     yeusoft_capture_bundle = load_yeusoft_capture_bundle(args.yeusoft_capture_dir)
 
     if args.zip_file:
@@ -7182,6 +8300,7 @@ def main() -> int:
                 cleaned,
                 store_name,
                 cost_snapshot=cost_snapshot,
+                cost_history_raw=cost_history_raw,
                 yeusoft_capture_bundle=yeusoft_capture_bundle,
             )
             outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
@@ -7194,6 +8313,7 @@ def main() -> int:
             cleaned,
             store_name,
             cost_snapshot=cost_snapshot,
+            cost_history_raw=cost_history_raw,
             yeusoft_capture_bundle=yeusoft_capture_bundle,
         )
         outputs = write_outputs(metrics, args.output_dir, args.pages_dir)

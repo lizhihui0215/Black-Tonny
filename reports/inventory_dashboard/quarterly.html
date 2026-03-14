@@ -42,6 +42,22 @@
     .metric-title { font-size:14px; color:#64748b; margin-bottom:8px; }
     .metric-value { font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }
     .metric-note { font-size:13px; color:#64748b; line-height:1.7; }
+    .inline-tip {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin-left:6px;
+      padding:1px 8px;
+      border-radius:999px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:800;
+      line-height:1.6;
+      vertical-align:middle;
+      white-space:nowrap;
+    }
     .metric-green { border-color:#bbf7d0; background:#f0fdf4; }
     .metric-green .metric-value { color:#166534; }
     .metric-yellow { border-color:#fde68a; background:#fffbeb; }
@@ -68,6 +84,14 @@
     .mini-chip-yellow { background:#fef3c7; color:#92400e; }
     .mini-chip-red { background:#fee2e2; color:#991b1b; }
     .empty-card { border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }
+    .analysis-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+    .analysis-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }
+    .analysis-card h3 { margin:0 0 10px; font-size:17px; color:#0f172a; }
+    .analysis-list { margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }
+    .priority-red { background:#fff7f7; border-color:#fecaca; }
+    .priority-yellow { background:#fffbeb; border-color:#fde68a; }
+    .priority-neutral { background:#f8fafc; border-color:#cbd5e1; }
+    .priority-green { background:#f0fdf4; border-color:#bbf7d0; }
     @media (max-width: 960px) {
       .page-shell { grid-template-columns:1fr; }
       .rail-card { position:static; }
@@ -103,7 +127,7 @@
     <section class="hero">
       <h1>咸阳沣西吾悦专卖店 季度经营页</h1>
       <p>这里专门看 季度趋势、结构和建议。首页负责今天先做什么，这里负责判断这个月或这个季度整体方向对不对。</p>
-      <div class="hero-note">最近5个季度已纳入统计；最新周期 2026Q1 销售额 149,648.00 元，较上季度回落 50.0%。</div>
+      <div class="hero-note">最近5个季度已纳入统计；最新周期 2026Q1 销售额 150,107.00 元，较上季度回落 49.8%。</div>
       <div class="hero-status">
         <div class="hero-status-chip">最近抓取日期：2026-03-14（北京时间）</div>
         <div class="hero-status-chip">当前季节：春季 / 春夏换季期</div>
@@ -117,6 +141,8 @@
           <a href="#period-charts">趋势图表</a>
           <a href="#period-cards">阶段明细</a>
           <a href="#period-guidance">经营建议</a>
+          <a href="#period-consulting">经营分析</a>
+          <a href="#period-purchase">进货建议</a>
         </nav>
         <section class="module" id="period-overview">
           <div class="module-header">
@@ -124,8 +150,8 @@
             <p class="module-note">根据全量销售、当前库存结构、会员贡献和利润保本状态，自动给出这一阶段的经营判断。</p>
           </div>
           <div class="overview-card">
-            <div class="overview-headline">较上季度回落 50.0%</div>
-            <p class="overview-summary">最近5个季度已纳入统计；最新周期 2026Q1 销售额 149,648.00 元，较上季度回落 50.0%。</p>
+            <div class="overview-headline">较上季度回落 49.8%</div>
+            <p class="overview-summary">最近5个季度已纳入统计；最新周期 2026Q1 销售额 150,107.00 元，较上季度回落 49.8%。</p>
           </div>
         </section>
         <section class="module" id="period-metrics">
@@ -136,25 +162,25 @@
           <div class="metrics-grid">
         <div class="metric-card metric-neutral">
           <div class="metric-title">最新季度销售额</div>
-          <div class="metric-value">149,648.00 元</div>
+          <div class="metric-value">150,107.00 元</div>
           <div class="metric-note">2026Q1</div>
         </div>
         
         <div class="metric-card metric-neutral">
           <div class="metric-title">最新季度客单价</div>
-          <div class="metric-value">213.48 元</div>
+          <div class="metric-value">212.62 元</div>
           <div class="metric-note">销售额 / 订单数</div>
         </div>
         
         <div class="metric-card metric-green">
           <div class="metric-title">最新季度会员占比</div>
-          <div class="metric-value">67.5%</div>
+          <div class="metric-value">67.4%</div>
           <div class="metric-note">会员贡献</div>
         </div>
         
         <div class="metric-card metric-neutral">
           <div class="metric-title">平均季度销售额</div>
-          <div class="metric-value">171,433.01 元</div>
+          <div class="metric-value">171,524.81 元</div>
           <div class="metric-note">共 5 个季度周期</div>
         </div>
         
@@ -166,7 +192,7 @@
         
         <div class="metric-card metric-red">
           <div class="metric-title">季环比</div>
-          <div class="metric-value">较上季度回落 50.0%</div>
+          <div class="metric-value">较上季度回落 49.8%</div>
           <div class="metric-note">和上一周期相比</div>
         </div>
         
@@ -189,7 +215,7 @@
             <p class="module-note">销售额、订单数、客单价和会员占比放在一起看，更容易判断阶段节奏。</p>
           </div>
           <div class="cards-grid"><section class='chart-card'><div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
-        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="e74558a7-89dc-4ac7-bda3-5950f0629a8b" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e74558a7-89dc-4ac7-bda3-5950f0629a8b")) {                    Plotly.newPlot(                        "e74558a7-89dc-4ac7-bda3-5950f0629a8b",                        [{"marker":{"color":"#1d4ed8"},"name":"\u9500\u552e\u989d","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"16NwPYoI3kCuR+F62AIIQQrXo3BnGAZBmpmZmctAEkEAAAAAgEQCQQ=="},"type":"bar"},{"line":{"color":"#f97316","width":3},"mode":"lines+markers","name":"\u8ba2\u5355\u6570","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"i2","bdata":"hgDiA6QDQAS9Ag=="},"yaxis":"y2","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u8ba2\u5355\u6570"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u5b63\u5ea6\u9500\u552e\u989d\u4e0e\u8ba2\u5355\u6570"},"height":400,"yaxis":{"title":{"text":"\u9500\u552e\u989d"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="2ab38bfa-6bf4-4871-98d9-d551df739445" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("2ab38bfa-6bf4-4871-98d9-d551df739445")) {                    Plotly.newPlot(                        "2ab38bfa-6bf4-4871-98d9-d551df739445",                        [{"line":{"color":"#0f766e","width":3},"mode":"lines+markers","name":"\u5ba2\u5355\u4ef7","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"+zxz6kawbECU\u002fPU1XbxoQO4JnvTCRmhAzczMzOwtcUAzhE7dSq9qQA=="},"type":"scatter"},{"marker":{"color":"#a855f7"},"name":"\u4f1a\u5458\u5360\u6bd4","opacity":0.45,"x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"VXA5NsdWU0AiQkxUxrRQQH9vmgSWt1NAJHZr7H+rVECCKrf8t+JQQA=="},"yaxis":"y2","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u4f1a\u5458\u5360\u6bd4(%)"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u5b63\u5ea6\u5ba2\u5355\u4ef7\u4e0e\u4f1a\u5458\u5360\u6bd4"},"height":400,"yaxis":{"title":{"text":"\u5ba2\u5355\u4ef7"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section></div>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="012cc2f2-40b9-4851-b5df-b62843ac4c34" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("012cc2f2-40b9-4851-b5df-b62843ac4c34")) {                    Plotly.newPlot(                        "012cc2f2-40b9-4851-b5df-b62843ac4c34",                        [{"marker":{"color":"#1d4ed8"},"name":"\u9500\u552e\u989d","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"16NwPYoI3kCuR+F62AIIQQrXo3BnGAZBmpmZmctAEkEAAAAA2FICQQ=="},"type":"bar"},{"line":{"color":"#f97316","width":3},"mode":"lines+markers","name":"\u8ba2\u5355\u6570","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"i2","bdata":"hgDiA6QDQATCAg=="},"yaxis":"y2","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u8ba2\u5355\u6570"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u5b63\u5ea6\u9500\u552e\u989d\u4e0e\u8ba2\u5355\u6570"},"height":400,"yaxis":{"title":{"text":"\u9500\u552e\u989d"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="8f2eeae1-f70a-4103-8615-bffb82ba3cd0" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("8f2eeae1-f70a-4103-8615-bffb82ba3cd0")) {                    Plotly.newPlot(                        "8f2eeae1-f70a-4103-8615-bffb82ba3cd0",                        [{"line":{"color":"#0f766e","width":3},"mode":"lines+markers","name":"\u5ba2\u5355\u4ef7","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"+zxz6kawbECU\u002fPU1XbxoQO4JnvTCRmhAzczMzOwtcUCSl496t5NqQA=="},"type":"scatter"},{"marker":{"color":"#a855f7"},"name":"\u4f1a\u5458\u5360\u6bd4","opacity":0.45,"x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"VXA5NsdWU0AiQkxUxrRQQH9vmgSWt1NAJHZr7H+rVEDGLZ6JUdpQQA=="},"yaxis":"y2","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u4f1a\u5458\u5360\u6bd4(%)"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u5b63\u5ea6\u5ba2\u5355\u4ef7\u4e0e\u4f1a\u5458\u5360\u6bd4"},"height":400,"yaxis":{"title":{"text":"\u5ba2\u5355\u4ef7"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section></div>
         </section>
         <section class="module" id="period-cards">
           <div class="module-header">
@@ -200,13 +226,13 @@
             <article class="period-card">
               <div class="period-card-head">
                 <div class="period-card-title">2026Q1</div>
-                <div class="mini-chip mini-chip-red">回落 50.0%</div>
+                <div class="mini-chip mini-chip-red">回落 49.8%</div>
               </div>
               <div class="period-stat-grid">
-                <div class="period-stat"><span>销售额</span><strong>149,648.00 元</strong></div>
-                <div class="period-stat"><span>订单数</span><strong>701</strong></div>
-                <div class="period-stat"><span>客单价</span><strong>213.48 元</strong></div>
-                <div class="period-stat"><span>会员占比</span><strong>67.5%</strong></div>
+                <div class="period-stat"><span>销售额</span><strong>150,107.00 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>706</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>212.62 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>67.4%</strong></div>
               </div>
               <div class="period-card-note">主销中类：儿童内衣套装</div>
             </article>
@@ -273,7 +299,7 @@
             <h2 class="module-title">经营建议</h2>
             <p class="module-note">建议会结合销售趋势、库存动态、会员贡献和利润保本状态自动变化。</p>
           </div>
-          <ul class="guidance-list"><li>最近一个季度销售回落，先收紧平均补货，把预算集中到仍在跑量的 儿童内衣套装。</li><li>会员贡献高，这个阶段更适合做定向回访和到店试穿，而不是全场硬促销。</li><li>当前跨季库存占比约 56.2%，这个阶段要先去跨季库存，再决定深补。</li><li>当前还有 144 个积压风险款，陈列和组合促销要优先围绕这些款做。</li><li>按当前利润口径，月末净利预测约 69,081.13 元，季度策略要兼顾利润和库存节奏。</li></ul>
+          <ul class="guidance-list"><li>最近一个季度销售回落，先收紧平均补货，把预算集中到仍在跑量的 儿童内衣套装。</li><li>会员贡献高，这个阶段更适合做定向回访和到店试穿，而不是全场硬促销。</li><li>当前跨季库存占比约 56.2%，这个阶段要先去跨季库存，再决定深补。</li><li>当前还有 144 个积压风险款，陈列和组合促销要优先围绕这些款做。</li><li>按当前利润口径，月末净利预测约 -11,365.35 元，季度策略要兼顾利润和库存节奏。</li></ul>
           <div class="support-grid" style="margin-top:16px;">
             <article class="support-card">
               <h3>最新季度主销中类</h3>
@@ -283,7 +309,7 @@
             
             <article class="support-card">
               <h3>商品动销提醒</h3>
-              <div class="support-value">快销 559 / 积压 144</div>
+              <div class="support-value">快销 560 / 积压 144</div>
               <p>售罄率 62.8%，库存结构主要压在 2025秋、2026夏、2025夏。</p>
             </article>
             
@@ -293,6 +319,213 @@
               <p>前 10 位会员贡献 6.6% 销额，适合做重点回访。</p>
             </article>
             </div>
+        </section>
+        
+    <section class="module analysis-module" id="period-consulting">
+      <div class="module-header">
+        <h2 class="module-title">季度经营分析与销售建议</h2>
+        <p class="module-note">这部分不只描述数据，而是把“发生了什么、说明什么、现在最该做什么、谁来做”一起讲清楚。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card">
+          <h3>经营诊断总结</h3>
+          <ul class="analysis-list">
+            <li>当前门店最需要优先处理的是 先校库存，再决定补货和去化。。从数据看，销售主力仍集中在 衣着系列，但库存压力主要压在 袜品，补货应优先给 裤类，去化则先盯 袜品。 按当前口径，本月净利预测约 -11,365.35 元，还没有真正过保本线。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>本季度最值得关注的 5 个问题</h3>
+          <ul class="analysis-list">
+            <li>库存覆盖天数约 303.1 天，库存压力偏重。</li><li>负库存 SKU 还有 105 个，库存口径还没完全干净。</li><li>袜品 是当前压货最重的品类，继续补货会进一步拖慢周转。</li><li>衣着系列 贡献占比较高，结构上仍有“靠少数品类撑销售”的风险。</li><li>会员贡献已经很高，但连带和复购还可以继续放大。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>销售表现分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】本季度销售额 150,107.00 元，较上季度下降 49.8%。</li><li>【直接数据】变化主要来自单量，订单数较上季度回落 35.1%，客单价变化相对更小。</li><li>【直接数据】当前主销中类是 儿童内衣套装，说明阶段性增长/下滑主要先看这个中类有没有继续撑住。</li><li>【经营判断】销售看起来不算差，但结构并不轻松，衣着系列 单类大约贡献了 51.1% 销售，存在“靠少数品类硬撑”的风险。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>品类结构分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】品类贡献排序靠前的是：衣着系列(5,549.22元)、内裤(2,586.24元)、袜品(1,991.78元)。</li><li>【直接数据】品类风险排序靠前的是：袜品(高压货)、少女文胸(高压货)、内裤(需关注)。</li><li>【直接数据】品类动作建议里，补货优先级靠前的是：裤类(148)、衣类(206)、防晒服(11)。</li><li>【直接数据】去化优先级靠前的是：袜品(796)、袜品(235)、少女文胸(202)。</li><li>【经营判断】前两大品类大约贡献了 74.9% 销售，结构偏集中。短期靠它们撑得住，长期要防一旦主力品类失速，整体营业额会一起掉。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>SKU / 爆款 / 滞销分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】当前爆款/断货风险款主要集中在：TND1Y81001X/灰蓝色、TNX1Y90914Z/紫红色、TND1Y81002X/藕粉色。</li><li>【动作建议】这类款先保核心尺码和主销色，不建议一次补深，按 2-3 次小单快返来补最稳。</li><li>【经营判断】有持续动销能力的 SKU 主要集中在 裤类，它们更适合稳补；如果只是一两周突然冲高，则先按小量试补处理。</li><li>【直接数据】明显滞销或高库存低动销 SKU 主要有：TNQ1W60628、TOX2K10296、TOX1W30932。</li><li>【动作建议】这类货不要继续深补，优先判断是季节错了、陈列靠后、价格门槛高，还是尺码结构不对，再决定轻促销还是强去化。</li><li>【经营判断】连续慢销款更像结构问题，不只是单品问题。先调陈列和搭配，如果 1-2 周仍不改善，再升级到清货动作。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>库存健康分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】当前经营库存覆盖天数约 303.1 天，库存压力判断为 偏重。</li><li>【直接数据】库存压力最大的品类先看 袜品，而补货优先品类先看 裤类，说明库存结构已经出现“该补的不一定多、该去化的反而压得深”的失衡。</li><li>【经营判断】当前更适合先去化再补货；如果先补，会把现金继续压进旧货和错季货里。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>会员 / 客单价 / 连带率分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】会员销售额占比约 73.1%，最近客单价约 162.02 元。</li><li>【直接数据】店员平均连带约 2.48，平均单效约 287.00 元。</li><li>【经营判断】当前销售已经明显依赖会员，说明复购稳定性不错，下一步更该做的是把高价值会员的回访和搭配销售做深。</li><li>【经营判断】连带不算太差，但仍建议用基础打底 + 袜品 + 家居服组合继续放大客单。</li><li>【动作建议】会员回访先盯 圆子、茵茵、呦米，优先做换季提醒、到店试穿和组合推荐。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>目标达成与节奏分析</h3>
+          <ul class="analysis-list">
+            <li>【经营判断】当前更像 去库存阶段，不是简单追销售额。</li><li>【直接数据】按当前节奏月末仍有亏损风险，本周应该先保毛利、控补货、做去化，而不是盲目冲低价促销。</li><li>【直接数据】后面每天至少还要卖 2,814.58 元才能过保本；如果继续慢半拍，月底就会靠最后几天硬冲。</li><li>【经营判断】当前节奏还能推进，但要防止销售做上去了，利润却被深补和清货拖掉。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>本周优先动作建议</h3>
+          <ul class="analysis-list">
+            <li>先把 袜品 做成专项去化表，先停补、先前移陈列、先做组合价。</li><li>把 裤类 的核心尺码和主销色列成补货清单，本周只补最能带营业额的那批。</li><li>先校正负库存，再安排补货；库存没校准前，不做深补。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>补货建议</h3>
+          <ul class="analysis-list">
+            <li>裤类（建议补货量 148）</li><li>衣类（建议补货量 206）</li><li>防晒服（建议补货量 11）</li><li>儿童袜（建议补货量 108）</li><li>常规内裤（建议补货量 39）</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>去化 / 清货建议</h3>
+          <ul class="analysis-list">
+            <li>袜品（库存金额/销售金额 5.28）</li><li>少女文胸（库存金额/销售金额 3.76）</li><li>连裤袜（优先去化）</li><li>内裤（先控补货节奏）</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>品类经营建议</h3>
+          <ul class="analysis-list">
+            <li>衣着系列 继续做主销中轴，优先保不断码。</li><li>袜品 先控采购，再安排门口清货位和组合去化。</li><li>儿童袜 这类跨季品类要单独管理，不跟当季补货混预算。</li><li>儿童内衣 / 棉品 / 家居服要分清角色：主销、连带、去化，别放在一张表里平均看。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>风险预警清单</h3>
+          <ul class="analysis-list">
+            <li>如果继续平均补货，袜品 的压货会继续加重。</li><li>如果负库存不先纠偏，补货建议和库存健康判断都会继续失真。</li><li>如果会员回访只做群发，不做分层，复购效率会继续偏低。</li><li>如果当前主销中类突然断码，销售额会很容易直接下滑。</li><li>如果跨季货不单独管理，到了下个季节会出现旧货、新货一起压的情况。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>如果下周不处理，最可能出现的问题</h3>
+          <ul class="analysis-list">
+            <li>下周最可能先出现的是 袜品 库存继续变重，但真正能卖的 裤类 反而更容易断。</li><li>店员会继续把时间花在介绍货，而不是推动组合成交，客单和连带抬不起来。</li><li>如果月底前还没压住慢销库存，利润会继续被固定费用和工资吃掉。</li><li>跨季货如果这周不处理，下周仍会占货位，影响春夏主销款出样和成交。</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">老板娘 / 店长 / 店员分角色建议</h2>
+        <p class="module-note">同一份数据，三个角色的动作不一样，这里直接拆开给执行。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card">
+          <h3>老板娘建议</h3>
+          <ul class="analysis-list">
+            <li>本周先盯 3 个数：保本进度、库存覆盖天数、裤类 的断码情况。</li><li>需要你拍板的不是所有货，而是 袜品 怎么去化、儿童袜 是否暂缓、裤类 补货预算给多少。</li><li>如果这周只能做一个经营动作，就先把高库存慢销货位和清货策略定下来，不要让旧货继续占预算。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>店长建议</h3>
+          <ul class="analysis-list">
+            <li>先把 袜品 从正常主陈列里压缩出来，给 裤类 腾出更前的位置。</li><li>盯员工两件事：主销款不断推、每单至少带一件顺手连带商品。</li><li>把负库存、去化名单、补货名单分三张小表带晨会，不要让店员自己判断优先级。</li><li>会员跟进先看 [&#x27;圆子&#x27;, &#x27;茵茵&#x27;, &#x27;呦米&#x27;]。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>店员建议</h3>
+          <ul class="analysis-list">
+            <li>今天优先推 裤类，这是当前最值得先卖、也最该先保不断货的品类。</li><li>带货顺序先主销，再顺带 袜品 这类更容易顺手带走的商品。</li><li>慢销款不要硬单推，改成组合推荐：基础款 + 袜品 / 家居服 / 第二件优惠。</li><li>顾客犹豫时，先问使用场景和孩子年龄，再推最稳的基础款，不要先推难卖的货。</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">经营动作优先级排序</h2>
+        <p class="module-note">今天先干什么、这周重点抓什么、本月不能忽视什么，都按轻重缓急排好了。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card priority-red">
+          <h3>重要且紧急</h3>
+          <ul class="analysis-list">
+            <li>先纠偏负库存，再决定补货和去化。</li><li>先停补 袜品，优先安排去化和货位调整。</li><li>如果净利预测为负，先盯保本日销和高毛利主销组合。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card priority-yellow">
+          <h3>重要不紧急</h3>
+          <ul class="analysis-list">
+            <li>把高价值会员分层回访，做换季提醒和复购带连带。</li><li>把 儿童袜 这类跨季货单独管理，避免下一轮继续压货。</li><li>每周固定复盘一次品类贡献、补货效果和去化进度。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card priority-neutral">
+          <h3>可观察</h3>
+          <ul class="analysis-list">
+            <li>下一季试补品类先小量试单，观察 1 周再决定是否放大。</li><li>继续跟踪店员连带率和客单价，判断是不是单量正常但带得少。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card priority-green">
+          <h3>暂不处理</h3>
+          <ul class="analysis-list">
+            <li>暂不做非核心品类深补。</li><li>暂不为了冲营业额做全场重折扣。</li><li>暂不把预算投向还没验证的新扩品。</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">判断依据说明</h2>
+        <p class="module-note">哪些是直接数据，哪些是零售经验判断，哪些还需要后续补数据，这里单独说明。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card">
+          <h3>基于数据直接得出的</h3>
+          <ul class="analysis-list">
+            <li>本季度销售、订单、客单变化来自 POS 全量销售数据。</li><li>品类贡献和库存风险来自当前销售、库存和进销存报表。</li><li>补货和去化建议来自 SKU 动销、库存周数、季节策略和库存风险规则。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>基于零售经验的判断</h3>
+          <ul class="analysis-list">
+            <li>哪些品类更适合继续放大，部分基于当前主销中类、库存结构和换季逻辑做经营推断。</li><li>滞销原因中的价格、陈列、尺码结构问题，属于结合零售经验的判断，不是系统直接字段。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>还需要补数据确认的</h3>
+          <ul class="analysis-list">
+            <li>如果要更准判断品类增长来源，最好再补连续月度的分品类销售明细。</li><li>如果要更准判断店员转化问题，最好补进店人数或试穿数据。</li>
+          </ul>
+        </div>
+        
+      </div>
+    </section>
+    
+        <section class="module" id="period-purchase">
+          <div class="module-header">
+            <h2 class="module-title">季度进货建议</h2>
+            <p class="module-note">这里专门看销售、补货和库存之间的关系，帮助老板决定这个月或这个季度该怎么进货。</p>
+          </div>
+          <ul class="guidance-list"><li>季度销售回落时，进货预算先收紧到 儿童内衣套装 这类仍有成交的中类，其他中类只做保断码补货，不做平均备货。</li><li>当前跨季库存占比约 56.2%，这期进货要明显收缩跨季和非主销货，预算优先留给当季货，先去库存再扩品。</li><li>当季库存占比只有 2.5%，这期新进货建议至少 60% 以上给当季主销中类，先保主销不断码。</li><li>从补货信号看，当前最值得补的是 裤类，建议补货量约 148。做法上先保销量高的款和尺码，不建议整类平均补。</li><li>袜品 当前库存压力还在，这期进货前要先给它让预算和货位。高库存品类先停补、先去化，避免新货和旧货一起压。</li></ul>
         </section>
       </div>
       <aside class="side-rail">
@@ -304,6 +537,7 @@
             <a href="./index.html">进入仪表盘</a>
             <a href="./details.html">进入详细页</a>
             <a class="current" href="./quarterly.html">当前季度页</a>
+            <a href="./monthly.html">进入月度页</a>
           </div>
         </section>
         <section class="rail-card">
@@ -315,6 +549,8 @@
             <a href="#period-charts">趋势图表</a>
             <a href="#period-cards">阶段明细</a>
             <a href="#period-guidance">经营建议</a>
+            <a href="#period-consulting">经营分析</a>
+            <a href="#period-purchase">进货建议</a>
           </div>
         </section>
       </aside>

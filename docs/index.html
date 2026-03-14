@@ -588,7 +588,7 @@
           ${payload.sync_start_date || payload.sync_end_date ? `<p class="status-line"><strong>同步范围：</strong>${payload.sync_start_date || '-'} 到 ${payload.sync_end_date || '-'}</p>` : ''}
           ${payload.started_at ? `<p class="status-line"><strong>开始时间：</strong>${payload.started_at}</p>` : ''}
           ${payload.finished_at ? `<p class="status-line"><strong>完成时间：</strong>${payload.finished_at}</p>` : ''}
-          ${payload.total_reports ? `<p class="status-line"><strong>报表结果：</strong>总计 ${payload.total_reports} 张，成功 ${payload.ok_reports || 0} 张，部分成功 ${payload.partial_reports || 0} 张，仅打开未取数 ${payload.opened_only_reports || 0} 张，失败 ${payload.error_reports || 0} 张</p>` : ''}
+          ${payload.total_reports ? `<p class="status-line"><strong>报表结果：</strong>总计 ${payload.total_reports} 张，成功 ${payload.ok_reports || 0} 张，部分成功 ${payload.partial_reports || 0} 张，沿用上次成功数据 ${payload.warning_reports || 0} 张，仅打开未取数 ${payload.opened_only_reports || 0} 张，失败 ${payload.error_reports || 0} 张</p>` : ''}
           ${payload.last_dashboard ? `<p class="status-line"><strong>最新仪表盘：</strong>${payload.last_dashboard}</p>` : ''}
           ${stepsHtml}
         `;

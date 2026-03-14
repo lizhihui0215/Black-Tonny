@@ -423,6 +423,22 @@
       color: #64748b;
       line-height: 1.7;
     }
+    .inline-tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 6px;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.6;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
     .metric-red {
       border-color: #fecaca;
       background: #fff7f7;
@@ -620,6 +636,38 @@
         align-items: flex-start;
       }
     }
+  
+    .tooltip-badge::after,
+    .tooltip-badge::before {
+      display: none !important;
+      content: none !important;
+    }
+    .floating-tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      max-width: min(420px, calc(100vw - 24px));
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.7;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .floating-tooltip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
   </style>
 </head>
 <body>
@@ -691,8 +739,8 @@
       <div class="focus-wrap">
         <div class="focus-panel">
           <div class="focus-headline">先校库存，再决定补货和去化。</div>
-          <p class="focus-summary">春夏换季期阶段，最近日销上涨，但当前有 105 个负库存 SKU。先把账实校准，不然所有经营动作都会跑偏。 当前阶段：换季切换；最近日销均值 1,476.17 元。 当前净利润 14,095.67 元，已过保本线。 按当前节奏月末净利润约 69,081.13 元。 POS 库存主要压在 2026春、2025秋、2026夏。 近段时间净入库 12,170 件，补货节奏也要一并考虑。</p>
-          <div class="chip-row"><span class='mini-chip mini-chip-primary tooltip-badge' title="今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。" data-tip="今天先查库存为负的款。先核对盘点、调拨和销售回写，别直接按系统数去补货。" tabindex="0" role="note">先处理负库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。" data-tip="先暂停深补，把高库存慢销货先卖掉。优先做清货位、组合价和会员定向去化。" tabindex="0" role="note">先去库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" data-tip="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" tabindex="0" role="note">先停补袜品</span></div>
+          <p class="focus-summary">春夏换季期阶段，最近日销上涨，但当前有 105 个负库存 SKU。先把账实校准，不然所有经营动作都会跑偏。 当前阶段：换季切换；最近日销均值 1,476.17 元。 当前净利润 -21,889.94 元，尚未过保本线。 按当前节奏月末净利润约 -11,365.35 元。 POS 库存主要压在 2026春、2025秋、2026夏。 近段时间净入库 12,170 件，补货节奏也要一并考虑。</p>
+          <div class="chip-row"><span class='mini-chip mini-chip-primary tooltip-badge' title="为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。" data-tip="为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。" tabindex="0" role="note">先处理负库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。" data-tip="为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。" tabindex="0" role="note">先去库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" data-tip="这个结论表示先暂停 袜品 的新补货，把现有库存先卖掉，再决定后续是否恢复补货。" tabindex="0" role="note">先停补袜品</span></div>
           <ul class="focus-list"><li>当前阶段：换季切换 / 春夏换季期</li><li>日销趋势：上涨</li><li>今日主打法：校库存优先</li><li>季节判断：春夏换季，重心是薄款起量、冬款不深补。</li></ul>
         </div>
         <div class="focus-panel">
@@ -700,7 +748,7 @@
             <h3 class="submodule-title">今日执行任务</h3>
             <p class="submodule-note">先把今天要做的事排清楚，再让店员按顺序执行。</p>
           </div>
-          <ul class="task-list"><li><span class='mini-chip mini-chip-soft'>处理负库存</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="今天要明确哪些品类先停补、哪些品类上清货位、哪些品类做组合促销。" data-tip="今天要明确哪些品类先停补、哪些品类上清货位、哪些品类做组合促销。" tabindex="0" role="note">安排去库存动作</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" data-tip="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" tabindex="0" role="note">调整袜品陈列</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" data-tip="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" tabindex="0" role="note">检查裤类断码</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="由老板拍板跨季品类是去化、暂缓还是等下季，不要混进当季补货里。" data-tip="由老板拍板跨季品类是去化、暂缓还是等下季，不要混进当季补货里。" tabindex="0" role="note">确认跨季处理</span></li></ul>
+          <ul class="task-list"><li><span class='mini-chip mini-chip-soft'>处理负库存</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。" data-tip="为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。" tabindex="0" role="note">安排去库存动作</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" data-tip="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" tabindex="0" role="note">调整袜品陈列</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" data-tip="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" tabindex="0" role="note">检查裤类断码</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="为什么：跨季货最容易越拖越难卖。怎么做：老板拍板是去化、暂缓还是等下季。好处：减少反复摇摆。注意：不要混进当季补货预算。" data-tip="为什么：跨季货最容易越拖越难卖。怎么做：老板拍板是去化、暂缓还是等下季。好处：减少反复摇摆。注意：不要混进当季补货预算。" tabindex="0" role="note">确认跨季处理</span></li></ul>
           <div class="submodule-header">
             <h3 class="submodule-title">今天先别做</h3>
           </div>
@@ -718,7 +766,7 @@
       <div class="strip-card">
         <div>
           <strong>POS 高价值数据已接入</strong>
-          <p>POS 全期零售：857,165.05 元；POS 商品动销：售罄率 62.8%；POS 会员排行：妞宝、年年、史振尧。主销中类 衣类、裤类、儿童内衣套装，会员销售占比 75.4%。 当前库存 4,885 件，快销潜力款 559 个，积压风险款 144 个。</p>
+          <p>POS 全期零售：857,624.05 元；POS 商品动销：售罄率 62.8%；POS 会员排行：妞宝、年年、史振尧。主销中类 衣类、裤类、儿童内衣套装，会员销售占比 75.4%。 当前库存 4,886 件，快销潜力款 560 个，积压风险款 144 个。</p>
         </div>
         <a class="strip-link" href="./details.html#overview-section">看 POS 详情</a>
       </div>
@@ -762,46 +810,46 @@
         </div>
         <div class="metrics-grid profit-grid">
           
-          <div class="metric-card metric-green">
+          <div class="metric-card metric-red">
             <div class="metric-title">净利润</div>
-            <div class="metric-value">14,095.67 元</div>
-            <div class="metric-note">已过保本线</div>
+            <div class="metric-value">-21,889.94 元</div>
+            <div class="metric-note">未过保本线</div>
           </div>
             
           <div class="metric-card metric-neutral">
             <div class="metric-title">毛利额</div>
-            <div class="metric-value">45,597.22 元</div>
-            <div class="metric-note">毛利率 59.0%</div>
+            <div class="metric-value">9,611.61 元</div>
+            <div class="metric-note">毛利率 48.0% <span class='inline-tip tooltip-badge' title='销售口径：POS销售清单（月累计）；毛利率口径：默认毛利率（48%）；按当前口径估算毛利额 9,611.61 元。' data-tip='销售口径：POS销售清单（月累计）；毛利率口径：默认毛利率（48%）；按当前口径估算毛利额 9,611.61 元。' tabindex='0' role='note'>口径</span></div>
           </div>
             
           <div class="metric-card metric-neutral">
             <div class="metric-title">固定费用</div>
             <div class="metric-value">24,001.55 元</div>
-            <div class="metric-note">每天固定支出约 774.24 元</div>
+            <div class="metric-note">当前成本快照 <span class='inline-tip tooltip-badge' title='固定费用来源：当前成本快照；本月固定费用 24,001.55 元；平均每天固定支出约 774.24 元。' data-tip='固定费用来源：当前成本快照；本月固定费用 24,001.55 元；平均每天固定支出约 774.24 元。' tabindex='0' role='note'>说明</span></div>
           </div>
             
           <div class="metric-card metric-neutral">
             <div class="metric-title">人工费用</div>
             <div class="metric-value">7,500.00 元</div>
-            <div class="metric-note">每天人工成本约 241.94 元</div>
+            <div class="metric-note">按当前工资口径 <span class='inline-tip tooltip-badge' title='当前人工费用按月计 7,500.00 元；平均每天人工成本约 241.94 元。' data-tip='当前人工费用按月计 7,500.00 元；平均每天人工成本约 241.94 元。' tabindex='0' role='note'>说明</span></div>
           </div>
             
           <div class="metric-card metric-neutral">
             <div class="metric-title">保本销售额</div>
-            <div class="metric-value">53,392.46 元</div>
-            <div class="metric-note">保本日销约 1,722.34 元</div>
+            <div class="metric-value">65,628.23 元</div>
+            <div class="metric-note">保本日销约 2,117.04 元 <span class='inline-tip tooltip-badge' title='公式：总费用 31,501.55 元 / 毛利率 48.0% = 保本销售额 65,628.23 元；对应保本日销约 2,117.04 元。' data-tip='公式：总费用 31,501.55 元 / 毛利率 48.0% = 保本销售额 65,628.23 元；对应保本日销约 2,117.04 元。' tabindex='0' role='note'>公式</span></div>
           </div>
             
-          <div class="metric-card metric-green">
+          <div class="metric-card metric-yellow">
             <div class="metric-title">保本进度</div>
-            <div class="metric-value">144.0%</div>
-            <div class="metric-note">已过保本线</div>
+            <div class="metric-value">30.5%</div>
+            <div class="metric-note">还差 45,604.05 元 <span class='inline-tip tooltip-badge' title='当前销售 20,024.18 元；保本销售额 65,628.23 元；距离保本还差 45,604.05 元；剩余每天至少要卖 2,814.58 元。' data-tip='当前销售 20,024.18 元；保本销售额 65,628.23 元；距离保本还差 45,604.05 元；剩余每天至少要卖 2,814.58 元。' tabindex='0' role='note'>说明</span></div>
           </div>
             
-          <div class="metric-card metric-green">
+          <div class="metric-card metric-red">
             <div class="metric-title">月末净利预测</div>
-            <div class="metric-value">69,081.13 元</div>
-            <div class="metric-note">按当前节奏月底大概率还能赚钱</div>
+            <div class="metric-value">-11,365.35 元</div>
+            <div class="metric-note">按当前节奏月底还有亏损风险 <span class='inline-tip tooltip-badge' title='计算过程：已实现销售 20,024.18 元；当前平均日销 1,353.24 元；剩余 16.2 天预计新增销售 21,926.23 元；月末销售约 41,950.41 元；按毛利率 48.0% 预计月末毛利 20,136.20 元；再减总费用 31,501.55 元，得到月末净利预测 -11,365.35 元。' data-tip='计算过程：已实现销售 20,024.18 元；当前平均日销 1,353.24 元；剩余 16.2 天预计新增销售 21,926.23 元；月末销售约 41,950.41 元；按毛利率 48.0% 预计月末毛利 20,136.20 元；再减总费用 31,501.55 元，得到月末净利预测 -11,365.35 元。' tabindex='0' role='note'>公式</span></div>
           </div>
             
         </div>
@@ -858,28 +906,28 @@
               <div class="card-title">袜品</div>
               <div class="stat-row"><span>库存数量</span><strong>796</strong></div>
               <div class="stat-row"><span>近期销量</span><strong>28</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" data-tip="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" data-tip="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" data-tip="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" tabindex="0" role="note">清货陈列</span></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" data-tip="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" data-tip="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" data-tip="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" tabindex="0" role="note">清货陈列</span></div>
             </article>
             
             <article class="risk-card">
               <div class="card-title">袜品</div>
               <div class="stat-row"><span>库存数量</span><strong>235</strong></div>
               <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" data-tip="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" data-tip="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" data-tip="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" tabindex="0" role="note">调整陈列</span></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" data-tip="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" data-tip="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" data-tip="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" tabindex="0" role="note">调整陈列</span></div>
             </article>
             
             <article class="risk-card">
               <div class="card-title">少女文胸</div>
               <div class="stat-row"><span>库存数量</span><strong>202</strong></div>
               <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" data-tip="补货可以做，但要收紧节奏。先补销量高、库存低的主销款，别平均补。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" data-tip="不要单独硬推慢销货，和基础款、袜品、家居服做搭配更容易成交。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" data-tip="通过前移、压缩、分区等方式，让主销品类更显眼，慢销品类不占主位置。" tabindex="0" role="note">调整陈列</span></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" data-tip="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" data-tip="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" data-tip="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" tabindex="0" role="note">调整陈列</span></div>
             </article>
             
             <article class="risk-card">
               <div class="card-title">内裤</div>
               <div class="stat-row"><span>库存数量</span><strong>170</strong></div>
               <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" data-tip="这个动作表示先别继续进货，把现有库存先卖掉，再决定要不要恢复补货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" data-tip="把高库存品类和低决策商品搭在一起卖，比如第二件折扣、两件组合价、满额换购。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" data-tip="把需要优先卖掉的货放到门口或主通道陈列位，让顾客先看到。" tabindex="0" role="note">清货陈列</span></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" data-tip="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" data-tip="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" data-tip="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" tabindex="0" role="note">清货陈列</span></div>
             </article>
             </div>
     </section>
@@ -1019,5 +1067,70 @@
       </aside>
     </div>
   </div>
+
+  <script>
+    (function () {
+      if (window.__blackTonnyTooltipInit) return;
+      window.__blackTonnyTooltipInit = true;
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'floating-tooltip';
+      document.body.appendChild(tooltip);
+
+      let activeTarget = null;
+
+      function hideTooltip() {
+        activeTarget = null;
+        tooltip.classList.remove('is-visible');
+      }
+
+      function showTooltip(target) {
+        const message = target.getAttribute('data-tip') || target.getAttribute('title');
+        if (!message) return;
+        activeTarget = target;
+        tooltip.textContent = message;
+        tooltip.classList.add('is-visible');
+
+        const rect = target.getBoundingClientRect();
+        const ttRect = tooltip.getBoundingClientRect();
+        const margin = 12;
+        let left = rect.left + rect.width / 2 - ttRect.width / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - ttRect.width - margin));
+        let top = rect.top - ttRect.height - 12;
+        if (top < margin) {
+          top = rect.bottom + 12;
+        }
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      }
+
+      function attachTooltip(target) {
+        target.addEventListener('mouseenter', () => showTooltip(target));
+        target.addEventListener('mouseleave', hideTooltip);
+        target.addEventListener('focus', () => showTooltip(target));
+        target.addEventListener('blur', hideTooltip);
+        target.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (activeTarget === target && tooltip.classList.contains('is-visible')) {
+            hideTooltip();
+          } else {
+            showTooltip(target);
+          }
+        });
+      }
+
+      document.querySelectorAll('.tooltip-badge').forEach(attachTooltip);
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', () => {
+        if (activeTarget) showTooltip(activeTarget);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.tooltip-badge')) {
+          hideTooltip();
+        }
+      });
+    })();
+  </script>
+    
 </body>
 </html>
