@@ -390,7 +390,19 @@ def load_yeusoft_capture_bundle(capture_dir: Path | None) -> dict[str, dict]:
         return {}
 
     bundle: dict[str, dict] = {}
-    for report_name in ("销售清单", "商品销售情况", "会员消费排行", "库存综合分析", "出入库单据", "每日流水单"):
+    for report_name in (
+        "销售清单",
+        "商品销售情况",
+        "会员消费排行",
+        "库存综合分析",
+        "出入库单据",
+        "每日流水单",
+        "商品品类分析",
+        "会员综合分析",
+        "导购员报表",
+        "门店销售月报",
+        "零售明细统计",
+    ):
         capture_path = capture_dir / f"{report_name}.json"
         if capture_path.exists():
             try:
@@ -439,6 +451,30 @@ def normalize_yeusoft_frame(frame: pd.DataFrame, numeric_columns: Iterable[str])
         if column in cleaned.columns:
             cleaned[column] = pd.to_numeric(cleaned[column], errors="coerce").fillna(0.0)
     return cleaned
+
+
+def parse_yeusoft_request_date(value: object) -> pd.Timestamp:
+    if value in (None, ""):
+        return pd.NaT
+    text = str(value).strip()
+    for fmt in ("%Y%m%d", "%Y-%m-%d"):
+        parsed = pd.to_datetime(text, format=fmt, errors="coerce")
+        if pd.notna(parsed):
+            return parsed
+    return pd.to_datetime(text, errors="coerce")
+
+
+def extract_yeusoft_period_headers(payload: dict) -> list[tuple[str, str]]:
+    headers = payload.get("GridHeader") or []
+    amount_columns: list[tuple[str, str]] = []
+    for item in headers:
+        gcode = decode_yeusoft_text(item.get("gcode"))
+        if not gcode or not gcode.isdigit() or len(gcode) != 5:
+            continue
+        amount_code = f"{gcode}Money"
+        label = decode_yeusoft_text(item.get("gname"))
+        amount_columns.append((amount_code, label or gcode))
+    return amount_columns
 
 
 def parse_yeusoft_sales_overview(capture_payload: dict | None) -> dict | None:
@@ -899,8 +935,8 @@ def parse_yeusoft_daily_flow(capture_payload: dict | None) -> dict | None:
 
     return {
         "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
-        "window_start": pd.to_datetime(request_payload.get("BeginDate"), errors="coerce"),
-        "window_end": pd.to_datetime(request_payload.get("EndDate"), errors="coerce"),
+        "window_start": parse_yeusoft_request_date(request_payload.get("BeginDate")),
+        "window_end": parse_yeusoft_request_date(request_payload.get("EndDate")),
         "order_count": len(normalized_rows),
         "sales_qty": total_sales_qty,
         "tag_money": total_tag_money,
@@ -909,6 +945,323 @@ def parse_yeusoft_daily_flow(capture_payload: dict | None) -> dict | None:
         "payment_breakdown": payment_breakdown,
         "dominant_payment": dominant_payment,
         "latest_make_date": latest_make_date,
+    }
+
+
+def parse_yeusoft_category_analysis(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelWareTypeAnalysisList")
+    if not body or body.get("errcode") != "1000":
+        return None
+
+    payload = (body.get("retdata") or [{}])[0]
+    rows = payload.get("Data") or []
+    if not rows:
+        return None
+
+    amount_columns = extract_yeusoft_period_headers(payload)
+    numeric_columns = [column for column, _ in amount_columns]
+    frame = normalize_yeusoft_frame(pd.DataFrame(rows), numeric_columns)
+    if frame.empty or "Category" not in frame.columns:
+        return None
+
+    frame["Category"] = frame["Category"].replace("", "未标记品类")
+    available_periods = [
+        (column, label)
+        for column, label in amount_columns
+        if column in frame.columns and float(frame[column].sum()) > 0
+    ]
+    if not available_periods:
+        return None
+
+    frame["total_period_sales"] = frame[[column for column, _ in available_periods]].sum(axis=1)
+    total_sales = float(frame["total_period_sales"].sum())
+    top_categories_df = (
+        frame[["Category", "total_period_sales"]]
+        .groupby("Category", dropna=False)
+        .sum()
+        .reset_index()
+        .sort_values("total_period_sales", ascending=False)
+    )
+    top_categories = [
+        {
+            "name": row["Category"],
+            "sales_amount": float(row["total_period_sales"]),
+            "share": safe_ratio(row["total_period_sales"], total_sales),
+        }
+        for _, row in top_categories_df.head(5).iterrows()
+    ]
+
+    period_rows: list[dict[str, object]] = []
+    for column, label in available_periods:
+        period_total = float(frame[column].sum())
+        if period_total <= 0:
+            continue
+        top_row = frame.sort_values(column, ascending=False).iloc[0]
+        period_rows.append(
+            {
+                "label": label,
+                "sales_amount": period_total,
+                "top_category": top_row["Category"] or "未标记品类",
+                "top_category_sales": float(top_row[column]),
+            }
+        )
+
+    latest_period = period_rows[-1] if period_rows else None
+    previous_period = period_rows[-2] if len(period_rows) >= 2 else None
+    latest_column = available_periods[-1][0]
+    previous_column = available_periods[-2][0] if len(available_periods) >= 2 else None
+    growth_rows: list[dict[str, object]] = []
+    decline_rows: list[dict[str, object]] = []
+    if previous_column:
+        comparison = frame[["Category", latest_column, previous_column]].copy()
+        comparison["delta_sales"] = comparison[latest_column] - comparison[previous_column]
+        growth_rows = [
+            {
+                "name": row["Category"],
+                "delta_sales": float(row["delta_sales"]),
+                "latest_sales": float(row[latest_column]),
+            }
+            for _, row in comparison.sort_values("delta_sales", ascending=False).head(3).iterrows()
+            if float(row["delta_sales"]) > 0
+        ]
+        decline_rows = [
+            {
+                "name": row["Category"],
+                "delta_sales": float(row["delta_sales"]),
+                "latest_sales": float(row[latest_column]),
+            }
+            for _, row in comparison.sort_values("delta_sales", ascending=True).head(3).iterrows()
+            if float(row["delta_sales"]) < 0
+        ]
+
+    request_payload = extract_capture_request(capture_payload, "SelWareTypeAnalysisList") or {}
+    top_category_names = "、".join(item["name"] for item in top_categories[:3]) if top_categories else "暂无明显主力品类"
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": parse_yeusoft_request_date(request_payload.get("bdate")),
+        "window_end": parse_yeusoft_request_date(request_payload.get("edate")),
+        "top_categories": top_categories,
+        "top_category_names": top_category_names,
+        "top1_share": top_categories[0]["share"] if top_categories else 0.0,
+        "top2_share": safe_ratio(sum(item["sales_amount"] for item in top_categories[:2]), total_sales),
+        "period_rows": period_rows,
+        "latest_period": latest_period,
+        "previous_period": previous_period,
+        "growth_rows": growth_rows,
+        "decline_rows": decline_rows,
+    }
+
+
+def parse_yeusoft_vip_analysis(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelVipAnalysisReport")
+    if not body or body.get("errcode") != "1000":
+        return None
+
+    payload = (body.get("retdata") or [{}])[0]
+    rows = payload.get("Data") or []
+    if not rows:
+        return None
+
+    numeric_columns = [
+        "Point",
+        "TotalPoint",
+        "RetuMoney",
+        "SSMoney",
+        "BVMoney",
+        "VipPosCardNum",
+        "EachSale",
+        "SaleNumByYear",
+        "SaleStock",
+        "SaleNum",
+        "TotalMoney",
+        "SaleWeek",
+        "SaleSpace",
+    ]
+    frame = normalize_yeusoft_frame(pd.DataFrame(rows), numeric_columns)
+    if frame.empty:
+        return None
+
+    if "LastSaleDate" in frame.columns:
+        frame["LastSaleDate"] = pd.to_datetime(frame["LastSaleDate"], errors="coerce")
+    frame = frame[frame["VipCardID"].astype(str).str.strip().ne("")].copy()
+    if frame.empty:
+        return None
+
+    frame = frame.sort_values(["TotalMoney", "SaleNum"], ascending=[False, False]).reset_index(drop=True)
+    summary_row = ((payload.get("HJ") or [{}])[0]) if (payload.get("HJ") or []) else {}
+    total_member_sales = safe_float(summary_row.get("TotalMoney")) or float(frame["TotalMoney"].sum())
+    avg_member_sale = safe_float(summary_row.get("EachSale")) or safe_ratio(total_member_sales, len(frame))
+    total_member_orders = safe_float(summary_row.get("SaleNum")) or float(frame["SaleNum"].sum())
+    vip_card_count = safe_float(summary_row.get("VipPosCardNum")) or float(len(frame))
+    request_payload = extract_capture_request(capture_payload, "SelVipAnalysisReport") or {}
+    window_end = parse_yeusoft_request_date(request_payload.get("saleedate"))
+
+    active_recent_count = 0
+    dormant_count = 0
+    if pd.notna(window_end) and "LastSaleDate" in frame.columns:
+        active_recent_count = int((frame["LastSaleDate"] >= (window_end - pd.Timedelta(days=60))).sum())
+        dormant_count = int(
+            frame["LastSaleDate"].isna().sum()
+            + (frame["LastSaleDate"] < (window_end - pd.Timedelta(days=120))).sum()
+        )
+
+    top_members = [
+        {
+            "name": row["VipName"] or "未命名会员",
+            "vip_card": row["VipCardID"],
+            "total_money": float(row["TotalMoney"]),
+            "sale_count": float(row["SaleNum"]),
+            "last_sale_date": row["LastSaleDate"],
+        }
+        for _, row in frame.head(5).iterrows()
+    ]
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": parse_yeusoft_request_date(request_payload.get("salebdate")),
+        "window_end": window_end,
+        "member_count": int(len(frame)),
+        "vip_card_count": int(vip_card_count),
+        "total_member_sales": total_member_sales,
+        "avg_member_sale": avg_member_sale,
+        "total_member_orders": total_member_orders,
+        "active_recent_count": active_recent_count,
+        "dormant_count": dormant_count,
+        "dormant_ratio": safe_ratio(dormant_count, len(frame)),
+        "top_members": top_members,
+        "top_member_names": "、".join(item["name"] for item in top_members[:3]) if top_members else "暂无高价值会员",
+    }
+
+
+def parse_yeusoft_guide_report(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelPersonSale")
+    if not body or body.get("errcode") != "1000":
+        return None
+
+    payload = (body.get("retdata") or [{}])[0]
+    rows = payload.get("Data") or []
+    if not rows:
+        return None
+
+    numeric_columns = [
+        "Amount",
+        "TotalRetailMoeny",
+        "DisCount",
+        "TotalMoney",
+        "Cash",
+        "CreditCard",
+        "OrderMoney",
+        "PosMoney",
+        "RetuMoney",
+        "ActivityMoeny",
+        "StockMoney",
+        "WxPayMoney",
+        "ZfbPayMoney",
+        "OddMoney",
+        "WpZeroMoney",
+        "VipAmount",
+        "VipMoney",
+        "Saleps",
+        "StockRechargeMoney",
+        "DJ",
+        "FJ",
+        "JEZB",
+        "SLZB",
+        "ssMoneyRebate",
+    ]
+    frame = normalize_yeusoft_frame(pd.DataFrame(rows), numeric_columns)
+    if frame.empty:
+        return None
+
+    frame = frame[frame["Name"].astype(str).str.strip().ne("")].copy()
+    if frame.empty:
+        return None
+
+    frame = frame.sort_values(["TotalMoney", "Amount"], ascending=[False, False]).reset_index(drop=True)
+    total_sales = float(frame["TotalMoney"].sum())
+    top_guides = [
+        {
+            "name": row["Name"],
+            "sales_amount": float(row["TotalMoney"]),
+            "sales_qty": float(row["Amount"]),
+            "vip_money": float(row["VipMoney"]),
+            "discount_rate": float(row["DisCount"]),
+        }
+        for _, row in frame.head(5).iterrows()
+    ]
+    request_payload = extract_capture_request(capture_payload, "SelPersonSale") or {}
+    top_guide_sales = top_guides[0]["sales_amount"] if top_guides else 0.0
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": parse_yeusoft_request_date(request_payload.get("bdate")),
+        "window_end": parse_yeusoft_request_date(request_payload.get("edate")),
+        "guide_count": int(len(frame)),
+        "total_sales": total_sales,
+        "vip_sales_share": safe_ratio(frame["VipMoney"].sum(), total_sales),
+        "top_guides": top_guides,
+        "top_guide_name": top_guides[0]["name"] if top_guides else "暂无主力导购",
+        "top_guide_share": safe_ratio(top_guide_sales, total_sales),
+    }
+
+
+def parse_yeusoft_monthly_sales_report(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "DeptMonthSalesReport")
+    if not body or not body.get("Success"):
+        return None
+
+    payload = body.get("Data") or {}
+    page_data = payload.get("PageData") or {}
+    rows = page_data.get("Items") or []
+    if not rows:
+        return None
+
+    numeric_columns = ["SalePNum", "SaleAmount", "Jointandseveral"]
+    frame = normalize_yeusoft_frame(pd.DataFrame(rows), numeric_columns)
+    if frame.empty or "Date" not in frame.columns:
+        return None
+
+    frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
+    frame = frame[frame["Date"].notna()].copy()
+    if frame.empty:
+        return None
+
+    frame["month_period"] = frame["Date"].dt.to_period("M")
+    frame["quarter_period"] = frame["Date"].dt.to_period("Q")
+    monthly_rows = []
+    for period, chunk in frame.groupby("month_period"):
+        monthly_rows.append(
+            {
+                "label": period.strftime("%Y-%m"),
+                "order_count": float(chunk["SalePNum"].sum()),
+                "sales_qty": float(chunk["SaleAmount"].sum()),
+                "joint_rate": safe_ratio(chunk["SaleAmount"].sum(), chunk["SalePNum"].sum()),
+                "avg_joint_rate": float(chunk["Jointandseveral"].mean()),
+            }
+        )
+    quarterly_rows = []
+    for period, chunk in frame.groupby("quarter_period"):
+        quarterly_rows.append(
+            {
+                "label": f"{period.year}Q{period.quarter}",
+                "order_count": float(chunk["SalePNum"].sum()),
+                "sales_qty": float(chunk["SaleAmount"].sum()),
+                "joint_rate": safe_ratio(chunk["SaleAmount"].sum(), chunk["SalePNum"].sum()),
+                "avg_joint_rate": float(chunk["Jointandseveral"].mean()),
+            }
+        )
+
+    request_payload = extract_capture_request(capture_payload, "DeptMonthSalesReport") or {}
+    low_joint_days = int((frame["Jointandseveral"] < 1.1).sum())
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": parse_yeusoft_request_date(request_payload.get("BeginDate")),
+        "window_end": parse_yeusoft_request_date(request_payload.get("EndDate")),
+        "row_count": int(len(frame)),
+        "monthly_rows": monthly_rows,
+        "quarterly_rows": quarterly_rows,
+        "latest_month": monthly_rows[-1] if monthly_rows else None,
+        "latest_quarter": quarterly_rows[-1] if quarterly_rows else None,
+        "low_joint_days": low_joint_days,
     }
 
 
@@ -928,10 +1281,25 @@ def build_yeusoft_report_highlights(
     )
     movement = parse_yeusoft_movement_report(capture_bundle.get("出入库单据"))
     daily_flow = parse_yeusoft_daily_flow(capture_bundle.get("每日流水单"))
+    category_analysis = parse_yeusoft_category_analysis(capture_bundle.get("商品品类分析"))
+    vip_analysis = parse_yeusoft_vip_analysis(capture_bundle.get("会员综合分析"))
+    guide_report = parse_yeusoft_guide_report(capture_bundle.get("导购员报表"))
+    store_month_report = parse_yeusoft_monthly_sales_report(capture_bundle.get("门店销售月报"))
 
     capture_dates = [
         value.get("capture_at")
-        for value in (sales_overview, product_sales, member_rank, stock_analysis, movement, daily_flow)
+        for value in (
+            sales_overview,
+            product_sales,
+            member_rank,
+            stock_analysis,
+            movement,
+            daily_flow,
+            category_analysis,
+            vip_analysis,
+            guide_report,
+            store_month_report,
+        )
         if value and pd.notna(value.get("capture_at"))
     ]
 
@@ -942,6 +1310,10 @@ def build_yeusoft_report_highlights(
         "stock_analysis": stock_analysis,
         "movement": movement,
         "daily_flow": daily_flow,
+        "category_analysis": category_analysis,
+        "vip_analysis": vip_analysis,
+        "guide_report": guide_report,
+        "store_month_report": store_month_report,
         "capture_at": max(capture_dates) if capture_dates else pd.NaT,
     }
 
@@ -2441,6 +2813,10 @@ def dedupe_preserve_order(items: list[str]) -> list[str]:
     return ordered
 
 
+def strip_sentence_tail(text: str) -> str:
+    return str(text).strip().rstrip("。.!！?？")
+
+
 def build_time_strategy(metrics: dict, now: datetime | None = None) -> dict:
     now = now or get_beijing_now()
     season, phase, next_season = infer_season(now)
@@ -2624,12 +3000,30 @@ def build_decision_engine(metrics: dict) -> dict[str, object]:
     time_strategy = build_time_strategy(metrics)
     sales_trend = classify_sales_trend(metrics["sales_daily"])
     stage = classify_business_stage(time_strategy["phase"])
+    profit = cards.get("profit_snapshot")
+    signals = build_homepage_operating_signals(metrics)
 
     top_replenish = top_labels_from_series(metrics["replenish_categories"]["中类"], time_strategy["top_replenish_category"], 2)
     top_clearance = top_labels_from_series(metrics["clearance_categories"]["大类"], time_strategy["top_clearance_category"], 2)
     top_seasonal = top_labels_from_series(metrics["seasonal_categories"]["中类"], "跨季品类", 2)
 
-    if cards["negative_sku_count"] >= 50:
+    if profit and profit["projected_month_net_profit"] < 0 and signals["low_joint"]:
+        mode = "提连带保利润"
+        headline = "先提连带和客单，别只冲单数。"
+        summary = (
+            f"{time_strategy['phase']}阶段，最近日销{sales_trend['label']}，"
+            f"但按当前节奏月末净利约 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+            f" 最近件单比只有 {format_num(signals['latest_joint_rate'], 2)}，先把 {top_replenish} 做成组合成交，再谈放大量。"
+        )
+    elif profit and profit["projected_month_net_profit"] < 0 and not profit["passed_breakeven"]:
+        mode = "稳利润优先"
+        headline = "先稳利润和保本，再谈放大营业额。"
+        summary = (
+            f"{time_strategy['phase']}阶段，最近日销{sales_trend['label']}，"
+            f"当前还差 {format_num(profit['remaining_sales_to_breakeven'], 2)} 元过保本。"
+            f" 先保 {top_replenish} 的高毛利主销，先压 {top_clearance} 的库存，不适合做深折扣。"
+        )
+    elif cards["negative_sku_count"] >= 50:
         mode = "校库存优先"
         headline = "先校库存，再决定补货和去化。"
         summary = (
@@ -2664,6 +3058,9 @@ def build_decision_engine(metrics: dict) -> dict[str, object]:
             f"补货先看 {top_replenish}，去化先看 {top_clearance}，按周复盘即可。"
         )
 
+    if profit and profit["projected_month_net_profit"] >= 0 and profit["passed_breakeven"]:
+        summary += " 当前利润口径已经过保本线，可以在不伤毛利的前提下放大主销营业额。"
+
     return {
         "mode": mode,
         "stage": stage,
@@ -2675,6 +3072,49 @@ def build_decision_engine(metrics: dict) -> dict[str, object]:
         "top_replenish": top_replenish,
         "top_clearance": top_clearance,
         "top_seasonal": top_seasonal,
+    }
+
+
+def build_homepage_operating_signals(metrics: dict) -> dict[str, object]:
+    pos_highlights = metrics.get("yeusoft_highlights") or {}
+    category_analysis = pos_highlights.get("category_analysis") or {}
+    vip_analysis = pos_highlights.get("vip_analysis") or {}
+    guide_report = pos_highlights.get("guide_report") or {}
+    store_month_report = pos_highlights.get("store_month_report") or {}
+
+    latest_month = store_month_report.get("latest_month") if store_month_report else None
+    top2_share = float(category_analysis.get("top2_share", 0) or 0)
+    dormant_ratio = float(vip_analysis.get("dormant_ratio", 0) or 0)
+    top_guide_share = float(guide_report.get("top_guide_share", 0) or 0)
+    latest_joint_rate = float((latest_month or {}).get("joint_rate", 0) or 0)
+
+    growth_rows = category_analysis.get("growth_rows") or []
+    growth_names = "、".join(item["name"] for item in growth_rows[:2]) if growth_rows else category_analysis.get(
+        "top_category_names", "主销品类"
+    )
+
+    return {
+        "category_analysis": category_analysis,
+        "vip_analysis": vip_analysis,
+        "guide_report": guide_report,
+        "store_month_report": store_month_report,
+        "latest_month": latest_month,
+        "category_concentrated": top2_share >= 0.6,
+        "top2_share": top2_share,
+        "top_category_names": category_analysis.get("top_category_names", "主销品类"),
+        "growth_names": growth_names,
+        "vip_dormant_high": dormant_ratio >= 0.35,
+        "dormant_ratio": dormant_ratio,
+        "active_recent_count": int(vip_analysis.get("active_recent_count", 0) or 0),
+        "top_member_names": vip_analysis.get("top_member_names", "高价值会员"),
+        "guide_concentrated": top_guide_share >= 0.45,
+        "top_guide_name": guide_report.get("top_guide_name", "主力店员"),
+        "top_guide_share": top_guide_share,
+        "vip_sales_share": float(guide_report.get("vip_sales_share", 0) or 0),
+        "low_joint": bool(latest_month) and latest_joint_rate > 0 and latest_joint_rate < 1.2,
+        "latest_joint_rate": latest_joint_rate,
+        "low_joint_days": int(store_month_report.get("low_joint_days", 0) or 0),
+        "latest_month_label": (latest_month or {}).get("label", "最近月份"),
     }
 
 
@@ -2874,6 +3314,10 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
     sales_overview = yeusoft.get("sales_overview") or {}
     member_rank = yeusoft.get("member_rank") or {}
     stock_analysis = yeusoft.get("stock_analysis") or {}
+    category_highlight = yeusoft.get("category_analysis") or {}
+    vip_analysis = yeusoft.get("vip_analysis") or {}
+    guide_report = yeusoft.get("guide_report") or {}
+    store_month_report = yeusoft.get("store_month_report") or {}
 
     period_label = "本月" if period_type == "monthly" else "本季度" if period_type == "quarterly" else "当前阶段"
     previous_label = "上月" if period_type == "monthly" else "上季度" if period_type == "quarterly" else "上一阶段"
@@ -2969,6 +3413,21 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             for _, row in category_sales.head(3).iterrows()
         )
         category_analysis.append(f"【直接数据】品类贡献排序靠前的是：{top_contributors}。")
+    if category_highlight:
+        growth_rows = category_highlight.get("growth_rows") or []
+        decline_rows = category_highlight.get("decline_rows") or []
+        if growth_rows:
+            category_analysis.append(
+                "【直接数据】阶段性增长更快的品类主要是："
+                + "、".join(f"{row['name']}(+{format_num(row['delta_sales'], 2)}元)" for row in growth_rows)
+                + "。"
+            )
+        if decline_rows:
+            category_analysis.append(
+                "【直接数据】阶段性回落更明显的品类主要是："
+                + "、".join(f"{row['name']}({format_num(row['delta_sales'], 2)}元)" for row in decline_rows)
+                + "。"
+            )
     if not category_risks.empty:
         top_risks = "、".join(
             f"{row['大类']}({row['状态']})" for _, row in category_risks.head(3).iterrows()
@@ -2992,6 +3451,10 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         )
     else:
         category_analysis.append("【经营判断】品类结构不算单一，但库存风险和补货节奏已经开始分化，后面要按品类区别对待，而不是平均发力。")
+    if category_highlight and category_highlight.get("top2_share", 0) >= 0.65:
+        category_analysis.append(
+            f"【经营判断】从全量品类分析看，前两品类贡献约 {format_num(category_highlight['top2_share'] * 100, 1)}%，销售更多靠少数品类撑着，扩品只能做补充，不能动摇主销预算。"
+        )
 
     sku_analysis: list[str] = []
     if not best_sellers.empty:
@@ -3054,6 +3517,14 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         member_analysis.append("【经营判断】当前销售已经明显依赖会员，说明复购稳定性不错，下一步更该做的是把高价值会员的回访和搭配销售做深。")
     else:
         member_analysis.append("【经营判断】当前会员贡献不算稳，后面要补会员召回和老客复购，不然销售容易更多靠自然客流波动。")
+    if vip_analysis:
+        member_analysis.append(
+            f"【直接数据】会员基盘里目前有 {format_num(vip_analysis['member_count'])} 位会员，近 60 天活跃 {format_num(vip_analysis['active_recent_count'])} 位，沉默占比约 {format_num(vip_analysis['dormant_ratio'] * 100, 1)}%。"
+        )
+        if vip_analysis["dormant_ratio"] >= 0.35:
+            member_analysis.append("【经营判断】会员沉默占比偏高，说明老客不是没有，而是唤醒不够。这个阶段更适合做一对一回访，而不是只等自然复购。")
+        else:
+            member_analysis.append("【经营判断】会员活跃度还算可以，可以把重点放在高价值会员的复购和连带，而不是泛泛拉群。")
     if avg_attachment and avg_attachment < 1.5:
         member_analysis.append("【经营判断】现在更像“有成交，但每单带得不够”，优先提高连带率，比单纯追客流更划算。")
     else:
@@ -3061,6 +3532,10 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
     if top_members is not None and not top_members.empty:
         top_member_names = "、".join(top_members["VIP姓名"].astype(str).head(3).tolist())
         member_analysis.append(f"【动作建议】会员回访先盯 {top_member_names}，优先做换季提醒、到店试穿和组合推荐。")
+    if guide_report:
+        member_analysis.append(
+            f"【直接数据】导购总销里 VIP 销售占比约 {format_num(guide_report['vip_sales_share'] * 100, 1)}%，头部导购 {guide_report['top_guide_name']} 贡献约 {format_num(guide_report['top_guide_share'] * 100, 1)}%。"
+        )
 
     rhythm_analysis: list[str] = []
     stage_label = "去库存阶段" if cards["estimated_inventory_days"] >= 180 else "稳利润阶段" if profit and not profit["passed_breakeven"] else "冲销售阶段"
@@ -3080,9 +3555,24 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         rhythm_analysis.append("【经营判断】当前节奏更像转化或结构问题，不只是客流问题。先看主销品类和连带，再看活动。")
     else:
         rhythm_analysis.append("【经营判断】当前节奏还能推进，但要防止销售做上去了，利润却被深补和清货拖掉。")
+    if store_month_report:
+        latest_joint = store_month_report.get("latest_month") or {}
+        if latest_joint:
+            rhythm_analysis.append(
+                f"【直接数据】最近月度件单比约 {format_num(latest_joint.get('joint_rate', 0), 2)}，低连带天数 {format_num(store_month_report.get('low_joint_days', 0))} 天。"
+            )
+            if latest_joint.get("joint_rate", 0) < 1.2:
+                rhythm_analysis.append("【经营判断】当前节奏还有一个明显短板是连带偏弱。进店有单，但每单件数不高，店员执行要先盯组合成交。")
+
+    if guide_report:
+        top_guide_name = guide_report.get("top_guide_name") or "主力导购"
+        top_guide_share = guide_report.get("top_guide_share", 0)
+    else:
+        top_guide_name = "主力导购"
+        top_guide_share = 0.0
 
     diagnosis_summary = (
-        f"当前门店最需要优先处理的是 {decision['headline']}。"
+        f"当前门店最需要优先处理的是 {strip_sentence_tail(decision['headline'])}。"
         f"从数据看，销售主力仍集中在 {top_category_name}，但库存压力主要压在 {top_risk_category}，"
         f"补货应优先给 {top_replenish_category}，去化则先盯 {top_clearance_category}。"
     )
@@ -3110,6 +3600,7 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             "先校正负库存，再安排补货；库存没校准前，不做深补。",
             "把高价值会员分成 3 组：本周联系、下周联系、暂缓联系，避免群发式打扰。",
             "店员统一搭配话术：先卖主销，再顺带袜品/基础打底/家居服，提高连带。",
+            f"店员排班和带教先盯 {top_guide_name} 的做法，当前销售占比约 {format_num(top_guide_share * 100, 1)}%。",
         ]
     )[:3]
 
@@ -3141,6 +3632,7 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             "盯员工两件事：主销款不断推、每单至少带一件顺手连带商品。",
             "把负库存、去化名单、补货名单分三张小表带晨会，不要让店员自己判断优先级。",
             f"会员跟进先看 {top_members['VIP姓名'].head(3).tolist() if not top_members.empty else '高价值会员名单'}。",
+            f"导购执行先对齐 {top_guide_name} 的成交路径，再让其他人照着练，避免每个人各讲各的。",
         ]
     )
     staff_advice = dedupe_preserve_order(
@@ -3210,6 +3702,12 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         direct_basis.append("品类贡献和库存风险来自当前销售、库存和进销存报表。")
     if not metrics["replenish_categories"].empty or not metrics["clearance_categories"].empty:
         direct_basis.append("补货和去化建议来自 SKU 动销、库存周数、季节策略和库存风险规则。")
+    if category_highlight:
+        direct_basis.append("品类增长/回落判断补充参考了商品品类分析的全量周期数据。")
+    if vip_analysis:
+        direct_basis.append("会员活跃与沉默判断补充参考了会员综合分析。")
+    if guide_report:
+        direct_basis.append("店员人效和连带判断补充参考了导购员报表与门店销售月报。")
 
     inferred_basis = [
         "哪些品类更适合继续放大，部分基于当前主销中类、库存结构和换季逻辑做经营推断。",
@@ -3426,7 +3924,7 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
     profit = cards.get("profit_snapshot")
     pos_highlights = metrics.get("yeusoft_highlights")
     decision = build_decision_engine(metrics)
-    time_strategy = build_time_strategy(metrics)
+    signals = build_homepage_operating_signals(metrics)
     seasonal_categories = metrics["seasonal_categories"].head(3)
     top_replenish_categories = decision["top_replenish"]
     top_clearance_categories = decision["top_clearance"]
@@ -3449,28 +3947,91 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
             f" 近段时间净入库 {format_num(pos_highlights['movement']['net_qty'])} 件，"
             "补货节奏也要一并考虑。"
         )
+    if signals["category_concentrated"]:
+        summary += (
+            f" 前两品类贡献约 {format_num(signals['top2_share'] * 100, 1)}%，"
+            "补货预算先保主销，别平均分。"
+        )
+    if signals["vip_dormant_high"]:
+        summary += (
+            f" 会员沉默占比约 {format_num(signals['dormant_ratio'] * 100, 1)}%，"
+            "这周要主动唤醒老客。"
+        )
+    if signals["guide_concentrated"]:
+        summary += (
+            f" 店员销售主要集中在 {signals['top_guide_name']}，"
+            "成交打法要尽快复制给其他人。"
+        )
+    if signals["low_joint"]:
+        summary += (
+            f" 最近件单比约 {format_num(signals['latest_joint_rate'], 2)}，"
+            "说明成交有了，但每单带得还不够。"
+        )
+
+    first_watch_body = (
+        "先打开“去化重点品类”和“负库存异常清单”。"
+        if cards["negative_sku_count"] >= 30
+        else "先打开“去化重点品类”，确认今天最该先处理的品类。"
+    )
+    if signals["category_concentrated"]:
+        first_watch_body = (
+            f"先看 {signals['top_category_names']} 的补货和销售结构，"
+            "今天的预算先保主销，再看其他品类。"
+        )
+    elif signals["low_joint"]:
+        first_watch_body = (
+            f"先看 {signals['latest_month_label']} 的件单比和组合销售提醒，"
+            "今天优先提升每单带出的件数。"
+        )
+    elif signals["vip_dormant_high"]:
+        first_watch_body = (
+            f"先看会员基盘和高价值会员名单，优先把 {signals['top_member_names']} 这类老客叫回来。"
+        )
+
+    today_do_body = (
+        f"先处理 {top_clearance_categories} 的库存压力；"
+        f"补货只看 {top_replenish_categories} 这些当季主销品类。"
+    )
+    if signals["low_joint"]:
+        today_do_body = (
+            f"今天店员先做组合销售，重点把 {top_replenish_categories} 和袜品/内裤做搭配；"
+            f"去化仍先盯 {top_clearance_categories}。"
+        )
+    elif signals["vip_dormant_high"]:
+        today_do_body = (
+            f"今天先做老客唤醒和会员回访，再把 {top_replenish_categories} 的主销款做定向推荐。"
+        )
+
+    owner_decision_body = (
+        f"单独看 {top_seasonal_categories} 这些跨季品类，决定是去化、暂缓，还是等回到主销季再补。"
+    )
+    if signals["category_concentrated"]:
+        owner_decision_body = (
+            f"今天先拍板主销预算，优先给 {signals['top_category_names']}；"
+            "其他补货只能做补充，不要平均分货。"
+        )
+    elif signals["guide_concentrated"]:
+        owner_decision_body = (
+            f"今天先把 {signals['top_guide_name']} 的成交话术、搭配顺序和加购打法拆出来，"
+            "安排给另外店员直接照着用。"
+        )
+    elif signals["vip_dormant_high"]:
+        owner_decision_body = (
+            "今天先拍板老客唤醒动作，决定是会员回访、定向组合包，还是到店小福利。"
+        )
 
     actions_today = [
         {
             "title": "先看哪张表",
-            "body": (
-                "先打开“去化重点品类”和“负库存异常清单”。"
-                if cards["negative_sku_count"] >= 30
-                else "先打开“去化重点品类”，确认今天最该先处理的品类。"
-            ),
+            "body": first_watch_body,
         },
         {
             "title": "今天怎么做",
-            "body": (
-                f"先处理 {top_clearance_categories} 的库存压力；"
-                f"补货只看 {top_replenish_categories} 这些当季主销品类。"
-            ),
+            "body": today_do_body,
         },
         {
             "title": "老板今天拍板什么",
-            "body": (
-                f"单独看 {top_seasonal_categories} 这些跨季品类，决定是去化、暂缓，还是等回到主销季再补。"
-            ),
+            "body": owner_decision_body,
         },
     ]
 
@@ -3481,11 +4042,20 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
     ]
     if not seasonal_categories.empty:
         dont_do.append("不要因为某个冬款历史卖过，就在春夏阶段继续追补。")
+    if signals["category_concentrated"]:
+        dont_do.append("不要把补货预算平均分到所有品类，先保主销结构。")
+    if signals["guide_concentrated"]:
+        dont_do.append("不要把成交全压在一个店员身上，头部打法要复制。")
+    if signals["vip_dormant_high"]:
+        dont_do.append("不要只等自然回购，沉默会员需要主动叫回。")
+    if signals["low_joint"]:
+        dont_do.append("不要只盯单数，今天要想办法把每单带得更多。")
 
     reading_order = [
         "先看“老板一分钟结论”，确认今天的主任务。",
         "再看“经营健康灯”，判断先救火还是先放大机会。",
         "再看“补货重点品类 / 去化重点品类 / 跨季处理重点品类”。",
+        "再看“会员经营 / 店员执行 / 月度件单比”这些结构提醒。",
         "最后再下钻到具体 SKU 明细表执行。",
     ]
 
@@ -3494,6 +4064,12 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         f"今天主盯品类：去化看 {top_clearance_categories}，补货看 {top_replenish_categories}。",
         "今天执行顺序：先纠偏，再去化，再补货。",
     ]
+    if signals["vip_dormant_high"]:
+        meeting_script.append("今天加一件事：沉默会员先回访，不要只等老客自己回来。")
+    if signals["guide_concentrated"]:
+        meeting_script.append(f"今天带教重点：先复制 {signals['top_guide_name']} 的成交动作。")
+    if signals["low_joint"]:
+        meeting_script.append("今天门店目标：每单多带一件，不只看有没有成交。")
 
     return {
         "headline": headline,
@@ -3511,6 +4087,7 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
     profit = cards.get("profit_snapshot")
     actions = metrics["action_summary"]
     decision = build_decision_engine(metrics)
+    signals = build_homepage_operating_signals(metrics)
     replenish_categories = metrics["replenish_categories"]
     clearance_categories = metrics["clearance_categories"]
     seasonal_categories = metrics["seasonal_categories"]
@@ -3526,6 +4103,12 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         conclusions.append("先去库存")
     elif cards["estimated_inventory_days"] > 120:
         conclusions.append("控制库存量")
+    if signals["low_joint"]:
+        conclusions.append("先提连带")
+    if signals["vip_dormant_high"]:
+        conclusions.append("先唤醒老客")
+    if signals["category_concentrated"]:
+        conclusions.append("先保主销预算")
     if actions["clearance_count"] > 50 or actions["high_risk_category_count"] > 0:
         conclusions.append(trim_text(f"先停补{top_clearance}", 12))
     if actions["replenish_count"] > 100:
@@ -3534,6 +4117,8 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         conclusions.append("处理跨季品类")
     if cards["member_sales_ratio"] >= 0.6:
         conclusions.append("联系高价值会员")
+    if signals["guide_concentrated"]:
+        conclusions.append("复制头部打法")
     if profit and not profit["passed_breakeven"]:
         conclusions.append("先冲保本线")
     if decision["mode"] == "保畅销优先":
@@ -3563,6 +4148,12 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         tasks.append(trim_text(f"调整{top_clearance}陈列", 12))
     if not replenish_categories.empty:
         tasks.append(trim_text(f"检查{top_replenish}断码", 12))
+    if signals["low_joint"]:
+        tasks.append("今天主推组合单")
+    if signals["vip_dormant_high"]:
+        tasks.append("联系沉默会员")
+    if signals["guide_concentrated"]:
+        tasks.append("复制头部成交话术")
     if not seasonal_categories.empty:
         tasks.append("确认跨季处理")
     if not top_members.empty:
@@ -3832,6 +4423,45 @@ def build_yeusoft_highlight_cards(pos_highlights: dict | None) -> list[dict[str,
                 "note": (
                     f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，"
                     f"{payment_note}。"
+                ),
+            }
+        )
+
+    category_analysis = pos_highlights.get("category_analysis")
+    if category_analysis:
+        cards.append(
+            {
+                "title": "POS 品类结构",
+                "value": category_analysis["top_category_names"],
+                "note": (
+                    f"第一品类贡献 {format_num(category_analysis['top1_share'] * 100, 1)}%，"
+                    f"前两品类贡献 {format_num(category_analysis['top2_share'] * 100, 1)}%。"
+                ),
+            }
+        )
+
+    vip_analysis = pos_highlights.get("vip_analysis")
+    if vip_analysis:
+        cards.append(
+            {
+                "title": "POS 会员基盘",
+                "value": f"{format_num(vip_analysis['member_count'])} 人",
+                "note": (
+                    f"近 60 天活跃 {format_num(vip_analysis['active_recent_count'])} 人，"
+                    f"沉默占比约 {format_num(vip_analysis['dormant_ratio'] * 100, 1)}%。"
+                ),
+            }
+        )
+
+    guide_report = pos_highlights.get("guide_report")
+    if guide_report:
+        cards.append(
+            {
+                "title": "POS 店员人效",
+                "value": guide_report["top_guide_name"],
+                "note": (
+                    f"销售占比 {format_num(guide_report['top_guide_share'] * 100, 1)}%，"
+                    f"VIP 销售占比 {format_num(guide_report['vip_sales_share'] * 100, 1)}%。"
                 ),
             }
         )
@@ -7055,9 +7685,14 @@ def build_period_rows(metrics: dict, period_type: str) -> list[dict[str, object]
 def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
     cards = metrics["summary_cards"]
     profit = cards.get("profit_snapshot")
+    period_name = "月度" if period_type == "monthly" else "季度"
     pos_highlights = metrics.get("yeusoft_highlights") or {}
     product_sales = pos_highlights.get("product_sales")
     member_rank = pos_highlights.get("member_rank")
+    category_highlight = pos_highlights.get("category_analysis")
+    vip_analysis = pos_highlights.get("vip_analysis")
+    guide_report = pos_highlights.get("guide_report")
+    store_month_report = pos_highlights.get("store_month_report")
     rows = build_period_rows(metrics, period_type)
     latest = rows[-1] if rows else None
     previous = rows[-2] if len(rows) >= 2 else None
@@ -7095,6 +7730,21 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
             )
         if latest.get("member_ratio", 0) >= 0.6:
             guidance.append("会员贡献高，这个阶段更适合做定向回访和到店试穿，而不是全场硬促销。")
+    if category_highlight:
+        growth_rows = category_highlight.get("growth_rows") or []
+        decline_rows = category_highlight.get("decline_rows") or []
+        if growth_rows:
+            guidance.append(
+                "阶段性跑得更快的品类是 "
+                + "、".join(row["name"] for row in growth_rows)
+                + "，这批更适合继续放大陈列和补货预算。"
+            )
+        if decline_rows:
+            guidance.append(
+                "阶段性回落更明显的品类是 "
+                + "、".join(row["name"] for row in decline_rows)
+                + "，先别急着补，先判断是季节切换、货位靠后还是尺码结构不对。"
+            )
 
     if product_sales:
         cross_share = product_sales["cross_season_stock_share"]
@@ -7115,6 +7765,24 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         guidance.append(
             f"前 10 位会员贡献约 {format_num(member_rank['top10_share'] * 100, 1)}% 销额，优先回访 {member_rank['top_names']} 这类高价值会员。"
         )
+    if vip_analysis and vip_analysis["dormant_ratio"] >= 0.35:
+        guidance.append(
+            f"会员沉默占比约 {format_num(vip_analysis['dormant_ratio'] * 100, 1)}%，这个阶段要把唤醒老客列进周任务。"
+        )
+    if guide_report and guide_report["top_guide_share"] >= 0.45:
+        guidance.append(
+            f"导购销售集中在 {guide_report['top_guide_name']}，占比约 {format_num(guide_report['top_guide_share'] * 100, 1)}%。接下来要把她的成交打法拆出来，带其他店员复制。"
+        )
+    if store_month_report:
+        latest_joint = (
+            store_month_report.get("latest_month")
+            if period_type == "monthly"
+            else store_month_report.get("latest_quarter")
+        ) or {}
+        if latest_joint and latest_joint.get("joint_rate", 0) < 1.2:
+            guidance.append(
+                f"最近{period_name}件单比约 {format_num(latest_joint.get('joint_rate', 0), 2)}，成交有了但每单带得不够，陈列和店员话术都要更偏组合。"
+            )
 
     if profit:
         if period_type == "monthly":
@@ -7126,6 +7794,14 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
             guidance.append(
                 f"按当前利润口径，月末净利预测约 {format_num(profit['projected_month_net_profit'], 2)} 元，季度策略要兼顾利润和库存节奏。"
             )
+        if profit["projected_month_net_profit"] < 0:
+            guidance.append(
+                f"当前总费用约 {format_num(profit['total_expense'], 2)} 元，按现有节奏毛利还盖不住费用。这个阶段先做高毛利组合、提客单和控补货，不建议为了冲销售做深折扣。"
+            )
+        elif profit["passed_breakeven"]:
+            guidance.append(
+                "利润口径已经过保本线，后面的动作重点不是继续压缩经营，而是在守住毛利的前提下把主销营业额做大。"
+            )
 
     if not guidance:
         guidance.append("当前还缺少足够的长时间数据，先保持主销品类不断码，再继续积累月度与季度记录。")
@@ -7133,8 +7809,6 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
     top_replenish = replenish_categories.iloc[0] if not replenish_categories.empty else None
     top_seasonal = seasonal_categories.iloc[0] if not seasonal_categories.empty else None
     top_clearance = clearance_categories.iloc[0] if not clearance_categories.empty else None
-    period_name = "月度" if period_type == "monthly" else "季度"
-
     if latest and top_replenish is not None:
         if delta_pct >= 0.08:
             purchase_guidance.append(
@@ -7165,6 +7839,11 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         purchase_guidance.append(
             f"从补货信号看，当前最值得补的是 {top_replenish['中类']}，建议补货量约 {format_num(top_replenish['建议补货量'])}。做法上先保销量高的款和尺码，不建议整类平均补。"
         )
+    if category_highlight and category_highlight.get("growth_rows"):
+        leading_name = category_highlight["growth_rows"][0]["name"]
+        purchase_guidance.append(
+            f"从品类趋势看，{leading_name} 近期跑得更快，这期进货预算可以适度向它倾斜，但仍然只补核心款和核心尺码。"
+        )
 
     if top_clearance is not None and top_clearance["实际库存"] > 0:
         purchase_guidance.append(
@@ -7175,6 +7854,15 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         purchase_guidance.append(
             f"{top_seasonal['中类']} 当前季节策略是 {top_seasonal['季节策略']}，这类货本期不适合深补。正确做法是有库存先处理，没库存先等回到主销季再判断。"
         )
+    if profit:
+        if profit["projected_month_net_profit"] < 0:
+            purchase_guidance.append(
+                f"按当前利润口径，月底净利仍偏弱。这期进货先保高毛利、快周转、主销中类，低毛利和慢销中类只补断码，不做压货型备货。"
+            )
+        elif profit["passed_breakeven"]:
+            purchase_guidance.append(
+                "当前利润口径已过保本线，这期进货可以更主动，但仍以小单快返为主，优先放大主销，不建议因为利润转正就平均扩所有品类。"
+            )
 
     if not purchase_guidance:
         purchase_guidance.append("当前还缺少足够的周期数据，进货先遵守两个原则：优先当季主销、避免平均补货。")
@@ -7201,6 +7889,10 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         "overview_text": overview_text,
         "product_sales": product_sales,
         "member_rank": member_rank,
+        "category_highlight": category_highlight,
+        "vip_analysis": vip_analysis,
+        "guide_report": guide_report,
+        "store_month_report": store_month_report,
         "profit": profit,
     }
 
@@ -7316,6 +8008,10 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     peak = period_summary["peak"]
     product_sales = period_summary["product_sales"]
     member_rank = period_summary["member_rank"]
+    category_highlight = period_summary["category_highlight"]
+    vip_analysis = period_summary["vip_analysis"]
+    guide_report = period_summary["guide_report"]
+    store_month_report = period_summary["store_month_report"]
     profit = period_summary["profit"]
     charts = build_period_charts(period_summary, period_type)
     period_cards_html = build_period_cards(period_summary["rows"], period_type)
@@ -7361,6 +8057,48 @@ def build_period_page(metrics: dict, period_type: str) -> str:
                 "green" if member_rank["top10_share"] >= 0.25 else "neutral",
             )
         )
+    if category_highlight:
+        metric_cards.append(
+            (
+                "前两品类集中度",
+                f"{format_num(category_highlight['top2_share'] * 100, 1)}%",
+                category_highlight["top_category_names"],
+                "red" if category_highlight["top2_share"] >= 0.7 else "yellow" if category_highlight["top2_share"] >= 0.55 else "green",
+            )
+        )
+    if guide_report:
+        metric_cards.append(
+            (
+                "店员销售集中度",
+                f"{format_num(guide_report['top_guide_share'] * 100, 1)}%",
+                f"主力导购 {guide_report['top_guide_name']}",
+                "red" if guide_report["top_guide_share"] >= 0.5 else "yellow" if guide_report["top_guide_share"] >= 0.35 else "green",
+            )
+        )
+    if vip_analysis:
+        metric_cards.append(
+            (
+                "会员沉默占比",
+                f"{format_num(vip_analysis['dormant_ratio'] * 100, 1)}%",
+                f"近60天活跃 {format_num(vip_analysis['active_recent_count'])} 人",
+                "red" if vip_analysis["dormant_ratio"] >= 0.35 else "yellow" if vip_analysis["dormant_ratio"] >= 0.2 else "green",
+            )
+        )
+    if store_month_report:
+        latest_joint = (
+            store_month_report.get("latest_month")
+            if period_type == "monthly"
+            else store_month_report.get("latest_quarter")
+        ) or {}
+        if latest_joint:
+            metric_cards.append(
+                (
+                    f"最近{period_label}件单比",
+                    format_num(latest_joint.get("joint_rate", 0), 2),
+                    f"低连带天数 {format_num(store_month_report.get('low_joint_days', 0))}",
+                    "yellow" if latest_joint.get("joint_rate", 0) < 1.2 else "green",
+                )
+            )
     if profit and period_type == "monthly":
         metric_cards.append(
             (
@@ -7368,6 +8106,15 @@ def build_period_page(metrics: dict, period_type: str) -> str:
                 f"{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
                 profit["forecast_headline"],
                 "green" if profit["passed_breakeven"] else "yellow",
+            )
+        )
+    if profit:
+        metric_cards.append(
+            (
+                "月末净利预测",
+                f"{format_num(profit['projected_month_net_profit'], 2)} 元",
+                "先看利润，再决定冲销售还是控补货",
+                "green" if profit["projected_month_net_profit"] > 0 else "yellow" if profit["projected_month_gross_profit"] >= profit["total_expense"] * 0.9 else "red",
             )
         )
 
@@ -7412,6 +8159,48 @@ def build_period_page(metrics: dict, period_type: str) -> str:
               <h3>会员经营提醒</h3>
               <div class="support-value">{html.escape(member_rank['top_names'])}</div>
               <p>前 10 位会员贡献 {format_num(member_rank['top10_share'] * 100, 1)}% 销额，适合做重点回访。</p>
+            </article>
+            """
+        )
+    if category_highlight:
+        growth_rows = category_highlight.get("growth_rows") or []
+        growth_text = "、".join(row["name"] for row in growth_rows[:3]) if growth_rows else "暂无明显增长品类"
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>品类结构提醒</h3>
+              <div class="support-value">{html.escape(category_highlight['top_category_names'])}</div>
+              <p>前两品类集中度 {format_num(category_highlight['top2_share'] * 100, 1)}%，近期增长更快的是 {html.escape(growth_text)}。</p>
+            </article>
+            """
+        )
+    if vip_analysis:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>会员基盘提醒</h3>
+              <div class="support-value">{format_num(vip_analysis['member_count'])} 位会员</div>
+              <p>近 60 天活跃 {format_num(vip_analysis['active_recent_count'])} 位，沉默占比 {format_num(vip_analysis['dormant_ratio'] * 100, 1)}%。</p>
+            </article>
+            """
+        )
+    if guide_report:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>店员执行提醒</h3>
+              <div class="support-value">{html.escape(guide_report['top_guide_name'])}</div>
+              <p>销售占比 {format_num(guide_report['top_guide_share'] * 100, 1)}%，VIP 销售占比 {format_num(guide_report['vip_sales_share'] * 100, 1)}。</p>
+            </article>
+            """
+        )
+    if profit:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>利润与保本提醒</h3>
+              <div class="support-value">{html.escape(profit['headline'])}</div>
+              <p>总费用 {format_num(profit['total_expense'], 2)} 元，月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元。当前更适合{'先稳利润和客单' if profit['projected_month_net_profit'] < 0 else '稳毛利放大主销'}。</p>
             </article>
             """
         )
@@ -7676,6 +8465,15 @@ def build_markdown_summary(metrics: dict) -> str:
     clearance_categories = metrics["clearance_categories"].head(5)
     primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
+    if profit:
+        if profit["projected_month_net_profit"] < 0:
+            current_priority = "先稳利润、提连带、控补货。"
+        elif not profit["passed_breakeven"]:
+            current_priority = "先冲保本线，优先高毛利主销和会员复购。"
+        else:
+            current_priority = "已过保本线，稳毛利的前提下放大主销营业额。"
+    else:
+        current_priority = f"先按 {decision['mode']} 推进，再继续补利润口径。"
     lines = [
         f"# {cards['store_name']} 库存销售摘要",
         "",
@@ -7684,6 +8482,7 @@ def build_markdown_summary(metrics: dict) -> str:
         f"- 说明：{boss_board['summary']}",
         f"- 当前经营阶段：{decision['stage']} / {decision['phase']}",
         f"- 日销趋势：{decision['sales_trend']['detail']}",
+        f"- 当前经营优先级：{current_priority}",
         "",
         "### 今天先做",
     ]
@@ -7721,6 +8520,9 @@ def build_markdown_summary(metrics: dict) -> str:
         stock_analysis = pos_highlights.get("stock_analysis")
         movement = pos_highlights.get("movement")
         daily_flow = pos_highlights.get("daily_flow")
+        category_highlight = pos_highlights.get("category_analysis")
+        vip_analysis = pos_highlights.get("vip_analysis")
+        guide_report = pos_highlights.get("guide_report")
         lines.extend([
             "## POS 高价值数据",
         ])
@@ -7746,6 +8548,18 @@ def build_markdown_summary(metrics: dict) -> str:
             lines.append(
                 f"- 当日流水：{format_num(daily_flow['actual_money'], 2)} 元，"
                 f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。"
+            )
+        if category_highlight:
+            lines.append(
+                f"- 品类结构：前两品类贡献约 {format_num(category_highlight['top2_share'] * 100, 1)}%，主要集中在 {category_highlight['top_category_names']}。"
+            )
+        if vip_analysis:
+            lines.append(
+                f"- 会员基盘：会员 {format_num(vip_analysis['member_count'])} 位，近60天活跃 {format_num(vip_analysis['active_recent_count'])} 位，沉默占比 {format_num(vip_analysis['dormant_ratio'] * 100, 1)}%。"
+            )
+        if guide_report:
+            lines.append(
+                f"- 店员执行：主力导购 {guide_report['top_guide_name']}，销售占比 {format_num(guide_report['top_guide_share'] * 100, 1)}%，VIP 销售占比 {format_num(guide_report['vip_sales_share'] * 100, 1)}。"
             )
         lines.append("")
 
@@ -7909,6 +8723,15 @@ def build_business_report(metrics: dict) -> str:
     consulting_analysis = build_retail_consulting_analysis(metrics)
     primary_reference = metrics["primary_reference"]
     level_map = {"red": "红灯", "yellow": "黄灯", "green": "绿灯"}
+    if profit:
+        if profit["projected_month_net_profit"] < 0:
+            current_priority = "先稳利润、提连带、控补货，再谈放大营业额。"
+        elif not profit["passed_breakeven"]:
+            current_priority = "先冲保本线，优先高毛利主销、会员复购和断码补位。"
+        else:
+            current_priority = "已过保本线，守住毛利的前提下继续放大主销营业额。"
+    else:
+        current_priority = f"先按 {decision['mode']} 推进，利润口径补齐后再进一步复盘。"
 
     lines = [
         f"# {cards['store_name']} 库存销售分析报告",
@@ -7921,6 +8744,7 @@ def build_business_report(metrics: dict) -> str:
         f"- 说明：{boss_board['summary']}",
         f"- 当前经营阶段：{decision['stage']} / {decision['phase']}",
         f"- 日销趋势：{decision['sales_trend']['detail']}",
+        f"- 当前经营优先级：{current_priority}",
         "",
         "### 今天先做",
     ]
@@ -7975,6 +8799,9 @@ def build_business_report(metrics: dict) -> str:
         stock_analysis = pos_highlights.get("stock_analysis")
         movement = pos_highlights.get("movement")
         daily_flow = pos_highlights.get("daily_flow")
+        category_highlight = pos_highlights.get("category_analysis")
+        vip_analysis = pos_highlights.get("vip_analysis")
+        guide_report = pos_highlights.get("guide_report")
         lines.extend([
             "## POS 高价值数据",
             "",
@@ -8001,6 +8828,18 @@ def build_business_report(metrics: dict) -> str:
             lines.append(
                 f"- 当日流水：{format_num(daily_flow['actual_money'], 2)} 元，"
                 f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。"
+            )
+        if category_highlight:
+            lines.append(
+                f"- 品类结构：前两品类贡献约 {format_num(category_highlight['top2_share'] * 100, 1)}%，主要集中在 {category_highlight['top_category_names']}。"
+            )
+        if vip_analysis:
+            lines.append(
+                f"- 会员基盘：会员 {format_num(vip_analysis['member_count'])} 位，近60天活跃 {format_num(vip_analysis['active_recent_count'])} 位，沉默占比 {format_num(vip_analysis['dormant_ratio'] * 100, 1)}%。"
+            )
+        if guide_report:
+            lines.append(
+                f"- 店员执行：主力导购 {guide_report['top_guide_name']}，销售占比 {format_num(guide_report['top_guide_share'] * 100, 1)}%，VIP 销售占比 {format_num(guide_report['vip_sales_share'] * 100, 1)}。"
             )
         lines.append("")
 
