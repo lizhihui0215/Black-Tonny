@@ -1661,6 +1661,23 @@ def build_html(metrics: dict) -> str:
             "<a href='#details'>详细数据</a>",
         ]
     )
+    detail_nav_items = [
+        ("detail-overview", "总览", "健康灯 / 季节 / 提醒"),
+        ("detail-strategy", "经营策略", "方案 / 术语"),
+        ("detail-charts", "图表", "趋势 / 结构"),
+        ("detail-inventory", "补货去化", "品类 / SKU / 异常"),
+        ("detail-people", "会员店员", "会员 / 导购 / 参考店"),
+        ("detail-downloads", "下载", "摘要 / 报告 / CSV"),
+    ]
+    detail_nav_html = "".join(
+        f"""
+        <button type="button" class="detail-nav-btn{' is-active' if index == 0 else ''}" data-detail-target="{item_id}">
+          <span class="detail-nav-label">{label}</span>
+          <span class="detail-nav-note">{note}</span>
+        </button>
+        """
+        for index, (item_id, label, note) in enumerate(detail_nav_items)
+    )
 
     if not money_opportunities.empty:
         money_html = "".join(
@@ -1779,8 +1796,63 @@ def build_html(metrics: dict) -> str:
             ("道具库存件数", format_num(cards["props_inventory_qty"]), "单独参考"),
         ]
     )
-
-    tables = "".join(
+    overview_panels_html = f"""
+      <div class="detail-grid">
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
+            <p class="module-note">红色优先处理，黄色持续盯住，绿色维持节奏。</p>
+          </div>
+          <div class="health-grid">{health_html}</div>
+        </div>
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
+            <p class="module-note">今天 / 本周 / 本月的季节动作参考。</p>
+          </div>
+          <ul class="insight-list">
+            <li>北京时间：{time_strategy['beijing_time']}</li>
+            <li>当前判断：{time_strategy['headline']}</li>
+            {"".join(f"<li>{item}</li>" for item in time_strategy['daily_actions'])}
+            {"".join(f"<li>{item}</li>" for item in time_strategy['weekly_actions'])}
+            {"".join(f"<li>{item}</li>" for item in time_strategy['monthly_actions'])}
+          </ul>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
+            <p class="module-note">道具已从主经营指标剥离，只保留为参考值。</p>
+          </div>
+          <div class="metrics-grid">{reference_html}</div>
+        </div>
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
+            <p class="module-note">保留原有数据提醒，方便二次复盘。</p>
+          </div>
+          <ul class="insight-list">{insights_html}</ul>
+        </div>
+      </div>
+    """
+    strategy_panels_html = f"""
+      <div class="module detail-module" style="margin:0;">
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">自动生成经营方案</h3>
+          <p class="module-note">基于当前数据生成的处理方案，适合老板拍板。</p>
+        </div>
+        <div class="playbook-grid">{playbooks_html}</div>
+      </div>
+      <div class="module detail-module" style="margin-top:14px;">
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">术语 Tips</h3>
+          <p class="module-note">鼠标悬浮或点按标签可看动作词解释；这里是完整词典。</p>
+        </div>
+        <div class="tip-grid">{tips_html}</div>
+      </div>
+    """
+    inventory_tables_html = "".join(
         [
             table_html(metrics["replenish_categories"], "补货重点品类", 10, "先按品类定补货优先级，再下钻到单款。"),
             table_html(metrics["seasonal_categories"], "跨季处理重点品类", 10, "先看哪些品类已经跨季。"),
@@ -1789,10 +1861,55 @@ def build_html(metrics: dict) -> str:
             table_html(metrics["seasonal_actions"], "跨季处理 SKU 明细", 12, "老板做二次判断时使用。"),
             table_html(metrics["clearance"], "去化 SKU 明细", 12, "执行去化时再下钻到具体款。"),
             table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨。"),
+        ]
+    )
+    people_tables_html = "".join(
+        [
             table_html(metrics["top_members"], "高价值会员", 12, "优先回访高消费或高频顾客。"),
+            table_html(metrics["guide_perf"], "店员 / 导购表现", 10, "电脑端更适合同屏对比实收金额、票数和连带。"),
             table_html(other_references, "其他店铺参考", 8, reference_intro),
         ]
     )
+    download_cards_html = """
+      <div class="cards-grid">
+        <div class="opportunity-card">
+          <div class="card-kicker">HTML</div>
+          <div class="card-title">老板仪表盘</div>
+          <p class="table-tip">适合老板每天直接打开，先看今日重点和执行任务。</p>
+          <div class="chip-row">
+            <a class="download-link" href="./">打开当前页</a>
+          </div>
+        </div>
+        <div class="opportunity-card">
+          <div class="card-kicker">HTML</div>
+          <div class="card-title">文字摘要</div>
+          <p class="table-tip">适合手机快速阅读，也适合转发给店员和群里同步。</p>
+          <div class="chip-row">
+            <a class="download-link" href="../manuals/dashboard/summary.html">打开 HTML 摘要</a>
+            <a class="download-link" href="./summary.md">下载 Markdown</a>
+          </div>
+        </div>
+        <div class="opportunity-card">
+          <div class="card-kicker">HTML</div>
+          <div class="card-title">分析报告</div>
+          <p class="table-tip">适合周复盘时看完整分析，也适合做经营会议材料。</p>
+          <div class="chip-row">
+            <a class="download-link" href="../manuals/dashboard/report.html">打开 HTML 报告</a>
+            <a class="download-link" href="./report.md">下载 Markdown</a>
+          </div>
+        </div>
+        <div class="opportunity-card">
+          <div class="card-kicker">CSV</div>
+          <div class="card-title">补货 / 去化 / 风险</div>
+          <p class="table-tip">需要下钻执行时，再下载 CSV 给店员或表格协作人使用。</p>
+          <div class="chip-row">
+            <a class="download-link" href="./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">补货 CSV</a>
+            <a class="download-link" href="./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">去化 CSV</a>
+            <a class="download-link" href="./%E5%93%81%E7%B1%BB%E9%A3%8E%E9%99%A9%E6%A6%82%E8%A7%88.csv">风险 CSV</a>
+          </div>
+        </div>
+      </div>
+    """
 
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -2107,25 +2224,111 @@ def build_html(metrics: dict) -> str:
     .detail-panel[open] summary {{
       margin-bottom: 14px;
     }}
-    .nested-detail {{
-      border: 1px solid #e2e8f0;
+    .detail-intro {{
+      margin: 0 0 14px;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.8;
+    }}
+    .detail-shell {{
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }}
+    .detail-sidebar {{
+      position: sticky;
+      top: 16px;
+      align-self: start;
+    }}
+    .detail-sidebar-card {{
+      background: #f8fafc;
+      border: 1px solid #dbe4f0;
       border-radius: 16px;
       padding: 14px;
-      background: #ffffff;
-      margin-top: 14px;
+      margin-bottom: 12px;
     }}
-    .nested-detail summary {{
-      cursor: pointer;
+    .detail-sidebar-title {{
+      margin: 0 0 8px;
       font-size: 16px;
       font-weight: 800;
       color: #0f172a;
-      list-style: none;
     }}
-    .nested-detail summary::-webkit-details-marker {{
+    .detail-sidebar-note {{
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #64748b;
+    }}
+    .detail-nav {{
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }}
+    .detail-nav-btn {{
+      appearance: none;
+      width: 100%;
+      border: 1px solid #dbe4f0;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+    }}
+    .detail-nav-btn:hover {{
+      border-color: #93c5fd;
+      background: #f8fbff;
+      transform: translateY(-1px);
+    }}
+    .detail-nav-btn.is-active {{
+      border-color: #60a5fa;
+      background: #eff6ff;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+    }}
+    .detail-nav-label {{
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }}
+    .detail-nav-note {{
+      display: block;
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.6;
+    }}
+    .detail-content {{
+      min-width: 0;
+    }}
+    .detail-pane {{
       display: none;
+      animation: fadeIn 0.18s ease;
     }}
-    .nested-detail[open] summary {{
+    .detail-pane.is-active {{
+      display: block;
+    }}
+    .detail-pane + .detail-pane {{
+      margin-top: 0;
+    }}
+    .detail-pane-header {{
       margin-bottom: 12px;
+    }}
+    .detail-pane-title {{
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+    }}
+    .detail-pane-note {{
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.8;
+    }}
+    .detail-module {{
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
     }}
     .detail-grid, .health-grid, .tip-grid, .playbook-grid, .charts, .tables {{
       display: grid;
@@ -2194,6 +2397,16 @@ def build_html(metrics: dict) -> str:
       font-size: 13px;
       color: #334155;
     }}
+    .download-link {{
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }}
     .data-table {{
       width: 100%;
       border-collapse: collapse;
@@ -2211,6 +2424,16 @@ def build_html(metrics: dict) -> str:
     }}
     .table-card {{
       overflow-x: auto;
+    }}
+    @keyframes fadeIn {{
+      from {{
+        opacity: 0;
+        transform: translateY(3px);
+      }}
+      to {{
+        opacity: 1;
+        transform: translateY(0);
+      }}
     }}
     @media (max-width: 960px) {{
       .page {{
@@ -2230,6 +2453,16 @@ def build_html(metrics: dict) -> str:
       }}
       .focus-wrap {{
         grid-template-columns: 1fr;
+      }}
+      .detail-shell {{
+        grid-template-columns: 1fr;
+      }}
+      .detail-sidebar {{
+        position: static;
+      }}
+      .detail-nav {{
+        grid-template-columns: repeat(3, minmax(160px, 1fr));
+        overflow-x: auto;
       }}
       .module-header {{
         flex-direction: column;
@@ -2268,6 +2501,41 @@ def build_html(metrics: dict) -> str:
         padding: 14px;
         border-radius: 16px;
         margin-bottom: 14px;
+      }}
+      .detail-panel {{
+        padding: 14px;
+      }}
+      .detail-intro {{
+        font-size: 12px;
+      }}
+      .detail-sidebar-card {{
+        padding: 12px;
+        border-radius: 14px;
+      }}
+      .detail-nav {{
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-right: -2px;
+        padding-bottom: 2px;
+      }}
+      .detail-nav-btn {{
+        min-width: 154px;
+        padding: 10px 11px;
+        flex: 0 0 auto;
+      }}
+      .detail-nav-label {{
+        font-size: 13px;
+      }}
+      .detail-nav-note,
+      .detail-pane-note,
+      .detail-sidebar-note {{
+        font-size: 11px;
+        line-height: 1.7;
+      }}
+      .detail-pane-title {{
+        font-size: 18px;
       }}
       .module-title {{
         font-size: 18px;
@@ -2396,83 +2664,128 @@ def build_html(metrics: dict) -> str:
 
     <details class="detail-panel" id="details">
       <summary>查看详细数据与图表</summary>
-      <details class="nested-detail">
-        <summary>经营健康灯与季节节奏</summary>
-        <div class="detail-grid">
-          <div class="module" style="margin:0;">
-            <div class="module-header">
-              <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
-              <p class="module-note">红色优先处理，黄色持续盯住，绿色维持节奏。</p>
+      <p class="detail-intro">电脑端建议用左侧导航切换模块，同屏看更多内容；手机端建议横向滑动下面的导航按钮，只看你今天要执行的那一组。</p>
+      <div class="detail-shell">
+        <aside class="detail-sidebar">
+          <div class="detail-sidebar-card">
+            <h3 class="detail-sidebar-title">详细区导航</h3>
+            <p class="detail-sidebar-note">先看总览，再按需要切到图表、补货去化、会员店员或下载区，不用从上往下一直翻。</p>
+            <div class="detail-nav">{detail_nav_html}</div>
+          </div>
+          <div class="detail-sidebar-card">
+            <h3 class="detail-sidebar-title">电脑端怎么用</h3>
+            <p class="detail-sidebar-note">桌面更适合同屏对比多张卡片和表格。建议老板开会时先看“总览”和“经营策略”，执行层再看“补货去化”和“会员店员”。</p>
+          </div>
+        </aside>
+
+        <div class="detail-content">
+          <section class="detail-pane is-active" id="detail-overview" data-detail-pane>
+            <div class="detail-pane-header">
+              <h3 class="detail-pane-title">总览</h3>
+              <p class="detail-pane-note">先看健康灯、季节节奏和自动提醒。这一屏最适合老板快速判断今天属于救火、稳经营，还是放大机会。</p>
             </div>
-            <div class="health-grid">{health_html}</div>
-          </div>
-          <div class="module" style="margin:0;">
-            <div class="module-header">
-              <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
-              <p class="module-note">今天 / 本周 / 本月的季节动作参考。</p>
+            {overview_panels_html}
+          </section>
+
+          <section class="detail-pane" id="detail-strategy" data-detail-pane>
+            <div class="detail-pane-header">
+              <h3 class="detail-pane-title">经营策略</h3>
+              <p class="detail-pane-note">这里保留自动生成经营方案和完整术语词典。老板拍板时看方案，店员执行时看术语解释。</p>
             </div>
-            <ul class="insight-list">
-              <li>北京时间：{time_strategy['beijing_time']}</li>
-              <li>当前判断：{time_strategy['headline']}</li>
-              {"".join(f"<li>{item}</li>" for item in time_strategy['daily_actions'])}
-              {"".join(f"<li>{item}</li>" for item in time_strategy['weekly_actions'])}
-              {"".join(f"<li>{item}</li>" for item in time_strategy['monthly_actions'])}
-            </ul>
-          </div>
-        </div>
-      </details>
+            {strategy_panels_html}
+          </section>
 
-      <details class="nested-detail">
-        <summary>自动经营方案与术语</summary>
-        <div class="module" style="margin-top:12px;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">自动生成经营方案</h3>
-            <p class="module-note">基于当前数据生成的处理方案，适合老板拍板。</p>
-          </div>
-          <div class="playbook-grid">{playbooks_html}</div>
-        </div>
-        <div class="module" style="margin-top:18px;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">术语 Tips</h3>
-            <p class="module-note">鼠标悬浮或点按标签可看动作词解释；这里是完整词典。</p>
-          </div>
-          <div class="tip-grid">{tips_html}</div>
-        </div>
-      </details>
+          <section class="detail-pane" id="detail-charts" data-detail-pane>
+            <div class="detail-pane-header">
+              <h3 class="detail-pane-title">图表</h3>
+              <p class="detail-pane-note">电脑端更适合同屏看多张趋势和结构图；手机端建议只挑你今天最关心的一张图表看，不用全刷完。</p>
+            </div>
+            <div class="charts">{chart_html}</div>
+          </section>
 
-      <details class="nested-detail">
-        <summary>道具口径与自动提醒</summary>
-        <div class="module" style="margin-top:12px;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
-            <p class="module-note">道具已从主经营指标剥离，只保留为参考值。</p>
-          </div>
-          <div class="metrics-grid">{reference_html}</div>
-        </div>
-        <div class="module" style="margin-top:18px;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
-            <p class="module-note">保留原有数据提醒，方便二次复盘。</p>
-          </div>
-          <ul class="insight-list">{insights_html}</ul>
-        </div>
-      </details>
+          <section class="detail-pane" id="detail-inventory" data-detail-pane>
+            <div class="detail-pane-header">
+              <h3 class="detail-pane-title">补货 / 去化</h3>
+              <p class="detail-pane-note">先看品类，再看 SKU，再看负库存异常。这样不容易因为单款波动做错整体动作。</p>
+            </div>
+            <div class="tables">{inventory_tables_html}</div>
+          </section>
 
-      <details class="nested-detail">
-        <summary>图表</summary>
-        <div class="charts">{chart_html}</div>
-      </details>
+          <section class="detail-pane" id="detail-people" data-detail-pane>
+            <div class="detail-pane-header">
+              <h3 class="detail-pane-title">会员 / 店员 / 参考店</h3>
+              <p class="detail-pane-note">这一组更适合看复购机会、导购执行和其他店铺的参考数据，不参与主店结论，但适合横向对比。</p>
+            </div>
+            <div class="tables">{people_tables_html}</div>
+          </section>
 
-      <details class="nested-detail">
-        <summary>明细表与其他店参考</summary>
-        <div class="module-header">
-          <h3 class="module-title" style="font-size:18px;">明细表与其他店参考</h3>
-          <p class="module-note">执行层和复盘层使用。第一页先看上面的 6 个模块。</p>
+          <section class="detail-pane" id="detail-downloads" data-detail-pane>
+            <div class="detail-pane-header">
+              <h3 class="detail-pane-title">下载</h3>
+              <p class="detail-pane-note">这里保留 HTML 摘要、分析报告和 CSV 下载入口。老板看页面，执行层和协作人再来这里拿文件。</p>
+            </div>
+            {download_cards_html}
+          </section>
         </div>
-        <div class="tables">{tables}</div>
-      </details>
+      </div>
     </details>
   </div>
+  <script>
+    (function () {{
+      const detailPanel = document.getElementById('details');
+      const buttons = Array.from(document.querySelectorAll('[data-detail-target]'));
+      const panes = Array.from(document.querySelectorAll('[data-detail-pane]'));
+      if (!detailPanel || buttons.length === 0 || panes.length === 0) {{
+        return;
+      }}
+
+      function activatePane(targetId, syncHash) {{
+        let found = false;
+        buttons.forEach((button) => {{
+          const active = button.getAttribute('data-detail-target') === targetId;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+          if (active) {{
+            found = true;
+          }}
+        }});
+        panes.forEach((pane) => {{
+          pane.classList.toggle('is-active', pane.id === targetId);
+        }});
+        if (!found) {{
+          return;
+        }}
+        if (syncHash && window.history && window.history.replaceState) {{
+          window.history.replaceState(null, '', '#' + targetId);
+        }}
+      }}
+
+      buttons.forEach((button) => {{
+        button.addEventListener('click', () => {{
+          const targetId = button.getAttribute('data-detail-target');
+          if (!targetId) return;
+          detailPanel.open = true;
+          activatePane(targetId, true);
+        }});
+      }});
+
+      const initialHash = window.location.hash.replace('#', '');
+      if (initialHash && panes.some((pane) => pane.id === initialHash)) {{
+        detailPanel.open = true;
+        activatePane(initialHash, false);
+      }} else {{
+        activatePane('detail-overview', false);
+      }}
+
+      window.addEventListener('hashchange', () => {{
+        const hash = window.location.hash.replace('#', '');
+        if (hash && panes.some((pane) => pane.id === hash)) {{
+          detailPanel.open = true;
+          activatePane(hash, false);
+        }}
+      }});
+    }})();
+  </script>
 </body>
 </html>
 """
