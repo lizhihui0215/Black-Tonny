@@ -8,8 +8,10 @@ import calendar
 import html
 import json
 import math
+import re
 import tempfile
 import zipfile
+import urllib.parse
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -26,6 +28,7 @@ DEFAULT_INPUT_DIR = ROOT / "data" / "inventory_zip_extract"
 DEFAULT_OUTPUT_DIR = ROOT / "reports" / "inventory_dashboard"
 DEFAULT_PAGES_DIR = ROOT / "docs" / "dashboard"
 DEFAULT_COST_FILE = ROOT / "data" / "store_cost_snapshot.json"
+DEFAULT_YEU_CAPTURE_DIR = ROOT / "reports" / "yeusoft_report_capture"
 BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 PRIMARY_INPUT = "郭文攀"
 SEASON_STRATEGY_TOOLTIPS = {
@@ -319,10 +322,291 @@ def get_beijing_now() -> datetime:
     return datetime.now(BEIJING_TZ)
 
 
+def normalize_compare_timestamp(value: object) -> pd.Timestamp:
+    timestamp = pd.Timestamp(value)
+    if timestamp.tzinfo is not None:
+        return timestamp.tz_convert(BEIJING_TZ).tz_localize(None)
+    return timestamp
+
+
 def load_cost_snapshot(cost_file: Path | None) -> dict | None:
     if not cost_file or not cost_file.exists():
         return None
     return json.loads(cost_file.read_text(encoding="utf-8"))
+
+
+def decode_yeusoft_text(value: object) -> str:
+    if value is None:
+        return ""
+    text = str(value)
+    text = re.sub(r"%u([0-9A-Fa-f]{4})", lambda match: chr(int(match.group(1), 16)), text)
+    return urllib.parse.unquote(text)
+
+
+def safe_float(value: object) -> float:
+    if value in (None, ""):
+        return 0.0
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def extract_capture_response(capture_payload: dict | None, url_keyword: str) -> dict | None:
+    if not capture_payload:
+        return None
+    for response in capture_payload.get("responses", []):
+        if url_keyword in response.get("url", ""):
+            return response.get("body")
+    return None
+
+
+def extract_capture_request(capture_payload: dict | None, url_keyword: str) -> dict | None:
+    if not capture_payload:
+        return None
+    for request in capture_payload.get("requests", []):
+        if url_keyword in request.get("url", ""):
+            return request.get("postData")
+    return None
+
+
+def load_yeusoft_capture_bundle(capture_dir: Path | None) -> dict[str, dict]:
+    if not capture_dir or not capture_dir.exists():
+        return {}
+
+    bundle: dict[str, dict] = {}
+    for report_name in ("库存综合分析", "出入库单据", "每日流水单"):
+        capture_path = capture_dir / f"{report_name}.json"
+        if capture_path.exists():
+            try:
+                bundle[report_name] = json.loads(capture_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                continue
+    return bundle
+
+
+def parse_yeusoft_stock_analysis(capture_payload: dict | None, current_season: str, next_season: str) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelStockAnalysisList")
+    if not body or body.get("errcode") != "1000":
+        return None
+
+    retdata = body.get("retdata") or []
+    if not retdata:
+        return None
+    payload = retdata[0]
+    summary_rows = payload.get("HJ") or []
+    detail_rows = payload.get("Data") or []
+    if not summary_rows:
+        return None
+
+    total_row = summary_rows[0]
+    parsed_rows = []
+    for row in detail_rows:
+        season = decode_yeusoft_text(row.get("Season"))
+        year = decode_yeusoft_text(row.get("Year"))
+        inventory_qty = safe_float(row.get("SL2"))
+        inventory_amount = safe_float(row.get("JE2"))
+        style_count = safe_float(row.get("KS2"))
+        season_strategy = classify_season_action(current_season, next_season, season)
+        parsed_rows.append(
+            {
+                "label": f"{year}{season}" if year or season else "未标记季节",
+                "year": year,
+                "season": season,
+                "inventory_qty": inventory_qty,
+                "inventory_amount": inventory_amount,
+                "style_count": style_count,
+                "season_strategy": season_strategy,
+            }
+        )
+
+    inventory_rows = [row for row in parsed_rows if row["inventory_amount"] > 0 or row["inventory_qty"] > 0]
+    inventory_rows.sort(key=lambda row: row["inventory_amount"], reverse=True)
+
+    total_inventory_qty = safe_float(total_row.get("SL2"))
+    total_inventory_amount = safe_float(total_row.get("JE2"))
+    total_style_count = safe_float(total_row.get("KS2"))
+    for row in inventory_rows:
+        row["inventory_amount_share"] = safe_ratio(row["inventory_amount"], total_inventory_amount)
+        row["inventory_qty_share"] = safe_ratio(row["inventory_qty"], total_inventory_qty)
+
+    current_rows = [row for row in inventory_rows if row["season"] == current_season]
+    cross_season_rows = [
+        row for row in inventory_rows if row["season_strategy"] in {"跨季去化", "暂缓补货"}
+    ]
+    next_season_rows = [row for row in inventory_rows if row["season"] == next_season]
+    top_rows = inventory_rows[:3]
+    top_labels = "、".join(row["label"] for row in top_rows) if top_rows else "暂无明显库存结构"
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "last_year_label": decode_yeusoft_text(payload.get("LastYDate")),
+        "current_year_label": decode_yeusoft_text(payload.get("LastNYDate")),
+        "total_inventory_qty": total_inventory_qty,
+        "total_inventory_amount": total_inventory_amount,
+        "total_style_count": total_style_count,
+        "current_season_inventory_share": safe_ratio(
+            sum(row["inventory_amount"] for row in current_rows), total_inventory_amount
+        ),
+        "next_season_inventory_share": safe_ratio(
+            sum(row["inventory_amount"] for row in next_season_rows), total_inventory_amount
+        ),
+        "cross_season_inventory_share": safe_ratio(
+            sum(row["inventory_amount"] for row in cross_season_rows), total_inventory_amount
+        ),
+        "top_rows": top_rows,
+        "top_labels": top_labels,
+    }
+
+
+def parse_yeusoft_movement_report(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelOutInStockReport")
+    if not body or body.get("errcode") != "1000":
+        return None
+
+    retdata = body.get("retdata") or []
+    if not retdata:
+        return None
+
+    request_payload = extract_capture_request(capture_payload, "SelOutInStockReport") or {}
+    payload = retdata[0]
+    rows = payload.get("Data") or []
+    decoded_rows = []
+    for row in rows:
+        decoded_rows.append(
+            {
+                "doc_type": decode_yeusoft_text(row.get("DocType")),
+                "doc_status": decode_yeusoft_text(row.get("DocStat")),
+                "transfer_type": decode_yeusoft_text(row.get("Transtat")),
+                "from_store": decode_yeusoft_text(row.get("WhID")),
+                "to_store": decode_yeusoft_text(row.get("InWhID")),
+                "come_date": pd.to_datetime(row.get("ComeDate"), errors="coerce"),
+                "receive_date": pd.to_datetime(row.get("ReceDate"), errors="coerce"),
+                "qty": safe_float(row.get("TN")),
+                "amount": safe_float(row.get("TRP")),
+            }
+        )
+
+    inbound_rows = [row for row in decoded_rows if "入库" in row["doc_status"]]
+    outbound_rows = [row for row in decoded_rows if "出库" in row["doc_status"]]
+    latest_doc_time = max(
+        [row["receive_date"] for row in decoded_rows if pd.notna(row["receive_date"])]
+        + [row["come_date"] for row in decoded_rows if pd.notna(row["come_date"])],
+        default=pd.NaT,
+    )
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": pd.to_datetime(request_payload.get("bdate"), format="%Y%m%d", errors="coerce"),
+        "window_end": pd.to_datetime(request_payload.get("edate"), format="%Y%m%d", errors="coerce"),
+        "record_count": int(payload.get("Count") or len(decoded_rows)),
+        "inbound_count": len(inbound_rows),
+        "inbound_qty": sum(row["qty"] for row in inbound_rows),
+        "inbound_amount": sum(row["amount"] for row in inbound_rows),
+        "outbound_count": len(outbound_rows),
+        "outbound_qty": sum(row["qty"] for row in outbound_rows),
+        "outbound_amount": sum(row["amount"] for row in outbound_rows),
+        "net_qty": sum(row["qty"] for row in inbound_rows) - sum(row["qty"] for row in outbound_rows),
+        "net_amount": sum(row["amount"] for row in inbound_rows) - sum(row["amount"] for row in outbound_rows),
+        "latest_doc_time": latest_doc_time,
+    }
+
+
+def parse_yeusoft_daily_flow(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelectRetailDocPaymentSlip")
+    if not body or not body.get("Success"):
+        return None
+
+    payload = body.get("Data") or {}
+    columns = payload.get("Columns") or []
+    rows = payload.get("List") or []
+    if not columns:
+        return None
+
+    normalized_rows = [dict(zip(columns, row)) for row in rows if isinstance(row, list)]
+    request_payload = extract_capture_request(capture_payload, "SelectRetailDocPaymentSlip") or {}
+    payment_labels = {
+        "CashMoney": "现金",
+        "SwipeMoney": "刷卡",
+        "WxMoney": "微信",
+        "AlipayMoney": "支付宝",
+        "CouponMoney": "券",
+        "ActivityMoney": "活动优惠",
+        "ScanCodeMoney": "扫码",
+        "WipeZeroMoney": "抹零",
+        "OtherMoney": "其他",
+    }
+    payment_breakdown = []
+    total_actual_money = 0.0
+    total_sales_qty = 0.0
+    total_tag_money = 0.0
+    total_discount = 0.0
+    latest_make_date = pd.NaT
+
+    payment_totals = {key: 0.0 for key in payment_labels}
+    for row in normalized_rows:
+        total_actual_money += safe_float(row.get("ActualMoney"))
+        total_sales_qty += safe_float(row.get("Amount"))
+        total_tag_money += safe_float(row.get("TagMoney"))
+        total_discount += safe_float(row.get("SaleDiscount"))
+        make_date = pd.to_datetime(row.get("MakeDate"), errors="coerce")
+        if pd.notna(make_date):
+            latest_make_date = make_date if pd.isna(latest_make_date) else max(latest_make_date, make_date)
+        for key in payment_labels:
+            payment_totals[key] += safe_float(row.get(key))
+
+    for key, label in payment_labels.items():
+        amount = payment_totals[key]
+        if amount > 0:
+            payment_breakdown.append(
+                {
+                    "label": label,
+                    "amount": amount,
+                    "share": safe_ratio(amount, total_actual_money),
+                }
+            )
+    payment_breakdown.sort(key=lambda item: item["amount"], reverse=True)
+    dominant_payment = payment_breakdown[0] if payment_breakdown else None
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": pd.to_datetime(request_payload.get("BeginDate"), errors="coerce"),
+        "window_end": pd.to_datetime(request_payload.get("EndDate"), errors="coerce"),
+        "order_count": len(normalized_rows),
+        "sales_qty": total_sales_qty,
+        "tag_money": total_tag_money,
+        "actual_money": total_actual_money,
+        "average_discount": safe_ratio(total_discount, len(normalized_rows)),
+        "payment_breakdown": payment_breakdown,
+        "dominant_payment": dominant_payment,
+        "latest_make_date": latest_make_date,
+    }
+
+
+def build_yeusoft_report_highlights(
+    capture_bundle: dict[str, dict], current_season: str, next_season: str
+) -> dict | None:
+    if not capture_bundle:
+        return None
+
+    stock_analysis = parse_yeusoft_stock_analysis(
+        capture_bundle.get("库存综合分析"), current_season, next_season
+    )
+    movement = parse_yeusoft_movement_report(capture_bundle.get("出入库单据"))
+    daily_flow = parse_yeusoft_daily_flow(capture_bundle.get("每日流水单"))
+
+    capture_dates = [
+        value.get("capture_at")
+        for value in (stock_analysis, movement, daily_flow)
+        if value and pd.notna(value.get("capture_at"))
+    ]
+
+    return {
+        "stock_analysis": stock_analysis,
+        "movement": movement,
+        "daily_flow": daily_flow,
+        "capture_at": max(capture_dates) if capture_dates else pd.NaT,
+    }
 
 
 def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
@@ -372,6 +656,7 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
     breakeven_sales = safe_ratio(total_expense, gross_margin_rate)
     breakeven_daily_sales = safe_ratio(breakeven_sales, month_days)
     average_daily_sales = safe_ratio(sales_amount, elapsed_days)
+    average_daily_gross_profit = safe_ratio(gross_profit, elapsed_days)
     remaining_sales_to_breakeven = max(0.0, breakeven_sales - sales_amount)
     remaining_daily_sales_needed = safe_ratio(remaining_sales_to_breakeven, remaining_days)
     passed_breakeven = sales_amount >= breakeven_sales if breakeven_sales else False
@@ -379,16 +664,35 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
     expense_ratio = safe_ratio(total_expense, sales_amount)
     salary_ratio = safe_ratio(salary_total, sales_amount)
     operating_expense_ratio = safe_ratio(monthly_operating_expense, sales_amount)
+    expense_coverage_ratio = safe_ratio(gross_profit, total_expense)
+    breakeven_progress_ratio = safe_ratio(sales_amount, breakeven_sales) if breakeven_sales else 0.0
+    projected_month_sales = average_daily_sales * month_days
+    projected_month_gross_profit = projected_month_sales * gross_margin_rate
+    projected_month_net_profit = projected_month_gross_profit - total_expense
+    projected_monthly_status = (
+        "green" if projected_month_net_profit > 0 else "yellow" if projected_month_gross_profit >= total_expense * 0.9 else "red"
+    )
+    fixed_cost_daily_burden = safe_ratio(monthly_operating_expense, month_days)
+    salary_daily_burden = safe_ratio(salary_total, month_days)
+    top_expense_item = max(expense_items, key=lambda item: float(item.get("amount", 0) or 0), default=None)
+    top_salary_item = max(salary_items, key=lambda item: float(item.get("amount", 0) or 0), default=None)
 
     if passed_breakeven and net_profit > 0:
         status = "green"
         headline = "已过保本线"
-    elif gross_profit >= total_expense * 0.9:
+    elif projected_month_net_profit > 0 or gross_profit >= total_expense * 0.9:
         status = "yellow"
         headline = "接近保本线"
     else:
         status = "red"
         headline = "未过保本线"
+
+    if projected_month_net_profit > 0:
+        forecast_headline = "按当前节奏月底大概率还能赚钱"
+    elif projected_month_gross_profit >= total_expense:
+        forecast_headline = "按当前节奏月底大概率刚过保本"
+    else:
+        forecast_headline = "按当前节奏月底还有亏损风险"
 
     return {
         "snapshot_name": raw_snapshot.get("snapshot_name", "成本快照"),
@@ -402,15 +706,27 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
         "total_expense": total_expense,
         "net_profit": net_profit,
         "net_margin_rate": net_margin_rate,
+        "average_daily_gross_profit": average_daily_gross_profit,
         "expense_ratio": expense_ratio,
         "salary_ratio": salary_ratio,
         "operating_expense_ratio": operating_expense_ratio,
+        "expense_coverage_ratio": expense_coverage_ratio,
         "breakeven_sales": breakeven_sales,
         "breakeven_daily_sales": breakeven_daily_sales,
+        "breakeven_progress_ratio": breakeven_progress_ratio,
         "average_daily_sales": average_daily_sales,
         "remaining_days": remaining_days,
         "remaining_sales_to_breakeven": remaining_sales_to_breakeven,
         "remaining_daily_sales_needed": remaining_daily_sales_needed,
+        "projected_month_sales": projected_month_sales,
+        "projected_month_gross_profit": projected_month_gross_profit,
+        "projected_month_net_profit": projected_month_net_profit,
+        "projected_monthly_status": projected_monthly_status,
+        "forecast_headline": forecast_headline,
+        "fixed_cost_daily_burden": fixed_cost_daily_burden,
+        "salary_daily_burden": salary_daily_burden,
+        "top_expense_item": top_expense_item,
+        "top_salary_item": top_salary_item,
         "passed_breakeven": passed_breakeven,
         "status": status,
         "headline": headline,
@@ -531,7 +847,12 @@ def build_health_lights(cards: dict, actions: dict) -> list[dict[str, str]]:
     return [inventory_level, accuracy_level, category_level, replenish_level, member_level]
 
 
-def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot: dict | None = None) -> dict:
+def build_metrics(
+    data: dict[str, pd.DataFrame],
+    store_name: str,
+    cost_snapshot: dict | None = None,
+    yeusoft_capture_bundle: dict[str, dict] | None = None,
+) -> dict:
     now = get_beijing_now()
     current_season_name, phase_name, next_season_name = infer_season(now)
     current_season_key = current_season_name[0]
@@ -547,6 +868,9 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot:
     movement = data["movement"].copy()
     store_retail = data.get("store_retail", pd.DataFrame()).copy()
     profit_snapshot = build_profit_snapshot(cost_snapshot)
+    yeusoft_highlights = build_yeusoft_report_highlights(
+        yeusoft_capture_bundle or {}, current_season_key, next_season_key
+    )
     stock_flow = stock_flow[stock_flow["商品款号"].notna()].copy()
     stock_flow["近期零售"] = stock_flow["零售数量"].abs()
     stock_flow["动销率"] = stock_flow.apply(
@@ -628,9 +952,12 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot:
         movement["发货时间"].max() if not movement.empty else pd.NaT,
         store_retail["销售日期"].max() if not store_retail.empty and "销售日期" in store_retail.columns else pd.NaT,
     ]
-    valid_capture_dates = [pd.Timestamp(item) for item in capture_candidates if pd.notna(item)]
+    if yeusoft_highlights and pd.notna(yeusoft_highlights.get("capture_at")):
+        capture_candidates.append(yeusoft_highlights["capture_at"])
+    valid_capture_dates = [normalize_compare_timestamp(item) for item in capture_candidates if pd.notna(item)]
     summary_cards["data_capture_at"] = max(valid_capture_dates) if valid_capture_dates else pd.Timestamp(now.date())
     summary_cards["profit_snapshot"] = profit_snapshot
+    summary_cards["yeusoft_highlights"] = yeusoft_highlights
 
     sales_daily = (
         sales_no_props.groupby(sales_no_props["销售日期"].dt.date)
@@ -872,6 +1199,42 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot:
         f"{action_summary['seasonal_hold_count']} 个跨季不建议补货、应转去化或暂缓的 SKU，"
         f"{action_summary['clearance_count']} 个建议先去化的高库存低动销 SKU。",
     ]
+    if yeusoft_highlights:
+        stock_analysis = yeusoft_highlights.get("stock_analysis")
+        movement_highlight = yeusoft_highlights.get("movement")
+        daily_flow = yeusoft_highlights.get("daily_flow")
+        if stock_analysis:
+            top_labels = stock_analysis["top_labels"]
+            cross_share = stock_analysis["cross_season_inventory_share"] * 100
+            current_share = stock_analysis["current_season_inventory_share"] * 100
+            insights.append(
+                f"POS 库存综合分析显示，当前库存金额主要压在 {top_labels}；"
+                f"其中当季库存约占 {format_num(current_share, 1)}%，跨季库存约占 {format_num(cross_share, 1)}%。"
+            )
+        if movement_highlight:
+            window_start = movement_highlight["window_start"]
+            window_end = movement_highlight["window_end"]
+            window_label = (
+                f"{window_start.strftime('%Y-%m-%d')} 到 {window_end.strftime('%Y-%m-%d')}"
+                if pd.notna(window_start) and pd.notna(window_end)
+                else "最近一段时间"
+            )
+            insights.append(
+                f"POS 出入库单据显示 {window_label} 内入库 {format_num(movement_highlight['inbound_qty'])} 件 / "
+                f"{format_num(movement_highlight['inbound_amount'], 2)} 元，出库 {format_num(movement_highlight['outbound_qty'])} 件 / "
+                f"{format_num(movement_highlight['outbound_amount'], 2)} 元，净入库 {format_num(movement_highlight['net_qty'])} 件。"
+            )
+        if daily_flow:
+            dominant_payment = daily_flow.get("dominant_payment")
+            payment_text = (
+                f"{dominant_payment['label']}占比 {format_num(dominant_payment['share'] * 100, 1)}%"
+                if dominant_payment
+                else "暂无明显支付方式集中"
+            )
+            insights.append(
+                f"POS 每日流水单显示，当日流水 {format_num(daily_flow['actual_money'], 2)} 元，"
+                f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。"
+            )
     if profit_snapshot:
         insights.append(
             f"按最近一版成本快照，毛利约 {format_num(profit_snapshot['gross_profit'], 2)} 元，"
@@ -881,6 +1244,15 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot:
         insights.append(
             f"当前保本销售额约 {format_num(profit_snapshot['breakeven_sales'], 2)} 元，"
             f"平均每天至少要卖 {format_num(profit_snapshot['breakeven_daily_sales'], 2)} 元。"
+        )
+        insights.append(
+            f"固定费用约 {format_num(profit_snapshot['monthly_operating_expense'], 2)} 元，"
+            f"人工费用约 {format_num(profit_snapshot['salary_total'], 2)} 元；"
+            f"目前保本进度约 {format_num(profit_snapshot['breakeven_progress_ratio'] * 100, 1)}%。"
+        )
+        insights.append(
+            f"按当前平均日销推算，月末销售约 {format_num(profit_snapshot['projected_month_sales'], 2)} 元，"
+            f"月末净利润约 {format_num(profit_snapshot['projected_month_net_profit'], 2)} 元。"
         )
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
@@ -913,6 +1285,7 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str, cost_snapshot:
         "clearance_categories": clearance_categories,
         "action_summary": action_summary,
         "insights": insights,
+        "yeusoft_highlights": yeusoft_highlights,
     }
 
 
@@ -1578,6 +1951,7 @@ def build_operational_playbooks(metrics: dict) -> list[dict]:
 def build_boss_action_board(metrics: dict) -> dict[str, object]:
     cards = metrics["summary_cards"]
     profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights")
     decision = build_decision_engine(metrics)
     time_strategy = build_time_strategy(metrics)
     seasonal_categories = metrics["seasonal_categories"].head(3)
@@ -1593,6 +1967,14 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         summary += (
             f" 当前净利润 {format_num(profit['net_profit'], 2)} 元，"
             f"{'已过' if profit['passed_breakeven'] else '尚未过'}保本线。"
+            f" 按当前节奏月末净利润约 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+        )
+    if pos_highlights and pos_highlights.get("stock_analysis"):
+        summary += f" POS 库存主要压在 {pos_highlights['stock_analysis']['top_labels']}。"
+    if pos_highlights and pos_highlights.get("movement"):
+        summary += (
+            f" 近段时间净入库 {format_num(pos_highlights['movement']['net_qty'])} 件，"
+            "补货节奏也要一并考虑。"
         )
 
     actions_today = [
@@ -1774,6 +2156,10 @@ def chip_html(label: str, tone: str = "neutral") -> str:
     return f"<span class='{classes}'{attrs}>{safe_label}</span>"
 
 
+def render_empty(message: str) -> str:
+    return f"<div class='empty-card'>{html.escape(message)}</div>"
+
+
 def table_html(df: pd.DataFrame, title: str, rows: int = 10, tip: str | None = None) -> str:
     preview = df.head(rows).copy()
     preview = decorate_table(preview)
@@ -1878,9 +2264,1233 @@ def compact_list_html(
     """
 
 
+def build_yeusoft_highlight_cards(pos_highlights: dict | None) -> list[dict[str, str]]:
+    if not pos_highlights:
+        return []
+
+    cards: list[dict[str, str]] = []
+    stock_analysis = pos_highlights.get("stock_analysis")
+    if stock_analysis:
+        top_rows = stock_analysis.get("top_rows") or []
+        top_labels = "、".join(row["label"] for row in top_rows[:3]) if top_rows else "暂无明显结构"
+        cards.append(
+            {
+                "title": "POS 库存结构",
+                "value": top_labels,
+                "note": (
+                    f"当季库存占比 {format_num(stock_analysis['current_season_inventory_share'] * 100, 1)}%，"
+                    f"跨季库存占比 {format_num(stock_analysis['cross_season_inventory_share'] * 100, 1)}%。"
+                ),
+            }
+        )
+
+    movement = pos_highlights.get("movement")
+    if movement:
+        window_start = movement.get("window_start")
+        window_end = movement.get("window_end")
+        if pd.notna(window_start) and pd.notna(window_end):
+            title = f"近 {max((window_end - window_start).days, 1)} 天出入库"
+        else:
+            title = "最近出入库"
+        cards.append(
+            {
+                "title": title,
+                "value": f"净入库 {format_num(movement['net_qty'])} 件",
+                "note": (
+                    f"入库 {format_num(movement['inbound_qty'])} 件 / {format_num(movement['inbound_amount'], 2)} 元，"
+                    f"出库 {format_num(movement['outbound_qty'])} 件 / {format_num(movement['outbound_amount'], 2)} 元。"
+                ),
+            }
+        )
+
+    daily_flow = pos_highlights.get("daily_flow")
+    if daily_flow:
+        dominant_payment = daily_flow.get("dominant_payment")
+        payment_note = (
+            f"{dominant_payment['label']}占比 {format_num(dominant_payment['share'] * 100, 1)}%"
+            if dominant_payment
+            else "暂无明显主支付方式"
+        )
+        cards.append(
+            {
+                "title": "POS 当日流水",
+                "value": f"{format_num(daily_flow['actual_money'], 2)} 元",
+                "note": (
+                    f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，"
+                    f"{payment_note}。"
+                ),
+            }
+        )
+
+    return cards
+
+
+def build_profit_card_defs(profit: dict | None) -> list[tuple[str, str, str, str]]:
+    if not profit:
+        return []
+
+    progress_text = (
+        "已过保本线"
+        if profit["passed_breakeven"]
+        else f"还差 {format_num(profit['remaining_sales_to_breakeven'], 2)} 元"
+    )
+    progress_tone = "green" if profit["passed_breakeven"] else "yellow"
+    projection_tone = profit.get("projected_monthly_status", "neutral")
+    top_expense = profit.get("top_expense_item") or {}
+    top_salary = profit.get("top_salary_item") or {}
+
+    return [
+        ("净利润", f"{format_num(profit['net_profit'], 2)} 元", profit["headline"], profit["status"]),
+        (
+            "毛利额",
+            f"{format_num(profit['gross_profit'], 2)} 元",
+            f"毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+            "neutral",
+        ),
+        (
+            "固定费用",
+            f"{format_num(profit['monthly_operating_expense'], 2)} 元",
+            (
+                f"每天固定支出约 {format_num(profit['fixed_cost_daily_burden'], 2)} 元"
+                if profit["monthly_operating_expense"]
+                else "当前没有固定费用数据"
+            ),
+            "neutral",
+        ),
+        (
+            "人工费用",
+            f"{format_num(profit['salary_total'], 2)} 元",
+            (
+                f"每天人工成本约 {format_num(profit['salary_daily_burden'], 2)} 元"
+                if profit["salary_total"]
+                else "当前没有人工成本数据"
+            ),
+            "neutral",
+        ),
+        (
+            "保本销售额",
+            f"{format_num(profit['breakeven_sales'], 2)} 元",
+            f"保本日销约 {format_num(profit['breakeven_daily_sales'], 2)} 元",
+            "neutral",
+        ),
+        (
+            "保本进度",
+            f"{format_num(min(profit['breakeven_progress_ratio'], 9.99) * 100, 1)}%",
+            progress_text,
+            progress_tone,
+        ),
+        (
+            "月末净利预测",
+            f"{format_num(profit['projected_month_net_profit'], 2)} 元",
+            profit["forecast_headline"],
+            projection_tone,
+        ),
+        (
+            "最大费用项",
+            f"{top_expense.get('name', '未记录')}",
+            (
+                f"{format_num(float(top_expense.get('amount', 0) or 0), 2)} 元"
+                if top_expense
+                else "暂无费用明细"
+            ),
+            "neutral",
+        ),
+        (
+            "最高工资项",
+            f"{top_salary.get('name', '未记录')}",
+            (
+                f"{format_num(float(top_salary.get('amount', 0) or 0), 2)} 元"
+                if top_salary
+                else "暂无工资明细"
+            ),
+            "neutral",
+        ),
+    ]
+
+
+def build_cost_detail_frames(profit: dict | None) -> tuple[pd.DataFrame, pd.DataFrame]:
+    if not profit:
+        return pd.DataFrame(), pd.DataFrame()
+
+    expense_df = pd.DataFrame(profit.get("expense_items") or [])
+    salary_df = pd.DataFrame(profit.get("salary_items") or [])
+    if not expense_df.empty:
+        expense_df = expense_df.copy()
+        expense_df["amount"] = expense_df["amount"].apply(lambda value: safe_float(value))
+        expense_df = expense_df.sort_values("amount", ascending=False)
+    if not salary_df.empty:
+        salary_df = salary_df.copy()
+        salary_df["amount"] = salary_df["amount"].apply(lambda value: safe_float(value))
+        salary_df = salary_df.sort_values("amount", ascending=False)
+    return expense_df, salary_df
+
+
+def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]:
+    cards = metrics["summary_cards"]
+    actions = metrics["action_summary"]
+    charts = build_charts(metrics)
+    health_lights = build_health_lights(cards, actions)
+    dashboard_tips = build_dashboard_tips(cards, actions)
+    time_strategy = build_time_strategy(metrics)
+    playbooks = build_operational_playbooks(metrics)
+    other_references = metrics["other_references"]
+
+    health_html = "".join(
+        f"""
+        <div class="health-card health-{item['level']}">
+          <div class="health-title">{item['title']}</div>
+          <div class="health-value">{item['value']}</div>
+          <div class="health-note">{item['note']}</div>
+        </div>
+        """
+        for item in health_lights
+    )
+    tips_html = "".join(
+        f"""
+        <div class="tip-card">
+          <div class="tip-term">{item['term']}</div>
+          <div class="tip-meaning">{item['meaning']}</div>
+          <div class="tip-watch">看法：{item['watch']}</div>
+        </div>
+        """
+        for item in dashboard_tips
+    )
+    playbooks_html = "".join(
+        f"""
+        <div class="playbook-card playbook-{item['level']}">
+          <div class="playbook-title">{item['title']}</div>
+          <div class="playbook-trigger">触发原因：{item['trigger']}</div>
+          <div class="playbook-goal">目标：{item['goal']}</div>
+          <div class="chip-row">
+            {"".join(chip_html(scheme['name'], 'soft') for scheme in item['schemes'])}
+          </div>
+          <ul>
+            {"".join(f"<li><strong>{scheme['name']}</strong>：{scheme['detail']}</li>" for scheme in item['schemes'])}
+          </ul>
+        </div>
+        """
+        for item in playbooks
+    )
+    insights_html = "".join(f"<li>{item}</li>" for item in metrics["insights"])
+    chart_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts)
+    reference_html = "".join(
+        f"""
+        <div class="metric-card">
+          <div class="metric-title">{title}</div>
+          <div class="metric-value">{value}</div>
+          <div class="metric-note">{note}</div>
+        </div>
+        """
+        for title, value, note in [
+            ("道具销售额", f"{format_num(cards['props_sales_amount'], 2)} 元", "单独参考，不计入经营销售额"),
+            ("道具库存额", f"{format_num(cards['props_inventory_amount'], 2)} 元", "单独参考，不计入经营库存额"),
+            ("道具销量", format_num(cards["props_sales_qty"]), "单独参考"),
+            ("道具库存件数", format_num(cards["props_inventory_qty"]), "单独参考"),
+        ]
+    )
+
+    overview_panels_html = f"""
+      <div class="detail-grid">
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">经营健康灯</h3>
+            <p class="module-note">根据每日数据、整体数据和库存动态自动调整，红色优先处理。</p>
+          </div>
+          <div class="health-grid">{health_html}</div>
+        </div>
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">北京时间与季节节奏</h3>
+            <p class="module-note">今天 / 本周 / 本月的动作建议会根据日销趋势、库存覆盖和换季阶段自动切换。</p>
+          </div>
+          <ul class="insight-list">
+            <li>北京时间：{time_strategy['beijing_time']}</li>
+            <li>当前判断：{time_strategy['headline']}</li>
+            {"".join(f"<li>{item}</li>" for item in time_strategy['daily_actions'])}
+            {"".join(f"<li>{item}</li>" for item in time_strategy['weekly_actions'])}
+            {"".join(f"<li>{item}</li>" for item in time_strategy['monthly_actions'])}
+          </ul>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
+            <p class="module-note">道具只保留为参考值，不参与主经营判断。</p>
+          </div>
+          <div class="metrics-grid">{reference_html}</div>
+        </div>
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
+            <p class="module-note">根据当天的销售、库存和利润状态生成，适合复盘时快速扫一遍。</p>
+          </div>
+          <ul class="insight-list">{insights_html}</ul>
+        </div>
+      </div>
+    """
+
+    strategy_panels_html = f"""
+      <div class="module detail-module" style="margin:0;">
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">自动生成经营方案</h3>
+          <p class="module-note">基于日销趋势、整体数据、库存和利润状态自动调整，不是固定文案。</p>
+        </div>
+        <div class="playbook-grid">{playbooks_html}</div>
+      </div>
+      <div class="module detail-module" style="margin-top:14px;">
+        <div class="module-header">
+          <h3 class="module-title" style="font-size:18px;">术语 Tips</h3>
+          <p class="module-note">鼠标悬浮或点按标签可看动作词解释；这里是完整词典。</p>
+        </div>
+        <div class="tip-grid">{tips_html}</div>
+      </div>
+    """
+
+    inventory_tables_html = "".join(
+        [
+            compact_list_html(
+                metrics["replenish_categories"],
+                "补货重点品类",
+                8,
+                "先按品类定补货优先级，再下钻到单款。",
+                lambda row: row["中类"],
+                lambda row: f"{row['季节策略']} / 建议补货 SKU {format_num(row['SKU数'])}",
+                lambda row: [
+                    compact_stat_row("销售额", f"{format_num(row['销售额'], 2)} 元"),
+                    compact_stat_row("当前库存", format_num(row["库存"])),
+                    compact_stat_row("建议补货量", format_num(row["建议补货量"])),
+                ],
+                lambda row: [
+                    f"季节策略：{row['季节策略']}",
+                    f"建议补货 SKU：{format_num(row['SKU数'])}",
+                ],
+            ),
+            compact_list_html(
+                metrics["seasonal_categories"],
+                "跨季处理重点品类",
+                8,
+                "先看哪些品类已经跨季，再决定暂缓还是去化。",
+                lambda row: row["中类"],
+                lambda row: f"{row['季节策略']} / {row['建议动作']}",
+                lambda row: [
+                    compact_stat_row("库存", format_num(row["库存"])),
+                    compact_stat_row("SKU数", format_num(row["SKU数"])),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
+                ],
+                lambda row: [
+                    f"季节策略：{row['季节策略']}",
+                    f"建议动作：{row['建议动作']}",
+                ],
+            ),
+            compact_list_html(
+                metrics["clearance_categories"],
+                "去化重点品类",
+                8,
+                "先按品类看库存压力，再安排陈列和促销动作。",
+                lambda row: row["大类"],
+                lambda row: f"{row['建议动作']} / 高库存低动销",
+                lambda row: [
+                    compact_stat_row("实际库存", format_num(row["实际库存"])),
+                    compact_stat_row("近期零售", format_num(row["近期零售"])),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
+                ],
+                lambda row: [
+                    f"SKU数：{format_num(row['SKU数'])}",
+                ],
+            ),
+            compact_list_html(
+                metrics["replenish"],
+                "补货 SKU 明细",
+                10,
+                "确定品类要补后，再来这里挑具体款。",
+                lambda row: row["款号"],
+                lambda row: f"{row['中类']} / {row['颜色']}",
+                lambda row: [
+                    compact_stat_row("库存", format_num(row["库存"])),
+                    compact_stat_row("周均销量", format_num(row["周均销量"], 1)),
+                    compact_stat_row("建议补货", format_num(row["建议补货量"])),
+                ],
+                lambda row: [
+                    f"销售金额：{format_num(row['销售金额'], 2)} 元",
+                    f"库存周数：{format_num(row['库存周数'], 2)}",
+                    f"建议动作：{row['建议动作']}",
+                ],
+            ),
+            compact_list_html(
+                metrics["seasonal_actions"],
+                "跨季处理 SKU 明细",
+                10,
+                "老板做二次判断时使用，先看库存，再看建议动作。",
+                lambda row: row["款号"],
+                lambda row: f"{row['中类']} / {row['颜色']} / {row['季节']}",
+                lambda row: [
+                    compact_stat_row("库存", format_num(row["库存"])),
+                    compact_stat_row("销售金额", f"{format_num(row['销售金额'], 2)} 元"),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="warn"),
+                ],
+                lambda row: [
+                    f"季节策略：{row['季节策略']}",
+                    f"库存周数：{format_num(row['库存周数'], 2)}",
+                ],
+            ),
+            compact_list_html(
+                metrics["clearance"],
+                "去化 SKU 明细",
+                10,
+                "执行去化时再下钻到具体款，优先看库存深但近期零售弱的款。",
+                lambda row: row["商品款号"],
+                lambda row: " / ".join(
+                    [
+                        str(part)
+                        for part in [row.get("商品名称", ""), row.get("商品颜色", "")]
+                        if str(part).strip()
+                    ]
+                ),
+                lambda row: [
+                    compact_stat_row("实际库存", format_num(row["实际库存"])),
+                    compact_stat_row("近期零售", format_num(row["近期零售"])),
+                    compact_stat_row("建议动作", row["建议动作"], is_badge=True, tone="danger"),
+                ],
+                lambda row: [
+                    f"大类：{row['大类']}",
+                    f"中类：{row['中类']}" if row.get("中类") else "",
+                    f"小类：{row['小类']}" if row.get("小类") else "",
+                    f"零售价：{format_num(row['零售价'], 2)} 元" if row.get("零售价") is not None else "",
+                ],
+            ),
+            table_html(metrics["negative_inventory"], "负库存异常清单", 12, "先查账、查盘点、查调拨。"),
+        ]
+    )
+
+    people_tables_html = "".join(
+        [
+            table_html(metrics["top_members"], "高价值会员", 12, "优先回访高消费或高频顾客。"),
+            table_html(metrics["guide_perf"], "店员 / 导购表现", 10, "电脑端更适合同屏对比实收金额、票数和连带。"),
+            table_html(other_references, "其他店铺参考", 8, reference_intro),
+        ]
+    )
+
+    download_cards_html = """
+      <div class="cards-grid">
+        <div class="opportunity-card">
+          <div class="card-kicker">主页</div>
+          <div class="card-title">返回老板仪表盘</div>
+          <p class="table-tip">回到短版首页，快速看今天最该做什么。</p>
+          <div class="chip-row">
+            <a class="download-link" href="./">返回首页</a>
+          </div>
+        </div>
+        <div class="opportunity-card">
+          <div class="card-kicker">HTML</div>
+          <div class="card-title">文字摘要</div>
+          <p class="table-tip">适合手机快速阅读，也适合转发给店员和群里同步。</p>
+          <div class="chip-row">
+            <a class="download-link" href="../manuals/dashboard/summary.html">打开 HTML 摘要</a>
+            <a class="download-link" href="./summary.md">下载 Markdown</a>
+          </div>
+        </div>
+        <div class="opportunity-card">
+          <div class="card-kicker">HTML</div>
+          <div class="card-title">分析报告</div>
+          <p class="table-tip">适合周复盘时看完整分析，也适合做经营会议材料。</p>
+          <div class="chip-row">
+            <a class="download-link" href="../manuals/dashboard/report.html">打开 HTML 报告</a>
+            <a class="download-link" href="./report.md">下载 Markdown</a>
+          </div>
+        </div>
+        <div class="opportunity-card">
+          <div class="card-kicker">CSV</div>
+          <div class="card-title">补货 / 去化 / 风险</div>
+          <p class="table-tip">需要下钻执行时，再下载 CSV 给店员或表格协作人使用。</p>
+          <div class="chip-row">
+            <a class="download-link" href="./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">补货 CSV</a>
+            <a class="download-link" href="./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">去化 CSV</a>
+            <a class="download-link" href="./%E5%93%81%E7%B1%BB%E9%A3%8E%E9%99%A9%E6%A6%82%E8%A7%88.csv">风险 CSV</a>
+          </div>
+        </div>
+      </div>
+    """
+
+    return {
+        "overview_panels_html": overview_panels_html,
+        "strategy_panels_html": strategy_panels_html,
+        "chart_html": chart_html,
+        "inventory_tables_html": inventory_tables_html,
+        "people_tables_html": people_tables_html,
+        "download_cards_html": download_cards_html,
+    }
+
+
 def build_html(metrics: dict) -> str:
     cards = metrics["summary_cards"]
     profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights")
+    focus = build_today_focus(metrics)
+    boss_board = build_boss_action_board(metrics)
+    decision = build_decision_engine(metrics)
+    time_strategy = build_time_strategy(metrics)
+
+    inventory_days_level = (
+        "red" if cards["estimated_inventory_days"] > 180 else "yellow" if cards["estimated_inventory_days"] > 120 else "green"
+    )
+    core_metrics = [
+        ("经营销售额", f"{format_num(cards['sales_amount'], 2)} 元", f"近 {cards['sales_days']} 天经营销售额", "neutral"),
+        ("客单价", f"{format_num(cards['avg_order_value'], 2)} 元", "经营销售额 / 订单数", "neutral"),
+        ("库存覆盖天数", f"{format_num(cards['estimated_inventory_days'], 1)} 天", "库存还能卖多久", inventory_days_level),
+        ("会员销售占比", f"{format_num(cards['member_sales_ratio'] * 100, 1)}%", "会员销售贡献", "neutral"),
+    ]
+
+    money_opportunities = (
+        metrics["replenish"][metrics["replenish"]["库存周数"] < 1]
+        .groupby("中类")
+        .agg(销售额=("销售金额", "sum"), 当前库存=("库存", "sum"), 建议补货量=("建议补货量", "sum"))
+        .reset_index()
+        .sort_values(["销售额", "当前库存"], ascending=[False, True])
+        .head(4)
+    )
+    if money_opportunities.empty:
+        money_opportunities = (
+            metrics["replenish_categories"][["中类", "销售额", "库存", "建议补货量"]]
+            .rename(columns={"库存": "当前库存"})
+            .head(4)
+        )
+
+    inventory_risks = metrics["clearance_categories"].head(4).copy()
+    replenish_focus = (
+        metrics["replenish_categories"]
+        .sort_values(["SKU数", "销售额", "库存"], ascending=[False, False, True])
+        .head(4)
+        .copy()
+    )
+    member_focus = metrics["top_members"].head(3).copy()
+
+    capture_date = pd.Timestamp(cards["data_capture_at"]).strftime("%Y-%m-%d")
+    current_strategy = [
+        f"当前阶段：{decision['stage']} / {decision['phase']}",
+        f"日销趋势：{decision['sales_trend']['label']}",
+        f"今日主打法：{decision['mode']}",
+        f"季节判断：{time_strategy['headline']}",
+    ]
+    store_note = f"{cards['store_name']} · 主输入人：{metrics['primary_input']}"
+    pos_highlight_cards = build_yeusoft_highlight_cards(pos_highlights)
+    profit_card_defs = build_profit_card_defs(profit)
+    pos_strip_html = ""
+    if pos_highlight_cards:
+        strip_summary = "；".join(f"{item['title']}：{item['value']}" for item in pos_highlight_cards[:3])
+        strip_note = " ".join(item["note"] for item in pos_highlight_cards[:2])
+        pos_strip_html = f"""
+      <div class="strip-card">
+        <div>
+          <strong>POS 高价值数据已接入</strong>
+          <p>{html.escape(strip_summary)}。{html.escape(strip_note)}</p>
+        </div>
+        <a class="strip-link" href="./details.html#overview-section">看 POS 详情</a>
+      </div>
+        """
+
+    core_metric_html = "".join(
+        f"""
+        <div class="metric-card metric-{level}">
+          <div class="metric-title">{title}</div>
+          <div class="metric-value">{value}</div>
+          <div class="metric-note">{note}</div>
+        </div>
+        """
+        for title, value, note, level in core_metrics
+    )
+
+    profit_cards_html = ""
+    if profit:
+        profit_metrics_html = "".join(
+            f"""
+          <div class="metric-card metric-{level}">
+            <div class="metric-title">{title}</div>
+            <div class="metric-value">{value}</div>
+            <div class="metric-note">{note}</div>
+          </div>
+            """
+            for title, value, note, level in profit_card_defs[:7]
+        )
+        profit_cards_html = f"""
+        <div class="submodule-header">
+          <h3 class="submodule-title">利润与保本</h3>
+          <p class="submodule-note">成本快照已接入。这里不只看赚没赚钱，还看固定费用、人工压力、保本进度和月末预测。</p>
+        </div>
+        <div class="metrics-grid profit-grid">
+          {profit_metrics_html}
+        </div>
+        """
+
+    money_html = (
+        "".join(
+            f"""
+            <article class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">{html.escape(str(row['中类']))}</div>
+              <div class="stat-row"><span>销售额</span><strong>{format_num(row['销售额'], 2)}</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>{format_num(row['当前库存'])}</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>{format_num(row['建议补货量'])}</strong></div>
+            </article>
+            """
+            for _, row in money_opportunities.iterrows()
+        )
+        if not money_opportunities.empty
+        else render_empty("当前没有明显的低库存赚钱机会。")
+    )
+
+    inventory_risk_html = (
+        "".join(
+            f"""
+            <article class="risk-card">
+              <div class="card-title">{html.escape(str(row['大类']))}</div>
+              <div class="stat-row"><span>库存数量</span><strong>{format_num(row['实际库存'])}</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>{format_num(row['近期零售'])}</strong></div>
+              <div class="chip-row">{''.join(chip_html(item, 'danger') for item in suggestions_for_risk_action(str(row['建议动作'])))}</div>
+            </article>
+            """
+            for _, row in inventory_risks.iterrows()
+        )
+        if not inventory_risks.empty
+        else render_empty("当前没有明显的高库存风险品类。")
+    )
+
+    replenish_html = (
+        "".join(
+            f"""
+            <article class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">{html.escape(str(row['中类']))}</div>
+              <div class="stat-row"><span>销售额</span><strong>{format_num(row['销售额'], 2)}</strong></div>
+              <div class="stat-row"><span>库存</span><strong>{format_num(row['库存'])}</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>{format_num(row['建议补货量'])}</strong></div>
+              <div class="card-note">建议补货 SKU：{format_num(row['SKU数'])}</div>
+            </article>
+            """
+            for _, row in replenish_focus.iterrows()
+        )
+        if not replenish_focus.empty
+        else render_empty("当前没有需要优先补货的品类。")
+    )
+
+    member_html = (
+        "".join(
+            f"""
+            <article class="member-card">
+              <div class="card-title">{html.escape(str(row['VIP姓名']))}</div>
+              <div class="card-note">服务导购：{html.escape(str(row['服务导购']))}</div>
+              <div class="stat-row"><span>购买金额</span><strong>{format_num(row['购买金额'], 2)}</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>{format_num(row['消费次数/年'])}</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>{format_num(row['平均单笔消费额'], 2)}</strong></div>
+            </article>
+            """
+            for _, row in member_focus.iterrows()
+        )
+        if not member_focus.empty
+        else render_empty("当前没有可展示的高价值会员。")
+    )
+
+    conclusions_html = "".join(chip_html(item, "primary") for item in focus["conclusions"])
+    tasks_html = "".join(f"<li>{chip_html(item, 'soft')}</li>" for item in focus["tasks"])
+    dont_do_html = "".join(f"<li>{chip_html(item, 'warn')}</li>" for item in boss_board["dont_do"])
+    strategy_summary_html = "".join(f"<li>{html.escape(item)}</li>" for item in current_strategy)
+    action_today_html = "".join(
+        f"""
+        <li>
+          <strong>{html.escape(item['title'])}</strong>
+          <span>{html.escape(item['body'])}</span>
+        </li>
+        """
+        for item in boss_board["actions_today"]
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{cards['store_name']} 老板经营仪表盘</title>
+  <style>
+    html, body {{
+      max-width: 100%;
+      overflow-x: hidden;
+    }}
+    * {{
+      box-sizing: border-box;
+    }}
+    body {{
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }}
+    .page {{
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+    }}
+    .hero {{
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+    }}
+    .hero h1 {{
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.25;
+    }}
+    .hero p {{
+      margin: 0;
+      opacity: 0.94;
+      line-height: 1.8;
+    }}
+    .hero-note {{
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.9;
+    }}
+    .hero-status {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }}
+    .hero-status-chip {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+    }}
+    .quick-nav {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 12px 0 18px;
+    }}
+    .quick-nav a {{
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+    .module {{
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      margin-bottom: 18px;
+    }}
+    .module-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }}
+    .module-title {{
+      margin: 0;
+      font-size: 22px;
+      color: #0f172a;
+    }}
+    .module-note {{
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.8;
+    }}
+    .detail-link {{
+      text-decoration: none;
+      color: white;
+      background: #1d4ed8;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(29, 78, 216, 0.22);
+    }}
+    .focus-wrap {{
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }}
+    .focus-panel {{
+      background: #fffdf7;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+    }}
+    .focus-headline {{
+      font-size: 28px;
+      font-weight: 800;
+      color: #92400e;
+      margin: 0 0 10px;
+      line-height: 1.35;
+    }}
+    .focus-summary {{
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #5b4636;
+    }}
+    .submodule-header {{
+      margin: 18px 0 10px;
+    }}
+    .submodule-title {{
+      margin: 0 0 6px;
+      font-size: 18px;
+      color: #0f172a;
+    }}
+    .submodule-note {{
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.8;
+    }}
+    .chip-row {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }}
+    .mini-chip {{
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+    .mini-chip-primary {{
+      background: #dbeafe;
+      color: #1d4ed8;
+    }}
+    .mini-chip-soft {{
+      background: #f1f5f9;
+      color: #334155;
+    }}
+    .mini-chip-danger {{
+      background: #fee2e2;
+      color: #991b1b;
+    }}
+    .mini-chip-warn {{
+      background: #fef3c7;
+      color: #92400e;
+    }}
+    .tooltip-badge {{
+      position: relative;
+      cursor: help;
+    }}
+    .tooltip-badge::after {{
+      content: attr(data-tip);
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 10px);
+      width: min(320px, 68vw);
+      white-space: normal;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.6;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 40;
+    }}
+    .tooltip-badge::before {{
+      content: "";
+      position: absolute;
+      left: 14px;
+      bottom: calc(100% + 4px);
+      width: 10px;
+      height: 10px;
+      background: #0f172a;
+      transform: rotate(45deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 39;
+    }}
+    .tooltip-badge:hover::after,
+    .tooltip-badge:hover::before,
+    .tooltip-badge:focus-visible::after,
+    .tooltip-badge:focus-visible::before {{
+      opacity: 1;
+      transform: translateY(0);
+    }}
+    .tooltip-badge:focus-visible {{
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+    }}
+    .focus-list, .task-list {{
+      margin: 10px 0 0 18px;
+      padding: 0;
+      line-height: 1.9;
+      color: #334155;
+      font-size: 14px;
+    }}
+    .task-list li + li,
+    .focus-list li + li {{
+      margin-top: 4px;
+    }}
+    .task-list strong {{
+      display: block;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }}
+    .metrics-grid, .cards-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }}
+    .metric-card, .opportunity-card, .risk-card, .member-card {{
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      min-width: 0;
+    }}
+    .metric-card {{
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }}
+    .metric-title {{
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }}
+    .metric-value {{
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }}
+    .metric-note {{
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.7;
+    }}
+    .metric-red {{
+      border-color: #fecaca;
+      background: #fff7f7;
+    }}
+    .metric-red .metric-value {{
+      color: #991b1b;
+    }}
+    .metric-yellow {{
+      border-color: #fde68a;
+      background: #fffbeb;
+    }}
+    .metric-yellow .metric-value {{
+      color: #92400e;
+    }}
+    .metric-green {{
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }}
+    .metric-green .metric-value {{
+      color: #166534;
+    }}
+    .card-kicker {{
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }}
+    .card-title {{
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      word-break: break-word;
+    }}
+    .card-note {{
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 10px;
+      line-height: 1.7;
+    }}
+    .stat-row {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #475569;
+    }}
+    .stat-row strong {{
+      color: #0f172a;
+      font-size: 15px;
+    }}
+    .risk-card {{
+      background: #fff8f5;
+      border-color: #fed7aa;
+    }}
+    .member-card {{
+      background: #f8fafc;
+    }}
+    .strip-card {{
+      margin-top: 14px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }}
+    .strip-card strong {{
+      color: #0f172a;
+      font-size: 16px;
+      display: block;
+      margin-bottom: 4px;
+    }}
+    .strip-card p {{
+      margin: 0;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.7;
+    }}
+    .strip-link {{
+      text-decoration: none;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+    }}
+    .empty-card {{
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 20px;
+      color: #64748b;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }}
+    @media (max-width: 960px) {{
+      .page {{
+        padding: 16px;
+      }}
+      .focus-wrap {{
+        grid-template-columns: 1fr;
+      }}
+      .module-header {{
+        flex-direction: column;
+        align-items: flex-start;
+      }}
+      .metrics-grid, .cards-grid {{
+        grid-template-columns: 1fr;
+      }}
+    }}
+    @media (max-width: 640px) {{
+      .page {{
+        padding: 12px;
+      }}
+      .hero {{
+        padding: 18px;
+        border-radius: 16px;
+      }}
+      .hero h1 {{
+        font-size: 24px;
+      }}
+      .hero p,
+      .hero-note,
+      .module-note,
+      .focus-summary,
+      .metric-note,
+      .card-note,
+      .task-list,
+      .focus-list {{
+        font-size: 12px;
+        line-height: 1.75;
+      }}
+      .hero-status-chip {{
+        width: 100%;
+      }}
+      .quick-nav {{
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+      }}
+      .module {{
+        padding: 14px;
+        border-radius: 16px;
+        margin-bottom: 14px;
+      }}
+      .focus-headline {{
+        font-size: 22px;
+      }}
+      .metric-value {{
+        font-size: 24px;
+      }}
+      .mini-chip {{
+        font-size: 12px;
+        padding: 6px 10px;
+        white-space: normal;
+      }}
+      .card-title {{
+        font-size: 16px;
+      }}
+      .stat-row {{
+        font-size: 13px;
+      }}
+      .stat-row strong {{
+        font-size: 14px;
+      }}
+      .strip-card {{
+        align-items: flex-start;
+      }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>{cards['store_name']} 老板经营仪表盘</h1>
+      <p>首页只保留老板 10 秒内最该知道的事情。总览、经营策略、图表和明细已经拆到详细页，首页更适合每天快速拍板。</p>
+      <div class="hero-note">{store_note} · 当前季节：{time_strategy['season']} / {time_strategy['phase']} · 当前阶段：{decision['stage']} · 日销趋势：{decision['sales_trend']['label']}</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最近抓取日期：{capture_date}（北京时间）</div>
+        <div class="hero-status-chip">数据导入日期：{capture_date}（北京时间）</div>
+      </div>
+    </section>
+
+    <nav class="quick-nav">
+      <a href="#focus">今日重点</a>
+      <a href="#core-metrics">核心指标</a>
+      <a href="#money-opportunities">赚钱机会</a>
+      <a href="#inventory-risks">库存风险</a>
+      <a href="#replenish-opportunities">补货机会</a>
+      <a href="#member-ops">会员经营</a>
+    </nav>
+
+    <section class="module" id="focus">
+      <div class="module-header">
+        <h2 class="module-title">1. 今日经营重点</h2>
+        <a class="detail-link" href="./details.html">查看详细数据与图表</a>
+      </div>
+      <div class="focus-wrap">
+        <div class="focus-panel">
+          <div class="focus-headline">{boss_board['headline']}</div>
+          <p class="focus-summary">{boss_board['summary']}</p>
+          <div class="chip-row">{conclusions_html}</div>
+          <ul class="focus-list">{strategy_summary_html}</ul>
+        </div>
+        <div class="focus-panel">
+          <div class="submodule-header">
+            <h3 class="submodule-title">今日执行任务</h3>
+            <p class="submodule-note">先把今天要做的事排清楚，再让店员按顺序执行。</p>
+          </div>
+          <ul class="task-list">{tasks_html}</ul>
+          <div class="submodule-header">
+            <h3 class="submodule-title">今天先别做</h3>
+          </div>
+          <ul class="focus-list">{dont_do_html}</ul>
+        </div>
+      </div>
+      <div class="strip-card">
+        <div>
+          <strong>总览和经营策略已移到详细页顶部</strong>
+          <p>详细页会根据每日销售、整体销售、库存动态和利润保本状态自动刷新，更适合复盘和细看。</p>
+        </div>
+        <a class="strip-link" href="./details.html#overview-section">打开详细页</a>
+      </div>
+      {pos_strip_html}
+    </section>
+
+    <section class="module" id="core-metrics">
+      <div class="module-header">
+        <h2 class="module-title">2. 核心经营指标</h2>
+        <p class="module-note">先看这 4 个数字，再判断今天是去库存、保畅销，还是冲保本线。</p>
+      </div>
+      <div class="metrics-grid">{core_metric_html}</div>
+      {profit_cards_html}
+    </section>
+
+    <section class="module" id="money-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">3. 赚钱机会</h2>
+        <p class="module-note">优先找卖得快但库存浅的品类，先保不断货，再谈放大销售额。</p>
+      </div>
+      <div class="cards-grid">{money_html}</div>
+    </section>
+
+    <section class="module" id="inventory-risks">
+      <div class="module-header">
+        <h2 class="module-title">4. 库存风险</h2>
+        <p class="module-note">这里看库存压力最大的品类。先停补、再去化、再调陈列。</p>
+      </div>
+      <div class="cards-grid">{inventory_risk_html}</div>
+    </section>
+
+    <section class="module" id="replenish-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">5. 补货机会</h2>
+        <p class="module-note">这里只显示最值得优先补的品类。具体款号、颜色和尺码，去详细页再下钻。</p>
+      </div>
+      <div class="cards-grid">{replenish_html}</div>
+    </section>
+
+    <section class="module" id="member-ops">
+      <div class="module-header">
+        <h2 class="module-title">6. 会员经营</h2>
+        <p class="module-note">高价值会员适合优先回访。详细页里会有更完整的会员、店员和参考店信息。</p>
+      </div>
+      <div class="cards-grid">{member_html}</div>
+      <div class="strip-card">
+        <div>
+          <strong>详细页包含总览、经营策略、图表、补货去化、会员店员和下载区</strong>
+          <p>首页用于每天拍板，详细页用于复盘、解释和交给店员执行。</p>
+        </div>
+        <a class="strip-link" href="./details.html">去详细页</a>
+      </div>
+    </section>
+
+    <section class="module">
+      <div class="module-header">
+        <h2 class="module-title">老板拍板参考</h2>
+        <p class="module-note">这组话术更适合晨会或微信里直接发给店员。</p>
+      </div>
+      <ul class="task-list">{action_today_html}</ul>
+    </section>
+  </div>
+</body>
+</html>
+"""
+
+
+def build_detail_html(metrics: dict) -> str:
+    cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights")
     charts = build_charts(metrics)
     actions = metrics["action_summary"]
     health_lights = build_health_lights(cards, actions)
@@ -1890,14 +3500,12 @@ def build_html(metrics: dict) -> str:
     boss_board = build_boss_action_board(metrics)
     focus = build_today_focus(metrics)
     decision = build_decision_engine(metrics)
+    profit_card_defs = build_profit_card_defs(profit)
     primary_reference = metrics["primary_reference"]
     other_references = metrics["other_references"]
 
     def chip(label: str, tone: str = "neutral") -> str:
         return chip_html(label, tone)
-
-    def render_empty(message: str) -> str:
-        return f"<div class='empty-card'>{html.escape(message)}</div>"
 
     inventory_days_level = (
         "red" if cards["estimated_inventory_days"] > 180 else "yellow" if cards["estimated_inventory_days"] > 120 else "green"
@@ -1947,42 +3555,23 @@ def build_html(metrics: dict) -> str:
 
     profit_cards_html = ""
     if profit:
+        profit_metrics_html = "".join(
+            f"""
+          <div class="metric-card metric-{level}">
+            <div class="metric-title">{title}</div>
+            <div class="metric-value">{value}</div>
+            <div class="metric-note">{note}</div>
+          </div>
+            """
+            for title, value, note, level in profit_card_defs
+        )
         profit_cards_html = f"""
         <div class="submodule-header">
           <h3 class="submodule-title">利润与保本</h3>
-          <p class="submodule-note">按你维护的成本快照计算，帮助老板判断本月到底赚了没有、还差多少过保本线。</p>
+          <p class="submodule-note">按你维护的成本快照计算。这里把固定费用、人工费用、保本进度和月末净利预测一起拉进来。</p>
         </div>
         <div class="metrics-grid profit-grid">
-          <div class="metric-card metric-{profit['status']}">
-            <div class="metric-title">净利润</div>
-            <div class="metric-value">{format_num(profit['net_profit'], 2)} 元</div>
-            <div class="metric-note">{profit['headline']}</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-title">毛利额</div>
-            <div class="metric-value">{format_num(profit['gross_profit'], 2)} 元</div>
-            <div class="metric-note">毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-title">总费用</div>
-            <div class="metric-value">{format_num(profit['total_expense'], 2)} 元</div>
-            <div class="metric-note">含房租、工资、电费等月费用</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-title">保本销售额</div>
-            <div class="metric-value">{format_num(profit['breakeven_sales'], 2)} 元</div>
-            <div class="metric-note">当前毛利率下本月至少要卖到这里</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-title">保本日销</div>
-            <div class="metric-value">{format_num(profit['breakeven_daily_sales'], 2)} 元</div>
-            <div class="metric-note">按整月平均每天至少要卖这么多</div>
-          </div>
-          <div class="metric-card metric-{'green' if profit['passed_breakeven'] else 'yellow'}">
-            <div class="metric-title">剩余保本压力</div>
-            <div class="metric-value">{format_num(profit['remaining_sales_to_breakeven'], 2)} 元</div>
-            <div class="metric-note">剩余每天约 {format_num(profit['remaining_daily_sales_needed'], 2)} 元</div>
-          </div>
+          {profit_metrics_html}
         </div>
         """
 
@@ -2148,6 +3737,53 @@ def build_html(metrics: dict) -> str:
             ("道具库存件数", format_num(cards["props_inventory_qty"]), "单独参考"),
         ]
     )
+    pos_cards = build_yeusoft_highlight_cards(pos_highlights)
+    expense_df, salary_df = build_cost_detail_frames(profit)
+    pos_overview_html = ""
+    if pos_cards:
+        pos_overview_html = "".join(
+            f"""
+            <div class="metric-card">
+              <div class="metric-title">{html.escape(item['title'])}</div>
+              <div class="metric-value" style="font-size:24px;">{html.escape(item['value'])}</div>
+              <div class="metric-note">{html.escape(item['note'])}</div>
+            </div>
+            """
+            for item in pos_cards
+        )
+    cost_breakdown_html = ""
+    if profit:
+        cost_breakdown_html = "".join(
+            [
+                compact_list_html(
+                    expense_df,
+                    "固定费用拆解",
+                    10,
+                    "这里放的是月固定或分摊后的费用，帮助老板知道利润为什么会被吃掉。",
+                    lambda row: row["name"],
+                    lambda row: row.get("note", "") or "固定费用项",
+                    lambda row: [
+                        compact_stat_row("金额", f"{format_num(row['amount'], 2)} 元"),
+                    ],
+                )
+                if not expense_df.empty
+                else render_empty("当前没有固定费用明细。"),
+                compact_list_html(
+                    salary_df,
+                    "工资拆解",
+                    10,
+                    "这里按人员拆工资，方便老板判断人工成本占比和排班压力。",
+                    lambda row: row["name"],
+                    lambda row: row.get("note", "") or "工资项",
+                    lambda row: [
+                        compact_stat_row("金额", f"{format_num(row['amount'], 2)} 元"),
+                    ],
+                )
+                if not salary_df.empty
+                else render_empty("当前没有工资明细。"),
+            ]
+        )
+
     overview_panels_html = f"""
       <div class="detail-grid">
         <div class="module detail-module" style="margin:0;">
@@ -2174,19 +3810,29 @@ def build_html(metrics: dict) -> str:
       <div class="detail-grid">
         <div class="module detail-module" style="margin:0;">
           <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">POS 高价值数据</h3>
+            <p class="module-note">把报表里更接近真实经营动作的数据抽出来，只保留老板能直接用的信息。</p>
+          </div>
+          {f"<div class='metrics-grid'>{pos_overview_html}</div>" if pos_overview_html else render_empty("当前还没有可用的 POS 高价值报表样本。")}
+        </div>
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
+            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
+            <p class="module-note">保留原有数据提醒，也把 POS 新增信息一起带进来，方便复盘时快速扫一遍。</p>
+          </div>
+          <ul class="insight-list">{insights_html}</ul>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="module detail-module" style="margin:0;">
+          <div class="module-header">
             <h3 class="module-title" style="font-size:18px;">道具参考口径</h3>
             <p class="module-note">道具已从主经营指标剥离，只保留为参考值。</p>
           </div>
           <div class="metrics-grid">{reference_html}</div>
         </div>
-        <div class="module detail-module" style="margin:0;">
-          <div class="module-header">
-            <h3 class="module-title" style="font-size:18px;">自动提炼重点提醒</h3>
-            <p class="module-note">保留原有数据提醒，方便二次复盘。</p>
-          </div>
-          <ul class="insight-list">{insights_html}</ul>
-        </div>
       </div>
+      {f"<div class='detail-grid'>{cost_breakdown_html}</div>" if cost_breakdown_html else ""}
     """
     strategy_panels_html = f"""
       <div class="module detail-module" style="margin:0;">
@@ -2366,6 +4012,17 @@ def build_html(metrics: dict) -> str:
         </div>
       </div>
     """
+    detail_quick_nav_html = "".join(
+        [
+            "<a href='./'>返回首页</a>",
+            "<a href='#overview-section'>总览</a>",
+            "<a href='#strategy-section'>经营策略</a>",
+            "<a href='#charts-section'>图表</a>",
+            "<a href='#inventory-section'>补货去化</a>",
+            "<a href='#people-section'>会员店员</a>",
+            "<a href='#downloads-section'>下载</a>",
+        ]
+    )
 
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -3303,8 +4960,8 @@ def build_html(metrics: dict) -> str:
 <body>
   <div class="page">
     <section class="hero">
-      <h1>{cards['store_name']} 老板经营仪表盘</h1>
-      <p>老板打开 10 秒内先看今日结论，再看今天执行任务。复杂图表和原始明细都保留在页面下方的“详细数据与图表”。</p>
+      <h1>{cards['store_name']} 详细经营页</h1>
+      <p>这是长版详细页。总览和经营策略放在最上面，后面依次看图表、补货去化、会员店员和下载区，更适合复盘和细看。</p>
       <div class="hero-note">{store_note} · 当前季节：{time_strategy['season']} / {time_strategy['phase']} · 日销趋势：{decision['sales_trend']['label']}</div>
       <div class="hero-status">
         <div class="hero-status-chip">最近抓取日期：{capture_date}（北京时间）</div>
@@ -3312,192 +4969,58 @@ def build_html(metrics: dict) -> str:
       </div>
     </section>
 
-    <nav class="quick-nav">{quick_nav_html}</nav>
+    <nav class="quick-nav">{detail_quick_nav_html}</nav>
 
-    <section class="module" id="focus">
+    <section class="module" id="overview-section">
       <div class="module-header">
-        <h2 class="module-title">1. 今日经营重点</h2>
-        <p class="module-note">当前阶段：{decision['stage']}。先看 3 条今日结论，再安排今天执行任务。</p>
+        <h2 class="module-title">总览</h2>
+        <p class="module-note">先看整体状态，再决定今天是先救火、先去库存，还是先放大机会。</p>
       </div>
-      <div class="focus-wrap">
-        <div class="focus-panel">
-          <div class="focus-headline">{boss_board['headline']}</div>
-          <p class="focus-summary">{boss_board['summary']}</p>
-          <div class="chip-row">{conclusions_html}</div>
-        </div>
-        <div class="focus-panel">
-          <div class="card-title">今日执行任务</div>
-          <ul class="task-list">{tasks_html}</ul>
-          <div class="card-note" style="margin-top:12px;">今天先别做：</div>
-          <ul class="detail-list">{dont_do_html}</ul>
-        </div>
-      </div>
+      {overview_panels_html}
     </section>
 
-    <section class="module" id="core-metrics">
+    <section class="module" id="strategy-section">
       <div class="module-header">
-        <h2 class="module-title">2. 核心经营指标</h2>
-        <p class="module-note">只保留 4 个最关键指标，方便老板先判断大方向。</p>
+        <h2 class="module-title">经营策略</h2>
+        <p class="module-note">这里的策略会根据每日数据、整体数据、库存和利润状态自动调整。</p>
       </div>
-      <div class="metrics-grid">{core_metric_html}</div>
-      {profit_cards_html}
+      {strategy_panels_html}
     </section>
 
-    <section class="module" id="money-opportunities">
+    <section class="module" id="charts-section">
       <div class="module-header">
-        <h2 class="module-title">3. 赚钱机会</h2>
-        <p class="module-note">找出卖得动但库存偏低的品类，先保营业额。</p>
+        <h2 class="module-title">图表</h2>
+        <p class="module-note">适合看趋势、结构和变化，不适合第一眼就下结论。</p>
       </div>
-      <div class="cards-grid">{money_html}</div>
+      <div class="charts">{chart_html}</div>
     </section>
 
-    <section class="module" id="inventory-risks">
+    <section class="module" id="inventory-section">
       <div class="module-header">
-        <h2 class="module-title">4. 库存风险</h2>
-        <p class="module-note">优先看库存深、近期动销弱的品类，先停补再去化。</p>
+        <h2 class="module-title">补货 / 去化</h2>
+        <p class="module-note">先看品类，再看 SKU，再看负库存异常。执行时从这里往下钻。</p>
       </div>
-      <div class="cards-grid">{inventory_risk_html}</div>
+      <div class="tables">{inventory_tables_html}</div>
     </section>
 
-    <section class="module" id="replenish-opportunities">
+    <section class="module" id="people-section">
       <div class="module-header">
-        <h2 class="module-title">5. 补货机会</h2>
-        <p class="module-note">先按品类看补货机会，再下钻到 SKU。</p>
+        <h2 class="module-title">会员 / 店员 / 参考店</h2>
+        <p class="module-note">这一组适合复盘复购、导购执行和其他店铺对比，不参与主店第一页结论。</p>
       </div>
-      <div class="cards-grid">{replenish_html}</div>
+      <div class="tables">{people_tables_html}</div>
     </section>
 
-    <section class="module" id="member-ops">
+    <section class="module" id="downloads-section">
       <div class="module-header">
-        <h2 class="module-title">6. 会员经营</h2>
-        <p class="module-note">优先回访高价值会员，放大复购和客单价。</p>
+        <h2 class="module-title">下载</h2>
+        <p class="module-note">需要转发、导出或交给执行层时，从这里拿 HTML 和 CSV。</p>
       </div>
-      <div class="cards-grid">{member_html}</div>
+      {download_cards_html}
     </section>
-
-    <details class="detail-panel" id="details">
-      <summary>查看详细数据与图表</summary>
-      <p class="detail-intro">电脑端建议用左侧导航切换模块，同屏看更多内容；手机端建议横向滑动下面的导航按钮，只看你今天要执行的那一组。</p>
-      <div class="detail-shell">
-        <aside class="detail-sidebar">
-          <div class="detail-sidebar-card">
-            <h3 class="detail-sidebar-title">详细区导航</h3>
-            <p class="detail-sidebar-note">先看总览，再按需要切到图表、补货去化、会员店员或下载区，不用从上往下一直翻。</p>
-            <div class="detail-nav">{detail_nav_html}</div>
-          </div>
-          <div class="detail-sidebar-card">
-            <h3 class="detail-sidebar-title">电脑端怎么用</h3>
-            <p class="detail-sidebar-note">桌面更适合同屏对比多张卡片和表格。建议老板开会时先看“总览”和“经营策略”，执行层再看“补货去化”和“会员店员”。</p>
-          </div>
-        </aside>
-
-        <div class="detail-content">
-          <section class="detail-pane is-active" id="detail-overview" data-detail-pane>
-            <div class="detail-pane-header">
-              <h3 class="detail-pane-title">总览</h3>
-              <p class="detail-pane-note">先看健康灯、季节节奏和自动提醒。这一屏最适合老板快速判断今天属于救火、稳经营，还是放大机会。</p>
-            </div>
-            {overview_panels_html}
-          </section>
-
-          <section class="detail-pane" id="detail-strategy" data-detail-pane>
-            <div class="detail-pane-header">
-              <h3 class="detail-pane-title">经营策略</h3>
-              <p class="detail-pane-note">这里保留自动生成经营方案和完整术语词典。老板拍板时看方案，店员执行时看术语解释。</p>
-            </div>
-            {strategy_panels_html}
-          </section>
-
-          <section class="detail-pane" id="detail-charts" data-detail-pane>
-            <div class="detail-pane-header">
-              <h3 class="detail-pane-title">图表</h3>
-              <p class="detail-pane-note">电脑端更适合同屏看多张趋势和结构图；手机端建议只挑你今天最关心的一张图表看，不用全刷完。</p>
-            </div>
-            <div class="charts">{chart_html}</div>
-          </section>
-
-          <section class="detail-pane" id="detail-inventory" data-detail-pane>
-            <div class="detail-pane-header">
-              <h3 class="detail-pane-title">补货 / 去化</h3>
-              <p class="detail-pane-note">先看品类，再看 SKU，再看负库存异常。这样不容易因为单款波动做错整体动作。</p>
-            </div>
-            <div class="tables">{inventory_tables_html}</div>
-          </section>
-
-          <section class="detail-pane" id="detail-people" data-detail-pane>
-            <div class="detail-pane-header">
-              <h3 class="detail-pane-title">会员 / 店员 / 参考店</h3>
-              <p class="detail-pane-note">这一组更适合看复购机会、导购执行和其他店铺的参考数据，不参与主店结论，但适合横向对比。</p>
-            </div>
-            <div class="tables">{people_tables_html}</div>
-          </section>
-
-          <section class="detail-pane" id="detail-downloads" data-detail-pane>
-            <div class="detail-pane-header">
-              <h3 class="detail-pane-title">下载</h3>
-              <p class="detail-pane-note">这里保留 HTML 摘要、分析报告和 CSV 下载入口。老板看页面，执行层和协作人再来这里拿文件。</p>
-            </div>
-            {download_cards_html}
-          </section>
-        </div>
-      </div>
-    </details>
   </div>
   <script>
     (function () {{
-      const detailPanel = document.getElementById('details');
-      const buttons = Array.from(document.querySelectorAll('[data-detail-target]'));
-      const panes = Array.from(document.querySelectorAll('[data-detail-pane]'));
-      if (!detailPanel || buttons.length === 0 || panes.length === 0) {{
-        return;
-      }}
-
-      function activatePane(targetId, syncHash) {{
-        let found = false;
-        buttons.forEach((button) => {{
-          const active = button.getAttribute('data-detail-target') === targetId;
-          button.classList.toggle('is-active', active);
-          button.setAttribute('aria-pressed', active ? 'true' : 'false');
-          if (active) {{
-            found = true;
-          }}
-        }});
-        panes.forEach((pane) => {{
-          pane.classList.toggle('is-active', pane.id === targetId);
-        }});
-        if (!found) {{
-          return;
-        }}
-        if (syncHash && window.history && window.history.replaceState) {{
-          window.history.replaceState(null, '', '#' + targetId);
-        }}
-      }}
-
-      buttons.forEach((button) => {{
-        button.addEventListener('click', () => {{
-          const targetId = button.getAttribute('data-detail-target');
-          if (!targetId) return;
-          detailPanel.open = true;
-          activatePane(targetId, true);
-        }});
-      }});
-
-      const initialHash = window.location.hash.replace('#', '');
-      if (initialHash && panes.some((pane) => pane.id === initialHash)) {{
-        detailPanel.open = true;
-        activatePane(initialHash, false);
-      }} else {{
-        activatePane('detail-overview', false);
-      }}
-
-      window.addEventListener('hashchange', () => {{
-        const hash = window.location.hash.replace('#', '');
-        if (hash && panes.some((pane) => pane.id === hash)) {{
-          detailPanel.open = true;
-          activatePane(hash, false);
-        }}
-      }});
-
       document.querySelectorAll('[data-table-toggle]').forEach((button) => {{
         const card = button.closest('.table-card');
         if (!card) return;
@@ -3518,6 +5041,8 @@ def build_html(metrics: dict) -> str:
 def build_markdown_summary(metrics: dict) -> str:
     cards = metrics["summary_cards"]
     actions = metrics["action_summary"]
+    profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights")
     health_lights = build_health_lights(cards, actions)
     dashboard_tips = build_dashboard_tips(cards, actions)[:7]
     time_strategy = build_time_strategy(metrics)
@@ -3572,8 +5097,52 @@ def build_markdown_summary(metrics: dict) -> str:
         f"- 跨季处理 SKU：{format_num(actions['seasonal_hold_count'])}",
         f"- 建议去化 SKU：{format_num(actions['clearance_count'])}",
         "",
-        "## 输入人 / 店铺逻辑",
     ])
+    if pos_highlights:
+        stock_analysis = pos_highlights.get("stock_analysis")
+        movement = pos_highlights.get("movement")
+        daily_flow = pos_highlights.get("daily_flow")
+        lines.extend([
+            "## POS 高价值数据",
+        ])
+        if stock_analysis:
+            lines.append(
+                f"- 库存结构：主要压在 {stock_analysis['top_labels']}，"
+                f"当季库存占比 {format_num(stock_analysis['current_season_inventory_share'] * 100, 1)}%，"
+                f"跨季库存占比 {format_num(stock_analysis['cross_season_inventory_share'] * 100, 1)}%。"
+            )
+        if movement:
+            lines.append(
+                f"- 最近出入库：入库 {format_num(movement['inbound_qty'])} 件 / {format_num(movement['inbound_amount'], 2)} 元，"
+                f"出库 {format_num(movement['outbound_qty'])} 件 / {format_num(movement['outbound_amount'], 2)} 元，"
+                f"净入库 {format_num(movement['net_qty'])} 件。"
+            )
+        if daily_flow:
+            dominant_payment = daily_flow.get("dominant_payment")
+            payment_text = (
+                f"{dominant_payment['label']}占比 {format_num(dominant_payment['share'] * 100, 1)}%"
+                if dominant_payment
+                else "暂无明显主支付方式"
+            )
+            lines.append(
+                f"- 当日流水：{format_num(daily_flow['actual_money'], 2)} 元，"
+                f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。"
+            )
+        lines.append("")
+
+    if profit:
+        lines.extend([
+            "## 利润与保本",
+            f"- 毛利额：{format_num(profit['gross_profit'], 2)} 元，毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+            f"- 固定费用：{format_num(profit['monthly_operating_expense'], 2)} 元，人工费用：{format_num(profit['salary_total'], 2)} 元",
+            f"- 总费用：{format_num(profit['total_expense'], 2)} 元，净利润：{format_num(profit['net_profit'], 2)} 元",
+            f"- 保本销售额：{format_num(profit['breakeven_sales'], 2)} 元，保本进度：{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
+            f"- 保本日销：{format_num(profit['breakeven_daily_sales'], 2)} 元，当前平均日销：{format_num(profit['average_daily_sales'], 2)} 元",
+            f"- 月末净利预测：{format_num(profit['projected_month_net_profit'], 2)} 元，判断：{profit['forecast_headline']}",
+            "",
+        ])
+
+    lines.append("## 输入人 / 店铺逻辑")
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         lines.extend([
@@ -3696,6 +5265,8 @@ def build_markdown_summary(metrics: dict) -> str:
 
 def build_business_report(metrics: dict) -> str:
     cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights")
     sales_top = metrics["sales_by_category_ex_props"].head(4)
     category_risks = metrics["category_risks"].head(4)
     guides = metrics["guide_perf"].head(3)
@@ -3771,9 +5342,59 @@ def build_business_report(metrics: dict) -> str:
         f"- 会员销售额占比：{format_num(cards['member_sales_ratio'] * 100, 1)}%",
         f"- 跨季处理 SKU：{format_num(metrics['action_summary']['seasonal_hold_count'])}",
         "",
+    ])
+    if pos_highlights:
+        stock_analysis = pos_highlights.get("stock_analysis")
+        movement = pos_highlights.get("movement")
+        daily_flow = pos_highlights.get("daily_flow")
+        lines.extend([
+            "## POS 高价值数据",
+            "",
+        ])
+        if stock_analysis:
+            lines.append(
+                f"- 库存结构：主要压在 {stock_analysis['top_labels']}，"
+                f"当季库存占比 {format_num(stock_analysis['current_season_inventory_share'] * 100, 1)}%，"
+                f"跨季库存占比 {format_num(stock_analysis['cross_season_inventory_share'] * 100, 1)}%。"
+            )
+        if movement:
+            lines.append(
+                f"- 最近出入库：入库 {format_num(movement['inbound_qty'])} 件 / {format_num(movement['inbound_amount'], 2)} 元，"
+                f"出库 {format_num(movement['outbound_qty'])} 件 / {format_num(movement['outbound_amount'], 2)} 元，"
+                f"净入库 {format_num(movement['net_qty'])} 件 / {format_num(movement['net_amount'], 2)} 元。"
+            )
+        if daily_flow:
+            dominant_payment = daily_flow.get("dominant_payment")
+            payment_text = (
+                f"{dominant_payment['label']}占比 {format_num(dominant_payment['share'] * 100, 1)}%"
+                if dominant_payment
+                else "暂无明显主支付方式"
+            )
+            lines.append(
+                f"- 当日流水：{format_num(daily_flow['actual_money'], 2)} 元，"
+                f"{format_num(daily_flow['order_count'])} 单 / {format_num(daily_flow['sales_qty'])} 件，{payment_text}。"
+            )
+        lines.append("")
+
+    if profit:
+        lines.extend([
+            "## 利润与保本",
+            "",
+            f"- 毛利额：{format_num(profit['gross_profit'], 2)} 元，毛利率 {format_num(profit['gross_margin_rate'] * 100, 1)}%",
+            f"- 固定费用：{format_num(profit['monthly_operating_expense'], 2)} 元，人工费用：{format_num(profit['salary_total'], 2)} 元",
+            f"- 总费用：{format_num(profit['total_expense'], 2)} 元，净利润：{format_num(profit['net_profit'], 2)} 元",
+            f"- 保本销售额：{format_num(profit['breakeven_sales'], 2)} 元，保本进度：{format_num(profit['breakeven_progress_ratio'] * 100, 1)}%",
+            f"- 保本日销：{format_num(profit['breakeven_daily_sales'], 2)} 元，当前平均日销：{format_num(profit['average_daily_sales'], 2)} 元",
+            f"- 月末销售预测：{format_num(profit['projected_month_sales'], 2)} 元，月末净利预测：{format_num(profit['projected_month_net_profit'], 2)} 元",
+            f"- 最大费用项：{(profit.get('top_expense_item') or {}).get('name', '未记录')} / {format_num(float((profit.get('top_expense_item') or {}).get('amount', 0) or 0), 2)} 元",
+            f"- 最高工资项：{(profit.get('top_salary_item') or {}).get('name', '未记录')} / {format_num(float((profit.get('top_salary_item') or {}).get('amount', 0) or 0), 2)} 元",
+            "",
+        ])
+    lines.extend([
         "## 输入人 / 店铺逻辑",
         "",
     ])
+
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         lines.extend([
@@ -3936,29 +5557,36 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     pages_dir.mkdir(parents=True, exist_ok=True)
     date_tag = pd.Timestamp.today().strftime("%Y-%m-%d")
     html_path = output_dir / f"库存销售看板_{date_tag}.html"
+    detail_html_path = output_dir / f"库存销售详细页_{date_tag}.html"
     latest_html_path = output_dir / "index.html"
+    latest_detail_html_path = output_dir / "details.html"
     md_path = output_dir / f"库存销售摘要_{date_tag}.md"
     report_path = output_dir / f"库存销售分析报告_{date_tag}.md"
     replenish_csv = output_dir / f"补货建议清单_{date_tag}.csv"
     clearance_csv = output_dir / f"去化建议清单_{date_tag}.csv"
     category_csv = output_dir / f"品类风险概览_{date_tag}.csv"
     pages_html_path = pages_dir / "index.html"
+    pages_detail_html_path = pages_dir / "details.html"
     pages_md_path = pages_dir / "summary.md"
     pages_report_path = pages_dir / "report.md"
     pages_replenish_csv = pages_dir / "补货建议清单.csv"
     pages_clearance_csv = pages_dir / "去化建议清单.csv"
     pages_category_csv = pages_dir / "品类风险概览.csv"
     html_output = build_html(metrics)
+    detail_html_output = build_detail_html(metrics)
     markdown_output = build_markdown_summary(metrics)
     report_output = build_business_report(metrics)
     html_path.write_text(html_output, encoding="utf-8")
+    detail_html_path.write_text(detail_html_output, encoding="utf-8")
     latest_html_path.write_text(html_output, encoding="utf-8")
+    latest_detail_html_path.write_text(detail_html_output, encoding="utf-8")
     md_path.write_text(markdown_output, encoding="utf-8")
     report_path.write_text(report_output, encoding="utf-8")
     metrics["replenish"].to_csv(replenish_csv, index=False, encoding="utf-8-sig")
     metrics["clearance"].to_csv(clearance_csv, index=False, encoding="utf-8-sig")
     metrics["category_risks"].to_csv(category_csv, index=False, encoding="utf-8-sig")
     pages_html_path.write_text(html_output, encoding="utf-8")
+    pages_detail_html_path.write_text(detail_html_output, encoding="utf-8")
     pages_md_path.write_text(markdown_output, encoding="utf-8")
     pages_report_path.write_text(report_output, encoding="utf-8")
     metrics["replenish"].to_csv(pages_replenish_csv, index=False, encoding="utf-8-sig")
@@ -3966,8 +5594,11 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     metrics["category_risks"].to_csv(pages_category_csv, index=False, encoding="utf-8-sig")
     return {
         "html": html_path,
+        "detail_html": detail_html_path,
         "latest_html": latest_html_path,
+        "latest_detail_html": latest_detail_html_path,
         "pages_html": pages_html_path,
+        "pages_detail_html": pages_detail_html_path,
         "markdown": md_path,
         "pages_markdown": pages_md_path,
         "report": report_path,
@@ -3987,10 +5618,12 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--pages-dir", type=Path, default=DEFAULT_PAGES_DIR)
     parser.add_argument("--cost-file", type=Path, default=DEFAULT_COST_FILE)
+    parser.add_argument("--yeusoft-capture-dir", type=Path, default=DEFAULT_YEU_CAPTURE_DIR)
     parser.add_argument("--store", default=None, help="Optional store name override")
     parser.add_argument("--zip-file", type=Path, default=None, help="Optional zip export to extract and analyze")
     args = parser.parse_args()
     cost_snapshot = load_cost_snapshot(args.cost_file)
+    yeusoft_capture_bundle = load_yeusoft_capture_bundle(args.yeusoft_capture_dir)
 
     if args.zip_file:
         with tempfile.TemporaryDirectory(prefix="inventory_zip_") as temp_dir:
@@ -4002,14 +5635,24 @@ def main() -> int:
             raw = load_data(reports)
             store_name = infer_store_name(raw, args.store)
             cleaned = clean_data(raw, store_name)
-            metrics = build_metrics(cleaned, store_name, cost_snapshot=cost_snapshot)
+            metrics = build_metrics(
+                cleaned,
+                store_name,
+                cost_snapshot=cost_snapshot,
+                yeusoft_capture_bundle=yeusoft_capture_bundle,
+            )
             outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
     else:
         reports = resolve_reports(args.input_dir)
         raw = load_data(reports)
         store_name = infer_store_name(raw, args.store)
         cleaned = clean_data(raw, store_name)
-        metrics = build_metrics(cleaned, store_name, cost_snapshot=cost_snapshot)
+        metrics = build_metrics(
+            cleaned,
+            store_name,
+            cost_snapshot=cost_snapshot,
+            yeusoft_capture_bundle=yeusoft_capture_bundle,
+        )
         outputs = write_outputs(metrics, args.output_dir, args.pages_dir)
 
     print(f"Store: {store_name}")

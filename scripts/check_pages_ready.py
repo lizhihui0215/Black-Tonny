@@ -41,6 +41,7 @@ def main() -> int:
             file_exists(DOCS_DIR / "index.html", "docs/index.html exists"),
             file_exists(MANUALS_DIR / "index.html", "docs/manuals/index.html exists"),
             file_exists(DASHBOARD_DIR / "index.html", "docs/dashboard/index.html exists"),
+            file_exists(DASHBOARD_DIR / "details.html", "docs/dashboard/details.html exists"),
             file_exists(DASHBOARD_DIR / "summary.md", "docs/dashboard/summary.md exists"),
             file_exists(DASHBOARD_DIR / "report.md", "docs/dashboard/report.md exists"),
             file_exists(DASHBOARD_DIR / "补货建议清单.csv", "docs/dashboard/补货建议清单.csv exists"),
@@ -62,6 +63,7 @@ def main() -> int:
             text_contains(readme, "docs/index.html", "README links to Pages homepage"),
             text_contains(readme, "manuals", "README mentions manuals html docs"),
             text_contains(readme, "docs/dashboard/index.html", "README links to dashboard entry"),
+            text_contains(dashboard_index, "./details.html", "dashboard links to detail page"),
             text_contains(readme, "GitHub Pages开启清单", "README links to Pages checklist"),
         ]
     )

@@ -1,9 +1,13 @@
 import fs from "fs/promises";
 import path from "path";
-import { captureReport } from "./capture_yeusoft_report_metadata.mjs";
+import {
+  captureReportInSession,
+  closeYeusoftSession,
+  createYeusoftSession,
+} from "./capture_yeusoft_report_metadata.mjs";
 
 const OUTPUT_DIR = process.env.YEU_OUTPUT_DIR || path.resolve("reports/yeusoft_report_capture");
-const REPORTS = [
+const DEFAULT_REPORTS = [
   "店铺零售清单",
   "销售清单",
   "库存综合分析",
@@ -17,6 +21,18 @@ const REPORTS = [
   "会员消费排行",
   "每日流水单",
 ];
+const REPORTS = process.env.YEU_REPORT_LIST
+  ? process.env.YEU_REPORT_LIST.split(",").map((item) => item.trim()).filter(Boolean)
+  : DEFAULT_REPORTS;
+
+function withTimeout(promise, reportName, ms = 90000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(`${reportName} 超时（>${ms / 1000}s）`)), ms);
+    }),
+  ]);
+}
 
 function extractEndpoint(payload, keyword) {
   return payload.responses.find((item) => item.url.includes(keyword));
@@ -62,19 +78,38 @@ async function main() {
   await fs.mkdir(OUTPUT_DIR, { recursive: true });
 
   const summaries = [];
-  for (const reportName of REPORTS) {
-    try {
-      const result = await captureReport(reportName, { outputDir: OUTPUT_DIR });
-      summaries.push({ status: "ok", ...extractReportSummary(result) });
-      console.log(`[OK] ${reportName}`);
-    } catch (error) {
-      summaries.push({
-        status: "error",
-        reportName,
-        error: String(error),
-      });
-      console.error(`[ERROR] ${reportName}: ${error}`);
+  const outputPath = path.join(OUTPUT_DIR, "index.json");
+  const session = await createYeusoftSession({ outputDir: OUTPUT_DIR });
+  try {
+    for (const reportName of REPORTS) {
+      try {
+        const result = await withTimeout(captureReportInSession(session, reportName, { outputDir: OUTPUT_DIR }), reportName);
+        summaries.push({ status: "ok", ...extractReportSummary(result) });
+        console.log(`[OK] ${reportName}`);
+      } catch (error) {
+        summaries.push({
+          status: "error",
+          reportName,
+          error: String(error),
+        });
+        console.error(`[ERROR] ${reportName}: ${error}`);
+      }
+
+      await fs.writeFile(
+        outputPath,
+        JSON.stringify(
+          {
+            capturedAt: new Date().toISOString(),
+            reports: summaries,
+          },
+          null,
+          2,
+        ),
+        "utf8",
+      );
     }
+  } finally {
+    await closeYeusoftSession(session);
   }
 
   const payload = {
@@ -82,7 +117,6 @@ async function main() {
     reports: summaries,
   };
 
-  const outputPath = path.join(OUTPUT_DIR, "index.json");
   await fs.writeFile(outputPath, JSON.stringify(payload, null, 2), "utf8");
   console.log(`Saved summary index: ${outputPath}`);
 }

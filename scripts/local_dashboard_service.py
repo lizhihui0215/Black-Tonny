@@ -35,6 +35,16 @@ def load_local_config() -> dict[str, Any]:
     return json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
 
 
+def load_cost_snapshot() -> dict[str, Any]:
+    if not COST_FILE.exists():
+        return {}
+    return json.loads(COST_FILE.read_text(encoding="utf-8"))
+
+
+def save_cost_snapshot(snapshot: dict[str, Any]) -> None:
+    COST_FILE.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 @dataclass
 class JobState:
     running: bool = False
@@ -150,6 +160,15 @@ def refresh_job() -> None:
 class Handler(BaseHTTPRequestHandler):
     server_version = "BlackTonyLocalService/1.0"
 
+    def _read_json_body(self) -> dict[str, Any]:
+        content_length = int(self.headers.get("Content-Length", "0") or 0)
+        if content_length <= 0:
+            return {}
+        raw = self.rfile.read(content_length)
+        if not raw:
+            return {}
+        return json.loads(raw.decode("utf-8"))
+
     def _send(self, status: int, payload: dict[str, Any]) -> None:
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -169,10 +188,41 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path == "/api/status":
             self._send(200, {"ok": True, **snapshot_state()})
             return
+        if parsed.path == "/api/cost-snapshot":
+            self._send(
+                200,
+                {
+                    "ok": True,
+                    "path": str(COST_FILE),
+                    "snapshot": load_cost_snapshot(),
+                },
+            )
+            return
         self._send(404, {"ok": False, "message": "Not found"})
 
     def do_POST(self) -> None:  # noqa: N802
         parsed = urlparse(self.path)
+        if parsed.path == "/api/cost-snapshot":
+            try:
+                payload = self._read_json_body()
+                snapshot = payload.get("snapshot")
+                if not isinstance(snapshot, dict):
+                    self._send(400, {"ok": False, "message": "请求里缺少 snapshot 对象。"})
+                    return
+                save_cost_snapshot(snapshot)
+                self._send(
+                    200,
+                    {
+                        "ok": True,
+                        "message": "成本快照已保存到本地文件。",
+                        "path": str(COST_FILE),
+                        "snapshot": snapshot,
+                    },
+                )
+            except Exception as error:  # noqa: BLE001
+                self._send(500, {"ok": False, "message": f"保存成本快照失败：{error}"})
+            return
+
         if parsed.path != "/api/refresh":
             self._send(404, {"ok": False, "message": "Not found"})
             return
