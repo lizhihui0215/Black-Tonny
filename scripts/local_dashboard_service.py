@@ -22,6 +22,7 @@ HOST = "127.0.0.1"
 PORT = 8765
 CONFIG_FILE = ROOT / "data" / "yeusoft_local_config.json"
 COST_FILE = ROOT / "data" / "store_cost_snapshot.json"
+COST_HISTORY_FILE = ROOT / "data" / "store_cost_history.json"
 SCAN_OUTPUT = ROOT / "reports" / "yeusoft_report_capture"
 
 
@@ -43,6 +44,49 @@ def load_cost_snapshot() -> dict[str, Any]:
 
 def save_cost_snapshot(snapshot: dict[str, Any]) -> None:
     COST_FILE.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def load_cost_history() -> list[dict[str, Any]]:
+    if not COST_HISTORY_FILE.exists():
+        return []
+    payload = json.loads(COST_HISTORY_FILE.read_text(encoding="utf-8"))
+    if isinstance(payload, list):
+        return [item for item in payload if isinstance(item, dict)]
+    if isinstance(payload, dict):
+        snapshots = payload.get("snapshots")
+        if isinstance(snapshots, list):
+            return [item for item in snapshots if isinstance(item, dict)]
+    return []
+
+
+def save_cost_history(history: list[dict[str, Any]]) -> None:
+    COST_HISTORY_FILE.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def snapshot_period_key(snapshot: dict[str, Any]) -> str:
+    snapshot_datetime = str(snapshot.get("snapshot_datetime") or "").strip()
+    if len(snapshot_datetime) >= 7:
+        return snapshot_datetime[:7]
+    return str(snapshot.get("snapshot_name") or "未标记月份").strip()
+
+
+def upsert_cost_history(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
+    history = load_cost_history()
+    period_key = snapshot_period_key(snapshot)
+    updated = False
+
+    for index, item in enumerate(history):
+        if snapshot_period_key(item) == period_key:
+            history[index] = snapshot
+            updated = True
+            break
+
+    if not updated:
+        history.append(snapshot)
+
+    history.sort(key=lambda item: str(item.get("snapshot_datetime") or ""), reverse=True)
+    save_cost_history(history)
+    return history
 
 
 @dataclass
@@ -131,11 +175,18 @@ def refresh_job() -> None:
             "scripts/build_inventory_dashboard.py",
             "--cost-file",
             str(COST_FILE),
+            "--cost-history-file",
+            str(COST_HISTORY_FILE),
         ]
         build = run_command(build_cmd, env=env)
         if build.returncode != 0:
             raise RuntimeError(f"看板重建失败：{build.stderr.strip() or build.stdout.strip()}")
         append_step("重建经营仪表盘", "ok", "已使用最新本地数据和成本快照重建仪表盘。")
+
+        manuals = run_command(["python3", "scripts/build_docs_html_site.py"], env=env)
+        if manuals.returncode != 0:
+            raise RuntimeError(f"文档中心重建失败：{manuals.stderr.strip() or manuals.stdout.strip()}")
+        append_step("重建文档中心", "ok", "已同步更新摘要、报告和网页版手册。")
 
         last_scan_index = str((SCAN_OUTPUT / "index.json").resolve()) if (SCAN_OUTPUT / "index.json").exists() else None
         last_dashboard = str((ROOT / "docs" / "dashboard" / "index.html").resolve())
@@ -189,12 +240,25 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, {"ok": True, **snapshot_state()})
             return
         if parsed.path == "/api/cost-snapshot":
+            history = load_cost_history()
             self._send(
                 200,
                 {
                     "ok": True,
                     "path": str(COST_FILE),
+                    "history_path": str(COST_HISTORY_FILE),
                     "snapshot": load_cost_snapshot(),
+                    "history": history,
+                },
+            )
+            return
+        if parsed.path == "/api/cost-history":
+            self._send(
+                200,
+                {
+                    "ok": True,
+                    "path": str(COST_HISTORY_FILE),
+                    "history": load_cost_history(),
                 },
             )
             return
@@ -210,13 +274,16 @@ class Handler(BaseHTTPRequestHandler):
                     self._send(400, {"ok": False, "message": "请求里缺少 snapshot 对象。"})
                     return
                 save_cost_snapshot(snapshot)
+                history = upsert_cost_history(snapshot)
                 self._send(
                     200,
                     {
                         "ok": True,
                         "message": "成本快照已保存到本地文件。",
                         "path": str(COST_FILE),
+                        "history_path": str(COST_HISTORY_FILE),
                         "snapshot": snapshot,
+                        "history": history,
                     },
                 )
             except Exception as error:  # noqa: BLE001

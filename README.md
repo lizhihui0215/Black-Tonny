@@ -8,6 +8,7 @@
 - 想直接打开最新在线经营仪表盘入口文件：看 [docs/dashboard/index.html](docs/dashboard/index.html)
 - 想先看 GitHub Pages 首页入口：看 [docs/index.html](docs/index.html)
 - 想直接网页阅读全部手册：看 [docs/manuals/index.html](docs/manuals/index.html)
+- 想在店里电脑维护月度成本快照：看 [docs/costs/index.html](docs/costs/index.html)
 - 想直接看怎么开启 GitHub Pages：看 [GitHub Pages开启清单](docs/25-GitHub%20Pages开启清单.md)
 - 想先做 GitHub Pages 上线前自检：看 [GitHub Pages上线前最后检查](docs/26-GitHub%20Pages上线前最后检查.md)
 - 想先搭整体经营盘：看 [店铺经营基础框架](docs/06-店铺经营基础框架.md)
@@ -17,6 +18,7 @@
 - 想先补全历史数据：看 [全量历史数据导出与看板升级清单](docs/23-全量历史数据导出与看板升级清单.md)
 - 想先看下一步优化建议：看 [内容经营与数据看板下一步优化建议](docs/24-内容经营与数据看板下一步优化建议.md)
 - 想先判断 POS 哪些报表值得接入老板看板：看 [POS报表收益评估与接入建议](docs/27-POS报表收益评估与接入建议.md)
+- 想维护月度成本、利润和保本口径：看 [月度成本快照维护说明](docs/28-月度成本快照维护说明.md)
 - 想先做复购和会员：看 [老客复购经营清单](docs/19-老客复购经营清单.md)
 - 想先看扩品：看 [低冲突扩品与产品线丰富策略](docs/21-低冲突扩品与产品线丰富策略.md)
 - 想先让员工跑顺：看 [小团队门店分工与排班手册](docs/08-小团队门店分工与排班手册.md)
@@ -33,6 +35,7 @@
 | GitHub Pages 在线仪表盘入口 | [docs/dashboard/index.html](docs/dashboard/index.html) |
 | GitHub Pages 首页入口 | [docs/index.html](docs/index.html) |
 | GitHub Pages 文档中心 | [docs/manuals/index.html](docs/manuals/index.html) |
+| 月度成本维护台（店里电脑） | [docs/costs/index.html](docs/costs/index.html) |
 | GitHub Pages 开启步骤 | [25-GitHub Pages开启清单](docs/25-GitHub%20Pages开启清单.md) |
 | GitHub Pages 上线前最后检查 | [26-GitHub Pages上线前最后检查](docs/26-GitHub%20Pages上线前最后检查.md) |
 | 历史数据补齐 | [23-全量历史数据导出与看板升级清单](docs/23-全量历史数据导出与看板升级清单.md) |
@@ -54,6 +57,7 @@
 - GitHub Pages 固定入口文件：[`docs/dashboard/index.html`](docs/dashboard/index.html)
 - GitHub Pages 首页入口：[`docs/index.html`](docs/index.html)
 - GitHub Pages 文档中心入口：[`docs/manuals/index.html`](docs/manuals/index.html)
+- 店里电脑本地成本维护入口：[`docs/costs/index.html`](docs/costs/index.html)
 - Pages 开启后，建议固定访问路径：`/dashboard/`
 - GitHub Pages 开启说明：[`docs/25-GitHub Pages开启清单.md`](docs/25-GitHub%20Pages开启清单.md)
 - GitHub Pages 上线前最后检查：[`docs/26-GitHub Pages上线前最后检查.md`](docs/26-GitHub%20Pages上线前最后检查.md)
@@ -107,6 +111,8 @@
   重点解决当前仓库下一阶段最值得继续补什么、先补什么
 - [POS报表收益评估与接入建议](docs/27-POS报表收益评估与接入建议.md)
   重点解决 Yeusoft 哪些报表最值得接入老板看板、哪些适合只放详细页或复盘
+- [月度成本快照维护说明](docs/28-月度成本快照维护说明.md)
+  重点解决老板每月怎么维护销售、进货、固定费用和保本口径，而不需要手改 JSON
 
 ## 小团队管理线
 

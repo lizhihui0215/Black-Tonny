@@ -28,6 +28,7 @@ DEFAULT_INPUT_DIR = ROOT / "data" / "inventory_zip_extract"
 DEFAULT_OUTPUT_DIR = ROOT / "reports" / "inventory_dashboard"
 DEFAULT_PAGES_DIR = ROOT / "docs" / "dashboard"
 DEFAULT_COST_FILE = ROOT / "data" / "store_cost_snapshot.json"
+DEFAULT_COST_HISTORY_FILE = ROOT / "data" / "store_cost_history.json"
 DEFAULT_YEU_CAPTURE_DIR = ROOT / "reports" / "yeusoft_report_capture"
 BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 PRIMARY_INPUT = "郭文攀"
@@ -333,6 +334,19 @@ def load_cost_snapshot(cost_file: Path | None) -> dict | None:
     if not cost_file or not cost_file.exists():
         return None
     return json.loads(cost_file.read_text(encoding="utf-8"))
+
+
+def load_cost_history(cost_history_file: Path | None) -> list[dict]:
+    if not cost_history_file or not cost_history_file.exists():
+        return []
+    payload = json.loads(cost_history_file.read_text(encoding="utf-8"))
+    if isinstance(payload, list):
+        return [item for item in payload if isinstance(item, dict)]
+    if isinstance(payload, dict):
+        snapshots = payload.get("snapshots")
+        if isinstance(snapshots, list):
+            return [item for item in snapshots if isinstance(item, dict)]
+    return []
 
 
 def decode_yeusoft_text(value: object) -> str:
@@ -736,6 +750,86 @@ def build_profit_snapshot(raw_snapshot: dict | None) -> dict | None:
     }
 
 
+def build_profit_history(raw_history: list[dict] | None, current_snapshot: dict | None) -> dict | None:
+    snapshots = list(raw_history or [])
+    if current_snapshot:
+        snapshots.append(current_snapshot)
+
+    normalized: dict[str, dict] = {}
+    for raw_snapshot in snapshots:
+        profit = build_profit_snapshot(raw_snapshot)
+        if not profit:
+            continue
+        period_key = profit["snapshot_datetime"].strftime("%Y-%m")
+        previous = normalized.get(period_key)
+        if not previous or profit["snapshot_datetime"] >= previous["snapshot_datetime"]:
+            normalized[period_key] = profit
+
+    entries = sorted(normalized.values(), key=lambda item: item["snapshot_datetime"])
+    if not entries:
+        return None
+
+    rows: list[dict[str, object]] = []
+    for entry in entries:
+        rows.append(
+            {
+                "月份": entry["snapshot_datetime"].strftime("%Y-%m"),
+                "快照名称": entry["snapshot_name"],
+                "销售额": entry["sales_amount"],
+                "毛利额": entry["gross_profit"],
+                "固定费用": entry["monthly_operating_expense"],
+                "人工费用": entry["salary_total"],
+                "总费用": entry["total_expense"],
+                "净利润": entry["net_profit"],
+                "毛利率": entry["gross_margin_rate"],
+                "保本销售额": entry["breakeven_sales"],
+                "保本进度": entry["breakeven_progress_ratio"],
+                "快照时间": entry["snapshot_datetime"],
+            }
+        )
+
+    latest = entries[-1]
+    previous = entries[-2] if len(entries) >= 2 else None
+    delta_net_profit = latest["net_profit"] - previous["net_profit"] if previous else 0.0
+    delta_sales = latest["sales_amount"] - previous["sales_amount"] if previous else 0.0
+    delta_total_expense = latest["total_expense"] - previous["total_expense"] if previous else 0.0
+    delta_breakeven_progress = (
+        latest["breakeven_progress_ratio"] - previous["breakeven_progress_ratio"] if previous else 0.0
+    )
+
+    if previous:
+        if delta_net_profit >= 0 and delta_total_expense <= 0:
+            headline = "利润改善"
+            status = "green"
+            note = "较上月净利润提升，同时总费用没有继续抬高。"
+        elif delta_net_profit >= 0:
+            headline = "利润回升"
+            status = "yellow"
+            note = "净利润较上月回升，但仍要继续盯住费用变化。"
+        else:
+            headline = "利润回落"
+            status = "red"
+            note = "较上月净利润回落，优先看销售、毛利和费用哪一段变差。"
+    else:
+        headline = "开始累计"
+        status = "neutral"
+        note = "当前只有 1 个月成本快照，先从本月开始连续记录。"
+
+    return {
+        "entries": entries,
+        "rows": rows,
+        "latest": latest,
+        "previous": previous,
+        "delta_net_profit": delta_net_profit,
+        "delta_sales": delta_sales,
+        "delta_total_expense": delta_total_expense,
+        "delta_breakeven_progress": delta_breakeven_progress,
+        "headline": headline,
+        "status": status,
+        "note": note,
+    }
+
+
 def infer_season(now: datetime) -> tuple[str, str, str]:
     month = now.month
     day = now.day
@@ -851,6 +945,7 @@ def build_metrics(
     data: dict[str, pd.DataFrame],
     store_name: str,
     cost_snapshot: dict | None = None,
+    cost_history_raw: list[dict] | None = None,
     yeusoft_capture_bundle: dict[str, dict] | None = None,
 ) -> dict:
     now = get_beijing_now()
@@ -868,6 +963,7 @@ def build_metrics(
     movement = data["movement"].copy()
     store_retail = data.get("store_retail", pd.DataFrame()).copy()
     profit_snapshot = build_profit_snapshot(cost_snapshot)
+    profit_history = build_profit_history(cost_history_raw, cost_snapshot)
     yeusoft_highlights = build_yeusoft_report_highlights(
         yeusoft_capture_bundle or {}, current_season_key, next_season_key
     )
@@ -1254,6 +1350,14 @@ def build_metrics(
             f"按当前平均日销推算，月末销售约 {format_num(profit_snapshot['projected_month_sales'], 2)} 元，"
             f"月末净利润约 {format_num(profit_snapshot['projected_month_net_profit'], 2)} 元。"
         )
+    if profit_history:
+        if profit_history["previous"]:
+            insights.append(
+                f"成本历史显示，较上月净利润变化 {format_num(profit_history['delta_net_profit'], 2)} 元，"
+                f"总费用变化 {format_num(profit_history['delta_total_expense'], 2)} 元。"
+            )
+        else:
+            insights.append("成本历史已开始累计，当前只有 1 个月快照，建议从下个月开始连续对比利润和费用。")
     if not primary_reference.empty:
         row = primary_reference.iloc[0]
         insights.append(
@@ -1286,6 +1390,7 @@ def build_metrics(
         "action_summary": action_summary,
         "insights": insights,
         "yeusoft_highlights": yeusoft_highlights,
+        "profit_history": profit_history,
     }
 
 
@@ -1311,6 +1416,42 @@ def fig_to_html(fig: go.Figure, include_js: bool = False) -> str:
 
 def build_charts(metrics: dict) -> list[str]:
     charts: list[str] = []
+    profit_history = metrics.get("profit_history")
+
+    if profit_history and len(profit_history["rows"]) >= 2:
+        history_df = pd.DataFrame(profit_history["rows"]).copy()
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=history_df["月份"],
+                y=history_df["销售额"],
+                mode="lines+markers",
+                name="销售额",
+            )
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=history_df["月份"],
+                y=history_df["净利润"],
+                mode="lines+markers",
+                name="净利润",
+            )
+        )
+        fig.add_trace(
+            go.Bar(
+                x=history_df["月份"],
+                y=history_df["总费用"],
+                name="总费用",
+                opacity=0.45,
+            )
+        )
+        fig.update_layout(
+            title="月度利润与费用趋势",
+            height=420,
+            margin=dict(l=20, r=20, t=60, b=20),
+            barmode="group",
+        )
+        charts.append(fig_to_html(fig, include_js=True))
 
     daily = metrics["sales_daily"]
     if not daily.empty:

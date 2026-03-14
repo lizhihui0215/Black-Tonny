@@ -39,7 +39,9 @@ def main() -> int:
         [
             file_exists(DOCS_DIR / ".nojekyll", "docs/.nojekyll exists"),
             file_exists(DOCS_DIR / "index.html", "docs/index.html exists"),
+            file_exists(DOCS_DIR / "costs" / "index.html", "docs/costs/index.html exists"),
             file_exists(MANUALS_DIR / "index.html", "docs/manuals/index.html exists"),
+            file_exists(MANUALS_DIR / "28-月度成本快照维护说明.html", "docs/manuals/28-月度成本快照维护说明.html exists"),
             file_exists(DASHBOARD_DIR / "index.html", "docs/dashboard/index.html exists"),
             file_exists(DASHBOARD_DIR / "details.html", "docs/dashboard/details.html exists"),
             file_exists(DASHBOARD_DIR / "summary.md", "docs/dashboard/summary.md exists"),
@@ -58,10 +60,13 @@ def main() -> int:
         [
             text_contains(docs_index, "./dashboard/", "Pages homepage links to dashboard"),
             text_contains(docs_index, "./manuals/", "Pages homepage links to manuals center"),
+            text_contains(docs_index, "./costs/", "Pages homepage links to cost maintenance"),
             text_contains(docs_index, "./manuals/dashboard/summary.html", "Pages homepage links to summary html"),
             text_contains(docs_index, "./manuals/dashboard/report.html", "Pages homepage links to report html"),
             text_contains(readme, "docs/index.html", "README links to Pages homepage"),
             text_contains(readme, "manuals", "README mentions manuals html docs"),
+            text_contains(readme, "docs/costs/index.html", "README links to cost maintenance"),
+            text_contains(readme, "28-月度成本快照维护说明.md", "README links to monthly cost guide"),
             text_contains(readme, "docs/dashboard/index.html", "README links to dashboard entry"),
             text_contains(dashboard_index, "./details.html", "dashboard links to detail page"),
             text_contains(readme, "GitHub Pages开启清单", "README links to Pages checklist"),

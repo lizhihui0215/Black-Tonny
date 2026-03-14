@@ -214,6 +214,7 @@
       <div class="hero-actions">
         <a class="btn-primary" href="./dashboard/">进入在线经营仪表盘</a>
         <a class="btn-secondary" href="./manuals/">进入文档中心</a>
+        <a class="btn-secondary" href="./costs/">进入月度成本维护台</a>
         <a class="btn-secondary" href="./manuals/dashboard/summary.html">查看文字摘要</a>
         <a class="btn-secondary" href="./manuals/dashboard/report.html">查看分析报告</a>
         <button class="btn-accent" type="button" id="refresh-dashboard-btn">本地一键抓取并刷新</button>
@@ -226,6 +227,7 @@
       <ul class="tip-list">
         <li>先在店里电脑运行：<code>python3 /Users/lizhihui/Workspace/black Tony/scripts/local_dashboard_service.py</code></li>
         <li>确认本地已填好：<code>data/yeusoft_local_config.json</code> 和 <code>data/store_cost_snapshot.json</code></li>
+        <li>如果本月费用有变化，先去 <a href="./costs/">月度成本维护台</a> 更新成本快照。</li>
         <li>然后回到这个首页，点击“本地一键抓取并刷新”。</li>
       </ul>
       <div class="local-console-actions">
@@ -274,6 +276,12 @@
           <p>把 `docs/` 下的 Markdown 手册整理成了网页阅读版，适合老板、店员和协作人员直接在手机上看。</p>
           <a href="./manuals/">打开文档中心</a>
         </article>
+        <article class="card">
+          <div class="card-kicker">本地维护</div>
+          <h3>月度成本维护台</h3>
+          <p>适合店里电脑每月维护成本快照。改完销售、进货和费用后，可以直接刷新仪表盘利润和保本判断。</p>
+          <a href="./costs/">打开成本维护台</a>
+        </article>
       </div>
     </section>
 
@@ -302,7 +310,7 @@
     </section>
 
     <div class="footer">
-      Pages 根目录建议使用 `docs/`。在线仪表盘固定入口是 `./dashboard/`，文档中心入口是 `./manuals/`。如果你在仓库里更新了数据，只要重新运行生成脚本并 push，老板访问的入口地址不需要更换。
+      Pages 根目录建议使用 `docs/`。在线仪表盘固定入口是 `./dashboard/`，文档中心入口是 `./manuals/`，店里电脑维护成本快照时使用 `./costs/`。如果你在仓库里更新了数据，只要重新运行生成脚本并 push，老板访问的入口地址不需要更换。
     </div>
   </div>
   <script>
