@@ -793,7 +793,23 @@ def build_metrics(data: dict[str, pd.DataFrame], store_name: str) -> dict:
 
 
 def fig_to_html(fig: go.Figure, include_js: bool = False) -> str:
-    return fig.to_html(full_html=False, include_plotlyjs="cdn" if include_js else False)
+    return fig.to_html(
+        full_html=False,
+        include_plotlyjs="cdn" if include_js else False,
+        config={
+            "responsive": True,
+            "displaylogo": False,
+            "scrollZoom": False,
+            "modeBarButtonsToRemove": [
+                "lasso2d",
+                "select2d",
+                "autoScale2d",
+                "toggleSpikelines",
+                "hoverClosestCartesian",
+                "hoverCompareCartesian",
+            ],
+        },
+    )
 
 
 def build_charts(metrics: dict) -> list[str]:
@@ -1548,15 +1564,57 @@ def infer_action_tip(label: str) -> str | None:
     return None
 
 
+def safe_cell_html(value: object) -> str:
+    if pd.isna(value):
+        return ""
+    text = str(value)
+    if "<" in text and ">" in text:
+        return text
+    return html.escape(text)
+
+
 def table_html(df: pd.DataFrame, title: str, rows: int = 10, tip: str | None = None) -> str:
     preview = df.head(rows).copy()
     preview = decorate_table(preview)
     tip_html = f"<p class='table-tip'>{tip}</p>" if tip else ""
+    columns = list(preview.columns)
+    mobile_visible_cols = min(3, len(columns))
+    has_hidden_cols = len(columns) > mobile_visible_cols
+
+    header_html = "".join(
+        f"<th data-mobile-hidden=\"{'1' if idx >= mobile_visible_cols else '0'}\">{html.escape(str(column))}</th>"
+        for idx, column in enumerate(columns)
+    )
+    body_rows: list[str] = []
+    for _, row in preview.iterrows():
+        cells = "".join(
+            f"<td data-mobile-hidden=\"{'1' if idx >= mobile_visible_cols else '0'}\" data-col-name=\"{html.escape(str(column), quote=True)}\">"
+            f"{safe_cell_html(row[column])}</td>"
+            for idx, column in enumerate(columns)
+        )
+        body_rows.append(f"<tr>{cells}</tr>")
+
+    toggle_html = ""
+    if has_hidden_cols:
+        toggle_html = (
+            "<button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' "
+            "data-collapse-label='收起额外列'>展开全部列</button>"
+        )
+    card_classes = "table-card is-compact" if has_hidden_cols else "table-card"
+
     return f"""
-    <section class="table-card">
-      <h3>{title}</h3>
+    <section class="{card_classes}">
+      <div class="table-header">
+        <h3>{title}</h3>
+        {toggle_html}
+      </div>
       {tip_html}
-      {preview.to_html(index=False, classes='data-table', border=0, escape=False)}
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr>{header_html}</tr></thead>
+          <tbody>{''.join(body_rows)}</tbody>
+        </table>
+      </div>
     </section>
     """
 
@@ -1633,6 +1691,8 @@ def build_html(metrics: dict) -> str:
     else:
         store_note = f"主店铺：{cards['store_name']}"
         reference_intro = "未读取到可用的输入人参考表。"
+    deployed_at = time_strategy["beijing_time"]
+    import_date = cards["sales_detail_end"].strftime("%Y-%m-%d")
 
     core_metric_html = "".join(
         f"""
@@ -1958,6 +2018,25 @@ def build_html(metrics: dict) -> str:
       margin-top: 12px;
       font-size: 13px;
       opacity: 0.88;
+    }}
+    .hero-status {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }}
+    .hero-status-chip {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
     }}
     .quick-nav {{
       display: flex;
@@ -2443,6 +2522,36 @@ def build_html(metrics: dict) -> str:
       position: sticky;
       top: 0;
     }}
+    .table-header {{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }}
+    .table-header h3 {{
+      margin: 0;
+      font-size: 18px;
+      color: #0f172a;
+    }}
+    .table-toggle {{
+      display: none;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }}
+    .table-scroll {{
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }}
     .table-card {{
       overflow-x: auto;
       max-width: 100%;
@@ -2500,13 +2609,8 @@ def build_html(metrics: dict) -> str:
         position: static;
       }}
       .detail-nav {{
-        grid-template-columns: repeat(3, minmax(160px, 1fr));
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x proximity;
-      }}
-      .detail-nav-btn {{
-        scroll-snap-align: start;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        overflow: visible;
       }}
       .module-header {{
         flex-direction: column;
@@ -2546,6 +2650,16 @@ def build_html(metrics: dict) -> str:
         font-size: 12px;
         line-height: 1.7;
       }}
+      .hero-status {{
+        gap: 8px;
+      }}
+      .hero-status-chip {{
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        font-size: 11px;
+        padding: 7px 10px;
+      }}
       .module {{
         padding: 14px;
         border-radius: 16px;
@@ -2562,24 +2676,23 @@ def build_html(metrics: dict) -> str:
         border-radius: 14px;
       }}
       .detail-nav {{
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-right: -2px;
-        padding-bottom: 2px;
-        scroll-snap-type: x proximity;
+        overflow: visible;
+        margin-right: 0;
+        padding-bottom: 0;
       }}
       .detail-nav-btn {{
-        width: auto;
-        min-width: 112px;
-        padding: 9px 10px;
-        flex: 0 0 auto;
-        scroll-snap-align: start;
+        width: 100%;
+        min-width: 0;
+        padding: 8px 6px;
+        border-radius: 12px;
       }}
       .detail-nav-label {{
         font-size: 12px;
         margin-bottom: 0;
+        text-align: center;
       }}
       .detail-nav-note {{
         display: none;
@@ -2596,10 +2709,16 @@ def build_html(metrics: dict) -> str:
       .detail-sidebar-card:last-child {{
         display: none;
       }}
-      .detail-nav-note,
-      .detail-pane-note,
       .detail-pane-title {{
         font-size: 18px;
+      }}
+      .table-toggle {{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }}
+      .table-card.is-compact [data-mobile-hidden="1"] {{
+        display: none;
       }}
       .module-title {{
         font-size: 18px;
@@ -2662,6 +2781,10 @@ def build_html(metrics: dict) -> str:
       <h1>{cards['store_name']} 老板经营仪表盘</h1>
       <p>老板打开 10 秒内先看今日结论，再看今天执行任务。复杂图表和原始明细都保留在页面下方的“详细数据与图表”。</p>
       <div class="hero-note">{store_note} · 当前季节：{time_strategy['season']} / {time_strategy['phase']} · 日销趋势：{decision['sales_trend']['label']}</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最近部署时间：{deployed_at}（北京时间）</div>
+        <div class="hero-status-chip">数据导入日期：{import_date}（北京时间）</div>
+      </div>
     </section>
 
     <nav class="quick-nav">{quick_nav_html}</nav>
@@ -2847,6 +2970,17 @@ def build_html(metrics: dict) -> str:
           detailPanel.open = true;
           activatePane(hash, false);
         }}
+      }});
+
+      document.querySelectorAll('[data-table-toggle]').forEach((button) => {{
+        const card = button.closest('.table-card');
+        if (!card) return;
+        button.addEventListener('click', () => {{
+          const compact = card.classList.toggle('is-compact');
+          button.textContent = compact
+            ? (button.getAttribute('data-expand-label') || '展开全部列')
+            : (button.getAttribute('data-collapse-label') || '收起额外列');
+        }});
       }});
     }})();
   </script>
