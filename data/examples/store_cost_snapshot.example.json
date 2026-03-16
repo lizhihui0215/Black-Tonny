@@ -1,0 +1,75 @@
+{
+  "snapshot_name": "2026年3月成本快照示例",
+  "snapshot_datetime": "2026-03-13T23:30:00+08:00",
+  "sales_amount": 76876.0,
+  "purchase_cost": 31278.78,
+  "gross_profit": 45597.22,
+  "gross_margin_rate": 0.59,
+  "expense_snapshot": {
+    "monthly_operating_expense": 24001.55,
+    "salary_total": 13557.0,
+    "total_expense": 37558.55,
+    "net_profit": 8038.67
+  },
+  "expense_items": [
+    {
+      "name": "房租+物业",
+      "amount": 15733.25,
+      "note": "3月份开始每月16661"
+    },
+    {
+      "name": "装修分摊",
+      "amount": 3125.0,
+      "note": "共75000，按两年分摊"
+    },
+    {
+      "name": "开店物料分摊",
+      "amount": 1450.0,
+      "note": "开店买东西总费用17388.64，按1年分摊"
+    },
+    {
+      "name": "推广服务费",
+      "amount": 250.0,
+      "note": "一年3000"
+    },
+    {
+      "name": "装修杂费分摊",
+      "amount": 1644.8,
+      "note": "共19737.5，按1年分摊"
+    },
+    {
+      "name": "采销服务费",
+      "amount": 17.0,
+      "note": "一年200"
+    },
+    {
+      "name": "垃圾清运费",
+      "amount": 34.0,
+      "note": "合同到2028-02-27"
+    },
+    {
+      "name": "电费",
+      "amount": 1000.0
+    },
+    {
+      "name": "店铺费用",
+      "amount": 747.5
+    }
+  ],
+  "salary_items": [
+    {
+      "name": "赵婷宇",
+      "amount": 3979.0,
+      "note": "底薪"
+    },
+    {
+      "name": "张静",
+      "amount": 9578.0,
+      "note": "按你截图里的总费用公式回填"
+    }
+  ],
+  "notes": [
+    "这个文件是示例模板，真实金额请写到 data/local/store_cost_snapshot.json。",
+    "脚本会优先读取真实快照文件，并据此计算净利润、保本销售额和保本日销。"
+  ]
+}
