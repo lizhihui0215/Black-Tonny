@@ -131,6 +131,12 @@ def write_publish_report(summary: dict[str, object], *, stamp: str) -> tuple[Pat
         for key, value in summary["analysis_summary"].items():
             lines.append(f"- {key}：{value}")
 
+    if summary.get("field_audit_summary"):
+        lines.extend(["", "## 字段核对摘要", ""])
+        field_audit_summary = summary["field_audit_summary"]
+        for key, value in field_audit_summary.items():
+            lines.append(f"- {key}：{value}")
+
     lines.extend(
         [
             "",
@@ -139,6 +145,8 @@ def write_publish_report(summary: dict[str, object], *, stamp: str) -> tuple[Pat
             f"- Pages 首页：[index.html]({summary['pages_dashboard_html']})",
             f"- Pages JSON 清单：[manifest.json]({summary['pages_manifest_json']})",
             f"- Pages 数据包目录：[data]({summary['pages_data_dir']})",
+            f"- 字段核对 Markdown：[api_field_audit.md]({summary['field_audit_markdown']})",
+            f"- 字段核对 JSON：[api_field_audit.json]({summary['field_audit_json']})",
             f"- 自检脚本：[check_pages_ready.py]({summary['check_script']})",
         ]
     )
@@ -170,6 +178,7 @@ def main() -> int:
     steps: list[StepResult] = []
     scan_counts: dict[str, object] = {}
     analysis_summary: dict[str, object] = {}
+    field_audit_summary: dict[str, object] = {}
 
     try:
         if args.skip_sync:
@@ -207,6 +216,24 @@ def main() -> int:
                     command=scan_cmd,
                 )
             )
+
+        field_audit_cmd = ["python3", "-m", "scripts.yeusoft.build_field_audit"]
+        field_audit = run_command(field_audit_cmd, env=env)
+        if field_audit.returncode != 0:
+            raise RuntimeError(field_audit.stderr.strip() or field_audit.stdout.strip() or "字段核对产物生成失败。")
+        field_audit_summary = json.loads(field_audit.stdout)
+        field_audit_status = "warning" if field_audit_summary.get("high_suspicion_count", 0) else "ok"
+        steps.append(
+            StepResult(
+                name="截图字段核对",
+                status=field_audit_status,
+                detail=(
+                    f"已经 {field_audit_summary.get('confirmed_count', 0)} 张，"
+                    f"高度怀疑 {field_audit_summary.get('high_suspicion_count', 0)} 张。"
+                ),
+                command=field_audit_cmd,
+            )
+        )
 
         build_db_cmd = [
             "python3",
@@ -320,6 +347,15 @@ def main() -> int:
             "pages_manifest_json": str((args.pages_dir / "data" / "manifest.json").resolve()),
             "check_script": str((ROOT / "scripts" / "tools" / "check_pages_ready.py").resolve()),
             "scan_counts": scan_counts,
+            "field_audit_summary": field_audit_summary,
+            "field_audit_markdown": field_audit_summary.get(
+                "audit_markdown",
+                str((ROOT / "reports" / "calibration" / "api_field_audit.md").resolve()),
+            ),
+            "field_audit_json": field_audit_summary.get(
+                "audit_json",
+                str((ROOT / "reports" / "calibration" / "api_field_audit.json").resolve()),
+            ),
             "analysis_summary": analysis_summary,
             "check_status": check_status,
             "steps": [
@@ -350,6 +386,15 @@ def main() -> int:
             "pages_manifest_json": str((args.pages_dir / "data" / "manifest.json").resolve()),
             "check_script": str((ROOT / "scripts" / "tools" / "check_pages_ready.py").resolve()),
             "scan_counts": scan_counts,
+            "field_audit_summary": field_audit_summary,
+            "field_audit_markdown": field_audit_summary.get(
+                "audit_markdown",
+                str((ROOT / "reports" / "calibration" / "api_field_audit.md").resolve()),
+            ),
+            "field_audit_json": field_audit_summary.get(
+                "audit_json",
+                str((ROOT / "reports" / "calibration" / "api_field_audit.json").resolve()),
+            ),
             "analysis_summary": analysis_summary,
             "check_status": "error",
             "steps": [

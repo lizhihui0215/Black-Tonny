@@ -1,0 +1,2899 @@
+[
+  {
+    "display_name": "零售明细统计",
+    "capture_name": "零售明细统计",
+    "status": "已经",
+    "reason": "表格列头、动态尺码列和合计列都能和当前 JSON 的 `retdata[0].Title/Data` 对上，两张截图只是横向拆屏。",
+    "notes": [
+      "`TotalNum` 对应零售小计，`TotalRetailMoney` 对应零售金额，`TotalMoney` 对应销售金额，`Discount` 对应折扣。",
+      "尺码字段不能把 `col01~col013` 固化，必须按 `Title` 解码成 `90/均码` 这类真实尺码头。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/零售明细统计.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/零售明细统计-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/零售明细统计-2.png"
+    ],
+    "url_keyword": "SelDeptSaleList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptSaleList",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "depts": "",
+      "spenum": "",
+      "warecause": "",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 1340,
+    "columns": [
+      "DeptName",
+      "WareName",
+      "Spec",
+      "ColorName",
+      "RetailPrice",
+      "col01",
+      "col02",
+      "col03",
+      "col04",
+      "col05",
+      "col06",
+      "col07",
+      "col08",
+      "col09",
+      "col010",
+      "col011",
+      "col012",
+      "col013",
+      "col014",
+      "col015",
+      "col016",
+      "col017",
+      "col018",
+      "col019",
+      "col020",
+      "col021",
+      "col022",
+      "col023",
+      "col024",
+      "col025",
+      "col026",
+      "col027",
+      "col028",
+      "col029",
+      "col030",
+      "TotalMoney",
+      "TotalNum",
+      "TotalRetailMoney",
+      "Discount",
+      "Trade",
+      "Type",
+      "Type1",
+      "Type2",
+      "Years",
+      "Season",
+      "Pd",
+      "Sex",
+      "Img"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list",
+      "title_rows": [
+        {
+          "row_index": 0,
+          "columns": [
+            {
+              "column": "col01",
+              "label": "90/均码/均码/均码"
+            },
+            {
+              "column": "col02",
+              "label": "100/XXS/8-10/75A"
+            },
+            {
+              "column": "col03",
+              "label": "110/XS/10-12/75B"
+            },
+            {
+              "column": "col04",
+              "label": "120/S/12-14/80A"
+            },
+            {
+              "column": "col05",
+              "label": "130/M/14-16/80B"
+            },
+            {
+              "column": "col06",
+              "label": "140/L/16-18/85A"
+            },
+            {
+              "column": "col07",
+              "label": "150/XL/18-20/85B"
+            },
+            {
+              "column": "col08",
+              "label": "160/XXL/20-22/75C"
+            },
+            {
+              "column": "col09",
+              "label": "170/XXXL/22-24/80C"
+            },
+            {
+              "column": "col010",
+              "label": "180/ / /85C"
+            },
+            {
+              "column": "col011",
+              "label": "66"
+            },
+            {
+              "column": "col012",
+              "label": "73"
+            },
+            {
+              "column": "col013",
+              "label": "80"
+            }
+          ]
+        }
+      ]
+    },
+    "sqlite_targets": [
+      "retail_detail_snapshots",
+      "size_metric_breakdowns"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "导购员报表",
+    "capture_name": "导购员报表",
+    "status": "已经",
+    "reason": "截图列头与 `SelPersonSale` 返回字段能逐一对应，付款方式和会员字段也能对上。",
+    "notes": [
+      "`Amount=销量`，`TotalRetailMoeny=吊牌金额`，`TotalMoney=销售金额`，`Saleps=票数`，`DJ=单效`，`FJ=连带`。",
+      "`PosMoney=储值`，`StockRechargeMoney=本期储值金额`，`ssMoneyRebate=返利金额`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/导购员报表.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/导购员报表.png"
+    ],
+    "url_keyword": "SelPersonSale",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposPerson/SelPersonSale",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "name": "",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 6,
+    "columns": [
+      "Num",
+      "Name",
+      "Amount",
+      "TotalRetailMoeny",
+      "DisCount",
+      "TotalMoney",
+      "Cash",
+      "CreditCard",
+      "OrderMoney",
+      "PosMoney",
+      "RetuMoney",
+      "ActivityMoeny",
+      "StockMoney",
+      "WxPayMoney",
+      "ZfbPayMoney",
+      "OddMoney",
+      "WpZeroMoney",
+      "Item1",
+      "Item2",
+      "Item3",
+      "Item4",
+      "Item5",
+      "Item6",
+      "Item7",
+      "Item8",
+      "Item9",
+      "VipAmount",
+      "VipMoney",
+      "Saleps",
+      "StockRechargeMoney",
+      "DJ",
+      "FJ",
+      "JEZB",
+      "SLZB",
+      "ssMoneyRebate"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [
+      "guide_report_summary"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "店铺零售清单",
+    "capture_name": "店铺零售清单",
+    "status": "已经",
+    "reason": "四张截图只是同一张明细表的横向切片，`ColumnsList` 与页面列头一致。",
+    "notes": [
+      "当前表是全店铺范围的零售清单，适合拿来做主表校验和补充维度，不要和单店 `销售清单` 混用。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/店铺零售清单.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/店铺零售清单-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/店铺零售清单-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/店铺零售清单-3.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/店铺零售清单-4.png"
+    ],
+    "url_keyword": "GetDIYReportData",
+    "request_url": "https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData",
+    "request_method": "POST",
+    "request_payload": {
+      "menuid": "E004001007",
+      "gridid": "E004001007_main",
+      "parameter": {
+        "WareClause": "",
+        "Depart": "  ",
+        "EndDate": "2026-03-16",
+        "BeginDate": "2025-03-01",
+        "Operater": "",
+        "Tiem": ""
+      }
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 83877,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 83877,
+    "columns": [
+      "零售单号",
+      "明细流水",
+      "单据类型",
+      "店铺名称",
+      "款号",
+      "品名",
+      "吊牌价",
+      "折扣",
+      "单价",
+      "颜色",
+      "尺码",
+      "数量",
+      "金额",
+      "吊牌金额",
+      "输入人",
+      "输入时间",
+      "销售日期",
+      "班组",
+      "导购员",
+      "会员卡号",
+      "参与活动",
+      "商城扣点",
+      "成本价",
+      "所属大区",
+      "分管业务员",
+      "品牌",
+      "商品大类",
+      "商品中类",
+      "商品小类",
+      "波段",
+      "年份",
+      "季节",
+      "性别",
+      "主题",
+      "系列",
+      "款式定位",
+      "价格段",
+      "设计师",
+      "单据备注",
+      "明细备注",
+      "客户类型",
+      "仓库分类",
+      "业务主管",
+      "上级店仓名",
+      "地理区域",
+      "省份",
+      "城市",
+      "区镇",
+      "城市等级",
+      "店铺面积",
+      "店铺人数",
+      "图片"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict",
+      "columns_list": [
+        "零售单号",
+        "明细流水",
+        "单据类型",
+        "店铺名称",
+        "款号",
+        "品名",
+        "吊牌价",
+        "折扣",
+        "单价",
+        "颜色",
+        "尺码",
+        "数量",
+        "金额",
+        "吊牌金额",
+        "输入人",
+        "输入时间",
+        "销售日期",
+        "班组",
+        "导购员",
+        "会员卡号",
+        "参与活动",
+        "商城扣点",
+        "成本价",
+        "所属大区",
+        "分管业务员",
+        "品牌",
+        "商品大类",
+        "商品中类",
+        "商品小类",
+        "波段",
+        "年份",
+        "季节",
+        "性别",
+        "主题",
+        "系列",
+        "款式定位",
+        "价格段",
+        "设计师",
+        "单据备注",
+        "明细备注",
+        "客户类型",
+        "仓库分类",
+        "业务主管",
+        "上级店仓名",
+        "地理区域",
+        "省份",
+        "城市",
+        "区镇",
+        "城市等级",
+        "店铺面积",
+        "店铺人数",
+        "图片"
+      ]
+    },
+    "sqlite_targets": [
+      "sales_order_lines"
+    ],
+    "sqlite_note": "当前以 validation 源进入 `sales_order_lines`，用于和主店销售清单交叉校验。"
+  },
+  {
+    "display_name": "销售清单",
+    "capture_name": "销售清单",
+    "status": "已经",
+    "reason": "三张截图与 `ColumnsList` 一致，是当前主店销售主表。",
+    "notes": [
+      "这张表是当前销售口径主来源，后续订单级校准、商品销售和回款校验都以它为锚点。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/销售清单.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/销售清单-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/销售清单-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/销售清单-3.png"
+    ],
+    "url_keyword": "GetDIYReportData",
+    "request_url": "https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData",
+    "request_method": "POST",
+    "request_payload": {
+      "menuid": "E004001008",
+      "gridid": "E004001008_2",
+      "parameter": {
+        "BeginDate": "20250301",
+        "Depart": "'A0190248'",
+        "EndDate": "20260316",
+        "Operater": "",
+        "Tiem": "1",
+        "WareClause": ""
+      }
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 9745,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 9745,
+    "columns": [
+      "零售单号",
+      "明细流水",
+      "单据类型",
+      "店铺名称",
+      "款号",
+      "品名",
+      "吊牌价",
+      "折扣",
+      "单价",
+      "颜色",
+      "尺码",
+      "数量",
+      "金额",
+      "吊牌金额",
+      "输入人",
+      "输入时间",
+      "销售日期",
+      "班组",
+      "导购员",
+      "会员卡号",
+      "参与活动",
+      "商城扣点",
+      "成本价",
+      "所属大区",
+      "分管业务员",
+      "品牌",
+      "商品大类",
+      "商品中类",
+      "商品小类",
+      "波段",
+      "年份",
+      "季节",
+      "性别",
+      "主题",
+      "系列",
+      "款式定位",
+      "价格段",
+      "设计师",
+      "单据备注",
+      "明细备注",
+      "客户类型",
+      "仓库分类",
+      "业务主管",
+      "上级店仓名",
+      "地理区域",
+      "省份",
+      "城市",
+      "区镇",
+      "城市等级",
+      "店铺面积",
+      "店铺人数",
+      "图片"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict",
+      "columns_list": [
+        "零售单号",
+        "明细流水",
+        "单据类型",
+        "店铺名称",
+        "款号",
+        "品名",
+        "吊牌价",
+        "折扣",
+        "单价",
+        "颜色",
+        "尺码",
+        "数量",
+        "金额",
+        "吊牌金额",
+        "输入人",
+        "输入时间",
+        "销售日期",
+        "班组",
+        "导购员",
+        "会员卡号",
+        "参与活动",
+        "商城扣点",
+        "成本价",
+        "所属大区",
+        "分管业务员",
+        "品牌",
+        "商品大类",
+        "商品中类",
+        "商品小类",
+        "波段",
+        "年份",
+        "季节",
+        "性别",
+        "主题",
+        "系列",
+        "款式定位",
+        "价格段",
+        "设计师",
+        "单据备注",
+        "明细备注",
+        "客户类型",
+        "仓库分类",
+        "业务主管",
+        "上级店仓名",
+        "地理区域",
+        "省份",
+        "城市",
+        "区镇",
+        "城市等级",
+        "店铺面积",
+        "店铺人数",
+        "图片"
+      ]
+    },
+    "sqlite_targets": [
+      "sales_order_lines"
+    ],
+    "sqlite_note": "当前以 master 源进入 `sales_order_lines`。"
+  },
+  {
+    "display_name": "库存明细统计",
+    "capture_name": "库存明细统计",
+    "status": "已经",
+    "reason": "截图和 JSON 的两段动态尺码头、现有库存/零售汇总列都能对齐。",
+    "notes": [
+      "`NTotalNum/NTotalMoney` 对应现有库存数量/金额，`STotalNum/STotalMoney` 对应零售数量/金额。",
+      "`Title` 有两行，既包含尺码头也包含第二段动态列头，不能只读第一行。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存明细统计.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存明细统计-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存明细统计-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存明细统计-3.png"
+    ],
+    "url_keyword": "SelDeptStockWaitList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockWaitList",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "depts": "",
+      "spenum": "",
+      "warecause": "",
+      "stockflag": "0",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 983,
+    "columns": [
+      "DeptName",
+      "WareName",
+      "Spec",
+      "ColorName",
+      "Type",
+      "Type1",
+      "Type2",
+      "Date1",
+      "Season",
+      "Pd",
+      "RetailPrice",
+      "Trade",
+      "Img",
+      "Sex",
+      "col01",
+      "col02",
+      "col03",
+      "col04",
+      "col05",
+      "col06",
+      "col07",
+      "col08",
+      "col09",
+      "col010",
+      "col011",
+      "col012",
+      "col013",
+      "col014",
+      "col015",
+      "col016",
+      "col017",
+      "col018",
+      "col019",
+      "col020",
+      "col021",
+      "col022",
+      "col023",
+      "col024",
+      "col025",
+      "col026",
+      "col027",
+      "col028",
+      "col029",
+      "col030",
+      "col031",
+      "col032",
+      "col033",
+      "col034",
+      "col035",
+      "NTotalNum",
+      "NTotalMoney",
+      "col036",
+      "col037",
+      "col038",
+      "col039",
+      "col040",
+      "col041",
+      "col042",
+      "col043",
+      "col044",
+      "col045",
+      "col046",
+      "col047",
+      "col048",
+      "col049",
+      "col050",
+      "col051",
+      "col052",
+      "col053",
+      "col054",
+      "col055",
+      "col056",
+      "col057",
+      "col058",
+      "col059",
+      "col060",
+      "col061",
+      "col062",
+      "col063",
+      "col064",
+      "col065",
+      "col066",
+      "col067",
+      "col068",
+      "col069",
+      "col070",
+      "STotalNum",
+      "STotalMoney"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list",
+      "title_rows": [
+        {
+          "row_index": 0,
+          "columns": [
+            {
+              "column": "col01",
+              "label": "90/均码/均码/均码"
+            },
+            {
+              "column": "col02",
+              "label": "100/XXS/8-10/75A"
+            },
+            {
+              "column": "col03",
+              "label": "110/XS/10-12/75B"
+            },
+            {
+              "column": "col04",
+              "label": "120/S/12-14/80A"
+            },
+            {
+              "column": "col05",
+              "label": "130/M/14-16/80B"
+            },
+            {
+              "column": "col06",
+              "label": "140/L/16-18/85A"
+            },
+            {
+              "column": "col07",
+              "label": "150/XL/18-20/85B"
+            },
+            {
+              "column": "col08",
+              "label": "160/XXL/20-22/75C"
+            },
+            {
+              "column": "col09",
+              "label": "170/XXXL/22-24/80C"
+            },
+            {
+              "column": "col010",
+              "label": "180/ / /85C"
+            },
+            {
+              "column": "col011",
+              "label": "66"
+            },
+            {
+              "column": "col012",
+              "label": "73"
+            },
+            {
+              "column": "col013",
+              "label": "80"
+            }
+          ]
+        },
+        {
+          "row_index": 1,
+          "columns": [
+            {
+              "column": "col036",
+              "label": "90/均码/均码/均码"
+            },
+            {
+              "column": "col037",
+              "label": "100/XXS/8-10/75A"
+            },
+            {
+              "column": "col038",
+              "label": "110/XS/10-12/75B"
+            },
+            {
+              "column": "col039",
+              "label": "120/S/12-14/80A"
+            },
+            {
+              "column": "col040",
+              "label": "130/M/14-16/80B"
+            },
+            {
+              "column": "col041",
+              "label": "140/L/16-18/85A"
+            },
+            {
+              "column": "col042",
+              "label": "150/XL/18-20/85B"
+            },
+            {
+              "column": "col043",
+              "label": "160/XXL/20-22/75C"
+            },
+            {
+              "column": "col044",
+              "label": "170/XXXL/22-24/80C"
+            },
+            {
+              "column": "col045",
+              "label": "180/ / /85C"
+            },
+            {
+              "column": "col046",
+              "label": "66"
+            },
+            {
+              "column": "col047",
+              "label": "73"
+            },
+            {
+              "column": "col048",
+              "label": "80"
+            }
+          ]
+        }
+      ]
+    },
+    "sqlite_targets": [
+      "inventory_detail_snapshots",
+      "size_metric_breakdowns"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "库存零售统计",
+    "capture_name": "库存零售统计",
+    "status": "已经",
+    "reason": "三张截图覆盖了同一张表的所有列，`StoU` 和零售合计列能和 JSON 对上。",
+    "notes": [
+      "`StoU=库销比`，`STotalNum=零售小计`，`STotalMoney=零售金额`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存零售统计.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存零售统计-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存零售统计-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存零售统计-3.png"
+    ],
+    "url_keyword": "SelDeptStockSaleList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockSaleList",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "depts": "",
+      "spenum": "",
+      "warecause": "",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 1340,
+    "columns": [
+      "DeptName",
+      "WareName",
+      "Spec",
+      "ColorName",
+      "Type",
+      "Type1",
+      "Type2",
+      "Date1",
+      "Season",
+      "Pd",
+      "RetailPrice",
+      "Trade",
+      "Img",
+      "StoU",
+      "col01",
+      "col02",
+      "col03",
+      "col04",
+      "col05",
+      "col06",
+      "col07",
+      "col08",
+      "col09",
+      "col010",
+      "col011",
+      "col012",
+      "col013",
+      "col014",
+      "col015",
+      "col016",
+      "col017",
+      "col018",
+      "col019",
+      "col020",
+      "STotalNum",
+      "STotalMoney",
+      "col021",
+      "col022",
+      "col023",
+      "col024",
+      "col025",
+      "col026",
+      "col027",
+      "col028",
+      "col029",
+      "col030",
+      "col031",
+      "col032",
+      "col033",
+      "col034",
+      "col035",
+      "col036",
+      "col037",
+      "col038",
+      "col039",
+      "col040",
+      "NTotalNum",
+      "NTotalMoney"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list",
+      "title_rows": [
+        {
+          "row_index": 0,
+          "columns": [
+            {
+              "column": "col01",
+              "label": "90/均码/均码/均码"
+            },
+            {
+              "column": "col02",
+              "label": "100/XXS/8-10/75A"
+            },
+            {
+              "column": "col03",
+              "label": "110/XS/10-12/75B"
+            },
+            {
+              "column": "col04",
+              "label": "120/S/12-14/80A"
+            },
+            {
+              "column": "col05",
+              "label": "130/M/14-16/80B"
+            },
+            {
+              "column": "col06",
+              "label": "140/L/16-18/85A"
+            },
+            {
+              "column": "col07",
+              "label": "150/XL/18-20/85B"
+            },
+            {
+              "column": "col08",
+              "label": "160/XXL/20-22/75C"
+            },
+            {
+              "column": "col09",
+              "label": "170/XXXL/22-24/80C"
+            },
+            {
+              "column": "col010",
+              "label": "180/ / /85C"
+            },
+            {
+              "column": "col011",
+              "label": "66"
+            },
+            {
+              "column": "col012",
+              "label": "73"
+            },
+            {
+              "column": "col013",
+              "label": "80"
+            }
+          ]
+        },
+        {
+          "row_index": 1,
+          "columns": [
+            {
+              "column": "col021",
+              "label": "90/均码/均码/均码"
+            },
+            {
+              "column": "col022",
+              "label": "100/XXS/8-10/75A"
+            },
+            {
+              "column": "col023",
+              "label": "110/XS/10-12/75B"
+            },
+            {
+              "column": "col024",
+              "label": "120/S/12-14/80A"
+            },
+            {
+              "column": "col025",
+              "label": "130/M/14-16/80B"
+            },
+            {
+              "column": "col026",
+              "label": "140/L/16-18/85A"
+            },
+            {
+              "column": "col027",
+              "label": "150/XL/18-20/85B"
+            },
+            {
+              "column": "col028",
+              "label": "160/XXL/20-22/75C"
+            },
+            {
+              "column": "col029",
+              "label": "170/XXXL/22-24/80C"
+            },
+            {
+              "column": "col030",
+              "label": "180/ / /85C"
+            },
+            {
+              "column": "col031",
+              "label": "66"
+            },
+            {
+              "column": "col032",
+              "label": "73"
+            },
+            {
+              "column": "col033",
+              "label": "80"
+            }
+          ]
+        }
+      ]
+    },
+    "sqlite_targets": [
+      "inventory_sales_snapshots",
+      "size_metric_breakdowns"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "库存总和分析-按年份季节",
+    "capture_name": "库存综合分析",
+    "status": "已经",
+    "reason": "当前 capture-cache 里的 `库存综合分析.json` 请求参数是 `rtype=1`，能和这张“按年份季节”截图对上。",
+    "notes": [
+      "`SL*=数量`，`JE*=金额`，`KS*=款数`；`*PERT*` 是对应占比。",
+      "`SL1/JE1/KS1` 是去年区块，`SL2/JE2/KS2` 是今年区块，`SL3/JE3/KS3` 是涨幅。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存综合分析.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存综合分析-按年份季节.png"
+    ],
+    "url_keyword": "SelStockAnalysisList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelStockAnalysisList",
+    "request_method": "POST",
+    "request_payload": {
+      "rtype": 1,
+      "spenum": "",
+      "warecause": ""
+    },
+    "expected_request": {
+      "rtype": 1
+    },
+    "expected_request_matched": true,
+    "capture_quality": "snapshot-data",
+    "report_mode": "snapshot",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "",
+      "end": ""
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 14,
+    "columns": [
+      "Num",
+      "Year",
+      "Season",
+      "SL1",
+      "SLPERT1",
+      "JE1",
+      "JEPERT1",
+      "KS1",
+      "KSPERT1",
+      "SL2",
+      "SLPERT2",
+      "JE2",
+      "JEPERT2",
+      "KS2",
+      "KSPERT2",
+      "SL3",
+      "JE3",
+      "KS3"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未单独入 SQLite，仅在字段审计和页面解释时使用。"
+  },
+  {
+    "display_name": "库存总和分析-按中分类",
+    "capture_name": "库存综合分析",
+    "status": "高度怀疑",
+    "reason": "当前 capture-cache 里只有 `rtype=1` 的 JSON，没有抓到 `rtype=2` 响应，无法和这张“按中分类”截图做 1:1 对照。",
+    "notes": [
+      "这张图先不要拿 `库存综合分析.json` 直接解释，必须补抓 `rtype=2` 的真实响应。",
+      "当前抓到的请求参数是 {\"rtype\": 1, \"spenum\": \"\", \"warecause\": \"\"}，没有满足预期 {\"rtype\": 2}。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存综合分析.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存综合分析-按中分类.png"
+    ],
+    "url_keyword": "SelStockAnalysisList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelStockAnalysisList",
+    "request_method": "POST",
+    "request_payload": {
+      "rtype": 1,
+      "spenum": "",
+      "warecause": ""
+    },
+    "expected_request": {
+      "rtype": 2
+    },
+    "expected_request_matched": false,
+    "capture_quality": "snapshot-data",
+    "report_mode": "snapshot",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "",
+      "end": ""
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 14,
+    "columns": [
+      "Num",
+      "Year",
+      "Season",
+      "SL1",
+      "SLPERT1",
+      "JE1",
+      "JEPERT1",
+      "KS1",
+      "KSPERT1",
+      "SL2",
+      "SLPERT2",
+      "JE2",
+      "JEPERT2",
+      "KS2",
+      "KSPERT2",
+      "SL3",
+      "JE3",
+      "KS3"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  },
+  {
+    "display_name": "库存总和分析-按波段",
+    "capture_name": "库存综合分析",
+    "status": "高度怀疑",
+    "reason": "当前 capture-cache 里只有 `rtype=1` 的 JSON，没有抓到 `rtype=3` 响应，无法和这张“按波段”截图做 1:1 对照。",
+    "notes": [
+      "这张图先不要用现有 `库存综合分析.json` 解释，必须补抓 `rtype=3`。",
+      "当前抓到的请求参数是 {\"rtype\": 1, \"spenum\": \"\", \"warecause\": \"\"}，没有满足预期 {\"rtype\": 3}。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存综合分析.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存综合分析-按波段分析.png"
+    ],
+    "url_keyword": "SelStockAnalysisList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelStockAnalysisList",
+    "request_method": "POST",
+    "request_payload": {
+      "rtype": 1,
+      "spenum": "",
+      "warecause": ""
+    },
+    "expected_request": {
+      "rtype": 3
+    },
+    "expected_request_matched": false,
+    "capture_quality": "snapshot-data",
+    "report_mode": "snapshot",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "",
+      "end": ""
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 14,
+    "columns": [
+      "Num",
+      "Year",
+      "Season",
+      "SL1",
+      "SLPERT1",
+      "JE1",
+      "JEPERT1",
+      "KS1",
+      "KSPERT1",
+      "SL2",
+      "SLPERT2",
+      "JE2",
+      "JEPERT2",
+      "KS2",
+      "KSPERT2",
+      "SL3",
+      "JE3",
+      "KS3"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  },
+  {
+    "display_name": "库存多维分析",
+    "capture_name": "库存多维分析",
+    "status": "已经",
+    "reason": "五张截图共同构成一张横向超宽表，`A01~A013` 的尺码列、`AStock` 和 `AMoney` 都能和 JSON 对上。",
+    "notes": [
+      "`AStock=现有小计`，`AMoney=现有金额`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存多维分析.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存多维分析-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存多维分析-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存多维分析-3.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存多维分析-4.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/库存多维分析-5.png"
+    ],
+    "url_keyword": "SelDeptStockAnalysis",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockAnalysis",
+    "request_method": "POST",
+    "request_payload": {
+      "bdate": "20250301",
+      "edate": "20260316",
+      "warecause": "",
+      "spenum": "",
+      "depts": "",
+      "stockflag": "0",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 983,
+    "columns": [
+      "Num",
+      "DeptName",
+      "WareName",
+      "Spec",
+      "ColorName",
+      "Type",
+      "Type1",
+      "Type2",
+      "Date1",
+      "Season",
+      "Pd",
+      "RetailPrice",
+      "Trade",
+      "Img",
+      "WareCode",
+      "DeptCode",
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A07",
+      "A08",
+      "A09",
+      "A010",
+      "A011",
+      "A012",
+      "A013",
+      "A014",
+      "A015",
+      "A016",
+      "A017",
+      "A018",
+      "A019",
+      "A020",
+      "AStock",
+      "AMoney",
+      "B01",
+      "B02",
+      "B03",
+      "B04",
+      "B05",
+      "B06",
+      "B07",
+      "B08",
+      "B09",
+      "B010",
+      "B011",
+      "B012",
+      "B013",
+      "B014",
+      "B015",
+      "B016",
+      "B017",
+      "B018",
+      "B019",
+      "B020",
+      "BStock",
+      "BMoney",
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D05",
+      "D06",
+      "D07",
+      "D08",
+      "D09",
+      "D010",
+      "D011",
+      "D012",
+      "D013",
+      "D014",
+      "D015",
+      "D016",
+      "D017",
+      "D018",
+      "D019",
+      "D020",
+      "DStock",
+      "DMoney",
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "C09",
+      "C010",
+      "C011",
+      "C012",
+      "C013",
+      "C014",
+      "C015",
+      "C016",
+      "C017",
+      "C018",
+      "C019",
+      "C020",
+      "CStock",
+      "CMoney",
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09",
+      "F010",
+      "F011",
+      "F012",
+      "F013",
+      "F014",
+      "F015",
+      "F016",
+      "F017",
+      "F018",
+      "F019",
+      "F020",
+      "FStock",
+      "FMoney"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list",
+      "title_rows": []
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未单独入 SQLite。"
+  },
+  {
+    "display_name": "进销存统计",
+    "capture_name": "进销存统计",
+    "status": "已经",
+    "reason": "三张截图与 `SelInSalesReport` 返回字段完全对应，数量列和分类维度都能对上。",
+    "notes": [
+      "`LastAmount=期初数量`，`InAmount=到货数量`，`TBInAmount=调入数量`，`RetuAmount=退货数量`，`TBOutAmount=调出数量`。",
+      "`ZMStockNum=账面库存`，`StockNum=实际库存`，`WaitStockNum=途库存`，`dxl=动销率`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/进销存统计.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/进销存统计-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/进销存统计-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/进销存统计-3.png"
+    ],
+    "url_keyword": "SelInSalesReport",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelInSalesReport",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "sort": "",
+      "spenum": "",
+      "warecause": "",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 1546,
+    "columns": [
+      "TrademarkName",
+      "dl",
+      "zl",
+      "xl",
+      "SpeNum",
+      "WareName",
+      "RetailPrice",
+      "LastAmount",
+      "InAmount",
+      "TBInAmount",
+      "RetuAmount",
+      "TBOutAmount",
+      "SaleAmount",
+      "ZMStockNum",
+      "BSOutAmount",
+      "StockNum",
+      "WaitStockNum",
+      "dxl",
+      "Year",
+      "Season",
+      "PdName",
+      "Sex",
+      "ColorName",
+      "ColorCode",
+      "Img"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [
+      "stock_flow_snapshots"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "出入库单据",
+    "capture_name": "出入库单据",
+    "status": "已经",
+    "reason": "页面列头、单据状态和首行值都能和 `SelOutInStockReport` 当前响应对上。",
+    "notes": [
+      "`TN=数量`，`TP=总金额`，`TRP=吊牌金额`。",
+      "当前 SQLite 只保留了 `TRP/吊牌金额` 到 `movement_docs.amount`，`TP/总金额` 还没有单独入库。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/出入库单据.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/出入库单据-1.png"
+    ],
+    "url_keyword": "SelOutInStockReport",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelOutInStockReport",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "datetype": "1",
+      "type": "已出库,已入库,在途",
+      "spenum": "",
+      "doctype": "1,2,3,4,5,6,7",
+      "warecause": "",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 307,
+    "columns": [
+      "DocType",
+      "SeasonType",
+      "DocStat",
+      "DocNo",
+      "WhID",
+      "InWhID",
+      "ComeDate",
+      "ReceDate",
+      "TN",
+      "Transtat",
+      "TP",
+      "TRP",
+      "Remark"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [
+      "movement_docs"
+    ],
+    "sqlite_note": "当前 `movement_docs` 只保留了数量与 `TRP/吊牌金额`。"
+  },
+  {
+    "display_name": "日进销存",
+    "capture_name": "日进销存",
+    "status": "高度怀疑",
+    "reason": "截图在，但当前 capture-cache 只有 opened-only，没有请求体和响应体，没法和 JSON 做精确对照。",
+    "notes": [
+      "这张表必须重新补抓成功响应后，才能继续做字段确认和 SQLite 同步。",
+      "当前 capture-cache 没有抓到这个接口的响应体。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/日进销存.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/日进销存.png"
+    ],
+    "url_keyword": "SelInSalesReportByDay",
+    "request_url": "",
+    "request_method": "POST",
+    "request_payload": {},
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "opened-only",
+    "report_mode": "date-range",
+    "capture_record_count": 0,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-14"
+    },
+    "request_range": {
+      "start": "",
+      "end": ""
+    },
+    "range_matched": false,
+    "response_found": false,
+    "response_shape": "missing-response",
+    "row_count": 0,
+    "columns": [],
+    "response_meta": {},
+    "sqlite_targets": [],
+    "sqlite_note": "当前无响应，也未入 SQLite。"
+  },
+  {
+    "display_name": "会员总和分析",
+    "capture_name": "会员综合分析",
+    "status": "已经",
+    "reason": "截图和 `SelVipAnalysisReport` 的会员分析字段能对上，积分、储值、消费频次等字段明确。",
+    "notes": [
+      "`Point=当前积分`，`TotalPoint=总积分`，`SSMoney=储值消费`，`BVMoney=储值余额`。",
+      "`EachSale=笔单价`，`SaleNumByYear=年均消费次数`，`SaleStock=消费件数`，`SaleNum=消费单数`，`TotalMoney=累计消费金额`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/会员综合分析.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/会员综合分析.png"
+    ],
+    "url_keyword": "SelVipAnalysisReport",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelVipAnalysisReport",
+    "request_method": "POST",
+    "request_payload": {
+      "salebdate": "20250301",
+      "saleedate": "20260316",
+      "birthbdate": "",
+      "birthedate": "",
+      "page": 0,
+      "pagesize": 0,
+      "salemoney1": "0",
+      "salemoney2": "0",
+      "tag": "",
+      "type": ""
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 1182,
+    "columns": [
+      "Num",
+      "OperName",
+      "VipName",
+      "VipCardID",
+      "VipGrade",
+      "VipCardType",
+      "BirthDate",
+      "Point",
+      "TotalPoint",
+      "RetuMoney",
+      "SSMoney",
+      "BVMoney",
+      "VipPosCardNum",
+      "InputDate",
+      "LastSaleDate",
+      "EachSale",
+      "SaleNumByYear",
+      "SaleStock",
+      "SaleNum",
+      "TotalMoney",
+      "SaleWeek",
+      "SaleSpace",
+      "VipType",
+      "VipTag"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list"
+    },
+    "sqlite_targets": [
+      "vip_analysis_members"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "会员消费排行",
+    "capture_name": "会员消费排行",
+    "status": "已经",
+    "reason": "两张截图与 `SelVipSaleRank` 返回字段一致，排名、单数、款数、销量、销额和占比都能对上。",
+    "notes": [
+      "`N=单数`，`WareCnt=款数`，`TN=销量`，`TM=销售金额`，`P=销售占比`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/会员消费排行.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/会员消费排行榜-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/会员消费排行榜-2.png"
+    ],
+    "url_keyword": "SelVipSaleRank",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelVipSaleRank",
+    "request_method": "POST",
+    "request_payload": {
+      "bdate": "20250301",
+      "edate": "20260316",
+      "page": 0,
+      "pagesize": 0
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1191,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 1191,
+    "columns": [
+      "Num",
+      "UserName",
+      "VipCardID",
+      "N",
+      "WareCnt",
+      "TN",
+      "TM",
+      "P",
+      "Img"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict"
+    },
+    "sqlite_targets": [
+      "member_sales_rank"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "储值按店汇总",
+    "capture_name": "储值按店汇总",
+    "status": "已经",
+    "reason": "截图列头与 `ColumnsList` 一致，门店级储值金额汇总没有歧义。",
+    "notes": [],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/储值按店汇总.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/储值按店汇总.png"
+    ],
+    "url_keyword": "GetDIYReportData",
+    "request_url": "https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData",
+    "request_method": "POST",
+    "request_payload": {
+      "menuid": "E004004003",
+      "gridid": "E004004003_main",
+      "parameter": {
+        "EndDate": "2026-03-16",
+        "BeginDate": "2025-03-01"
+      }
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 1,
+    "columns": [
+      "Area",
+      "Organization",
+      "OrganizationName",
+      "Customer",
+      "CustomerName",
+      "Type",
+      "TypeName",
+      "VipCount",
+      "RechargeVipCount",
+      "RechargeVipCountRate",
+      "StockUseMoney",
+      "StockRechargeMoney",
+      "StockGiveMoney",
+      "StockMoney",
+      "BvGiveMoney",
+      "BvMoney",
+      "RebateMoney",
+      "UsePoint"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict",
+      "columns_list": [
+        "Area",
+        "Organization",
+        "OrganizationName",
+        "Customer",
+        "CustomerName",
+        "Type",
+        "TypeName",
+        "VipCount",
+        "RechargeVipCount",
+        "RechargeVipCountRate",
+        "StockUseMoney",
+        "StockRechargeMoney",
+        "StockGiveMoney",
+        "StockMoney",
+        "BvGiveMoney",
+        "BvMoney",
+        "RebateMoney",
+        "UsePoint"
+      ]
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  },
+  {
+    "display_name": "储值卡汇总",
+    "capture_name": "储值卡汇总",
+    "status": "已经",
+    "reason": "截图和 `ColumnsList` 一致，卡级余额/充值/消费字段都能对应。",
+    "notes": [],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/储值卡汇总.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/储值卡汇总.png"
+    ],
+    "url_keyword": "GetDIYReportData",
+    "request_url": "https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData",
+    "request_method": "POST",
+    "request_payload": {
+      "menuid": "E004004004",
+      "gridid": "E004004004_main",
+      "parameter": {
+        "EndDate": "2026-03-16",
+        "BeginDate": "2025-03-01",
+        "Search": ""
+      }
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 19,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 19,
+    "columns": [
+      "Area",
+      "Organization",
+      "OrganizationName",
+      "Customer",
+      "CustomerName",
+      "Type",
+      "TypeName",
+      "VipCardId",
+      "VipCode",
+      "VipName",
+      "BeginMoney",
+      "AdjustmentMoney",
+      "CashRechargeMoney",
+      "SwipeCardRechargeMoney",
+      "AlipayRechargeMoney",
+      "WechatRechargeMoney",
+      "OtherRechargeMoney",
+      "ScanCodeRechargeMoney",
+      "StockUseMoney",
+      "EndMoney",
+      "NowMoney"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict",
+      "columns_list": [
+        "Area",
+        "Organization",
+        "OrganizationName",
+        "Customer",
+        "CustomerName",
+        "Type",
+        "TypeName",
+        "VipCardId",
+        "VipCode",
+        "VipName",
+        "BeginMoney",
+        "AdjustmentMoney",
+        "CashRechargeMoney",
+        "SwipeCardRechargeMoney",
+        "AlipayRechargeMoney",
+        "WechatRechargeMoney",
+        "OtherRechargeMoney",
+        "ScanCodeRechargeMoney",
+        "StockUseMoney",
+        "EndMoney",
+        "NowMoney"
+      ]
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  },
+  {
+    "display_name": "储值卡明细",
+    "capture_name": "储值卡明细",
+    "status": "已经",
+    "reason": "两张截图只是同一张明细表的横向拆屏，发生时间、单号、期初/期末余额与充值字段都能对上。",
+    "notes": [],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/储值卡明细.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/储值卡明细-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/储值卡明细.png"
+    ],
+    "url_keyword": "GetDIYReportData",
+    "request_url": "https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData",
+    "request_method": "POST",
+    "request_payload": {
+      "menuid": "E004004005",
+      "gridid": "E004004005_main",
+      "parameter": {
+        "EndDate": "2026-03-16",
+        "BeginDate": "2025-03-01",
+        "Search": ""
+      }
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 78,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 78,
+    "columns": [
+      "Area",
+      "Organization",
+      "OrganizationName",
+      "Customer",
+      "CustomerName",
+      "Type",
+      "TypeName",
+      "HappenDate",
+      "HappenCustomer",
+      "HappenNo",
+      "VipCardId",
+      "VipName",
+      "BeginMoney",
+      "AdjustmentMoney",
+      "CashRechargeMoney",
+      "SwipeCardRechargeMoney",
+      "AlipayRechargeMoney",
+      "WechatRechargeMoney",
+      "OtherRechargeMoney",
+      "ScanCodeRechargeMoney",
+      "StockUseMoney",
+      "EndMoney",
+      "OperName"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict",
+      "columns_list": [
+        "Area",
+        "Organization",
+        "OrganizationName",
+        "Customer",
+        "CustomerName",
+        "Type",
+        "TypeName",
+        "HappenDate",
+        "HappenCustomer",
+        "HappenNo",
+        "VipCardId",
+        "VipName",
+        "BeginMoney",
+        "AdjustmentMoney",
+        "CashRechargeMoney",
+        "SwipeCardRechargeMoney",
+        "AlipayRechargeMoney",
+        "WechatRechargeMoney",
+        "OtherRechargeMoney",
+        "ScanCodeRechargeMoney",
+        "StockUseMoney",
+        "EndMoney",
+        "OperName"
+      ]
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  },
+  {
+    "display_name": "商品销售情况",
+    "capture_name": "商品销售情况",
+    "status": "已经",
+    "reason": "两张截图与 `SelSaleReportData` 的字段一致，销量、销额、累销、库存和周度序列字段都在当前响应内。",
+    "notes": [
+      "`SaleAmount=销量`，`SaleMoney=销售金额`，`SumSaleAmount=累销`，`SumSaleMoney=累销额`，`StockNum=库存`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/商品销售情况.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/商品销售情况-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/商品销售情况-2.png"
+    ],
+    "url_keyword": "SelSaleReportData",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelSaleReportData",
+    "request_method": "POST",
+    "request_payload": {
+      "edate": "20260316",
+      "bdate": "20250301",
+      "warecause": "",
+      "spenum": ""
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1340,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 1340,
+    "columns": [
+      "Num",
+      "WareCode",
+      "ColorCode",
+      "Specification",
+      "Img",
+      "Color",
+      "SaleAmount",
+      "SaleMoney",
+      "SumSaleAmount",
+      "SumSaleMoney",
+      "SumArrival",
+      "WeekSellOut",
+      "SumSellOut",
+      "StockNum",
+      "FirstArrivalDate",
+      "FirstSaleDate",
+      "DaysSold",
+      "Week1",
+      "Week2",
+      "Week3",
+      "Week4",
+      "Week5",
+      "Week6",
+      "Week7",
+      "Week8",
+      "Trade",
+      "Year",
+      "Season",
+      "BD",
+      "MType",
+      "SumReturn"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict"
+    },
+    "sqlite_targets": [
+      "product_sales_snapshot"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "商品品类分析",
+    "capture_name": "商品品类分析",
+    "status": "高度怀疑",
+    "reason": "截图页面同时出现了“进货/销售/库存”三段，但当前抓到的 `type=3` JSON 只明显对得上其中的库存区块，不能把三段都当成同一份响应。",
+    "notes": [
+      "当前 `retdata[0].Data` 的值和截图底部“库存”区块一致；上方“进货/销售”需要继续补抓对应响应再确认。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/商品品类分析.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/商品品类分析-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/商品品类分析-2.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/商品品类分析-3.png"
+    ],
+    "url_keyword": "SelWareTypeAnalysisList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposWareTypeAnalysis/SelWareTypeAnalysisList",
+    "request_method": "POST",
+    "request_payload": {
+      "menuid": "E004005002",
+      "gridid": "E004005002_1",
+      "warecause": "",
+      "type": 3,
+      "bdate": "20250301",
+      "edate": "20260316"
+    },
+    "expected_request": {
+      "type": 3
+    },
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "20250301",
+      "end": "20260316"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-list",
+    "row_count": 13,
+    "columns": [
+      "DeptName",
+      "Category",
+      "TypeCode",
+      "20232SpeNums",
+      "20232Amount",
+      "20232Money",
+      "20232Ratio",
+      "20233SpeNums",
+      "20233Amount",
+      "20233Money",
+      "20233Ratio",
+      "20234SpeNums",
+      "20234Amount",
+      "20234Money",
+      "20234Ratio",
+      "20241SpeNums",
+      "20241Amount",
+      "20241Money",
+      "20241Ratio",
+      "20242SpeNums",
+      "20242Amount",
+      "20242Money",
+      "20242Ratio",
+      "20243SpeNums",
+      "20243Amount",
+      "20243Money",
+      "20243Ratio",
+      "20244SpeNums",
+      "20244Amount",
+      "20244Money",
+      "20244Ratio",
+      "20251SpeNums",
+      "20251Amount",
+      "20251Money",
+      "20251Ratio",
+      "20252SpeNums",
+      "20252Amount",
+      "20252Money",
+      "20252Ratio",
+      "20253SpeNums",
+      "20253Amount",
+      "20253Money",
+      "20253Ratio",
+      "20254SpeNums",
+      "20254Amount",
+      "20254Money",
+      "20254Ratio",
+      "2026SpeNums",
+      "2026Amount",
+      "2026Money",
+      "2026Ratio",
+      "20261SpeNums",
+      "20261Amount",
+      "20261Money",
+      "20261Ratio",
+      "20262SpeNums",
+      "20262Amount",
+      "20262Money",
+      "20262Ratio",
+      "20264SpeNums",
+      "20264Amount",
+      "20264Money",
+      "20264Ratio"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-list",
+      "grid_header": [
+        {
+          "code": "DeptName",
+          "label": "店铺名称",
+          "parent": ""
+        },
+        {
+          "code": "Category",
+          "label": "品类",
+          "parent": ""
+        },
+        {
+          "code": "TypeCode",
+          "label": "品类代码",
+          "parent": ""
+        },
+        {
+          "code": "20232",
+          "label": "23夏",
+          "parent": ""
+        },
+        {
+          "code": "20233",
+          "label": "23秋",
+          "parent": ""
+        },
+        {
+          "code": "20234",
+          "label": "23冬",
+          "parent": ""
+        },
+        {
+          "code": "20241",
+          "label": "24春",
+          "parent": ""
+        },
+        {
+          "code": "20242",
+          "label": "24夏",
+          "parent": ""
+        },
+        {
+          "code": "20243",
+          "label": "24秋",
+          "parent": ""
+        },
+        {
+          "code": "20244",
+          "label": "24冬",
+          "parent": ""
+        },
+        {
+          "code": "20251",
+          "label": "25春",
+          "parent": ""
+        },
+        {
+          "code": "20252",
+          "label": "25夏",
+          "parent": ""
+        },
+        {
+          "code": "20253",
+          "label": "25秋",
+          "parent": ""
+        },
+        {
+          "code": "20254",
+          "label": "25冬",
+          "parent": ""
+        },
+        {
+          "code": "2026",
+          "label": "",
+          "parent": ""
+        },
+        {
+          "code": "20261",
+          "label": "26春",
+          "parent": ""
+        },
+        {
+          "code": "20262",
+          "label": "26夏",
+          "parent": ""
+        },
+        {
+          "code": "20264",
+          "label": "26冬",
+          "parent": ""
+        }
+      ],
+      "grid_header_list": [
+        {
+          "code": "20232SpeNums",
+          "label": "款数",
+          "parent": "20232"
+        },
+        {
+          "code": "20232Amount",
+          "label": "数量",
+          "parent": "20232"
+        },
+        {
+          "code": "20232Money",
+          "label": "金额",
+          "parent": "20232"
+        },
+        {
+          "code": "20232Ratio",
+          "label": "金额占比(%)",
+          "parent": "20232"
+        },
+        {
+          "code": "20233SpeNums",
+          "label": "款数",
+          "parent": "20233"
+        },
+        {
+          "code": "20233Amount",
+          "label": "数量",
+          "parent": "20233"
+        },
+        {
+          "code": "20233Money",
+          "label": "金额",
+          "parent": "20233"
+        },
+        {
+          "code": "20233Ratio",
+          "label": "金额占比(%)",
+          "parent": "20233"
+        },
+        {
+          "code": "20234SpeNums",
+          "label": "款数",
+          "parent": "20234"
+        },
+        {
+          "code": "20234Amount",
+          "label": "数量",
+          "parent": "20234"
+        },
+        {
+          "code": "20234Money",
+          "label": "金额",
+          "parent": "20234"
+        },
+        {
+          "code": "20234Ratio",
+          "label": "金额占比(%)",
+          "parent": "20234"
+        },
+        {
+          "code": "20241SpeNums",
+          "label": "款数",
+          "parent": "20241"
+        },
+        {
+          "code": "20241Amount",
+          "label": "数量",
+          "parent": "20241"
+        },
+        {
+          "code": "20241Money",
+          "label": "金额",
+          "parent": "20241"
+        },
+        {
+          "code": "20241Ratio",
+          "label": "金额占比(%)",
+          "parent": "20241"
+        },
+        {
+          "code": "20242SpeNums",
+          "label": "款数",
+          "parent": "20242"
+        },
+        {
+          "code": "20242Amount",
+          "label": "数量",
+          "parent": "20242"
+        },
+        {
+          "code": "20242Money",
+          "label": "金额",
+          "parent": "20242"
+        },
+        {
+          "code": "20242Ratio",
+          "label": "金额占比(%)",
+          "parent": "20242"
+        },
+        {
+          "code": "20243SpeNums",
+          "label": "款数",
+          "parent": "20243"
+        },
+        {
+          "code": "20243Amount",
+          "label": "数量",
+          "parent": "20243"
+        },
+        {
+          "code": "20243Money",
+          "label": "金额",
+          "parent": "20243"
+        },
+        {
+          "code": "20243Ratio",
+          "label": "金额占比(%)",
+          "parent": "20243"
+        },
+        {
+          "code": "20244SpeNums",
+          "label": "款数",
+          "parent": "20244"
+        },
+        {
+          "code": "20244Amount",
+          "label": "数量",
+          "parent": "20244"
+        },
+        {
+          "code": "20244Money",
+          "label": "金额",
+          "parent": "20244"
+        },
+        {
+          "code": "20244Ratio",
+          "label": "金额占比(%)",
+          "parent": "20244"
+        },
+        {
+          "code": "20251SpeNums",
+          "label": "款数",
+          "parent": "20251"
+        },
+        {
+          "code": "20251Amount",
+          "label": "数量",
+          "parent": "20251"
+        },
+        {
+          "code": "20251Money",
+          "label": "金额",
+          "parent": "20251"
+        },
+        {
+          "code": "20251Ratio",
+          "label": "金额占比(%)",
+          "parent": "20251"
+        },
+        {
+          "code": "20252SpeNums",
+          "label": "款数",
+          "parent": "20252"
+        },
+        {
+          "code": "20252Amount",
+          "label": "数量",
+          "parent": "20252"
+        },
+        {
+          "code": "20252Money",
+          "label": "金额",
+          "parent": "20252"
+        },
+        {
+          "code": "20252Ratio",
+          "label": "金额占比(%)",
+          "parent": "20252"
+        },
+        {
+          "code": "20253SpeNums",
+          "label": "款数",
+          "parent": "20253"
+        },
+        {
+          "code": "20253Amount",
+          "label": "数量",
+          "parent": "20253"
+        },
+        {
+          "code": "20253Money",
+          "label": "金额",
+          "parent": "20253"
+        },
+        {
+          "code": "20253Ratio",
+          "label": "金额占比(%)",
+          "parent": "20253"
+        },
+        {
+          "code": "20254SpeNums",
+          "label": "款数",
+          "parent": "20254"
+        },
+        {
+          "code": "20254Amount",
+          "label": "数量",
+          "parent": "20254"
+        },
+        {
+          "code": "20254Money",
+          "label": "金额",
+          "parent": "20254"
+        },
+        {
+          "code": "20254Ratio",
+          "label": "金额占比(%)",
+          "parent": "20254"
+        },
+        {
+          "code": "2026SpeNums",
+          "label": "款数",
+          "parent": "2026"
+        },
+        {
+          "code": "2026Amount",
+          "label": "数量",
+          "parent": "2026"
+        },
+        {
+          "code": "2026Money",
+          "label": "金额",
+          "parent": "2026"
+        },
+        {
+          "code": "2026Ratio",
+          "label": "金额占比(%)",
+          "parent": "2026"
+        },
+        {
+          "code": "20261SpeNums",
+          "label": "款数",
+          "parent": "20261"
+        },
+        {
+          "code": "20261Amount",
+          "label": "数量",
+          "parent": "20261"
+        },
+        {
+          "code": "20261Money",
+          "label": "金额",
+          "parent": "20261"
+        },
+        {
+          "code": "20261Ratio",
+          "label": "金额占比(%)",
+          "parent": "20261"
+        },
+        {
+          "code": "20262SpeNums",
+          "label": "款数",
+          "parent": "20262"
+        },
+        {
+          "code": "20262Amount",
+          "label": "数量",
+          "parent": "20262"
+        },
+        {
+          "code": "20262Money",
+          "label": "金额",
+          "parent": "20262"
+        },
+        {
+          "code": "20262Ratio",
+          "label": "金额占比(%)",
+          "parent": "20262"
+        },
+        {
+          "code": "20264SpeNums",
+          "label": "款数",
+          "parent": "20264"
+        },
+        {
+          "code": "20264Amount",
+          "label": "数量",
+          "parent": "20264"
+        },
+        {
+          "code": "20264Money",
+          "label": "金额",
+          "parent": "20264"
+        },
+        {
+          "code": "20264Ratio",
+          "label": "金额占比(%)",
+          "parent": "20264"
+        }
+      ]
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  },
+  {
+    "display_name": "门店销售月报",
+    "capture_name": "门店销售月报",
+    "status": "已经",
+    "reason": "截图表头和 `DeptMonthSalesReport` 的 `PageData.Items` 字段一致；金额脱敏为 `****` 也是后端返回结果，不是对照异常。",
+    "notes": [
+      "`SalePNum=销售票数`，`SaleAmount=销售数`，`SaleMoney=销售金额`，`Jointandseveral=连带`。",
+      "`Discountamount=折扣金额`，`Actualsales=实际销额`，`CustomerSale=客单价`，`RetailMoney=吊牌额`，`VipSaleMoney=会员金额`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/门店销售月报.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/门店销售月报.png"
+    ],
+    "url_keyword": "DeptMonthSalesReport",
+    "request_url": "https://jyapistaging.yeusoft.net/JyApi/DeptMonthSalesReport/DeptMonthSalesReport",
+    "request_method": "POST",
+    "request_payload": {
+      "Type": "1",
+      "BeginDate": "2025-03-01",
+      "EndDate": "2026-03-16",
+      "YBeginDate": "2024-02-29",
+      "YEndDate": "2025-03-15",
+      "MBeginDate": "2025-01-31",
+      "MEndDate": "2026-02-15",
+      "PageIndex": 1,
+      "PageSize": 2000
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 365,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "jyapi-page-items",
+    "row_count": 365,
+    "columns": [
+      "DeptName",
+      "Date",
+      "Week",
+      "Numberofweeks",
+      "SalePNum",
+      "SaleAmount",
+      "SaleMoney",
+      "Jointandseveral",
+      "Discountamount",
+      "Actualsales",
+      "CustomerSale",
+      "Retailcost",
+      "Retailgrossmargin",
+      "Grossprofitmargin",
+      "RetailMoney",
+      "VipSaleMoney",
+      "ProportionOfSales",
+      "YoY",
+      "MoM"
+    ],
+    "response_meta": {
+      "page_index": 0,
+      "page_size": 0,
+      "total_count": 365
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite，仅在 `scripts.dashboard.yeusoft` 中做页面解析。"
+  },
+  {
+    "display_name": "每日流水单",
+    "capture_name": "每日流水单",
+    "status": "已经",
+    "reason": "两张截图与 `SelectRetailDocPaymentSlip` 的 `Data.Columns/List` 完整一致，支付方式列也能对上。",
+    "notes": [
+      "这张表是订单级支付流水，和销售净额不是同一个口径，后面做回款校验时要单独看。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/每日流水单.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/每日流水单-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/每日流水单-2.png"
+    ],
+    "url_keyword": "SelectRetailDocPaymentSlip",
+    "request_url": "https://jyapistaging.yeusoft.net/JyApi/ReconciliationAnalysis/SelectRetailDocPaymentSlip",
+    "request_method": "POST",
+    "request_payload": {
+      "MenuID": "E004006001",
+      "SearchType": "1",
+      "Search": "",
+      "LastDate": "",
+      "BeginDate": "2025-03-01",
+      "EndDate": "2026-03-16"
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "full-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 3988,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "jyapi-columns-list",
+    "row_count": 3988,
+    "columns": [
+      "Area",
+      "Organization",
+      "OrganizationName",
+      "Customer",
+      "CustomerName",
+      "Type",
+      "TypeName",
+      "MakeDate",
+      "DocType",
+      "DocTypeName",
+      "DocNo",
+      "Guide",
+      "TagMoney",
+      "Amount",
+      "Money",
+      "ActualMoney",
+      "SaleDiscount",
+      "UnitPrice",
+      "VipMovePhone",
+      "VipName",
+      "Remark",
+      "SourceNo",
+      "CashMoney",
+      "SwipeMoney",
+      "WxMoney",
+      "AlipayMoney",
+      "StockMoney",
+      "OrderMoney",
+      "CouponMoney",
+      "UseRebateMoney",
+      "UseBvMoney",
+      "OtherMoney",
+      "ActivityMoney",
+      "ScanCodeMoney",
+      "WipeZeroMoney",
+      "LookChangeMoney"
+    ],
+    "response_meta": {
+      "columns_list": [
+        "Area",
+        "Organization",
+        "OrganizationName",
+        "Customer",
+        "CustomerName",
+        "Type",
+        "TypeName",
+        "MakeDate",
+        "DocType",
+        "DocTypeName",
+        "DocNo",
+        "Guide",
+        "TagMoney",
+        "Amount",
+        "Money",
+        "ActualMoney",
+        "SaleDiscount",
+        "UnitPrice",
+        "VipMovePhone",
+        "VipName",
+        "Remark",
+        "SourceNo",
+        "CashMoney",
+        "SwipeMoney",
+        "WxMoney",
+        "AlipayMoney",
+        "StockMoney",
+        "OrderMoney",
+        "CouponMoney",
+        "UseRebateMoney",
+        "UseBvMoney",
+        "OtherMoney",
+        "ActivityMoney",
+        "ScanCodeMoney",
+        "WipeZeroMoney",
+        "LookChangeMoney"
+      ]
+    },
+    "sqlite_targets": [
+      "daily_flow_docs"
+    ],
+    "sqlite_note": ""
+  },
+  {
+    "display_name": "会员中心",
+    "capture_name": "会员中心",
+    "status": "高度怀疑",
+    "reason": "表格字段本身能和 `SelVipInfoList` 对齐，但截图顶部四张统计卡片不在当前响应里，所以整屏还不能算 100% 全量确认。",
+    "notes": [
+      "当前表格里的“会员卡号”实际对应 `VipCardID`，`VipCode` 更像内部会员编码，并没有显示在当前列表列头里。",
+      "`AttributionGuideName=归属导购`，`AttributionDeptName=归属店铺`，`StockCardMoney=储值卡金额`，`StockCardBv=储值卡赠送金额`，`CanUsePosNum=可用券数量`。"
+    ],
+    "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/会员中心.json",
+    "image_paths": [
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/会员中心-1.png",
+      "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/会员中心-2.png"
+    ],
+    "url_keyword": "SelVipInfoList",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposVipManage/SelVipInfoList",
+    "request_method": "POST",
+    "request_payload": {
+      "condition": "",
+      "searchval": "",
+      "VolumeNumber": ""
+    },
+    "expected_request": {},
+    "expected_request_matched": true,
+    "capture_quality": "partial-range-data",
+    "report_mode": "date-range",
+    "capture_record_count": 1297,
+    "requested_range": {
+      "start": "2025-03-01",
+      "end": "2026-03-16"
+    },
+    "request_range": {
+      "start": "",
+      "end": ""
+    },
+    "range_matched": false,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 1297,
+    "columns": [
+      "Num",
+      "VipCode",
+      "VipCardID",
+      "Name",
+      "MobliePhone",
+      "Birthday",
+      "Grade",
+      "GradeName",
+      "TotalPoint",
+      "ValidPoint",
+      "ValidStore",
+      "ValidUMoney",
+      "nsMoney",
+      "AttributionGuideName",
+      "AttributionDept",
+      "AttributionDeptName",
+      "PlatSet",
+      "LastSaleDate",
+      "RegisterDate",
+      "EndDate",
+      "TotalSaleFrequency",
+      "TotalSaleAmount",
+      "TotalSaleMoney",
+      "Label",
+      "Img",
+      "CheckStatus",
+      "StockCardMoney",
+      "StockCardBv",
+      "CanUsePosNum",
+      "SolarLunarCalendar",
+      "ssMoneyRebate",
+      "NickName",
+      "JtkhName"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict"
+    },
+    "sqlite_targets": [],
+    "sqlite_note": "当前未入 SQLite。"
+  }
+]
