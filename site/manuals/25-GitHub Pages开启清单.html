@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GitHub Pages 开启清单 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>GitHub Pages 开启清单</h1>
+      <p>这份清单用来把当前仓库里的在线经营仪表盘发布到 GitHub Pages。</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">GitHub Pages 开启清单</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">Pages 与发布</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-14</span><span class="meta-chip">适用对象：仓库管理员 / 老板 / 协作人员</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="github-pages">GitHub Pages 开启清单<a class="headerlink" href="#github-pages" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新时间：2026-03-14<br />
+适用对象：仓库管理员 / 老板 / 协作人员</p>
+<h2 id="_1">这份清单解决什么问题<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<p>这份清单用来把当前仓库里的在线经营仪表盘发布到 GitHub Pages。</p>
+<p>目标是：</p>
+<ol>
+<li>让最新看板有一个固定网址</li>
+<li>老板后面只打开这一个网址</li>
+<li>仓库继续保留历史版本，不影响日常生成</li>
+</ol>
+<p>当前仓库已经准备好的固定发布目录是：</p>
+<ul>
+<li><code>site/dashboard/</code></li>
+</ul>
+<p>固定入口文件是：</p>
+<ul>
+<li><code>site/dashboard/index.html</code></li>
+</ul>
+<h2 id="_2">当前发布结构<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>site/dashboard/</code>
+  用于 GitHub Pages 发布</li>
+<li><code>reports/dashboard-history/</code>
+  用于保留每天的历史版本</li>
+</ul>
+<p>当前脚本每次运行会同时刷新两份：</p>
+<ol>
+<li>历史版本到 <code>reports/dashboard-history/</code></li>
+<li>最新版本到 <code>site/dashboard/</code></li>
+</ol>
+<h2 id="github-pages_1">GitHub Pages 最推荐配置<a class="headerlink" href="#github-pages_1" title="Permanent link">¶</a></h2>
+<p>推荐方式：</p>
+<ol>
+<li>在 GitHub 打开这个仓库</li>
+<li>进入 <code>Settings</code></li>
+<li>进入 <code>Pages</code></li>
+<li>在 <code>Build and deployment</code> 里选择：
+   - <code>Source</code>：<code>Deploy from a branch</code>
+   - <code>Branch</code>：默认分支，例如 <code>main</code>
+   - <code>Folder</code>：<code>/site</code></li>
+<li>保存</li>
+</ol>
+<p>这样 Pages 会从 <code>site/</code> 发布整个站点。</p>
+<p>当前在线仪表盘入口就是：</p>
+<ul>
+<li><code>/dashboard/</code></li>
+</ul>
+<p>也就是：</p>
+<ul>
+<li><code>https://&lt;你的GitHub用户名&gt;.github.io/&lt;仓库名&gt;/dashboard/</code></li>
+</ul>
+<p>如果这是用户主页仓库或组织主页仓库，路径会更短，但当前默认先按项目仓库理解。</p>
+<h2 id="2">建议同时做的 2 件事<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
+<h3 id="1-site-nojekyll">1. 在 <code>site/</code> 目录保留 <code>.nojekyll</code><a class="headerlink" href="#1-site-nojekyll" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ul>
+<li>当前看板是纯 HTML/CSS/JS 输出</li>
+<li>不需要 Jekyll 构建</li>
+<li>加 <code>.nojekyll</code> 可以避免 GitHub Pages 把某些目录或文件当成 Jekyll 站点处理</li>
+</ul>
+<h2 id="2_1">2. 每次更新后只让老板打开固定路径<a class="headerlink" href="#2_1" title="Permanent link">¶</a></h2>
+<p>不要把每天带日期的 HTML 发给老板。</p>
+<p>固定只发：</p>
+<ul>
+<li><code>/dashboard/</code></li>
+</ul>
+<p>原因：</p>
+<ul>
+<li>地址不会变</li>
+<li>后面你脚本重跑后，老板不用重新换链接</li>
+</ul>
+<h2 id="_3">上线前自查<a class="headerlink" href="#_3" title="Permanent link">¶</a></h2>
+<p>上线前看这 6 项：</p>
+<ol>
+<li><code>site/dashboard/index.html</code> 是否存在</li>
+<li><code>site/dashboard/summary.md</code> 是否存在</li>
+<li><code>site/dashboard/report.md</code> 是否存在</li>
+<li>仓库默认分支是否已推送最新内容</li>
+<li>GitHub Pages 是否选择了 <code>main + /site</code></li>
+<li>页面打开后顶部是否先看到：
+   - 今日经营重点
+   - 核心经营指标
+   - 赚钱机会</li>
+</ol>
+<p>如果想在开启前先做一次自动检查，先看：</p>
+<ul>
+<li><a href="26-GitHub%20Pages上线前最后检查.html">26-GitHub Pages上线前最后检查</a></li>
+<li>或直接运行：</li>
+</ul>
+<pre><code class="language-bash">cd /Users/lizhihui/Workspace/Black\ Tony
+python3 -m scripts.tools.check_pages_ready
+</code></pre>
+<h2 id="_4">上线后怎么验证<a class="headerlink" href="#_4" title="Permanent link">¶</a></h2>
+<p>Pages 开启后，打开：</p>
+<ul>
+<li><code>https://&lt;你的GitHub用户名&gt;.github.io/&lt;仓库名&gt;/dashboard/</code></li>
+</ul>
+<p>验证这几件事：</p>
+<ol>
+<li>手机打开是否第一屏能看到 <code>今日经营重点</code></li>
+<li>页面顶部是否有 6 个模块</li>
+<li>页面顶部是否有 <code>当前阶段</code> 和 <code>日销趋势</code></li>
+<li>标签悬浮是否还能看到操作提示</li>
+<li>详细数据区是否还能正常展开</li>
+</ol>
+<h2 id="_5">如果页面没更新<a class="headerlink" href="#_5" title="Permanent link">¶</a></h2>
+<p>先按这个顺序排查：</p>
+<ol>
+<li>本地有没有重新运行脚本</li>
+<li><code>site/dashboard/index.html</code> 是否真的被刷新</li>
+<li>是否已经提交并 push 到远程仓库</li>
+<li>GitHub Pages 设置是否还是 <code>main + /site</code></li>
+<li>浏览器是否缓存旧页面</li>
+</ol>
+<h2 id="_6">官方参考<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
+<p>GitHub 官方关于 Pages 的说明：</p>
+<ul>
+<li><a href="https://docs.github.com/pages/getting-started-with-github-pages/what-is-github-pages">What is GitHub Pages?</a></li>
+<li><a href="https://docs.github.com/pages/setting-up-a-github-pages-site-with-jekyll/creating-a-github-pages-site-with-jekyll">Creating a GitHub Pages site with Jekyll</a></li>
+<li><a href="https://docs.github.com/en/pages">GitHub Pages documentation</a></li>
+</ul>
+<p>说明：</p>
+<ul>
+<li>当前仓库不是按 Jekyll 内容站来用，而是借 Pages 托管纯静态 HTML</li>
+<li>官方文档明确支持从分支和目录发布</li>
+<li>如果不需要 Jekyll 处理，放 <code>.nojekyll</code> 会更稳</li>
+</ul>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="24-内容经营与数据看板下一步优化建议.html">内容、经营与数据看板下一步优化建议</a><p>看板与数据</p></div><div class="footer-card"><div class="label">下一篇</div><a href="26-GitHub Pages上线前最后检查.html">GitHub Pages 上线前最后检查</a><p>Pages 与发布</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../docs/source/25-GitHub Pages开启清单.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#github-pages">GitHub Pages 开启清单</a><ul>
+<li><a href="#_1">这份清单解决什么问题</a></li>
+<li><a href="#_2">当前发布结构</a></li>
+<li><a href="#github-pages_1">GitHub Pages 最推荐配置</a></li>
+<li><a href="#2">建议同时做的 2 件事</a><ul>
+<li><a href="#1-site-nojekyll">1. 在 site/ 目录保留 .nojekyll</a></li>
+</ul>
+</li>
+<li><a href="#2_1">2. 每次更新后只让老板打开固定路径</a></li>
+<li><a href="#_3">上线前自查</a></li>
+<li><a href="#_4">上线后怎么验证</a></li>
+<li><a href="#_5">如果页面没更新</a></li>
+<li><a href="#_6">官方参考</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

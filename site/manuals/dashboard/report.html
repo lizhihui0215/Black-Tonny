@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 库存销售分析报告 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../../index.html">首页</a><a class="top-nav-link" href="../../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="../index.html">文档中心</a><a class="top-nav-link" href="../../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 库存销售分析报告</h1>
+      <p>日期：2026-03-17</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="../index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../../index.html">Pages 首页</a>
+        <a class="nav-chip" href="../index.html">文档中心</a>
+        <span class="nav-chip">咸阳沣西吾悦专卖店 库存销售分析报告</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">仪表盘输出</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="_1">咸阳沣西吾悦专卖店 库存销售分析报告<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>日期：2026-03-17</p>
+<h2 id="_2">老板一分钟结论<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>结论：先稳毛利，别靠打折硬撑。</li>
+<li>说明：春夏换季期阶段，最近日销下滑，但按当前节奏月末净利约 -9,190.73 元。 当前实销折扣约 7.7 折，家居服、常规内裤、裤类 这些中类折扣依赖偏重。先稳毛利、提组合，再谈放大量。 当前阶段：换季切换；最近日销均值 1,083.24 元。 当前净利润 -20,851.93 元，尚未过保本线。 按当前节奏月末净利润约 -9,190.73 元。 POS 库存主要压在 2026春、2025秋、2026夏。 近段时间净入库 12,170 件，补货节奏也要一并考虑。 会员沉默占比约 50.3%，这周要主动唤醒老客。 最近件单比约 1.07，说明成交有了，但每单带得还不够。</li>
+<li>当前经营阶段：换季切换 / 春夏换季期</li>
+<li>日销趋势：最近 3 天日销均值 1,083.24 元，对比前段为 下滑。</li>
+<li>当前经营优先级：先稳利润、提连带、控补货，再谈放大营业额。</li>
+</ul>
+<h3 id="_3">今天先做<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<ul>
+<li>先看哪张表：先看 家居服、常规内裤、裤类 的折扣依赖，再看 130/M、120/S、110/XS 这些主销尺码。今天先稳毛利，再决定要不要做活动。</li>
+<li>今天怎么做：今天先把 家居服、常规内裤、裤类 做高毛利搭配和门口陈列，补货只保 130/M、120/S、110/XS 这些主销尺码，别直接靠深折扣冲量。</li>
+<li>老板今天拍板什么：今天先拍板 家居服、常规内裤、裤类 是否继续让利，同时确认 130/M、120/S、110/XS 这些尺码的补货预算，别平均补货。</li>
+</ul>
+<h3 id="_4">今天先别做<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<ul>
+<li>不要先看单款，先看品类，再下钻到 SKU。</li>
+<li>不要把道具金额和库存算进正常经营判断。</li>
+<li>不要把其他输入人的店铺数据当成本店结论。</li>
+<li>不要因为某个冬款历史卖过，就在春夏阶段继续追补。</li>
+<li>不要只等自然回购，沉默会员需要主动叫回。</li>
+<li>不要为了冲销量继续做深折扣，先看组合和尺码结构。</li>
+<li>不要只盯单数，今天要想办法把每单带得更多。</li>
+</ul>
+<h3 id="_5">看板阅读顺序<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<ul>
+<li>先看“老板一分钟结论”，确认今天的主任务。</li>
+<li>再看“经营健康灯”，判断先救火还是先放大机会。</li>
+<li>再看“补货重点品类 / 去化重点品类 / 跨季处理重点品类”。</li>
+<li>再看“会员经营 / 店员执行 / 月度件单比”这些结构提醒。</li>
+<li>最后再下钻到具体 SKU 明细表执行。</li>
+</ul>
+<h2 id="_6">一句话结论<a class="headerlink" href="#_6" title="Permanent link">¶</a></h2>
+<p>这份数据已经足够支持一个给老板和店员直接用的图形化工具。
+当前最需要优先管理的不是“再多看几张表”，而是先把库存压力、负库存异常、会员经营和高压货品类管起来。</p>
+<h2 id="_7">核心经营判断<a class="headerlink" href="#_7" title="Permanent link">¶</a></h2>
+<ul>
+<li>近 8 天经营销售额：9,312.16 元</li>
+<li>销售明细时间范围：2026-03-09 到 2026-03-16</li>
+<li>历史累计销售额：859,786.57 元</li>
+<li>历史累计销量：9,016</li>
+<li>历史首次到货日期：2025-03-17</li>
+<li>历史首次销售日期：2025-03-17</li>
+<li>订单数：55</li>
+<li>客单价：169.31 元</li>
+<li>经营库存件数：5,823</li>
+<li>经营库存额：530,282.00 元</li>
+<li>经营库存覆盖天数：363.9 天</li>
+<li>道具销售额参考：4,835.84 元</li>
+<li>道具库存额参考：250,824.00 元</li>
+<li>负库存 SKU：105</li>
+<li>会员销售额占比：65.3%</li>
+<li>跨季处理 SKU：522</li>
+</ul>
+<h2 id="pos">POS 高价值数据<a class="headerlink" href="#pos" title="Permanent link">¶</a></h2>
+<ul>
+<li>库存结构：主要压在 2026春、2025秋、2026夏，当季库存占比 36.1%，跨季库存占比 40.1%。</li>
+<li>最近出入库：入库 12,642 件 / 1,613,873.00 元，出库 472 件 / 90,459.00 元，净入库 12,170 件 / 1,523,414.00 元。</li>
+<li>当日流水：935,577.00 元，3,988 单 / 9,297 件，现金占比 97.5%。</li>
+<li>品类结构：前两品类贡献约 45.0%，主要集中在 道具、常规内裤、家居服。</li>
+<li>折扣与尺码：当前实销折扣约 7.7 折，家居服、常规内裤、裤类 折扣依赖偏重，主销尺码集中在 130/M、120/S、110/XS。</li>
+<li>会员基盘：会员 1,182 位，近60天活跃 349 位，沉默占比 50.3%。</li>
+<li>店员执行：主力导购 赵婷宇，销售占比 41.2%，VIP 销售占比 75.7。</li>
+</ul>
+<h2 id="_8">利润与保本<a class="headerlink" href="#_8" title="Permanent link">¶</a></h2>
+<ul>
+<li>毛利额：10,649.62 元，毛利率 48.0%，销售口径 POS销售清单（月累计），毛利率口径 默认毛利率（48%）</li>
+<li>固定费用：24,001.55 元，人工费用：7,500.00 元</li>
+<li>总费用：31,501.55 元，净利润：-20,851.93 元</li>
+<li>保本销售额：65,628.23 元，保本进度：33.8%</li>
+<li>保本日销：2,117.04 元，当前平均日销：1,499.38 元</li>
+<li>月末销售预测：46,480.87 元，月末净利预测：-9,190.73 元</li>
+<li>预测拆解：已实现销售 22,186.70 元 + 剩余 16.2 天预计销售 24,294.17 元</li>
+<li>最大费用项：房租+物业 / 15,733.25 元</li>
+<li>最高工资项：员工工资（固定口径） / 7,500.00 元</li>
+</ul>
+<h2 id="_9">输入人 / 店铺逻辑<a class="headerlink" href="#_9" title="Permanent link">¶</a></h2>
+<ul>
+<li>主逻辑固定关注：郭文攀 / 咸阳沣西吾悦专卖店</li>
+<li>其他输入人代表其他店铺，只做参考，不参与主经营口径。</li>
+</ul>
+<h2 id="_10">北京时间与季节决策<a class="headerlink" href="#_10" title="Permanent link">¶</a></h2>
+<ul>
+<li>北京时间：2026-03-17 02:02</li>
+<li>当前季节：春季 / 春夏换季期</li>
+<li>当前判断：春夏换季，重心是薄款起量、冬款不深补。</li>
+<li>当前补货重点：裤类</li>
+<li>当前去化重点：袜品</li>
+</ul>
+<h3 id="_11">今天先做<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
+<ul>
+<li>今天先查负库存和断码，避免春夏补货判断失真。</li>
+<li>今天补货优先看 裤类，但冬季类补货先人工复核，不做深补。</li>
+<li>今天去化先盯 袜品，先停补再想组合去化。</li>
+</ul>
+<h3 id="_12">本周重点<a class="headerlink" href="#_12" title="Permanent link">¶</a></h3>
+<ul>
+<li>本周把补货重心转到 夏季，尤其是 裤类 这类能直接起量的商品。</li>
+<li>本周减少厚款和冬款的新进货，旧货先靠搭配和小组合去化。</li>
+<li>本周检查门店陈列，让春款在前，夏款预热，厚款退到后区。</li>
+</ul>
+<h3 id="_13">本月方向<a class="headerlink" href="#_13" title="Permanent link">¶</a></h3>
+<ul>
+<li>本月经营目标不是压更多货，而是把春款卖动、为夏款腾货位。</li>
+<li>本月把高压货品类做成专项表，先控进货，再安排去化节奏。</li>
+<li>本月会员触达重点围绕换季、开学、出游、早晚温差场景去做。</li>
+</ul>
+<h2 id="_14">具体操作方案<a class="headerlink" href="#_14" title="Permanent link">¶</a></h2>
+<h3 id="_15">还没过保本线，先盯利润而不是只看销售<a class="headerlink" href="#_15" title="Permanent link">¶</a></h3>
+<ul>
+<li>触发原因：当前净利润 -20,851.93 元，保本销售额约 65,628.23 元，还差 43,441.53 元。</li>
+<li>目标：先让本月销售和毛利覆盖固定费用与工资，再决定促销和扩品动作。</li>
+<li>方案1：先保高毛利主销，今天优先卖动高毛利、当季主销和高连带组合，不用低价促销去换低质量营业额。</li>
+<li>方案2：盯保本日销，本月平均每天至少要卖 2,117.04 元；如果剩余天数不多，后面每天至少要卖 2,681.12 元。</li>
+<li>方案3：先控费用和压货，在没过保本线前，先收紧补货、减少非必要促销和低效率支出，把现金留给主销款。</li>
+</ul>
+<h3 id="_16">库存周期过长，先做促销去化<a class="headerlink" href="#_16" title="Permanent link">¶</a></h3>
+<ul>
+<li>触发原因：当前经营库存覆盖天数 363.9 天，已经明显偏长。</li>
+<li>目标：先把高库存慢销货动起来，给当季主销和补货腾出空间。</li>
+<li>方案1：少女文胸 组合促销，围绕 少女文胸 做 2 件 / 3 件组合价，优先配基础内裤、袜品、家居这类低决策商品，门店主推“顺手带走”的组合。</li>
+<li>方案2：会员定向去化促销，优先触达 妞宝、年年、史振尧 这一类老客，发换季组合包或加价购，主推“到店试一套 / 顺手补一轮”。</li>
+<li>方案3：周末限时清货台，把 少女文胸 和当前去化重点放到门口清货位，做 3 天限时陈列，配合第二件折扣或满额换购，但不全场乱打折。</li>
+</ul>
+<h3 id="_17">畅销款缺货风险高，补货要分级<a class="headerlink" href="#_17" title="Permanent link">¶</a></h3>
+<ul>
+<li>触发原因：当前建议补货 SKU 339 个，补货压力较高。</li>
+<li>目标：先保住最能带营业额的款，不让补货动作失控。</li>
+<li>方案1：A类马上补，今天先定 裤类 这个品类的补货预算，再下钻到销售金额高、库存 0-1、库存周数小于 1 的款。</li>
+<li>方案2：B类本周补，本周内处理同品类里销售稳定但库存还有 1-2 周的款，避免一下子把补货预算打满。</li>
+<li>方案3：C类先观察，春季 和下季交界的款先小量试补，避免把非主销季的货压深。</li>
+</ul>
+<h3 id="_18">负库存先纠偏，再谈补货<a class="headerlink" href="#_18" title="Permanent link">¶</a></h3>
+<ul>
+<li>触发原因：当前负库存 SKU 105 个，库存口径已经影响经营判断。</li>
+<li>目标：先把库存账实校准，不然补货和去化都会跑偏。</li>
+<li>方案1：先查高频负库存，先从销售高、库存低、还在建议补货清单里的负库存款开始校正，优先处理最影响营业额的货。</li>
+<li>方案2：按来源分三类排查，把负库存拆成盘点错误、调拨未入、销售未回写 3 类，店员照类别处理，不要混着查。</li>
+<li>方案3：未校正前先冻结深补，对负库存涉及的款先不要深补，只允许人工确认后补货，避免一边错一边继续压货。</li>
+</ul>
+<h3 id="_19">跨季款先别补，先按季节处理<a class="headerlink" href="#_19" title="Permanent link">¶</a></h3>
+<ul>
+<li>触发原因：当前有 522 个 SKU 被识别为跨季去化或暂缓补货，重点集中在 儿童袜、常规内裤、连裤袜 这些品类。</li>
+<li>目标：避免把非主销季的货继续补深，把钱和货位留给当前季节。</li>
+<li>方案1：有库存先去化，如果 儿童袜、常规内裤、连裤袜 这些跨季品类手里还有库存，优先转到去化清单，用组合价、加价购、门口清货位来动销。</li>
+<li>方案2：没库存不再追补，如果某个跨季品类当前库存已经为 0，现阶段不要因为历史卖过就立即补，先等回到主销季再评估。</li>
+<li>方案3：跨季款单独看板，先看“跨季处理重点品类”，再下钻到单款。由老板每周决定这些品类是去化、暂缓还是等待下季，不跟当季补货混在一起。</li>
+</ul>
+<h3 id="_20">会员占比高，适合做定向复购<a class="headerlink" href="#_20" title="Permanent link">¶</a></h3>
+<ul>
+<li>触发原因：会员销售额占比 65.3%，会员已经是门店核心来源。</li>
+<li>目标：把已有会员复购做深，而不是只靠新客自然进店。</li>
+<li>方案1：换季提醒，围绕 春季 到 夏季 的换季场景，给老客发“尺码 / 厚薄 / 到店试一轮”的提醒。</li>
+<li>方案2：高客单老客回访，优先回访 妞宝、年年、史振尧 这类高价值会员，话术聚焦“新到一批适合你家孩子的基础款”。</li>
+<li>方案3：复购带连带，会员到店不要只补单品，主推基础打底 + 袜品 + 家居这种顺手连带组合，放大客单价。</li>
+</ul>
+<h2 id="_21">经营诊断总结<a class="headerlink" href="#_21" title="Permanent link">¶</a></h2>
+<ul>
+<li>当前门店最需要优先处理的是 先稳毛利，别靠打折硬撑。从数据看，销售主力仍集中在 衣着系列，但库存压力主要压在 少女文胸，补货应优先给 裤类，去化则先盯 袜品。 按当前口径，本月净利预测约 -9,190.73 元，还没有真正过保本线。</li>
+</ul>
+<h2 id="5">本月最值得关注的 5 个问题<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<ul>
+<li>库存覆盖天数约 363.9 天，库存压力偏重。</li>
+<li>负库存 SKU 还有 105 个，库存口径还没完全干净。</li>
+<li>少女文胸 是当前压货最重的品类，继续补货会进一步拖慢周转。</li>
+<li>衣着系列 贡献占比较高，结构上仍有“靠少数品类撑销售”的风险。</li>
+<li>会员贡献已经很高，但连带和复购还可以继续放大。</li>
+</ul>
+<h2 id="_22">销售表现分析<a class="headerlink" href="#_22" title="Permanent link">¶</a></h2>
+<ul>
+<li>【直接数据】当前阶段销售额 22,186.70 元，较上一阶段下降 60.5%。</li>
+<li>【直接数据】变化主要来自单量，订单数较上一阶段回落 55.1%，客单价变化相对更小。</li>
+<li>【直接数据】当前主销中类是 衣类，说明阶段性增长/下滑主要先看这个中类有没有继续撑住。</li>
+<li>【经营判断】销售看起来不算差，但结构并不轻松，衣着系列 单类大约贡献了 57.9% 销售，存在“靠少数品类硬撑”的风险。</li>
+<li>【直接数据】全量零售明细显示，当前实销折扣约 7.7 折，深折扣销售占比约 40.4%。</li>
+<li>【经营判断】当前销售不只是流量问题，家居服、常规内裤、裤类 这些品类已经有明显折扣依赖。继续靠深折扣冲营业额，会先伤毛利。</li>
+</ul>
+<h2 id="_23">品类结构分析<a class="headerlink" href="#_23" title="Permanent link">¶</a></h2>
+<ul>
+<li>【直接数据】品类贡献排序靠前的是：衣着系列(5,392.45元)、内裤(1,992.12元)、袜品(1,504.38元)。</li>
+<li>【直接数据】阶段性增长更快的品类主要是：儿童袜(+34,806.00元)、常规内裤(+25,874.00元)、少女文胸(+19,370.00元)。</li>
+<li>【直接数据】阶段性回落更明显的品类主要是：道具(-245,790.00元)、家居服(-9,468.00元)、亲子家居(-1,628.00元)。</li>
+<li>【直接数据】品类风险排序靠前的是：少女文胸(需关注)、袜品(相对健康)、内裤(相对健康)。</li>
+<li>【直接数据】品类动作建议里，补货优先级靠前的是：裤类(2,673)、衣类(3,468)、常规内裤(3,613)。</li>
+<li>【直接数据】去化优先级靠前的是：袜品(791)、袜品(235)、少女文胸(202)。</li>
+<li>【经营判断】前两大品类大约贡献了 79.3% 销售，结构偏集中。短期靠它们撑得住，长期要防一旦主力品类失速，整体营业额会一起掉。</li>
+<li>【直接数据】折扣依赖更明显的中类是：家居服(7.0折)、常规内裤(7.2折)、裤类(7.6折)。</li>
+<li>【经营判断】这说明部分品类现在更像“靠让利换成交”，如果不先调陈列、组合和尺码结构，后面利润会持续被拖薄。</li>
+</ul>
+<h2 id="sku">SKU / 爆款 / 滞销分析<a class="headerlink" href="#sku" title="Permanent link">¶</a></h2>
+<ul>
+<li>【直接数据】当前爆款/断货风险款主要集中在：TND1Y81001X/灰蓝色、TNX1Y90914Z/紫红色、TND1Y81002X/藕粉色。</li>
+<li>【动作建议】这类款先保核心尺码和主销色，不建议一次补深，按 2-3 次小单快返来补最稳。</li>
+<li>【经营判断】有持续动销能力的 SKU 主要集中在 裤类，它们更适合稳补；如果只是一两周突然冲高，则先按小量试补处理。</li>
+<li>【直接数据】明显滞销或高库存低动销 SKU 主要有：TNQ1W60628、TOX2K10296、TOX1W30935。</li>
+<li>【动作建议】这类货不要继续深补，优先判断是季节错了、陈列靠后、价格门槛高，还是尺码结构不对，再决定轻促销还是强去化。</li>
+<li>【经营判断】连续慢销款更像结构问题，不只是单品问题。先调陈列和搭配，如果 1-2 周仍不改善，再升级到清货动作。</li>
+<li>【直接数据】全量零售明细显示，主销尺码更集中在：130/M、120/S、110/XS。</li>
+<li>【动作建议】补货不要全尺码平均补，先保这些主销尺码，再用小量补单观察边缘尺码是否真有动销。</li>
+</ul>
+<h2 id="_24">库存健康分析<a class="headerlink" href="#_24" title="Permanent link">¶</a></h2>
+<ul>
+<li>【直接数据】当前经营库存覆盖天数约 363.9 天，库存压力判断为 偏重。</li>
+<li>【直接数据】库存压力最大的品类先看 少女文胸，而补货优先品类先看 裤类，说明库存结构已经出现“该补的不一定多、该去化的反而压得深”的失衡。</li>
+<li>【经营判断】当前更适合先去化再补货；如果先补，会把现金继续压进旧货和错季货里。</li>
+</ul>
+<h2 id="_25">会员 / 客单价 / 连带率分析<a class="headerlink" href="#_25" title="Permanent link">¶</a></h2>
+<ul>
+<li>【直接数据】会员销售额占比约 65.3%，最近客单价约 169.31 元。</li>
+<li>【直接数据】店员平均连带约 2.29，平均单效约 169.35 元。</li>
+<li>【经营判断】当前销售已经明显依赖会员，说明复购稳定性不错，下一步更该做的是把高价值会员的回访和搭配销售做深。</li>
+<li>【直接数据】会员基盘里目前有 1,182 位会员，近 60 天活跃 349 位，沉默占比约 50.3%。</li>
+<li>【经营判断】会员沉默占比偏高，说明老客不是没有，而是唤醒不够。这个阶段更适合做一对一回访，而不是只等自然复购。</li>
+<li>【经营判断】连带不算太差，但仍建议用基础打底 + 袜品 + 家居服组合继续放大客单。</li>
+<li>【动作建议】会员回访先盯 妞宝、年年、史振尧，优先做换季提醒、到店试穿和组合推荐。</li>
+<li>【直接数据】导购总销里 VIP 销售占比约 75.7%，头部导购 赵婷宇 贡献约 41.2%。</li>
+</ul>
+<h2 id="_26">目标达成与节奏分析<a class="headerlink" href="#_26" title="Permanent link">¶</a></h2>
+<ul>
+<li>【经营判断】当前更像 去库存阶段，不是简单追销售额。</li>
+<li>【直接数据】按当前节奏月末仍有亏损风险，本周应该先保毛利、控补货、做去化，而不是盲目冲低价促销。</li>
+<li>【直接数据】后面每天至少还要卖 2,681.12 元才能过保本；如果继续慢半拍，月底就会靠最后几天硬冲。</li>
+<li>【经营判断】当前节奏更像转化或结构问题，不只是客流问题。先看主销品类和连带，再看活动。</li>
+<li>【直接数据】最近月度件单比约 1.07，低连带天数 202 天。</li>
+<li>【经营判断】当前节奏还有一个明显短板是连带偏弱。进店有单，但每单件数不高，店员执行要先盯组合成交。</li>
+</ul>
+<h2 id="_27">本周优先动作建议<a class="headerlink" href="#_27" title="Permanent link">¶</a></h2>
+<ul>
+<li>先把 少女文胸 做成专项去化表，先停补、先前移陈列、先做组合价。</li>
+<li>把 裤类 的核心尺码和主销色列成补货清单，本周只补最能带营业额的那批。</li>
+<li>先校正负库存，再安排补货；库存没校准前，不做深补。</li>
+</ul>
+<h2 id="_28">补货建议<a class="headerlink" href="#_28" title="Permanent link">¶</a></h2>
+<ul>
+<li>裤类（建议补货量 2,673）</li>
+<li>衣类（建议补货量 3,468）</li>
+<li>常规内裤（建议补货量 3,613）</li>
+<li>家居服（建议补货量 929）</li>
+<li>防晒服（建议补货量 379）</li>
+</ul>
+<h2 id="_29">去化 / 清货建议<a class="headerlink" href="#_29" title="Permanent link">¶</a></h2>
+<ul>
+<li>裤类（优先去化）</li>
+<li>少女文胸（先控补货节奏）</li>
+</ul>
+<h2 id="_30">品类经营建议<a class="headerlink" href="#_30" title="Permanent link">¶</a></h2>
+<ul>
+<li>衣着系列 继续做主销中轴，优先保不断码。</li>
+<li>少女文胸 先控采购，再安排门口清货位和组合去化。</li>
+<li>儿童袜 这类跨季品类要单独管理，不跟当季补货混预算。</li>
+<li>儿童内衣 / 棉品 / 家居服要分清角色：主销、连带、去化，别放在一张表里平均看。</li>
+</ul>
+<h2 id="_31">老板娘 / 店长 / 店员分角色建议<a class="headerlink" href="#_31" title="Permanent link">¶</a></h2>
+<h3 id="_32">给老板娘的建议<a class="headerlink" href="#_32" title="Permanent link">¶</a></h3>
+<ul>
+<li>本周先盯 3 个数：保本进度、库存覆盖天数、裤类 的断码情况。</li>
+<li>需要你拍板的不是所有货，而是 少女文胸 怎么去化、儿童袜 是否暂缓、裤类 补货预算给多少。</li>
+<li>如果这周只能做一个经营动作，就先把高库存慢销货位和清货策略定下来，不要让旧货继续占预算。</li>
+<li>对 家居服、常规内裤、裤类 这几个中类，先拍板是稳毛利还是继续让利；补货预算先保 130/M、120/S、110/XS 这些主销尺码。</li>
+</ul>
+<h3 id="_33">给店长的建议<a class="headerlink" href="#_33" title="Permanent link">¶</a></h3>
+<ul>
+<li>先把 少女文胸 从正常主陈列里压缩出来，给 裤类 腾出更前的位置。</li>
+<li>盯员工两件事：主销款不断推、每单至少带一件顺手连带商品。</li>
+<li>把负库存、去化名单、补货名单分三张小表带晨会，不要让店员自己判断优先级。</li>
+<li>会员跟进先看 ['妞宝', '年年', '史振尧']。</li>
+<li>导购执行先对齐 赵婷宇 的成交路径，再让其他人照着练，避免每个人各讲各的。</li>
+<li>补货清单先按 130/M、120/S、110/XS 排序，家居服、常规内裤、裤类 这些中类先控量补、先看毛利。</li>
+</ul>
+<h3 id="_34">给店员的建议<a class="headerlink" href="#_34" title="Permanent link">¶</a></h3>
+<ul>
+<li>今天优先推 裤类，这是当前最值得先卖、也最该先保不断货的品类。</li>
+<li>带货顺序先主销，再顺带 袜品 这类更容易顺手带走的商品。</li>
+<li>慢销款不要硬单推，改成组合推荐：基础款 + 袜品 / 家居服 / 第二件优惠。</li>
+<li>顾客犹豫时，先问使用场景和孩子年龄，再推最稳的基础款，不要先推难卖的货。</li>
+<li>如果顾客在看 家居服、常规内裤、裤类 这些中类，先做组合和场景推荐，不要一上来就主动降价。</li>
+</ul>
+<h2 id="_35">风险预警清单<a class="headerlink" href="#_35" title="Permanent link">¶</a></h2>
+<ul>
+<li>如果继续平均补货，少女文胸 的压货会继续加重。</li>
+<li>如果负库存不先纠偏，补货建议和库存健康判断都会继续失真。</li>
+<li>如果会员回访只做群发，不做分层，复购效率会继续偏低。</li>
+<li>如果当前主销中类突然断码，销售额会很容易直接下滑。</li>
+<li>如果跨季货不单独管理，到了下个季节会出现旧货、新货一起压的情况。</li>
+</ul>
+<h2 id="_36">如果下周不处理，最可能出现的问题<a class="headerlink" href="#_36" title="Permanent link">¶</a></h2>
+<ul>
+<li>下周最可能先出现的是 少女文胸 库存继续变重，但真正能卖的 裤类 反而更容易断。</li>
+<li>店员会继续把时间花在介绍货，而不是推动组合成交，客单和连带抬不起来。</li>
+<li>如果月底前还没压住慢销库存，利润会继续被固定费用和工资吃掉。</li>
+<li>跨季货如果这周不处理，下周仍会占货位，影响春夏主销款出样和成交。</li>
+</ul>
+<h2 id="_37">经营动作优先级排序<a class="headerlink" href="#_37" title="Permanent link">¶</a></h2>
+<h3 id="_38">重要且紧急<a class="headerlink" href="#_38" title="Permanent link">¶</a></h3>
+<ul>
+<li>先纠偏负库存，再决定补货和去化。</li>
+<li>先停补 少女文胸，优先安排去化和货位调整。</li>
+<li>如果净利预测为负，先盯保本日销和高毛利主销组合。</li>
+</ul>
+<h3 id="_39">重要不紧急<a class="headerlink" href="#_39" title="Permanent link">¶</a></h3>
+<ul>
+<li>把高价值会员分层回访，做换季提醒和复购带连带。</li>
+<li>把 儿童袜 这类跨季货单独管理，避免下一轮继续压货。</li>
+<li>每周固定复盘一次品类贡献、补货效果和去化进度。</li>
+</ul>
+<h3 id="_40">可观察<a class="headerlink" href="#_40" title="Permanent link">¶</a></h3>
+<ul>
+<li>下一季试补品类先小量试单，观察 1 周再决定是否放大。</li>
+<li>继续跟踪店员连带率和客单价，判断是不是单量正常但带得少。</li>
+</ul>
+<h3 id="_41">暂不处理<a class="headerlink" href="#_41" title="Permanent link">¶</a></h3>
+<ul>
+<li>暂不做非核心品类深补。</li>
+<li>暂不为了冲营业额做全场重折扣。</li>
+<li>暂不把预算投向还没验证的新扩品。</li>
+</ul>
+<h2 id="_42">判断依据说明<a class="headerlink" href="#_42" title="Permanent link">¶</a></h2>
+<h3 id="_43">基于数据直接得出的<a class="headerlink" href="#_43" title="Permanent link">¶</a></h3>
+<ul>
+<li>当前阶段销售、订单、客单变化来自 POS 全量销售数据。</li>
+<li>品类贡献和库存风险来自当前销售、库存和进销存报表。</li>
+<li>补货和去化建议来自 SKU 动销、库存周数、季节策略和库存风险规则。</li>
+<li>品类增长/回落判断补充参考了商品品类分析的全量周期数据。</li>
+<li>会员活跃与沉默判断补充参考了会员综合分析。</li>
+<li>店员人效和连带判断补充参考了导购员报表与门店销售月报。</li>
+</ul>
+<h3 id="_44">基于零售经验做的判断<a class="headerlink" href="#_44" title="Permanent link">¶</a></h3>
+<ul>
+<li>哪些品类更适合继续放大，部分基于当前主销中类、库存结构和换季逻辑做经营推断。</li>
+<li>滞销原因中的价格、陈列、尺码结构问题，属于结合零售经验的判断，不是系统直接字段。</li>
+</ul>
+<h3 id="_45">还需要补充数据才能进一步确认<a class="headerlink" href="#_45" title="Permanent link">¶</a></h3>
+<ul>
+<li>如果要更准判断品类增长来源，最好再补连续月度的分品类销售明细。</li>
+<li>如果要更准判断店员转化问题，最好补进店人数或试穿数据。</li>
+</ul>
+<h2 id="top-5">补货重点品类 Top 5<a class="headerlink" href="#top-5" title="Permanent link">¶</a></h2>
+<ul>
+<li>裤类 / 下一季试补：SKU数 54，销售额 77,075.84，建议补货量 2,673，补货原则 小量试补、先校库存，主销尺码 130/M、120/S、110/XS</li>
+<li>衣类 / 下一季试补：SKU数 85，销售额 73,305.21，建议补货量 3,468，补货原则 小量试补、先校库存，主销尺码 130/M、120/S、110/XS</li>
+<li>常规内裤 / 下一季试补：SKU数 35，销售额 49,990.64，建议补货量 3,613，补货原则 小量试补、先校库存，主销尺码 130/M、120/S、110/XS</li>
+<li>家居服 / 下一季试补：SKU数 57，销售额 37,834.57，建议补货量 929，补货原则 小量试补、先校库存，主销尺码 130/M、120/S、110/XS</li>
+<li>防晒服 / 下一季试补：SKU数 12，销售额 24,168.62，建议补货量 379，补货原则 小量试补，主销尺码 130/M、120/S、110/XS</li>
+</ul>
+<h2 id="top-5_1">跨季处理重点品类 Top 5<a class="headerlink" href="#top-5_1" title="Permanent link">¶</a></h2>
+<ul>
+<li>儿童袜 / 暂缓补货：SKU数 69，库存 941，建议 暂缓补货</li>
+<li>常规内裤 / 暂缓补货：SKU数 29，库存 646，建议 暂缓补货</li>
+<li>连裤袜 / 暂缓补货：SKU数 8，库存 260，建议 暂缓补货</li>
+<li>亲子袜 / 暂缓补货：SKU数 8，库存 166，建议 暂缓补货</li>
+<li>裤类 / 跨季去化：SKU数 35，库存 84，建议 优先去化</li>
+</ul>
+<h2 id="top-5_2">去化重点品类 Top 5<a class="headerlink" href="#top-5_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>袜品：SKU数 24，实际库存 791，建议 先停补再去化</li>
+<li>袜品：SKU数 15，实际库存 235，建议 观察并做组合去化</li>
+<li>少女文胸：SKU数 12，实际库存 202，建议 观察并做组合去化</li>
+<li>内裤：SKU数 5，实际库存 169，建议 先停补再去化</li>
+<li>衣着系列：SKU数 3，实际库存 66，建议 先停补再去化</li>
+</ul>
+<h2 id="sku-top-5">跨季处理 SKU 明细 Top 5<a class="headerlink" href="#sku-top-5" title="Permanent link">¶</a></h2>
+<ul>
+<li>TND1W60626 / 黑色 / 冬：季节策略 跨季去化，库存 34，建议 优先去化</li>
+<li>TND1W60625 / 黑色 / 冬：季节策略 跨季去化，库存 18，建议 优先去化</li>
+<li>TND1W60625 / 深麻灰 / 冬：季节策略 跨季去化，库存 9，建议 优先去化</li>
+<li>TND1K60656X / 绿色 / 冬：季节策略 跨季去化，库存 7，建议 优先去化</li>
+<li>TND1K60631Z / 深灰色 / 冬：季节策略 跨季去化，库存 6，建议 优先去化</li>
+</ul>
+<h2 id="_46">当前最重要的发现<a class="headerlink" href="#_46" title="Permanent link">¶</a></h2>
+<ol>
+<li>主经营口径已经剔除道具后，库存覆盖天数仍然偏高，说明库存压力是真实存在的。</li>
+<li>负库存异常较多，说明库存口径还需要先校准。</li>
+<li>会员已经是核心收入来源，后续值得单独做会员复购提醒。</li>
+<li>袜品等品类的压货风险比较明显，适合先停补再做去化。</li>
+<li>道具现在只保留为参考值，不再影响销售、库存和补货判断。</li>
+</ol>
+<h2 id="_47">经营健康灯<a class="headerlink" href="#_47" title="Permanent link">¶</a></h2>
+<ul>
+<li>红灯 | 库存压力：363.9 天，库存覆盖偏长，先控补货再做去化</li>
+<li>红灯 | 库存准确性：105，负库存较多，先校库存再做经营判断</li>
+<li>绿灯 | 压货风险：0，压货品类数量可控</li>
+<li>红灯 | 缺货风险：339，建议补货 SKU 偏多，畅销货有断货风险</li>
+<li>黄灯 | 会员经营：65.3%，会员贡献中等，还有提升空间</li>
+</ul>
+<h2 id="_48">销售贡献靠前的品类<a class="headerlink" href="#_48" title="Permanent link">¶</a></h2>
+<ul>
+<li>衣着系列：销售额 5,392.45 元，销量 40，订单数 29</li>
+<li>内裤：销售额 1,992.12 元，销量 38，订单数 16</li>
+<li>袜品：销售额 1,504.38 元，销量 44，订单数 24</li>
+<li>少女文胸：销售额 423.21 元，销量 6，订单数 4</li>
+</ul>
+<h2 id="_49">高压货风险品类<a class="headerlink" href="#_49" title="Permanent link">¶</a></h2>
+<ul>
+<li>少女文胸：库存金额/销售金额 2.04，库存量/销售量 1.42，状态 需关注</li>
+<li>袜品：库存金额/销售金额 1.26，库存量/销售量 0.97，状态 相对健康</li>
+<li>内裤：库存金额/销售金额 1.02，库存量/销售量 0.75，状态 相对健康</li>
+<li>衣着系列：库存金额/销售金额 0.28，库存量/销售量 0.21，状态 相对健康</li>
+</ul>
+<h2 id="_50">导购表现靠前人员<a class="headerlink" href="#_50" title="Permanent link">¶</a></h2>
+<ul>
+<li>张静：实收金额 3,702.73 元，票数 21，连带 2.38，会员销额 2,959.73 元</li>
+<li>郭文攀：实收金额 3,170.65 元，票数 22，连带 2.18，会员销额 1,189.65 元</li>
+<li>刘梅：实收金额 2,438.78 元，票数 13，连带 2.31，会员销额 1,928.78 元</li>
+</ul>
+<h2 id="python">这套数据适不适合做成 Python 工具<a class="headerlink" href="#python" title="Permanent link">¶</a></h2>
+<p>结论：适合，而且已经进入可以落地的阶段。
+现在这套包里，短期趋势来自销售明细，长期累计来自商品销售情况，两种口径可以并行展示。</p>
+<p>原因：</p>
+<ol>
+<li>原始 Excel 数量多，老板和店员直接看不方便。</li>
+<li>核心动作已经能自动判断：补货、去化、品类风险、会员重点。</li>
+<li>当前脚本已经能稳定产出图形化看板、摘要和动作清单。</li>
+</ol>
+<h2 id="_51">最推荐的下一步<a class="headerlink" href="#_51" title="Permanent link">¶</a></h2>
+<ol>
+<li>继续保留当前脚本和 HTML 看板，先让门店跑起来。</li>
+<li>下一版做成本地上传 zip 的简易网页工具，给非技术人员直接用。</li>
+<li>后续再加红黄绿预警、断码提醒、会员复购提醒和导购经营看板。</li>
+</ol>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="../30-经营系统总目标拆解与实施任务清单.html">小黑托昵经营系统总目标拆解与实施任务清单</a><p>其他</p></div><div class="footer-card"><div class="label">下一篇</div><a href="summary.html">咸阳沣西吾悦专卖店 库存销售摘要</a><p>仪表盘输出</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../dashboard/report.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../../index.html">Pages 首页</a><a class="" href="../../dashboard/index.html">经营仪表盘</a><a class="" href="../../dashboard/details.html">详细经营页</a><a class="current" href="../index.html">文档中心</a><a class="" href="../../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">咸阳沣西吾悦专卖店 库存销售分析报告</a><ul>
+<li><a href="#_2">老板一分钟结论</a><ul>
+<li><a href="#_3">今天先做</a></li>
+<li><a href="#_4">今天先别做</a></li>
+<li><a href="#_5">看板阅读顺序</a></li>
+</ul>
+</li>
+<li><a href="#_6">一句话结论</a></li>
+<li><a href="#_7">核心经营判断</a></li>
+<li><a href="#pos">POS 高价值数据</a></li>
+<li><a href="#_8">利润与保本</a></li>
+<li><a href="#_9">输入人 / 店铺逻辑</a></li>
+<li><a href="#_10">北京时间与季节决策</a><ul>
+<li><a href="#_11">今天先做</a></li>
+<li><a href="#_12">本周重点</a></li>
+<li><a href="#_13">本月方向</a></li>
+</ul>
+</li>
+<li><a href="#_14">具体操作方案</a><ul>
+<li><a href="#_15">还没过保本线，先盯利润而不是只看销售</a></li>
+<li><a href="#_16">库存周期过长，先做促销去化</a></li>
+<li><a href="#_17">畅销款缺货风险高，补货要分级</a></li>
+<li><a href="#_18">负库存先纠偏，再谈补货</a></li>
+<li><a href="#_19">跨季款先别补，先按季节处理</a></li>
+<li><a href="#_20">会员占比高，适合做定向复购</a></li>
+</ul>
+</li>
+<li><a href="#_21">经营诊断总结</a></li>
+<li><a href="#5">本月最值得关注的 5 个问题</a></li>
+<li><a href="#_22">销售表现分析</a></li>
+<li><a href="#_23">品类结构分析</a></li>
+<li><a href="#sku">SKU / 爆款 / 滞销分析</a></li>
+<li><a href="#_24">库存健康分析</a></li>
+<li><a href="#_25">会员 / 客单价 / 连带率分析</a></li>
+<li><a href="#_26">目标达成与节奏分析</a></li>
+<li><a href="#_27">本周优先动作建议</a></li>
+<li><a href="#_28">补货建议</a></li>
+<li><a href="#_29">去化 / 清货建议</a></li>
+<li><a href="#_30">品类经营建议</a></li>
+<li><a href="#_31">老板娘 / 店长 / 店员分角色建议</a><ul>
+<li><a href="#_32">给老板娘的建议</a></li>
+<li><a href="#_33">给店长的建议</a></li>
+<li><a href="#_34">给店员的建议</a></li>
+</ul>
+</li>
+<li><a href="#_35">风险预警清单</a></li>
+<li><a href="#_36">如果下周不处理，最可能出现的问题</a></li>
+<li><a href="#_37">经营动作优先级排序</a><ul>
+<li><a href="#_38">重要且紧急</a></li>
+<li><a href="#_39">重要不紧急</a></li>
+<li><a href="#_40">可观察</a></li>
+<li><a href="#_41">暂不处理</a></li>
+</ul>
+</li>
+<li><a href="#_42">判断依据说明</a><ul>
+<li><a href="#_43">基于数据直接得出的</a></li>
+<li><a href="#_44">基于零售经验做的判断</a></li>
+<li><a href="#_45">还需要补充数据才能进一步确认</a></li>
+</ul>
+</li>
+<li><a href="#top-5">补货重点品类 Top 5</a></li>
+<li><a href="#top-5_1">跨季处理重点品类 Top 5</a></li>
+<li><a href="#top-5_2">去化重点品类 Top 5</a></li>
+<li><a href="#sku-top-5">跨季处理 SKU 明细 Top 5</a></li>
+<li><a href="#_46">当前最重要的发现</a></li>
+<li><a href="#_47">经营健康灯</a></li>
+<li><a href="#_48">销售贡献靠前的品类</a></li>
+<li><a href="#_49">高压货风险品类</a></li>
+<li><a href="#_50">导购表现靠前人员</a></li>
+<li><a href="#python">这套数据适不适合做成 Python 工具</a></li>
+<li><a href="#_51">最推荐的下一步</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

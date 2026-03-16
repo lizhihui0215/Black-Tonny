@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵门店接待话术SOP | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>小黑托昵门店接待话术SOP</h1>
+      <p>配套文档：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵门店接待话术SOP</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">引流与成交</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-12</span><span class="meta-chip">适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="sop">小黑托昵门店接待话术SOP<a class="headerlink" href="#sop" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-12<br />
+适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店<br />
+配套文档：
+- <code>docs/source/06-店铺经营基础框架.md</code>
+- <code>docs/source/09-员工培训与带教SOP.md</code>
+- <code>docs/source/11-员工日常检查清单.md</code></p>
+<h2 id="_1">使用说明<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>顾客进店后怎么开口、怎么判断、怎么推荐、怎么收口</code>。</li>
+<li>目标不是让员工背台词，而是让门店接待顺序统一，不再一人一个说法。</li>
+<li>默认原则只有 3 条：</li>
+<li>先问需求，不急着推货</li>
+<li>先缩范围，不一上来讲很多款</li>
+<li>先接问题，不急着讲活动</li>
+</ul>
+<p>当前门店统一按 <code>儿童贴身棉品</code> 来接待，默认优先覆盖这 5 类：</p>
+<ol>
+<li><code>内裤</code></li>
+<li><code>背心 / 发育期近身打底</code></li>
+<li><code>秋衣秋裤 / 单裤 / 打底</code></li>
+<li><code>家居服 / 睡衣</code></li>
+<li><code>袜品 / 连裤袜</code></li>
+</ol>
+<h2 id="1">1. 接待总原则<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<p>门店接待统一按这 4 步走：</p>
+<ol>
+<li><code>先开口</code>
+   让顾客知道有人在接，不要让人自己站着发懵</li>
+<li><code>再判断</code>
+   判断她是随便看看、带问题来、还是刷到抖音来的</li>
+<li><code>再缩范围</code>
+   先帮她判断厚薄、尺码、年龄段，再看具体款</li>
+<li><code>最后收口</code>
+   让顾客知道现在最适合先看哪几类，不要越看越乱</li>
+</ol>
+<h2 id="2">2. 顾客进店第一句话怎么说<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 基础开口<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>默认统一先说：</p>
+<p><code>是自己先看看，还是我先按厚薄和尺码帮你缩一下？</code></p>
+<p>这句话的作用：</p>
+<ol>
+<li>不会太硬</li>
+<li>能快速判断顾客是否需要帮助</li>
+<li>能自然进入“怎么选”的逻辑</li>
+</ol>
+<h3 id="22">2.2 顾客明显在找东西时<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>你是已经有想看的，还是我先按孩子年龄和最近穿的场景帮你缩一下？</code></p>
+<h3 id="23">2.3 顾客提着孩子、明显赶时间时<a class="headerlink" href="#23" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>你先跟我说孩子多大、最近是想换厚薄还是想看尺码，我直接带你看快一点。</code></p>
+<h2 id="3">3. 先判断顾客属于哪一类<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<p>接待时先分这 4 类：</p>
+<ol>
+<li><code>随便看看型</code>
+   特点：先逛、不急着问<br />
+   应对：轻接待，不要追着讲太多</li>
+<li><code>明确问题型</code>
+   特点：一进来就问尺码、厚薄、年龄段<br />
+   应对：直接按问题切入</li>
+<li><code>抖音到店型</code>
+   特点：提到视频、直播、评论、私信<br />
+   应对：先接线上问题，不让她重新解释一遍</li>
+<li><code>老客复购型</code>
+   特点：知道店里、知道你、带着明确偏好来<br />
+   应对：直接从她熟悉的逻辑切入</li>
+</ol>
+<h2 id="4">4. 怎么把顾客从“很多货”带到“少数选项”<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
+<p>统一先按这 3 步说：</p>
+<ol>
+<li><code>先判断厚薄</code>
+   例如：<code>你现在是准备最近就穿，还是先给后面换季备着？</code></li>
+<li><code>再判断尺码 / 年龄段</code>
+   例如：<code>孩子现在多大，平时穿得是偏正码还是偏宽松？</code></li>
+<li><code>最后再缩到具体款</code>
+   例如：<code>那你这种情况我先带你看这两类，不然一下子看太多会乱。</code></li>
+</ol>
+<h3 id="41">4.1 五类产品分别先怎么开口<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>内裤</code>
+   <code>你这次主要是想缩尺码，还是想找穿着更稳一点的那类？</code></li>
+<li><code>背心 / 发育期近身打底</code>
+   <code>你是想看日常打底，还是最近这个阶段更需要近身过渡一点的？</code></li>
+<li><code>秋衣秋裤 / 单裤 / 打底</code>
+   <code>你现在是准备最近就穿，还是给后面换季先备着？</code></li>
+<li><code>家居服 / 睡衣</code>
+   <code>你更想看在家舒服一点的，还是要兼顾早晚温差的？</code></li>
+<li><code>袜品 / 连裤袜</code>
+   <code>你是顺手配一类，还是最近正好在补这类？</code></li>
+</ol>
+<h2 id="5">5. 抖音到店顾客怎么接<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<h3 id="51">5.1 第一反应<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>只要顾客提到抖音、视频、直播、刷到过，统一先说：</p>
+<p><code>那我先按你线上关心的问题带你看，不让你从头重新选。</code></p>
+<h3 id="52-3">5.2 再追问 3 件事<a class="headerlink" href="#52-3" title="Permanent link">¶</a></h3>
+<ol>
+<li>她线上最关心的是 <code>地址 / 尺码 / 最近适不适合来 / 厚薄</code></li>
+<li>她是给多大孩子看</li>
+<li>她今天是想先了解，还是已经准备试一试</li>
+</ol>
+<h3 id="53">5.3 接待重点<a class="headerlink" href="#53" title="Permanent link">¶</a></h3>
+<ol>
+<li>不重新讲一大套品牌故事</li>
+<li>不假装没看见她线上已经问过的问题</li>
+<li>先把她带到最接近的问题区域</li>
+</ol>
+<h2 id="6">6. 顾客犹豫时怎么说<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<h3 id="61">6.1 顾客说“我再看看”<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>你先别急着全看，我先帮你把范围缩小，不然越看越不好选。</code></p>
+<h3 id="62">6.2 顾客在两类之间犹豫<a class="headerlink" href="#62" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>你这种情况先别纠结太多款，先把厚薄和尺码定下来，后面就会快很多。</code></p>
+<h3 id="63">6.3 顾客对尺码拿不准<a class="headerlink" href="#63" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>这种情况我一般先按孩子现在穿着反馈来缩范围，不先死盯吊牌数字。</code></p>
+<h2 id="7">7. 顾客问价格、活动时怎么接<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<p>默认顺序是：</p>
+<ol>
+<li>先回答她适合什么</li>
+<li>再回答价格和活动</li>
+</ol>
+<p>不要一上来就只讲活动。</p>
+<h3 id="71">7.1 顾客先问价格<a class="headerlink" href="#71" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>我先按孩子情况帮你缩一下，不然价格看了也不一定是最适合的。</code></p>
+<h3 id="72">7.2 顾客问有没有活动<a class="headerlink" href="#72" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>有的，我先帮你把适合的范围缩出来，再跟你说哪种拿法更合适。</code></p>
+<h2 id="8">8. 老客复购怎么接<a class="headerlink" href="#8" title="Permanent link">¶</a></h2>
+<h3 id="81">8.1 老客一进店<a class="headerlink" href="#81" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>你这次还是按上次那种穿着习惯看，还是孩子最近情况有变化？</code></p>
+<h3 id="82">8.2 老客想快一点<a class="headerlink" href="#82" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>那我先按你之前拿得比较稳的那类带你看，再看要不要微调。</code></p>
+<h3 id="83">8.3 老客的接待重点<a class="headerlink" href="#83" title="Permanent link">¶</a></h3>
+<ol>
+<li>不让她重新从零开始解释</li>
+<li>先接她熟悉的购买逻辑</li>
+<li>有变化时再补问细节</li>
+</ol>
+<h3 id="84">8.4 老客复购优先从哪几类切入<a class="headerlink" href="#84" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>内裤</code>
+   适合先问上次穿着反馈和最近尺码有没有变化</li>
+<li><code>秋衣秋裤 / 打底</code>
+   适合先问最近温差和活动场景</li>
+<li><code>家居服</code>
+   适合先问在家穿着习惯和松量偏好</li>
+</ol>
+<h2 id="9">9. 员工什么时候必须叫老板来<a class="headerlink" href="#9" title="Permanent link">¶</a></h2>
+<p>员工遇到下面这 5 种情况，优先交给老板：</p>
+<ol>
+<li>顾客明显是抖音专门找来的</li>
+<li>顾客是高价值老客</li>
+<li>顾客对尺码、厚薄特别犹豫，员工拿不准</li>
+<li>顾客已经接近成交，但还差最后一下判断</li>
+<li>顾客提出员工回答不稳的问题</li>
+</ol>
+<p>交给老板时不要只说“你来一下”，建议直接说：</p>
+<p><code>这位宝妈刚才主要在纠结 [具体问题]，我先带她看了 [哪两类]，你帮她最后定一下更合适。</code></p>
+<h2 id="10">10. 接待结束怎么收口<a class="headerlink" href="#10" title="Permanent link">¶</a></h2>
+<p>顾客暂时不买，也要给一个清晰收口。</p>
+<h3 id="101">10.1 顾客准备再想想<a class="headerlink" href="#101" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>没关系，你今天先把范围缩清楚，后面要是还纠结尺码或厚薄，你直接来问我。</code></p>
+<h3 id="102">10.2 顾客已经基本确定<a class="headerlink" href="#102" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>那你现在先按这类看最稳，后面如果还想比，我再帮你快速过一遍。</code></p>
+<h3 id="103">10.3 抖音顾客离店前<a class="headerlink" href="#103" title="Permanent link">¶</a></h3>
+<p>可以说：</p>
+<p><code>你后面如果还有线上看到的问题，来店里直接提，我按今天这个逻辑继续帮你接。</code></p>
+<h2 id="11">11. 门店接待里不要说的话<a class="headerlink" href="#11" title="Permanent link">¶</a></h2>
+<p>这些话尽量不用：</p>
+<ol>
+<li><code>这个就是最好的</code></li>
+<li><code>别人都买这个</code></li>
+<li><code>绝对没问题</code></li>
+<li><code>你就买这个就行</code></li>
+<li><code>活动最划算，先拿再说</code></li>
+</ol>
+<p>替代表达建议：</p>
+<ol>
+<li><code>你这种情况先看这类更稳</code></li>
+<li><code>这个场景下很多宝妈会先这样选</code></li>
+<li><code>我一般先按这个逻辑帮顾客缩范围</code></li>
+<li><code>这类孩子穿着反馈会更稳定一些</code></li>
+</ol>
+<p>额外提醒：</p>
+<ul>
+<li>不轻易主动说 <code>A类</code>、<code>抑菌</code>、<code>无甲醛</code>、<code>无荧光剂</code>、<code>绝对安全</code></li>
+<li>如果顾客主动追问这类信息，尽量回到 <code>具体商品吊牌 / 页面信息 / 门店实际试穿体验</code></li>
+<li>门店账号不冒充品牌官方解释检测和认证</li>
+</ul>
+<h2 id="12-5">12. 当前最适合先统一的 5 句门店话术<a class="headerlink" href="#12-5" title="Permanent link">¶</a></h2>
+<p>如果你们现在还没法全部统一，先只统一这 5 句：</p>
+<ol>
+<li><code>是自己先看看，还是我先按厚薄和尺码帮你缩一下？</code></li>
+<li><code>你先跟我说孩子多大，我帮你先缩范围。</code></li>
+<li><code>那我先按你线上关心的问题带你看。</code></li>
+<li><code>你这种情况先别全看，我先帮你缩小。</code></li>
+<li><code>这类先看更稳，后面再决定要不要比其他款。</code></li>
+</ol>
+<p>只要先把这 5 句统一起来，门店接待就会比之前顺很多。</p>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="11-员工日常检查清单.html">小黑托昵员工日常检查清单</a><p>小团队管理线</p></div><div class="footer-card"><div class="label">下一篇</div><a href="13-抖音到店承接SOP.html">小黑托昵抖音到店承接SOP</a><p>引流与成交</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../docs/source/12-门店接待话术SOP.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#sop">小黑托昵门店接待话术SOP</a><ul>
+<li><a href="#_1">使用说明</a></li>
+<li><a href="#1">1. 接待总原则</a></li>
+<li><a href="#2">2. 顾客进店第一句话怎么说</a><ul>
+<li><a href="#21">2.1 基础开口</a></li>
+<li><a href="#22">2.2 顾客明显在找东西时</a></li>
+<li><a href="#23">2.3 顾客提着孩子、明显赶时间时</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 先判断顾客属于哪一类</a></li>
+<li><a href="#4">4. 怎么把顾客从“很多货”带到“少数选项”</a><ul>
+<li><a href="#41">4.1 五类产品分别先怎么开口</a></li>
+</ul>
+</li>
+<li><a href="#5">5. 抖音到店顾客怎么接</a><ul>
+<li><a href="#51">5.1 第一反应</a></li>
+<li><a href="#52-3">5.2 再追问 3 件事</a></li>
+<li><a href="#53">5.3 接待重点</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 顾客犹豫时怎么说</a><ul>
+<li><a href="#61">6.1 顾客说“我再看看”</a></li>
+<li><a href="#62">6.2 顾客在两类之间犹豫</a></li>
+<li><a href="#63">6.3 顾客对尺码拿不准</a></li>
+</ul>
+</li>
+<li><a href="#7">7. 顾客问价格、活动时怎么接</a><ul>
+<li><a href="#71">7.1 顾客先问价格</a></li>
+<li><a href="#72">7.2 顾客问有没有活动</a></li>
+</ul>
+</li>
+<li><a href="#8">8. 老客复购怎么接</a><ul>
+<li><a href="#81">8.1 老客一进店</a></li>
+<li><a href="#82">8.2 老客想快一点</a></li>
+<li><a href="#83">8.3 老客的接待重点</a></li>
+<li><a href="#84">8.4 老客复购优先从哪几类切入</a></li>
+</ul>
+</li>
+<li><a href="#9">9. 员工什么时候必须叫老板来</a></li>
+<li><a href="#10">10. 接待结束怎么收口</a><ul>
+<li><a href="#101">10.1 顾客准备再想想</a></li>
+<li><a href="#102">10.2 顾客已经基本确定</a></li>
+<li><a href="#103">10.3 抖音顾客离店前</a></li>
+</ul>
+</li>
+<li><a href="#11">11. 门店接待里不要说的话</a></li>
+<li><a href="#12-5">12. 当前最适合先统一的 5 句门店话术</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

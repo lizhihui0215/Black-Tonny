@@ -4,6 +4,11 @@ node_modules/
 reports/yeusoft_inspect/
 reports/yeusoft_explore/
 reports/yeusoft_report_capture/
+reports/capture-cache/
+reports/debug/
+reports/calibration/*.sqlite
+data/imports/
+data/local/
 data/store_cost_snapshot.json
 data/yeusoft_local_config.json
 scripts/报表接口

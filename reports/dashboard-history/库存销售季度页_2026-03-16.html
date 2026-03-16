@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 季度经营页</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .page { max-width: 1440px; margin: 0 auto; padding: 18px; }
+    .top-nav { display:flex; justify-content:flex-start; margin-bottom:16px; }
+    .top-nav-links { display:flex; gap:10px; flex-wrap:wrap; }
+    .top-nav-link { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:800; color:#334155; background:#fff; border:1px solid #dbe4f0; text-decoration:none; }
+    .top-nav-link.is-active { background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }
+    .hero { background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%); color:#fff; padding:24px; border-radius:22px; box-shadow:0 18px 48px rgba(15, 23, 42, 0.18); margin-bottom:18px; }
+    .hero h1 { margin:0 0 10px; font-size:30px; line-height:1.25; }
+    .hero p { margin:0; line-height:1.8; opacity:0.95; }
+    .hero-note { margin-top:12px; font-size:13px; opacity:0.9; }
+    .hero-status { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .hero-status-chip { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); }
+    .page-shell { display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:18px; }
+    .main-column { min-width:0; }
+    .side-rail { display:flex; flex-direction:column; gap:16px; align-self:start; }
+    .rail-card { position:sticky; top:88px; background:#fff; border-radius:18px; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); }
+    .rail-card h3 { margin:0 0 8px; font-size:17px; }
+    .rail-card p { margin:0 0 12px; font-size:12px; line-height:1.8; color:#64748b; }
+    .rail-links { display:flex; flex-direction:column; gap:8px; }
+    .rail-links a { display:block; text-decoration:none; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:10px 12px; font-size:13px; font-weight:700; }
+    .rail-links a.current { background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }
+    .quick-nav { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px; }
+    .quick-nav a { text-decoration:none; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }
+    .module { background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(15,23,42,0.08); padding:18px; margin-bottom:18px; }
+    .module-header { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+    .module-title { margin:0; font-size:22px; }
+    .module-note { margin:0; font-size:13px; color:#64748b; line-height:1.8; }
+    .metrics-grid, .cards-grid, .support-grid, .period-card-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }
+    .metric-card, .support-card, .period-card, .chart-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }
+    .metric-card { box-shadow:0 8px 24px rgba(15,23,42,0.06); }
+    .metric-title { font-size:14px; color:#64748b; margin-bottom:8px; }
+    .metric-value { font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }
+    .metric-note { font-size:13px; color:#64748b; line-height:1.7; }
+    .inline-tip {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin-left:6px;
+      padding:1px 8px;
+      border-radius:999px;
+      border:1px solid #bfdbfe;
+      background:#eff6ff;
+      color:#1d4ed8;
+      font-size:11px;
+      font-weight:800;
+      line-height:1.6;
+      vertical-align:middle;
+      white-space:nowrap;
+    }
+    .metric-green { border-color:#bbf7d0; background:#f0fdf4; }
+    .metric-green .metric-value { color:#166534; }
+    .metric-yellow { border-color:#fde68a; background:#fffbeb; }
+    .metric-yellow .metric-value { color:#92400e; }
+    .metric-red { border-color:#fecaca; background:#fff7f7; }
+    .metric-red .metric-value { color:#991b1b; }
+    .overview-card { background:#fffdf7; border:1px solid #fde68a; border-radius:16px; padding:18px; }
+    .overview-headline { font-size:26px; font-weight:800; color:#92400e; margin:0 0 10px; line-height:1.35; }
+    .overview-summary { margin:0; font-size:14px; line-height:1.8; color:#5b4636; }
+    .guidance-list { margin:0; padding-left:18px; line-height:1.9; color:#334155; font-size:14px; }
+    .chart-card { overflow:hidden; }
+    .period-card-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+    .period-card-title { font-size:18px; font-weight:800; color:#0f172a; }
+    .period-card-note { margin-top:10px; font-size:12px; color:#64748b; line-height:1.7; }
+    .period-stat-grid { display:grid; gap:8px; }
+    .period-stat { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; color:#475569; }
+    .period-stat strong { color:#0f172a; }
+    .support-card h3 { margin:0 0 8px; font-size:16px; }
+    .support-value { font-size:22px; font-weight:800; margin-bottom:8px; color:#0f172a; line-height:1.35; }
+    .support-card p { margin:0; font-size:13px; line-height:1.8; color:#64748b; }
+    .mini-chip { display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; white-space:nowrap; }
+    .mini-chip-neutral, .mini-chip-soft { background:#f1f5f9; color:#334155; }
+    .mini-chip-green { background:#dcfce7; color:#166534; }
+    .mini-chip-yellow { background:#fef3c7; color:#92400e; }
+    .mini-chip-red { background:#fee2e2; color:#991b1b; }
+    .empty-card { border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }
+    .analysis-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+    .analysis-card { background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }
+    .analysis-card h3 { margin:0 0 10px; font-size:17px; color:#0f172a; }
+    .analysis-list { margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }
+    .priority-red { background:#fff7f7; border-color:#fecaca; }
+    .priority-yellow { background:#fffbeb; border-color:#fde68a; }
+    .priority-neutral { background:#f8fafc; border-color:#cbd5e1; }
+    .priority-green { background:#f0fdf4; border-color:#bbf7d0; }
+    @media (max-width: 960px) {
+      .page-shell { grid-template-columns:1fr; }
+      .rail-card { position:static; }
+      .rail-links { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .page { padding:12px; }
+      .hero { padding:18px; border-radius:16px; }
+      .hero h1 { font-size:24px; }
+      .hero-status-chip, .top-nav-link { width:100%; }
+      .top-nav-links { width:100%; }
+      .quick-nav { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+      .module { padding:14px; margin-bottom:14px; }
+      .overview-headline { font-size:22px; }
+      .metric-value { font-size:24px; }
+      .rail-links { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link " href="./monthly.html">月度页</a>
+        <a class="top-nav-link is-active" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 季度经营页</h1>
+      <p>这里专门看 季度趋势、结构和建议。首页负责今天先做什么，这里负责判断这个月或这个季度整体方向对不对。</p>
+      <div class="hero-note">最近5个季度已纳入统计；最新周期 2026Q1 销售额 152,269.52 元，较上季度回落 49.1%。</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最近抓取日期：2026-03-16（北京时间）</div>
+        <div class="hero-status-chip">当前季节：春季 / 春夏换季期</div>
+      </div>
+    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <nav class="quick-nav">
+          <a href="#period-overview">总览</a>
+          <a href="#period-metrics">核心统计</a>
+          <a href="#period-charts">趋势图表</a>
+          <a href="#period-cards">阶段明细</a>
+          <a href="#period-guidance">经营建议</a>
+          <a href="#period-consulting">经营分析</a>
+          <a href="#period-purchase">进货建议</a>
+        </nav>
+        <section class="module" id="period-overview">
+          <div class="module-header">
+            <h2 class="module-title">季度总览</h2>
+            <p class="module-note">根据全量销售、当前库存结构、会员贡献和利润保本状态，自动给出这一阶段的经营判断。</p>
+          </div>
+          <div class="overview-card">
+            <div class="overview-headline">较上季度回落 49.1%</div>
+            <p class="overview-summary">最近5个季度已纳入统计；最新周期 2026Q1 销售额 152,269.52 元，较上季度回落 49.1%。</p>
+          </div>
+        </section>
+        <section class="module" id="period-metrics">
+          <div class="module-header">
+            <h2 class="module-title">核心统计</h2>
+            <p class="module-note">先看这一阶段卖得怎么样、会员贡献如何、库存压力有没有跟着变化。</p>
+          </div>
+          <div class="metrics-grid">
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">最新季度销售额</div>
+          <div class="metric-value">152,269.52 元</div>
+          <div class="metric-note">2026Q1</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">最新季度客单价</div>
+          <div class="metric-value">212.07 元</div>
+          <div class="metric-note">销售额 / 订单数</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-title">最新季度会员占比</div>
+          <div class="metric-value">67.4%</div>
+          <div class="metric-note">会员贡献</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">平均季度销售额</div>
+          <div class="metric-value">171,957.31 元</div>
+          <div class="metric-note">共 5 个季度周期</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-title">峰值季度</div>
+          <div class="metric-value">2025Q4 / 299,058.90 元</div>
+          <div class="metric-note">当前统计范围内最高</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">季环比</div>
+          <div class="metric-value">较上季度回落 49.1%</div>
+          <div class="metric-note">和上一周期相比</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">跨季库存占比</div>
+          <div class="metric-value">56.3%</div>
+          <div class="metric-note">库存主要压在 2025秋、2026夏、2025夏</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">前10会员销额占比</div>
+          <div class="metric-value">6.6%</div>
+          <div class="metric-note">妞宝、年年、史振尧</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-title">前两品类集中度</div>
+          <div class="metric-value">45.0%</div>
+          <div class="metric-note">道具、常规内裤、家居服</div>
+        </div>
+        
+        <div class="metric-card metric-yellow">
+          <div class="metric-title">店员销售集中度</div>
+          <div class="metric-value">41.2%</div>
+          <div class="metric-note">主力导购 赵婷宇</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">会员沉默占比</div>
+          <div class="metric-value">50.3%</div>
+          <div class="metric-note">近60天活跃 349 人</div>
+        </div>
+        
+        <div class="metric-card metric-yellow">
+          <div class="metric-title">最近季度件单比</div>
+          <div class="metric-value">1.07</div>
+          <div class="metric-note">低连带天数 202</div>
+        </div>
+        
+        <div class="metric-card metric-yellow">
+          <div class="metric-title">实销折扣率</div>
+          <div class="metric-value">7.7 折</div>
+          <div class="metric-note">家居服、常规内裤、裤类</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">月末净利预测</div>
+          <div class="metric-value">-9,190.73 元</div>
+          <div class="metric-note">先看利润，再决定冲销售还是控补货</div>
+        </div>
+        </div>
+        </section>
+        <section class="module" id="period-charts">
+          <div class="module-header">
+            <h2 class="module-title">趋势图表</h2>
+            <p class="module-note">销售额、订单数、客单价和会员占比放在一起看，更容易判断阶段节奏。</p>
+          </div>
+          <div class="cards-grid"><section class='chart-card'><div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="3094c4e2-0362-47a1-84a4-dbacfa0582f8" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("3094c4e2-0362-47a1-84a4-dbacfa0582f8")) {                    Plotly.newPlot(                        "3094c4e2-0362-47a1-84a4-dbacfa0582f8",                        [{"marker":{"color":"#1d4ed8"},"name":"\u9500\u552e\u989d","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"16NwPYoI3kCuR+F62AIIQQrXo3BnGAZBmpmZmctAEkGPwvUobJYCQQ=="},"type":"bar"},{"line":{"color":"#f97316","width":3},"mode":"lines+markers","name":"\u8ba2\u5355\u6570","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"i2","bdata":"hgDiA6QDQATOAg=="},"yaxis":"y2","type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u8ba2\u5355\u6570"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u5b63\u5ea6\u9500\u552e\u989d\u4e0e\u8ba2\u5355\u6570"},"height":400,"yaxis":{"title":{"text":"\u9500\u552e\u989d"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="f67920fa-7c33-4417-9d8d-3123276a0466" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("f67920fa-7c33-4417-9d8d-3123276a0466")) {                    Plotly.newPlot(                        "f67920fa-7c33-4417-9d8d-3123276a0466",                        [{"line":{"color":"#0f766e","width":3},"mode":"lines+markers","name":"\u5ba2\u5355\u4ef7","x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"+zxz6kawbECU\u002fPU1XbxoQO4JnvTCRmhAzczMzOwtcUAqJYeiYoJqQA=="},"type":"scatter"},{"marker":{"color":"#a855f7"},"name":"\u4f1a\u5458\u5360\u6bd4","opacity":0.45,"x":["2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"y":{"dtype":"f8","bdata":"VXA5NsdWU0AiQkxUxrRQQH9vmgSWt1NAJHZr7H+rVEAkTPnZtdhQQA=="},"yaxis":"y2","type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"yaxis2":{"title":{"text":"\u4f1a\u5458\u5360\u6bd4(%)"},"overlaying":"y","side":"right"},"legend":{"orientation":"h"},"title":{"text":"\u5b63\u5ea6\u5ba2\u5355\u4ef7\u4e0e\u4f1a\u5458\u5360\u6bd4"},"height":400,"yaxis":{"title":{"text":"\u5ba2\u5355\u4ef7"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section></div>
+        </section>
+        <section class="module" id="period-cards">
+          <div class="module-header">
+            <h2 class="module-title">阶段明细</h2>
+            <p class="module-note">最近 6 个季度放成卡片，更方便快速对比。</p>
+          </div>
+          <div class='period-card-grid'>
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2026Q1</div>
+                <div class="mini-chip mini-chip-red">回落 49.1%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>152,269.52 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>718</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>212.07 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>67.4%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：儿童内衣套装</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025Q4</div>
+                <div class="mini-chip mini-chip-green">增长 65.2%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>299,058.90 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>1,088</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>274.87 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>82.7%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：衣类</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025Q3</div>
+                <div class="mini-chip mini-chip-yellow">回落 8.0%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>181,004.93 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>932</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>194.21 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>78.9%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：衣类</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025Q2</div>
+                <div class="mini-chip mini-chip-green">增长 539.6%</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>196,699.06 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>994</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>197.89 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>66.8%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：裤类</div>
+            </article>
+            
+            <article class="period-card">
+              <div class="period-card-head">
+                <div class="period-card-title">2025Q1</div>
+                <div class="mini-chip mini-chip-neutral">暂无可比</div>
+              </div>
+              <div class="period-stat-grid">
+                <div class="period-stat"><span>销售额</span><strong>30,754.16 元</strong></div>
+                <div class="period-stat"><span>订单数</span><strong>134</strong></div>
+                <div class="period-stat"><span>客单价</span><strong>229.51 元</strong></div>
+                <div class="period-stat"><span>会员占比</span><strong>77.4%</strong></div>
+              </div>
+              <div class="period-card-note">主销中类：衣类</div>
+            </article>
+            </div>
+        </section>
+        <section class="module" id="period-guidance">
+          <div class="module-header">
+            <h2 class="module-title">经营建议</h2>
+            <p class="module-note">建议会结合销售趋势、库存动态、会员贡献和利润保本状态自动变化。</p>
+          </div>
+          <ul class="guidance-list"><li>最近一个季度销售回落，先收紧平均补货，把预算集中到仍在跑量的 儿童内衣套装。</li><li>会员贡献高，这个阶段更适合做定向回访和到店试穿，而不是全场硬促销。</li><li>阶段性跑得更快的品类是 儿童袜、常规内裤、少女文胸，这批更适合继续放大陈列和补货预算。</li><li>阶段性回落更明显的品类是 道具、家居服、亲子家居，先别急着补，先判断是季节切换、货位靠后还是尺码结构不对。</li><li>当前跨季库存占比约 56.3%，这个阶段要先去跨季库存，再决定深补。</li></ul>
+          <div class="support-grid" style="margin-top:16px;">
+            <article class="support-card">
+              <h3>最新季度主销中类</h3>
+              <div class="support-value">儿童内衣套装</div>
+              <p>最新周期里，这个中类贡献最大，通常优先保障它的核心尺码和主色。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>商品动销提醒</h3>
+              <div class="support-value">快销 563 / 积压 144</div>
+              <p>售罄率 63.0%，库存结构主要压在 2025秋、2026夏、2025夏。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>会员经营提醒</h3>
+              <div class="support-value">妞宝、年年、史振尧</div>
+              <p>前 10 位会员贡献 6.6% 销额，适合做重点回访。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>品类结构提醒</h3>
+              <div class="support-value">道具、常规内裤、家居服</div>
+              <p>前两品类集中度 45.0%，近期增长更快的是 儿童袜、常规内裤、少女文胸。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>会员基盘提醒</h3>
+              <div class="support-value">1,182 位会员</div>
+              <p>近 60 天活跃 349 位，沉默占比 50.3%。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>店员执行提醒</h3>
+              <div class="support-value">赵婷宇</div>
+              <p>销售占比 41.2%，VIP 销售占比 75.7。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>折扣与尺码提醒</h3>
+              <div class="support-value">7.7 折 / 130/M、120/S、110/XS</div>
+              <p>家居服、常规内裤、裤类 折扣依赖更明显，补货先保 130/M、120/S、110/XS 这些主销尺码。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>进货预算与顺序</h3>
+              <div class="support-value">先保主销，再控折扣</div>
+              <p>季度销售回落时，进货预算先收紧到 儿童内衣套装 这类仍有成交的中类，其他中类只做保断码补货，不做平均备货。</p>
+            </article>
+            
+            <article class="support-card">
+              <h3>利润与保本提醒</h3>
+              <div class="support-value">未过保本线</div>
+              <p>总费用 31,501.55 元，月末净利预测 -9,190.73 元。当前更适合先稳利润和客单。</p>
+            </article>
+            </div>
+        </section>
+        
+    <section class="module analysis-module" id="period-consulting">
+      <div class="module-header">
+        <h2 class="module-title">季度经营分析与销售建议</h2>
+        <p class="module-note">这部分不只描述数据，而是把“发生了什么、说明什么、现在最该做什么、谁来做”一起讲清楚。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card">
+          <h3>经营诊断总结</h3>
+          <ul class="analysis-list">
+            <li>当前门店最需要优先处理的是 先稳毛利，别靠打折硬撑。从数据看，销售主力仍集中在 衣着系列，但库存压力主要压在 少女文胸，补货应优先给 裤类，去化则先盯 袜品。 按当前口径，本月净利预测约 -9,190.73 元，还没有真正过保本线。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>本季度最值得关注的 5 个问题</h3>
+          <ul class="analysis-list">
+            <li>库存覆盖天数约 363.9 天，库存压力偏重。</li><li>负库存 SKU 还有 105 个，库存口径还没完全干净。</li><li>少女文胸 是当前压货最重的品类，继续补货会进一步拖慢周转。</li><li>衣着系列 贡献占比较高，结构上仍有“靠少数品类撑销售”的风险。</li><li>会员贡献已经很高，但连带和复购还可以继续放大。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>销售表现分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】本季度销售额 152,269.52 元，较上季度下降 49.1%。</li><li>【直接数据】变化主要来自单量，订单数较上季度回落 34.0%，客单价变化相对更小。</li><li>【直接数据】当前主销中类是 儿童内衣套装，说明阶段性增长/下滑主要先看这个中类有没有继续撑住。</li><li>【经营判断】销售看起来不算差，但结构并不轻松，衣着系列 单类大约贡献了 57.9% 销售，存在“靠少数品类硬撑”的风险。</li><li>【直接数据】全量零售明细显示，当前实销折扣约 7.7 折，深折扣销售占比约 40.4%。</li><li>【经营判断】当前销售不只是流量问题，家居服、常规内裤、裤类 这些品类已经有明显折扣依赖。继续靠深折扣冲营业额，会先伤毛利。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>品类结构分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】品类贡献排序靠前的是：衣着系列(5,392.45元)、内裤(1,992.12元)、袜品(1,504.38元)。</li><li>【直接数据】阶段性增长更快的品类主要是：儿童袜(+34,806.00元)、常规内裤(+25,874.00元)、少女文胸(+19,370.00元)。</li><li>【直接数据】阶段性回落更明显的品类主要是：道具(-245,790.00元)、家居服(-9,468.00元)、亲子家居(-1,628.00元)。</li><li>【直接数据】品类风险排序靠前的是：少女文胸(需关注)、袜品(相对健康)、内裤(相对健康)。</li><li>【直接数据】品类动作建议里，补货优先级靠前的是：裤类(2,673)、衣类(3,468)、常规内裤(3,613)。</li><li>【直接数据】去化优先级靠前的是：袜品(791)、袜品(235)、少女文胸(202)。</li><li>【经营判断】前两大品类大约贡献了 79.3% 销售，结构偏集中。短期靠它们撑得住，长期要防一旦主力品类失速，整体营业额会一起掉。</li><li>【直接数据】折扣依赖更明显的中类是：家居服(7.0折)、常规内裤(7.2折)、裤类(7.6折)。</li><li>【经营判断】这说明部分品类现在更像“靠让利换成交”，如果不先调陈列、组合和尺码结构，后面利润会持续被拖薄。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>SKU / 爆款 / 滞销分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】当前爆款/断货风险款主要集中在：TND1Y81001X/灰蓝色、TNX1Y90914Z/紫红色、TND1Y81002X/藕粉色。</li><li>【动作建议】这类款先保核心尺码和主销色，不建议一次补深，按 2-3 次小单快返来补最稳。</li><li>【经营判断】有持续动销能力的 SKU 主要集中在 裤类，它们更适合稳补；如果只是一两周突然冲高，则先按小量试补处理。</li><li>【直接数据】明显滞销或高库存低动销 SKU 主要有：TNQ1W60628、TOX2K10296、TOX1W30935。</li><li>【动作建议】这类货不要继续深补，优先判断是季节错了、陈列靠后、价格门槛高，还是尺码结构不对，再决定轻促销还是强去化。</li><li>【经营判断】连续慢销款更像结构问题，不只是单品问题。先调陈列和搭配，如果 1-2 周仍不改善，再升级到清货动作。</li><li>【直接数据】全量零售明细显示，主销尺码更集中在：130/M、120/S、110/XS。</li><li>【动作建议】补货不要全尺码平均补，先保这些主销尺码，再用小量补单观察边缘尺码是否真有动销。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>库存健康分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】当前经营库存覆盖天数约 363.9 天，库存压力判断为 偏重。</li><li>【直接数据】库存压力最大的品类先看 少女文胸，而补货优先品类先看 裤类，说明库存结构已经出现“该补的不一定多、该去化的反而压得深”的失衡。</li><li>【经营判断】当前更适合先去化再补货；如果先补，会把现金继续压进旧货和错季货里。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>会员 / 客单价 / 连带率分析</h3>
+          <ul class="analysis-list">
+            <li>【直接数据】会员销售额占比约 65.3%，最近客单价约 169.31 元。</li><li>【直接数据】店员平均连带约 2.29，平均单效约 169.35 元。</li><li>【经营判断】当前销售已经明显依赖会员，说明复购稳定性不错，下一步更该做的是把高价值会员的回访和搭配销售做深。</li><li>【直接数据】会员基盘里目前有 1,182 位会员，近 60 天活跃 349 位，沉默占比约 50.3%。</li><li>【经营判断】会员沉默占比偏高，说明老客不是没有，而是唤醒不够。这个阶段更适合做一对一回访，而不是只等自然复购。</li><li>【经营判断】连带不算太差，但仍建议用基础打底 + 袜品 + 家居服组合继续放大客单。</li><li>【动作建议】会员回访先盯 妞宝、年年、史振尧，优先做换季提醒、到店试穿和组合推荐。</li><li>【直接数据】导购总销里 VIP 销售占比约 75.7%，头部导购 赵婷宇 贡献约 41.2%。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>目标达成与节奏分析</h3>
+          <ul class="analysis-list">
+            <li>【经营判断】当前更像 去库存阶段，不是简单追销售额。</li><li>【直接数据】按当前节奏月末仍有亏损风险，本周应该先保毛利、控补货、做去化，而不是盲目冲低价促销。</li><li>【直接数据】后面每天至少还要卖 2,681.12 元才能过保本；如果继续慢半拍，月底就会靠最后几天硬冲。</li><li>【经营判断】当前节奏更像转化或结构问题，不只是客流问题。先看主销品类和连带，再看活动。</li><li>【直接数据】最近月度件单比约 1.07，低连带天数 202 天。</li><li>【经营判断】当前节奏还有一个明显短板是连带偏弱。进店有单，但每单件数不高，店员执行要先盯组合成交。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>本周优先动作建议</h3>
+          <ul class="analysis-list">
+            <li>先把 少女文胸 做成专项去化表，先停补、先前移陈列、先做组合价。</li><li>把 裤类 的核心尺码和主销色列成补货清单，本周只补最能带营业额的那批。</li><li>先校正负库存，再安排补货；库存没校准前，不做深补。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>补货建议</h3>
+          <ul class="analysis-list">
+            <li>裤类（建议补货量 2,673）</li><li>衣类（建议补货量 3,468）</li><li>常规内裤（建议补货量 3,613）</li><li>家居服（建议补货量 929）</li><li>防晒服（建议补货量 379）</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>去化 / 清货建议</h3>
+          <ul class="analysis-list">
+            <li>裤类（优先去化）</li><li>少女文胸（先控补货节奏）</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>品类经营建议</h3>
+          <ul class="analysis-list">
+            <li>衣着系列 继续做主销中轴，优先保不断码。</li><li>少女文胸 先控采购，再安排门口清货位和组合去化。</li><li>儿童袜 这类跨季品类要单独管理，不跟当季补货混预算。</li><li>儿童内衣 / 棉品 / 家居服要分清角色：主销、连带、去化，别放在一张表里平均看。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>风险预警清单</h3>
+          <ul class="analysis-list">
+            <li>如果继续平均补货，少女文胸 的压货会继续加重。</li><li>如果负库存不先纠偏，补货建议和库存健康判断都会继续失真。</li><li>如果会员回访只做群发，不做分层，复购效率会继续偏低。</li><li>如果当前主销中类突然断码，销售额会很容易直接下滑。</li><li>如果跨季货不单独管理，到了下个季节会出现旧货、新货一起压的情况。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>如果下周不处理，最可能出现的问题</h3>
+          <ul class="analysis-list">
+            <li>下周最可能先出现的是 少女文胸 库存继续变重，但真正能卖的 裤类 反而更容易断。</li><li>店员会继续把时间花在介绍货，而不是推动组合成交，客单和连带抬不起来。</li><li>如果月底前还没压住慢销库存，利润会继续被固定费用和工资吃掉。</li><li>跨季货如果这周不处理，下周仍会占货位，影响春夏主销款出样和成交。</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">老板娘 / 店长 / 店员分角色建议</h2>
+        <p class="module-note">同一份数据，三个角色的动作不一样，这里直接拆开给执行。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card">
+          <h3>老板娘建议</h3>
+          <ul class="analysis-list">
+            <li>本周先盯 3 个数：保本进度、库存覆盖天数、裤类 的断码情况。</li><li>需要你拍板的不是所有货，而是 少女文胸 怎么去化、儿童袜 是否暂缓、裤类 补货预算给多少。</li><li>如果这周只能做一个经营动作，就先把高库存慢销货位和清货策略定下来，不要让旧货继续占预算。</li><li>对 家居服、常规内裤、裤类 这几个中类，先拍板是稳毛利还是继续让利；补货预算先保 130/M、120/S、110/XS 这些主销尺码。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>店长建议</h3>
+          <ul class="analysis-list">
+            <li>先把 少女文胸 从正常主陈列里压缩出来，给 裤类 腾出更前的位置。</li><li>盯员工两件事：主销款不断推、每单至少带一件顺手连带商品。</li><li>把负库存、去化名单、补货名单分三张小表带晨会，不要让店员自己判断优先级。</li><li>会员跟进先看 [&#x27;妞宝&#x27;, &#x27;年年&#x27;, &#x27;史振尧&#x27;]。</li><li>导购执行先对齐 赵婷宇 的成交路径，再让其他人照着练，避免每个人各讲各的。</li><li>补货清单先按 130/M、120/S、110/XS 排序，家居服、常规内裤、裤类 这些中类先控量补、先看毛利。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>店员建议</h3>
+          <ul class="analysis-list">
+            <li>今天优先推 裤类，这是当前最值得先卖、也最该先保不断货的品类。</li><li>带货顺序先主销，再顺带 袜品 这类更容易顺手带走的商品。</li><li>慢销款不要硬单推，改成组合推荐：基础款 + 袜品 / 家居服 / 第二件优惠。</li><li>顾客犹豫时，先问使用场景和孩子年龄，再推最稳的基础款，不要先推难卖的货。</li><li>如果顾客在看 家居服、常规内裤、裤类 这些中类，先做组合和场景推荐，不要一上来就主动降价。</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">经营动作优先级排序</h2>
+        <p class="module-note">今天先干什么、这周重点抓什么、本月不能忽视什么，都按轻重缓急排好了。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card priority-red">
+          <h3>重要且紧急</h3>
+          <ul class="analysis-list">
+            <li>先纠偏负库存，再决定补货和去化。</li><li>先停补 少女文胸，优先安排去化和货位调整。</li><li>如果净利预测为负，先盯保本日销和高毛利主销组合。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card priority-yellow">
+          <h3>重要不紧急</h3>
+          <ul class="analysis-list">
+            <li>把高价值会员分层回访，做换季提醒和复购带连带。</li><li>把 儿童袜 这类跨季货单独管理，避免下一轮继续压货。</li><li>每周固定复盘一次品类贡献、补货效果和去化进度。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card priority-neutral">
+          <h3>可观察</h3>
+          <ul class="analysis-list">
+            <li>下一季试补品类先小量试单，观察 1 周再决定是否放大。</li><li>继续跟踪店员连带率和客单价，判断是不是单量正常但带得少。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card priority-green">
+          <h3>暂不处理</h3>
+          <ul class="analysis-list">
+            <li>暂不做非核心品类深补。</li><li>暂不为了冲营业额做全场重折扣。</li><li>暂不把预算投向还没验证的新扩品。</li>
+          </ul>
+        </div>
+        
+      </div>
+      <div class="module-header" style="margin-top:18px;">
+        <h2 class="module-title">判断依据说明</h2>
+        <p class="module-note">哪些是直接数据，哪些是零售经验判断，哪些还需要后续补数据，这里单独说明。</p>
+      </div>
+      <div class="analysis-grid">
+        
+        <div class="analysis-card">
+          <h3>基于数据直接得出的</h3>
+          <ul class="analysis-list">
+            <li>本季度销售、订单、客单变化来自 POS 全量销售数据。</li><li>品类贡献和库存风险来自当前销售、库存和进销存报表。</li><li>补货和去化建议来自 SKU 动销、库存周数、季节策略和库存风险规则。</li><li>品类增长/回落判断补充参考了商品品类分析的全量周期数据。</li><li>会员活跃与沉默判断补充参考了会员综合分析。</li><li>店员人效和连带判断补充参考了导购员报表与门店销售月报。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>基于零售经验的判断</h3>
+          <ul class="analysis-list">
+            <li>哪些品类更适合继续放大，部分基于当前主销中类、库存结构和换季逻辑做经营推断。</li><li>滞销原因中的价格、陈列、尺码结构问题，属于结合零售经验的判断，不是系统直接字段。</li>
+          </ul>
+        </div>
+        
+        <div class="analysis-card">
+          <h3>还需要补数据确认的</h3>
+          <ul class="analysis-list">
+            <li>如果要更准判断品类增长来源，最好再补连续月度的分品类销售明细。</li><li>如果要更准判断店员转化问题，最好补进店人数或试穿数据。</li>
+          </ul>
+        </div>
+        
+      </div>
+    </section>
+    
+        <section class="module" id="period-purchase">
+          <div class="module-header">
+            <h2 class="module-title">季度进货建议</h2>
+            <p class="module-note">这里专门看销售、补货和库存之间的关系，帮助老板决定这个月或这个季度该怎么进货。</p>
+          </div>
+          <ul class="guidance-list"><li>季度销售回落时，进货预算先收紧到 儿童内衣套装 这类仍有成交的中类，其他中类只做保断码补货，不做平均备货。</li><li>当前跨季库存占比约 56.3%，这期进货要明显收缩跨季和非主销货，预算优先留给当季货，先去库存再扩品。</li><li>当季库存占比只有 2.5%，这期新进货建议至少 60% 以上给当季主销中类，先保主销不断码。</li><li>从补货信号看，当前最值得补的是 裤类，建议补货量约 2,673。做法上先保销量高的款和尺码，不建议整类平均补。</li><li>从品类趋势看，儿童袜 近期跑得更快，这期进货预算可以适度向它倾斜，但仍然只补核心款和核心尺码。</li></ul>
+        </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>固定入口放这里，老板看完趋势页可以直接跳回首页、仪表盘或详细页。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="./index.html">进入仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a class="current" href="./quarterly.html">当前季度页</a>
+            <a href="./monthly.html">进入月度页</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速看某一块，点这里直接跳，不用整页来回找。</p>
+          <div class="rail-links">
+            <a href="#period-overview">季度总览</a>
+            <a href="#period-metrics">核心统计</a>
+            <a href="#period-charts">趋势图表</a>
+            <a href="#period-cards">阶段明细</a>
+            <a href="#period-guidance">经营建议</a>
+            <a href="#period-consulting">经营分析</a>
+            <a href="#period-purchase">进货建议</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

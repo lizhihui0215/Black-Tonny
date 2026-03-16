@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 老板经营仪表盘</title>
+  <style>
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f6f7fb;
+      color: #1f2937;
+    }
+    .page {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin-bottom: 18px;
+      background: rgba(246, 247, 251, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+    }
+    .top-nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      text-decoration: none;
+    }
+    .top-nav-link.is-active {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .page-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 18px;
+    }
+    .main-column {
+      min-width: 0;
+    }
+    .side-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }
+    .rail-card {
+      position: sticky;
+      top: 88px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
+    .rail-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #0f172a;
+    }
+    .rail-card p {
+      margin: 0 0 12px;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #64748b;
+    }
+    .rail-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rail-links a {
+      display: block;
+      text-decoration: none;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rail-links a.current {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.25;
+    }
+    .hero p {
+      margin: 0;
+      opacity: 0.94;
+      line-height: 1.8;
+    }
+    .hero-note {
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    .hero-status {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .hero-status-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+    .action-strip {
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+      border: 1px solid #fed7aa;
+    }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .action-card {
+      background: #ffffff;
+      border: 1px solid #fde68a;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);
+    }
+    .action-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      color: #b45309;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .action-title {
+      margin: 0 0 8px;
+      font-size: 20px;
+      color: #0f172a;
+    }
+    .action-text {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 800;
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+    .quick-nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 12px 0 18px;
+    }
+    .quick-nav a {
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .module {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .module-title {
+      margin: 0;
+      font-size: 22px;
+      color: #0f172a;
+    }
+    .module-note {
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.8;
+    }
+    .detail-link {
+      text-decoration: none;
+      color: white;
+      background: #1d4ed8;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(29, 78, 216, 0.22);
+    }
+    .focus-wrap {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }
+    .focus-panel {
+      background: #fffdf7;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .focus-headline {
+      font-size: 28px;
+      font-weight: 800;
+      color: #92400e;
+      margin: 0 0 10px;
+      line-height: 1.35;
+    }
+    .focus-summary {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #5b4636;
+    }
+    .submodule-header {
+      margin: 18px 0 10px;
+    }
+    .submodule-title {
+      margin: 0 0 6px;
+      font-size: 18px;
+      color: #0f172a;
+    }
+    .submodule-note {
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.8;
+    }
+    .chip-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .mini-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .mini-chip-primary {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .mini-chip-soft {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .mini-chip-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .mini-chip-warn {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .tooltip-badge {
+      position: relative;
+      cursor: help;
+    }
+    .tooltip-badge::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 0;
+      bottom: calc(100% + 10px);
+      width: min(320px, 68vw);
+      white-space: normal;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.6;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 40;
+    }
+    .tooltip-badge::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      bottom: calc(100% + 4px);
+      width: 10px;
+      height: 10px;
+      background: #0f172a;
+      transform: rotate(45deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 39;
+    }
+    .tooltip-badge:hover::after,
+    .tooltip-badge:hover::before,
+    .tooltip-badge:focus-visible::after,
+    .tooltip-badge:focus-visible::before {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tooltip-badge:focus-visible {
+      outline: 2px solid #93c5fd;
+      outline-offset: 2px;
+    }
+    .focus-list, .task-list {
+      margin: 10px 0 0 18px;
+      padding: 0;
+      line-height: 1.9;
+      color: #334155;
+      font-size: 14px;
+    }
+    .task-list li + li,
+    .focus-list li + li {
+      margin-top: 4px;
+    }
+    .task-list strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .metrics-grid, .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .metric-card, .opportunity-card, .risk-card, .member-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+      min-width: 0;
+    }
+    .metric-card {
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .metric-title {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+    .metric-note {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.7;
+    }
+    .inline-tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 6px;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.6;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .metric-red {
+      border-color: #fecaca;
+      background: #fff7f7;
+    }
+    .metric-red .metric-value {
+      color: #991b1b;
+    }
+    .metric-yellow {
+      border-color: #fde68a;
+      background: #fffbeb;
+    }
+    .metric-yellow .metric-value {
+      color: #92400e;
+    }
+    .metric-green {
+      border-color: #bbf7d0;
+      background: #f0fdf4;
+    }
+    .metric-green .metric-value {
+      color: #166534;
+    }
+    .card-kicker {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .card-note {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 10px;
+      line-height: 1.7;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .stat-row strong {
+      color: #0f172a;
+      font-size: 15px;
+    }
+    .risk-card {
+      background: #fff8f5;
+      border-color: #fed7aa;
+    }
+    .member-card {
+      background: #f8fafc;
+    }
+    .strip-card {
+      margin-top: 14px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .strip-card strong {
+      color: #0f172a;
+      font-size: 16px;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .strip-card p {
+      margin: 0;
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .strip-link {
+      text-decoration: none;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .empty-card {
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 20px;
+      color: #64748b;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    @media (max-width: 960px) {
+      .page {
+        padding: 16px;
+      }
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+      .rail-card {
+        position: static;
+      }
+      .rail-links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .focus-wrap {
+        grid-template-columns: 1fr;
+      }
+      .module-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .metrics-grid, .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .page {
+        padding: 12px;
+      }
+      .top-nav-links {
+        width: 100%;
+      }
+      .top-nav-link {
+        width: 100%;
+      }
+      .hero {
+        padding: 18px;
+        border-radius: 16px;
+      }
+      .hero h1 {
+        font-size: 24px;
+      }
+      .hero p,
+      .hero-note,
+      .module-note,
+      .focus-summary,
+      .metric-note,
+      .card-note,
+      .task-list,
+      .focus-list {
+        font-size: 12px;
+        line-height: 1.75;
+      }
+      .hero-status-chip {
+        width: 100%;
+      }
+      .quick-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+      }
+      .module {
+        padding: 14px;
+        border-radius: 16px;
+        margin-bottom: 14px;
+      }
+      .focus-headline {
+        font-size: 22px;
+      }
+      .metric-value {
+        font-size: 24px;
+      }
+      .mini-chip {
+        font-size: 12px;
+        padding: 6px 10px;
+        white-space: normal;
+      }
+      .rail-links {
+        grid-template-columns: 1fr;
+      }
+      .card-title {
+        font-size: 16px;
+      }
+      .stat-row {
+        font-size: 13px;
+      }
+      .stat-row strong {
+        font-size: 14px;
+      }
+      .strip-card {
+        align-items: flex-start;
+      }
+    }
+  
+    .tooltip-badge::after,
+    .tooltip-badge::before {
+      display: none !important;
+      content: none !important;
+    }
+    .floating-tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      max-width: min(420px, calc(100vw - 24px));
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.7;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .floating-tooltip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="./monthly.html">月度页</a>
+        <a class="top-nav-link" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 老板经营仪表盘</h1>
+      <p>首页只保留老板 10 秒内最该知道的事情。总览、经营策略、图表和明细已经拆到详细页，首页更适合每天快速拍板。</p>
+      <div class="hero-note">咸阳沣西吾悦专卖店 · 主输入人：郭文攀 · 当前季节：春季 / 春夏换季期 · 当前阶段：换季切换 · 日销趋势：下滑</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最近抓取日期：2026-03-16（北京时间）</div>
+        <div class="hero-status-chip">数据导入日期：2026-03-16（北京时间）</div>
+      </div>
+    </section>
+
+    <section class="module action-strip">
+      <div class="module-header">
+        <h2 class="module-title">老板娘最常用 3 步</h2>
+        <p class="module-note">如果今天只做最常用的动作，先点这 3 个，不用在模块里慢慢找。</p>
+      </div>
+      <div class="action-grid">
+        <article class="action-card">
+          <div class="action-kicker">第 1 步</div>
+          <h3 class="action-title">回首页</h3>
+          <p class="action-text">如果要重新选入口、打开文档中心，或者让别人从最清楚的地方开始，就先回首页。</p>
+          <a class="action-link" href="../index.html">直接回首页</a>
+        </article>
+        <article class="action-card">
+          <div class="action-kicker">第 2 步</div>
+          <h3 class="action-title">看详细页</h3>
+          <p class="action-text">如果你已经看完首页结论，下一步通常就是去详细页看总览、经营策略和补货去化明细。</p>
+          <a class="action-link" href="./details.html">直接看详细页</a>
+        </article>
+        <article class="action-card">
+          <div class="action-kicker">第 3 步</div>
+          <h3 class="action-title">一键同步</h3>
+          <p class="action-text">如果店里电脑已经开了本地服务，回首页同步区直接一键抓取，就能刷新今天最新报表。</p>
+          <a class="action-link" href="../index.html#local-console">去同步区</a>
+        </article>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+    <nav class="quick-nav">
+      <a href="#focus">今日重点</a>
+      <a href="#core-metrics">核心指标</a>
+      <a href="#money-opportunities">赚钱机会</a>
+      <a href="#inventory-risks">库存风险</a>
+      <a href="#replenish-opportunities">补货机会</a>
+      <a href="#member-ops">会员经营</a>
+    </nav>
+
+    <section class="module" id="focus">
+      <div class="module-header">
+        <h2 class="module-title">1. 今日经营重点</h2>
+        <a class="detail-link" href="./details.html">查看详细数据与图表</a>
+      </div>
+      <div class="focus-wrap">
+        <div class="focus-panel">
+          <div class="focus-headline">先稳毛利，别靠打折硬撑。</div>
+          <p class="focus-summary">春夏换季期阶段，最近日销下滑，但按当前节奏月末净利约 -9,190.73 元。 当前实销折扣约 7.7 折，家居服、常规内裤、裤类 这些中类折扣依赖偏重。先稳毛利、提组合，再谈放大量。 当前阶段：换季切换；最近日销均值 1,083.24 元。 当前净利润 -20,851.93 元，尚未过保本线。 按当前节奏月末净利润约 -9,190.73 元。 POS 库存主要压在 2026春、2025秋、2026夏。 近段时间净入库 12,170 件，补货节奏也要一并考虑。 会员沉默占比约 50.3%，这周要主动唤醒老客。 最近件单比约 1.07，说明成交有了，但每单带得还不够。</p>
+          <div class="chip-row"><span class='mini-chip mini-chip-primary tooltip-badge' title="为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。" data-tip="为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。" tabindex="0" role="note">先处理负库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。" data-tip="为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。" tabindex="0" role="note">先去库存</span><span class='mini-chip mini-chip-primary'>先稳毛利</span></div>
+          <ul class="focus-list"><li>当前阶段：换季切换 / 春夏换季期</li><li>日销趋势：下滑</li><li>今日主打法：稳毛利优先</li><li>季节判断：春夏换季，重心是薄款起量、冬款不深补。</li></ul>
+        </div>
+        <div class="focus-panel">
+          <div class="submodule-header">
+            <h3 class="submodule-title">今日执行任务</h3>
+            <p class="submodule-note">先把今天要做的事排清楚，再让店员按顺序执行。</p>
+          </div>
+          <ul class="task-list"><li><span class='mini-chip mini-chip-soft'>处理负库存</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。" data-tip="为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。" tabindex="0" role="note">安排去库存动作</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" data-tip="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" tabindex="0" role="note">调整袜品陈列</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" data-tip="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" tabindex="0" role="note">检查裤类断码</span></li><li><span class='mini-chip mini-chip-soft'>检查折扣依赖</span></li></ul>
+          <div class="submodule-header">
+            <h3 class="submodule-title">今天先别做</h3>
+          </div>
+          <ul class="focus-list"><li><span class='mini-chip mini-chip-warn'>不要先看单款，先看品类，再下钻到 SKU。</span></li><li><span class='mini-chip mini-chip-warn'>不要把道具金额和库存算进正常经营判断。</span></li><li><span class='mini-chip mini-chip-warn'>不要把其他输入人的店铺数据当成本店结论。</span></li><li><span class='mini-chip mini-chip-warn'>不要因为某个冬款历史卖过，就在春夏阶段继续追补。</span></li><li><span class='mini-chip mini-chip-warn'>不要只等自然回购，沉默会员需要主动叫回。</span></li><li><span class='mini-chip mini-chip-warn'>不要为了冲销量继续做深折扣，先看组合和尺码结构。</span></li><li><span class='mini-chip mini-chip-warn'>不要只盯单数，今天要想办法把每单带得更多。</span></li></ul>
+        </div>
+      </div>
+      <div class="strip-card">
+        <div>
+          <strong>总览和经营策略已移到详细页顶部</strong>
+          <p>详细页会根据每日销售、整体销售、库存动态和利润保本状态自动刷新，更适合复盘和细看。</p>
+        </div>
+        <a class="strip-link" href="./details.html#overview-section">打开详细页</a>
+      </div>
+      
+      <div class="strip-card">
+        <div>
+          <strong>POS 高价值数据已接入</strong>
+          <p>POS 全期零售：859,786.57 元；POS 商品动销：售罄率 63.0%；POS 会员排行：妞宝、年年、史振尧。主销中类 衣类、裤类、儿童内衣套装，会员销售占比 75.4%。 当前库存 4,853 件，快销潜力款 563 个，积压风险款 144 个。</p>
+        </div>
+        <a class="strip-link" href="./details.html#overview-section">看 POS 详情</a>
+      </div>
+        
+    </section>
+
+    <section class="module" id="core-metrics">
+      <div class="module-header">
+        <h2 class="module-title">2. 核心经营指标</h2>
+        <p class="module-note">先看这 4 个数字，再判断今天是去库存、保畅销，还是冲保本线。</p>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">经营销售额</div>
+          <div class="metric-value">9,312.16 元</div>
+          <div class="metric-note">近 8 天经营销售额</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">客单价</div>
+          <div class="metric-value">169.31 元</div>
+          <div class="metric-note">经营销售额 / 订单数</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-title">库存覆盖天数</div>
+          <div class="metric-value">363.9 天</div>
+          <div class="metric-note">库存还能卖多久</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-title">会员销售占比</div>
+          <div class="metric-value">65.3%</div>
+          <div class="metric-note">会员销售贡献</div>
+        </div>
+        </div>
+      
+        <div class="submodule-header">
+          <h3 class="submodule-title">利润与保本</h3>
+          <p class="submodule-note">成本快照已接入。这里不只看赚没赚钱，还看固定费用、人工压力、保本进度和月末预测。</p>
+        </div>
+        <div class="metrics-grid profit-grid">
+          
+          <div class="metric-card metric-red">
+            <div class="metric-title">净利润</div>
+            <div class="metric-value">-20,851.93 元</div>
+            <div class="metric-note">未过保本线</div>
+          </div>
+            
+          <div class="metric-card metric-neutral">
+            <div class="metric-title">毛利额</div>
+            <div class="metric-value">10,649.62 元</div>
+            <div class="metric-note">毛利率 48.0% <span class='inline-tip tooltip-badge' title='销售口径：POS销售清单（月累计）；毛利率口径：默认毛利率（48%）；按当前口径估算毛利额 10,649.62 元。' data-tip='销售口径：POS销售清单（月累计）；毛利率口径：默认毛利率（48%）；按当前口径估算毛利额 10,649.62 元。' tabindex='0' role='note'>口径</span></div>
+          </div>
+            
+          <div class="metric-card metric-neutral">
+            <div class="metric-title">固定费用</div>
+            <div class="metric-value">24,001.55 元</div>
+            <div class="metric-note">当前成本快照 <span class='inline-tip tooltip-badge' title='固定费用来源：当前成本快照；本月固定费用 24,001.55 元；平均每天固定支出约 774.24 元。' data-tip='固定费用来源：当前成本快照；本月固定费用 24,001.55 元；平均每天固定支出约 774.24 元。' tabindex='0' role='note'>说明</span></div>
+          </div>
+            
+          <div class="metric-card metric-neutral">
+            <div class="metric-title">人工费用</div>
+            <div class="metric-value">7,500.00 元</div>
+            <div class="metric-note">按当前工资口径 <span class='inline-tip tooltip-badge' title='当前人工费用按月计 7,500.00 元；平均每天人工成本约 241.94 元。' data-tip='当前人工费用按月计 7,500.00 元；平均每天人工成本约 241.94 元。' tabindex='0' role='note'>说明</span></div>
+          </div>
+            
+          <div class="metric-card metric-neutral">
+            <div class="metric-title">保本销售额</div>
+            <div class="metric-value">65,628.23 元</div>
+            <div class="metric-note">保本日销约 2,117.04 元 <span class='inline-tip tooltip-badge' title='公式：总费用 31,501.55 元 / 毛利率 48.0% = 保本销售额 65,628.23 元；对应保本日销约 2,117.04 元。' data-tip='公式：总费用 31,501.55 元 / 毛利率 48.0% = 保本销售额 65,628.23 元；对应保本日销约 2,117.04 元。' tabindex='0' role='note'>公式</span></div>
+          </div>
+            
+          <div class="metric-card metric-yellow">
+            <div class="metric-title">保本进度</div>
+            <div class="metric-value">33.8%</div>
+            <div class="metric-note">还差 43,441.53 元 <span class='inline-tip tooltip-badge' title='当前销售 22,186.70 元；保本销售额 65,628.23 元；距离保本还差 43,441.53 元；剩余每天至少要卖 2,681.12 元。' data-tip='当前销售 22,186.70 元；保本销售额 65,628.23 元；距离保本还差 43,441.53 元；剩余每天至少要卖 2,681.12 元。' tabindex='0' role='note'>说明</span></div>
+          </div>
+            
+          <div class="metric-card metric-red">
+            <div class="metric-title">月末净利预测</div>
+            <div class="metric-value">-9,190.73 元</div>
+            <div class="metric-note">按当前节奏月底还有亏损风险 <span class='inline-tip tooltip-badge' title='计算过程：已实现销售 22,186.70 元；当前平均日销 1,499.38 元；剩余 16.2 天预计新增销售 24,294.17 元；月末销售约 46,480.87 元；按毛利率 48.0% 预计月末毛利 22,310.82 元；再减总费用 31,501.55 元，得到月末净利预测 -9,190.73 元。' data-tip='计算过程：已实现销售 22,186.70 元；当前平均日销 1,499.38 元；剩余 16.2 天预计新增销售 24,294.17 元；月末销售约 46,480.87 元；按毛利率 48.0% 预计月末毛利 22,310.82 元；再减总费用 31,501.55 元，得到月末净利预测 -9,190.73 元。' tabindex='0' role='note'>公式</span></div>
+          </div>
+            
+        </div>
+        
+    </section>
+
+    <section class="module" id="money-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">3. 赚钱机会</h2>
+        <p class="module-note">优先找卖得快但库存浅的品类，先保不断货，再谈放大销售额。</p>
+      </div>
+      <div class="cards-grid">
+            <article class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">裤类</div>
+              <div class="stat-row"><span>销售额</span><strong>87,143.47</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>56</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>3,092</strong></div>
+            </article>
+            
+            <article class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">衣类</div>
+              <div class="stat-row"><span>销售额</span><strong>72,273.46</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>9</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>3,439</strong></div>
+            </article>
+            
+            <article class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">家居服</div>
+              <div class="stat-row"><span>销售额</span><strong>50,554.62</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>20</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>1,216</strong></div>
+            </article>
+            
+            <article class="opportunity-card">
+              <div class="card-kicker">赚钱机会</div>
+              <div class="card-title">常规内裤</div>
+              <div class="stat-row"><span>销售额</span><strong>48,822.91</strong></div>
+              <div class="stat-row"><span>当前库存</span><strong>243</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>3,541</strong></div>
+            </article>
+            </div>
+    </section>
+
+    <section class="module" id="inventory-risks">
+      <div class="module-header">
+        <h2 class="module-title">4. 库存风险</h2>
+        <p class="module-note">这里看库存压力最大的品类。先停补、再去化、再调陈列。</p>
+      </div>
+      <div class="cards-grid">
+            <article class="risk-card">
+              <div class="card-title">袜品</div>
+              <div class="stat-row"><span>库存数量</span><strong>791</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>33</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" data-tip="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" data-tip="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" data-tip="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" tabindex="0" role="note">清货陈列</span></div>
+            </article>
+            
+            <article class="risk-card">
+              <div class="card-title">袜品</div>
+              <div class="stat-row"><span>库存数量</span><strong>235</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" data-tip="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" data-tip="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" data-tip="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" tabindex="0" role="note">调整陈列</span></div>
+            </article>
+            
+            <article class="risk-card">
+              <div class="card-title">少女文胸</div>
+              <div class="stat-row"><span>库存数量</span><strong>202</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" data-tip="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" data-tip="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" data-tip="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" tabindex="0" role="note">调整陈列</span></div>
+            </article>
+            
+            <article class="risk-card">
+              <div class="card-title">内裤</div>
+              <div class="stat-row"><span>库存数量</span><strong>169</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
+              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" data-tip="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" data-tip="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" data-tip="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" tabindex="0" role="note">清货陈列</span></div>
+            </article>
+            </div>
+    </section>
+
+    <section class="module" id="replenish-opportunities">
+      <div class="module-header">
+        <h2 class="module-title">5. 补货机会</h2>
+        <p class="module-note">这里只显示最值得优先补的品类。具体款号、颜色和尺码，去详细页再下钻。</p>
+      </div>
+      <div class="cards-grid">
+            <article class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">衣类</div>
+              <div class="stat-row"><span>销售额</span><strong>73,305.21</strong></div>
+              <div class="stat-row"><span>库存</span><strong>40</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>3,468</strong></div>
+              <div class="card-note">建议补货 SKU：85</div>
+            </article>
+            
+            <article class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">家居服</div>
+              <div class="stat-row"><span>销售额</span><strong>37,834.57</strong></div>
+              <div class="stat-row"><span>库存</span><strong>23</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>929</strong></div>
+              <div class="card-note">建议补货 SKU：57</div>
+            </article>
+            
+            <article class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">裤类</div>
+              <div class="stat-row"><span>销售额</span><strong>77,075.84</strong></div>
+              <div class="stat-row"><span>库存</span><strong>43</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>2,673</strong></div>
+              <div class="card-note">建议补货 SKU：54</div>
+            </article>
+            
+            <article class="opportunity-card">
+              <div class="card-kicker">补货机会</div>
+              <div class="card-title">儿童袜</div>
+              <div class="stat-row"><span>销售额</span><strong>22,777.16</strong></div>
+              <div class="stat-row"><span>库存</span><strong>119</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>3,433</strong></div>
+              <div class="card-note">建议补货 SKU：44</div>
+            </article>
+            </div>
+    </section>
+
+    <section class="module" id="member-ops">
+      <div class="module-header">
+        <h2 class="module-title">6. 会员经营</h2>
+        <p class="module-note">高价值会员适合优先回访。详细页里会有更完整的会员、店员和参考店信息。</p>
+      </div>
+      <div class="cards-grid">
+            <article class="member-card">
+              <div class="card-title">妞宝</div>
+              <div class="card-note">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>7,165.00</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>12</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>110.23</strong></div>
+            </article>
+            
+            <article class="member-card">
+              <div class="card-title">年年</div>
+              <div class="card-note">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>5,680.00</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>9</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>129.09</strong></div>
+            </article>
+            
+            <article class="member-card">
+              <div class="card-title">史振尧</div>
+              <div class="card-note">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>5,541.00</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>19</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>167.91</strong></div>
+            </article>
+            </div>
+      <div class="strip-card">
+        <div>
+          <strong>详细页包含总览、经营策略、图表、补货去化、会员店员和下载区</strong>
+          <p>首页用于每天拍板，详细页用于复盘、解释和交给店员执行。</p>
+        </div>
+        <a class="strip-link" href="./details.html">去详细页</a>
+      </div>
+    </section>
+
+    <section class="module">
+      <div class="module-header">
+        <h2 class="module-title">老板拍板参考</h2>
+        <p class="module-note">这组话术更适合晨会或微信里直接发给店员。</p>
+      </div>
+      <ul class="task-list">
+        <li>
+          <strong>先看哪张表</strong>
+          <span>先看 家居服、常规内裤、裤类 的折扣依赖，再看 130/M、120/S、110/XS 这些主销尺码。今天先稳毛利，再决定要不要做活动。</span>
+        </li>
+        
+        <li>
+          <strong>今天怎么做</strong>
+          <span>今天先把 家居服、常规内裤、裤类 做高毛利搭配和门口陈列，补货只保 130/M、120/S、110/XS 这些主销尺码，别直接靠深折扣冲量。</span>
+        </li>
+        
+        <li>
+          <strong>老板今天拍板什么</strong>
+          <span>今天先拍板 家居服、常规内裤、裤类 是否继续让利，同时确认 130/M、120/S、110/XS 这些尺码的补货预算，别平均补货。</span>
+        </li>
+        </ul>
+    </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>老板每天最常用的入口都固定在这里，不用回头找按钮。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a class="current" href="./index.html">当前仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a href="./monthly.html">进入月度页</a>
+            <a href="./quarterly.html">进入季度页</a>
+            <a href="../manuals/index.html">进入文档中心</a>
+            <a href="../costs/index.html">进入成本维护台</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速跳到某一块，直接点右边，不用整页来回找。</p>
+          <div class="rail-links">
+            <a href="#focus">今日重点</a>
+            <a href="#core-metrics">核心指标</a>
+            <a href="#money-opportunities">赚钱机会</a>
+            <a href="#inventory-risks">库存风险</a>
+            <a href="#replenish-opportunities">补货机会</a>
+            <a href="#member-ops">会员经营</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      if (window.__blackTonnyTooltipInit) return;
+      window.__blackTonnyTooltipInit = true;
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'floating-tooltip';
+      document.body.appendChild(tooltip);
+
+      let activeTarget = null;
+
+      function hideTooltip() {
+        activeTarget = null;
+        tooltip.classList.remove('is-visible');
+      }
+
+      function showTooltip(target) {
+        const message = target.getAttribute('data-tip') || target.getAttribute('title');
+        if (!message) return;
+        activeTarget = target;
+        tooltip.textContent = message;
+        tooltip.classList.add('is-visible');
+
+        const rect = target.getBoundingClientRect();
+        const ttRect = tooltip.getBoundingClientRect();
+        const margin = 12;
+        let left = rect.left + rect.width / 2 - ttRect.width / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - ttRect.width - margin));
+        let top = rect.top - ttRect.height - 12;
+        if (top < margin) {
+          top = rect.bottom + 12;
+        }
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      }
+
+      function attachTooltip(target) {
+        target.addEventListener('mouseenter', () => showTooltip(target));
+        target.addEventListener('mouseleave', hideTooltip);
+        target.addEventListener('focus', () => showTooltip(target));
+        target.addEventListener('blur', hideTooltip);
+        target.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (activeTarget === target && tooltip.classList.contains('is-visible')) {
+            hideTooltip();
+          } else {
+            showTooltip(target);
+          }
+        });
+      }
+
+      document.querySelectorAll('.tooltip-badge').forEach(attachTooltip);
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', () => {
+        if (activeTarget) showTooltip(activeTarget);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.tooltip-badge')) {
+          hideTooltip();
+        }
+      });
+    })();
+  </script>
+    
+</body>
+</html>

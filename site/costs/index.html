@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>月度成本维护台</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      color: #0f172a;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 18px 40px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: #fff;
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      line-height: 1.2;
+    }
+    .hero p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      opacity: 0.94;
+      max-width: 820px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .hero-actions a,
+    .hero-actions button,
+    .section button {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-light {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .btn-soft {
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-primary {
+      background: #fbbf24;
+      color: #1f2937;
+    }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      margin-bottom: 18px;
+      background: rgba(248, 250, 252, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+    }
+    .top-nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #dbe4f0;
+      text-decoration: none;
+    }
+    .top-nav-link.is-active {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .section {
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+    .section p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .page-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 18px;
+      margin-top: 22px;
+    }
+    .main-column {
+      min-width: 0;
+    }
+    .side-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }
+    .rail-card {
+      position: sticky;
+      top: 88px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+    .rail-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .rail-card p {
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #475569;
+    }
+    .rail-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rail-links a {
+      display: block;
+      text-decoration: none;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rail-links a.current {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px;
+    }
+    .card-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .metric {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .metric-note {
+      font-size: 12px;
+      line-height: 1.8;
+      color: #64748b;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+    input,
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #0f172a;
+      background: #fff;
+    }
+    input[readonly],
+    textarea[readonly] {
+      background: #f8fafc;
+      color: #475569;
+    }
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+    .table-wrap {
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 660px;
+    }
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f8fafc;
+      font-size: 13px;
+      color: #475569;
+    }
+    td input {
+      min-width: 0;
+    }
+    .inline-note {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #64748b;
+    }
+    .status-box {
+      margin-top: 16px;
+      border-radius: 16px;
+      border: 1px solid #dbeafe;
+      background: #eff6ff;
+      padding: 14px;
+    }
+    .status-line {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #334155;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .tips {
+      margin: 14px 0 0 18px;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.9;
+      color: #334155;
+    }
+    .danger-note {
+      color: #92400e;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 12px 28px;
+      }
+      .hero {
+        padding: 20px;
+        border-radius: 18px;
+      }
+      .hero h1 {
+        font-size: 26px;
+      }
+      .hero p {
+        font-size: 13px;
+      }
+      .top-nav-links,
+      .hero-actions a,
+      .hero-actions button,
+      .section button {
+        width: 100%;
+      }
+      .top-nav-link {
+        width: 100%;
+      }
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+      .rail-card {
+        position: static;
+        padding: 16px;
+        border-radius: 16px;
+      }
+      .rail-links {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      .section {
+        padding: 16px;
+        border-radius: 16px;
+      }
+      .section h2 {
+        font-size: 18px;
+      }
+      .metric {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="../dashboard/index.html">仪表盘</a>
+        <a class="top-nav-link" href="../dashboard/details.html">详细页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link is-active" href="./index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>月度成本维护台</h1>
+      <p>这个页面只给店里电脑用。你在这里维护月度销售、进货成本和固定费用，系统会自动重算毛利、总费用、净利润和保本线，然后保存到本地成本快照文件。</p>
+      <div class="hero-actions">
+        <a class="btn-light" href="../dashboard/index.html">返回仪表盘</a>
+        <a class="btn-soft" href="../manuals/28-%E6%9C%88%E5%BA%A6%E6%88%90%E6%9C%AC%E5%BF%AB%E7%85%A7%E7%BB%B4%E6%8A%A4%E8%AF%B4%E6%98%8E.html">查看维护说明</a>
+        <button class="btn-primary" type="button" id="load-cost-btn">读取当前成本快照</button>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+    <section class="section" id="cost-preview">
+      <h2>利润预览</h2>
+      <p>这里会根据你当前填的数字实时重算，不用先保存就能看结果。</p>
+      <div class="grid" id="preview-grid">
+        <article class="card">
+          <div class="card-kicker">预览</div>
+          <h3>毛利额</h3>
+          <div class="metric" id="preview-gross-profit">-</div>
+          <div class="metric-note" id="preview-gross-margin">毛利率 -</div>
+        </article>
+        <article class="card">
+          <div class="card-kicker">预览</div>
+          <h3>固定费用</h3>
+          <div class="metric" id="preview-operating-expense">-</div>
+          <div class="metric-note">由下方费用明细自动汇总</div>
+        </article>
+        <article class="card">
+          <div class="card-kicker">预览</div>
+          <h3>人工费用</h3>
+          <div class="metric" id="preview-salary-total">-</div>
+          <div class="metric-note">当前固定按 7.5k 计算</div>
+        </article>
+        <article class="card">
+          <div class="card-kicker">预览</div>
+          <h3>净利润</h3>
+          <div class="metric" id="preview-net-profit">-</div>
+          <div class="metric-note" id="preview-breakeven">保本销售额 -</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="cost-base">
+      <h2>基础口径</h2>
+      <p>先维护本月销售和进货成本，毛利会自动计算。</p>
+      <div class="form-grid">
+        <div>
+          <label for="snapshot-name">快照名称</label>
+          <input id="snapshot-name" type="text" placeholder="例如：2026年3月成本快照" />
+        </div>
+        <div>
+          <label for="snapshot-datetime">快照时间</label>
+          <input id="snapshot-datetime" type="datetime-local" />
+        </div>
+        <div>
+          <label for="sales-amount">零售金额</label>
+          <input id="sales-amount" type="number" step="0.01" />
+        </div>
+        <div>
+          <label for="purchase-cost">进货成本</label>
+          <input id="purchase-cost" type="number" step="0.01" />
+        </div>
+        <div>
+          <label for="gross-profit">毛利额</label>
+          <input id="gross-profit" type="number" step="0.01" readonly />
+        </div>
+        <div>
+          <label for="gross-margin-rate">毛利率</label>
+          <input id="gross-margin-rate" type="text" readonly />
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="cost-expenses">
+      <h2>固定费用</h2>
+      <p>这里维护月固定费用和分摊费用，合计后会自动进入总费用。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>费用项</th>
+              <th>金额</th>
+              <th>备注</th>
+            </tr>
+          </thead>
+          <tbody id="expense-table-body"></tbody>
+        </table>
+      </div>
+      <p class="inline-note">如果某个费用本月没有变化，直接保留上个月数值即可。</p>
+    </section>
+
+    <section class="section" id="cost-salary">
+      <h2>人工口径</h2>
+      <p>当前按你的最新要求，员工工资统一按固定口径计算，不参考截图里的逐人工资拆分。</p>
+      <div class="form-grid">
+        <div>
+          <label for="salary-fixed">员工工资（固定）</label>
+          <input id="salary-fixed" type="number" step="0.01" value="7500" readonly />
+        </div>
+        <div>
+          <label for="salary-note">人工说明</label>
+          <input id="salary-note" type="text" value="当前按固定 7.5k 计算" readonly />
+        </div>
+      </div>
+      <div class="danger-note">如果后面人工口径改了，再统一改这个维护台逻辑，不要临时在 JSON 里手改不同版本。</div>
+    </section>
+
+    <section class="section" id="cost-actions">
+      <h2>说明与保存</h2>
+      <p>保存后会写回本地 `data/local/store_cost_snapshot.json`。你可以继续一键重建仪表盘，让利润和保本判断同步更新。</p>
+      <div class="form-grid">
+        <div style="grid-column: 1 / -1;">
+          <label for="cost-notes">备注</label>
+          <textarea id="cost-notes" placeholder="例如：本月开始房租口径调整、人工统一按7.5k计算"></textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" type="button" id="save-cost-btn">保存成本快照</button>
+        <button class="btn-light" type="button" id="save-refresh-btn">保存并刷新仪表盘</button>
+        <button class="btn-light" type="button" id="check-service-btn">检查本地服务</button>
+      </div>
+      <div class="status-box" id="cost-status">
+        <p class="status-line"><strong>当前状态：</strong>还没有读取本地成本快照。</p>
+      </div>
+      <ul class="tips">
+        <li>先读取当前成本快照，再修改本月数字。</li>
+        <li>如果你只改成本，不改销售数据，也可以直接保存。</li>
+        <li>如果你希望利润看板立刻更新，保存后点“保存并刷新仪表盘”。</li>
+      </ul>
+    </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>这里固定放老板最常用的入口，避免在不同页面里来回找。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="../dashboard/index.html">进入仪表盘</a>
+            <a href="../dashboard/details.html">进入详细页</a>
+            <a href="../manuals/index.html">进入文档中心</a>
+            <a class="current" href="./index.html">当前成本维护台</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只是修改其中一部分，不用来回翻到底。</p>
+          <div class="rail-links">
+            <a href="#cost-preview">利润预览</a>
+            <a href="#cost-base">基础口径</a>
+            <a href="#cost-expenses">固定费用</a>
+            <a href="#cost-salary">人工口径</a>
+            <a href="#cost-actions">说明与保存</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const SERVICE_BASE = 'http://127.0.0.1:8765';
+      const DEFAULT_EXPENSE_ITEMS = [
+        { name: '房租+物业', amount: 0, note: '' },
+        { name: '装修分摊', amount: 0, note: '' },
+        { name: '开店物料分摊', amount: 0, note: '' },
+        { name: '推广服务费', amount: 0, note: '' },
+        { name: '装修杂费分摊', amount: 0, note: '' },
+        { name: '采销服务费', amount: 0, note: '' },
+        { name: '垃圾清运费', amount: 0, note: '' },
+        { name: '电费', amount: 0, note: '' },
+        { name: '店铺费用', amount: 0, note: '' }
+      ];
+      const FIXED_SALARY = 7500;
+      const expenseTableBody = document.getElementById('expense-table-body');
+      const statusBox = document.getElementById('cost-status');
+      const fields = {
+        snapshotName: document.getElementById('snapshot-name'),
+        snapshotDatetime: document.getElementById('snapshot-datetime'),
+        salesAmount: document.getElementById('sales-amount'),
+        purchaseCost: document.getElementById('purchase-cost'),
+        grossProfit: document.getElementById('gross-profit'),
+        grossMarginRate: document.getElementById('gross-margin-rate'),
+        salaryFixed: document.getElementById('salary-fixed'),
+        costNotes: document.getElementById('cost-notes')
+      };
+      const preview = {
+        grossProfit: document.getElementById('preview-gross-profit'),
+        grossMargin: document.getElementById('preview-gross-margin'),
+        operatingExpense: document.getElementById('preview-operating-expense'),
+        salaryTotal: document.getElementById('preview-salary-total'),
+        netProfit: document.getElementById('preview-net-profit'),
+        breakeven: document.getElementById('preview-breakeven')
+      };
+
+      function formatMoney(value) {
+        const number = Number(value || 0);
+        return `${number.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} 元`;
+      }
+
+      function formatPercent(value) {
+        const number = Number(value || 0) * 100;
+        return `${number.toFixed(1)}%`;
+      }
+
+      function setStatus(message, detail = '') {
+        statusBox.innerHTML = `
+          <p class="status-line"><strong>当前状态：</strong>${message}</p>
+          ${detail ? `<p class="status-line">${detail}</p>` : ''}
+        `;
+      }
+
+      function currentLocalDatetime() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const local = new Date(now.getTime() - offset * 60000);
+        return local.toISOString().slice(0, 16);
+      }
+
+      function buildExpenseRows(items) {
+        expenseTableBody.innerHTML = items.map((item, index) => `
+          <tr>
+            <td><input data-expense-name="${index}" type="text" value="${item.name || ''}" /></td>
+            <td><input data-expense-amount="${index}" type="number" step="0.01" value="${Number(item.amount || 0)}" /></td>
+            <td><input data-expense-note="${index}" type="text" value="${item.note || ''}" /></td>
+          </tr>
+        `).join('');
+        expenseTableBody.querySelectorAll('input').forEach((input) => {
+          input.addEventListener('input', updatePreview);
+        });
+      }
+
+      function readExpenseItems() {
+        const rows = [];
+        const rowCount = expenseTableBody.querySelectorAll('tr').length;
+        for (let index = 0; index < rowCount; index += 1) {
+          const name = expenseTableBody.querySelector(`[data-expense-name="${index}"]`)?.value?.trim() || '';
+          const amount = Number(expenseTableBody.querySelector(`[data-expense-amount="${index}"]`)?.value || 0);
+          const note = expenseTableBody.querySelector(`[data-expense-note="${index}"]`)?.value?.trim() || '';
+          rows.push({ name, amount, note });
+        }
+        return rows;
+      }
+
+      function calculateSnapshot() {
+        const salesAmount = Number(fields.salesAmount.value || 0);
+        const purchaseCost = Number(fields.purchaseCost.value || 0);
+        const grossProfit = salesAmount - purchaseCost;
+        const grossMarginRate = salesAmount > 0 ? grossProfit / salesAmount : 0;
+        const expenseItems = readExpenseItems();
+        const monthlyOperatingExpense = expenseItems.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const salaryTotal = FIXED_SALARY;
+        const totalExpense = monthlyOperatingExpense + salaryTotal;
+        const netProfit = grossProfit - totalExpense;
+        return {
+          snapshot_name: fields.snapshotName.value.trim() || '月度成本快照',
+          snapshot_datetime: fields.snapshotDatetime.value ? `${fields.snapshotDatetime.value}:00+08:00` : '',
+          sales_amount: salesAmount,
+          purchase_cost: purchaseCost,
+          gross_profit: grossProfit,
+          gross_margin_rate: grossMarginRate,
+          expense_snapshot: {
+            monthly_operating_expense: monthlyOperatingExpense,
+            salary_total: salaryTotal,
+            total_expense: totalExpense,
+            net_profit: netProfit
+          },
+          expense_items: expenseItems,
+          salary_items: [
+            {
+              name: '员工工资（固定口径）',
+              amount: salaryTotal,
+              note: '按固定7.5k计算，不参考截图工资明细'
+            }
+          ],
+          notes: [
+            fields.costNotes.value.trim() || '通过月度成本维护台保存。',
+            '员工工资当前按固定 7.5k 口径计算。'
+          ].filter(Boolean)
+        };
+      }
+
+      function updatePreview() {
+        const snapshot = calculateSnapshot();
+        fields.grossProfit.value = snapshot.gross_profit.toFixed(2);
+        fields.grossMarginRate.value = formatPercent(snapshot.gross_margin_rate);
+        preview.grossProfit.textContent = formatMoney(snapshot.gross_profit);
+        preview.grossMargin.textContent = `毛利率 ${formatPercent(snapshot.gross_margin_rate)}`;
+        preview.operatingExpense.textContent = formatMoney(snapshot.expense_snapshot.monthly_operating_expense);
+        preview.salaryTotal.textContent = formatMoney(snapshot.expense_snapshot.salary_total);
+        preview.netProfit.textContent = formatMoney(snapshot.expense_snapshot.net_profit);
+        const breakevenSales = snapshot.gross_margin_rate > 0
+          ? snapshot.expense_snapshot.total_expense / snapshot.gross_margin_rate
+          : 0;
+        preview.breakeven.textContent = `保本销售额 ${formatMoney(breakevenSales)}`;
+      }
+
+      function fillForm(snapshot) {
+        const data = snapshot || {};
+        fields.snapshotName.value = data.snapshot_name || '月度成本快照';
+        fields.snapshotDatetime.value = data.snapshot_datetime
+          ? String(data.snapshot_datetime).replace('+08:00', '').slice(0, 16)
+          : currentLocalDatetime();
+        fields.salesAmount.value = Number(data.sales_amount || 0);
+        fields.purchaseCost.value = Number(data.purchase_cost || 0);
+        fields.salaryFixed.value = FIXED_SALARY;
+        fields.costNotes.value = Array.isArray(data.notes) ? data.notes.join('\n') : '';
+        buildExpenseRows(Array.isArray(data.expense_items) && data.expense_items.length ? data.expense_items : DEFAULT_EXPENSE_ITEMS);
+        updatePreview();
+      }
+
+      async function loadSnapshot() {
+        setStatus('正在读取本地成本快照…');
+        try {
+          const response = await fetch(`${SERVICE_BASE}/api/cost-snapshot`);
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) {
+            throw new Error(payload.message || '读取失败');
+          }
+          fillForm(payload.snapshot || {});
+          setStatus('已读取本地成本快照。', `来源文件：${payload.path}`);
+        } catch (error) {
+          fillForm({
+            snapshot_name: '月度成本快照',
+            snapshot_datetime: `${currentLocalDatetime()}:00+08:00`,
+            expense_items: DEFAULT_EXPENSE_ITEMS
+          });
+          setStatus('读取失败，已加载默认模板。', '请先确认本地服务已启动。');
+        }
+      }
+
+      async function saveSnapshot(refreshAfterSave = false) {
+        const snapshot = calculateSnapshot();
+        setStatus(refreshAfterSave ? '正在保存成本快照并准备刷新仪表盘…' : '正在保存成本快照…');
+        try {
+          const response = await fetch(`${SERVICE_BASE}/api/cost-snapshot`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ snapshot })
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) {
+            throw new Error(payload.message || '保存失败');
+          }
+          setStatus('成本快照已保存。', `已写入：${payload.path}`);
+          if (refreshAfterSave) {
+            await triggerRefresh();
+          }
+        } catch (error) {
+          setStatus('保存失败。', String(error));
+        }
+      }
+
+      async function triggerRefresh() {
+        try {
+          const response = await fetch(`${SERVICE_BASE}/api/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              source: 'cost-console',
+              mode: 'full',
+              start_date: '2025-03-01'
+            })
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) {
+            throw new Error(payload.message || '刷新失败');
+          }
+          setStatus('已保存，并开始重建仪表盘。', payload.message || '请稍后回仪表盘查看最新结果。');
+        } catch (error) {
+          setStatus('成本已保存，但刷新仪表盘失败。', String(error));
+        }
+      }
+
+      async function checkService() {
+        setStatus('正在检查本地服务…');
+        try {
+          const response = await fetch(`${SERVICE_BASE}/api/status`);
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) {
+            throw new Error(payload.message || '检查失败');
+          }
+          setStatus('本地服务可用。', payload.message || '你现在可以读取、保存和重建仪表盘。');
+        } catch (error) {
+          setStatus('本地服务不可用。', '请先运行 python3 -m scripts.tools.local_dashboard_service');
+        }
+      }
+
+      document.getElementById('load-cost-btn').addEventListener('click', loadSnapshot);
+      document.getElementById('save-cost-btn').addEventListener('click', () => saveSnapshot(false));
+      document.getElementById('save-refresh-btn').addEventListener('click', () => saveSnapshot(true));
+      document.getElementById('check-service-btn').addEventListener('click', checkService);
+      fields.salesAmount.addEventListener('input', updatePreview);
+      fields.purchaseCost.addEventListener('input', updatePreview);
+
+      fillForm({
+        snapshot_name: '月度成本快照',
+        snapshot_datetime: `${currentLocalDatetime()}:00+08:00`,
+        expense_items: DEFAULT_EXPENSE_ITEMS
+      });
+      setStatus('页面已加载。建议先读取当前成本快照。');
+    })();
+  </script>
+</body>
+</html>

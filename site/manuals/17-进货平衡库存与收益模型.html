@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵进货平衡库存与收益模型 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>小黑托昵进货平衡库存与收益模型</h1>
+      <p>配套文档：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵进货平衡库存与收益模型</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">库存与进货</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-13</span><span class="meta-chip">适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="_1">小黑托昵进货平衡库存与收益模型<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-13<br />
+适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店<br />
+配套文档：
+- <code>docs/source/16-库存预警与补货计算手册.md</code>
+- <code>docs/source/15-门店营业额增长框架.md</code>
+- <code>docs/source/18-门店库存与营收核心计算方法.md</code></p>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>进货怎么既不压货，又不轻易错失营业额</code>。</li>
+<li>核心不是“买越多越稳”，而是先判断 <code>这批货值不值得压、该压多深</code>。</li>
+<li>默认按 <code>儿童贴身棉品门店</code> 的 5 类产品来理解：秋衣秋裤 / 打底、内裤、家居服、背心、袜品。</li>
+</ul>
+<h2 id="1">1. 进货平衡的核心目标<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<p>进货不是单纯追求不断货，而是同时平衡这 4 件事：</p>
+<ol>
+<li>卖得上的货要够</li>
+<li>卖得慢的货不能压太深</li>
+<li>主销类要稳住营业额</li>
+<li>现金不能被慢货吃掉</li>
+</ol>
+<h2 id="2-4">2. 先把货分成 4 种角色<a class="headerlink" href="#2-4" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 主销保量类<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>特点：</p>
+<ol>
+<li>卖得快</li>
+<li>断货影响大</li>
+<li>直接影响营业额</li>
+</ol>
+<p>适合你们的代表：</p>
+<ul>
+<li>秋衣秋裤 / 打底</li>
+</ul>
+<h3 id="22">2.2 高频复购类<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>特点：</p>
+<ol>
+<li>复购概率高</li>
+<li>顾客决策快</li>
+<li>可做稳定基础盘</li>
+</ol>
+<p>适合你们的代表：</p>
+<ul>
+<li>内裤</li>
+</ul>
+<h3 id="23">2.3 场景补充类<a class="headerlink" href="#23" title="Permanent link">¶</a></h3>
+<p>特点：</p>
+<ol>
+<li>顾客有明确场景时会买</li>
+<li>适合做搭配和顺手带单</li>
+<li>深度不用太大</li>
+</ol>
+<p>适合你们的代表：</p>
+<ul>
+<li>家居服</li>
+<li>背心</li>
+</ul>
+<h3 id="24">2.4 连带补充类<a class="headerlink" href="#24" title="Permanent link">¶</a></h3>
+<p>特点：</p>
+<ol>
+<li>件单价相对低</li>
+<li>更适合做顺手带一类</li>
+<li>需要快补，不需要压很深</li>
+</ol>
+<p>适合你们的代表：</p>
+<ul>
+<li>袜品</li>
+</ul>
+<h2 id="3">3. 用四象限判断值不值得深进<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<p>先按 <code>周转速度 × 毛利空间</code> 来判断：</p>
+<h3 id="31">3.1 高周转 + 高毛利<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
+<p>动作：</p>
+<ol>
+<li>可以深一点</li>
+<li>重点保尺码</li>
+<li>保证不断主销款</li>
+</ol>
+<h3 id="32">3.2 高周转 + 低毛利<a class="headerlink" href="#32" title="Permanent link">¶</a></h3>
+<p>动作：</p>
+<ol>
+<li>该保量，但别压太深</li>
+<li>重点靠连带和组合拉营业额</li>
+<li>不靠它单独赚钱，靠它带成交</li>
+</ol>
+<h3 id="33">3.3 低周转 + 高毛利<a class="headerlink" href="#33" title="Permanent link">¶</a></h3>
+<p>动作：</p>
+<ol>
+<li>小批量试</li>
+<li>卖动了再追</li>
+<li>不建议一次压深</li>
+</ol>
+<h3 id="34">3.4 低周转 + 低毛利<a class="headerlink" href="#34" title="Permanent link">¶</a></h3>
+<p>动作：</p>
+<ol>
+<li>缩减</li>
+<li>清理</li>
+<li>暂停进货</li>
+</ol>
+<h2 id="4">4. 小门店更适合的进货预算分配<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
+<p>如果你现在没有特别成熟的预算系统，先按这个思路分：</p>
+<table>
+<thead>
+<tr>
+<th>进货角色</th>
+<th>建议占比</th>
+<th>目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主销保量类</td>
+<td><code>40%-50%</code></td>
+<td>稳营业额</td>
+</tr>
+<tr>
+<td>高频复购类</td>
+<td><code>20%-25%</code></td>
+<td>稳回头率</td>
+</tr>
+<tr>
+<td>场景补充类</td>
+<td><code>10%-20%</code></td>
+<td>拉场景成交</td>
+</tr>
+<tr>
+<td>连带补充类</td>
+<td><code>10%-15%</code></td>
+<td>拉连带</td>
+</tr>
+<tr>
+<td>新品试投</td>
+<td><code>5%-10%</code></td>
+<td>试增长点</td>
+</tr>
+</tbody>
+</table>
+<p>这不是死规则，但对小店来说，它能防止你把钱都压在“不确定款”上。</p>
+<h2 id="5">5. 一套最实用的进货量算法<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<h3 id="51">5.1 基础进货量<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p><code>基础进货量 = 预计销售周期天数 × 预计日均销量</code></p>
+<h3 id="52">5.2 完整建议进货量<a class="headerlink" href="#52" title="Permanent link">¶</a></h3>
+<p><code>建议进货量 = 基础进货量 + 安全库存 - 当前可售库存 - 在途件数</code></p>
+<p>如果结果小于等于 0，说明：</p>
+<ol>
+<li>暂时不急着进</li>
+<li>或者这类货已经偏多</li>
+</ol>
+<h3 id="53">5.3 没有历史销量时怎么办<a class="headerlink" href="#53" title="Permanent link">¶</a></h3>
+<p>没有历史时，不要拍脑袋下大单，先这样处理：</p>
+<ol>
+<li>参考相近款销量</li>
+<li>按相近款的 <code>60%-80%</code> 试投</li>
+<li>先小批量，再决定要不要追</li>
+</ol>
+<h2 id="6">6. 怎么平衡“收益”和“压货风险”<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<h3 id="61">6.1 先看预计收益<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
+<p><code>预计销售额 = 预计售出件数 × 平均销售单价</code></p>
+<p><code>预计毛利 = 预计售出件数 × (平均销售单价 - 单件进货成本)</code></p>
+<h3 id="62">6.2 再看库存压力<a class="headerlink" href="#62" title="Permanent link">¶</a></h3>
+<p><code>库存压力金额 = 预计滞留件数 × 单件进货成本</code></p>
+<p>这里最简单的判断逻辑是：</p>
+<ol>
+<li>如果预计卖得快，库存压力可接受，可以进深一点</li>
+<li>如果预计卖得慢，滞留金额又高，就要保守</li>
+</ol>
+<h3 id="63">6.3 一条门店能直接用的判断线<a class="headerlink" href="#63" title="Permanent link">¶</a></h3>
+<p>如果某批货出现下面情况，先不要深进：</p>
+<ol>
+<li>预计售罄率低于 <code>60%</code></li>
+<li>预计滞留金额明显偏高</li>
+<li>不是主销类，也不是节点刚需</li>
+</ol>
+<h2 id="7">7. 季节切换时的进货规则<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<h3 id="71">7.1 季节切换前<a class="headerlink" href="#71" title="Permanent link">¶</a></h3>
+<p>原则：</p>
+<ol>
+<li>先清旧货节奏</li>
+<li>新货先小批量</li>
+<li>不确定款不深压</li>
+</ol>
+<h3 id="72">7.2 季节切换中<a class="headerlink" href="#72" title="Permanent link">¶</a></h3>
+<p>原则：</p>
+<ol>
+<li>主销类追货要快</li>
+<li>连带类维持浅库存</li>
+<li>慢货及时停补</li>
+</ol>
+<h3 id="73">7.3 季节切换后<a class="headerlink" href="#73" title="Permanent link">¶</a></h3>
+<p>原则：</p>
+<ol>
+<li>复盘哪些款值得明年保留</li>
+<li>复盘哪些款只会吃库存</li>
+<li>下次提前做预算分配</li>
+</ol>
+<h2 id="8">8. 一张进货判断表就够用<a class="headerlink" href="#8" title="Permanent link">¶</a></h2>
+<table>
+<thead>
+<tr>
+<th>品类 / 款</th>
+<th>近14天销量</th>
+<th>当前可售库存</th>
+<th>在途件数</th>
+<th>预计销售周期</th>
+<th>建议进货量</th>
+<th>预计毛利</th>
+<th>压货风险</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>例如 秋衣秋裤A款</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>结论只用这 4 种：</p>
+<ol>
+<li><code>深进</code></li>
+<li><code>正常补</code></li>
+<li><code>小批量试</code></li>
+<li><code>暂停</code></li>
+</ol>
+<h2 id="9-5">9. 当前最先执行的 5 件事<a class="headerlink" href="#9-5" title="Permanent link">¶</a></h2>
+<p>如果你今天就开始优化进货，先做这 5 条：</p>
+<ol>
+<li>把货先分成 4 个角色</li>
+<li>每次进货都先算 <code>建议进货量</code></li>
+<li>每次进货都加一列 <code>压货风险</code></li>
+<li>季节切换时先小批量，不一口气压深</li>
+<li>每周复盘一次：哪些货值得追，哪些货该停</li>
+</ol>
+<p>先把这 5 条跑顺，进货就不再只是“怕断货”或“怕压货”的情绪判断。</p>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="16-库存预警与补货计算手册.html">小黑托昵库存预警与补货计算手册</a><p>库存与进货</p></div><div class="footer-card"><div class="label">下一篇</div><a href="18-门店库存与营收核心计算方法.html">小黑托昵门店库存与营收核心计算方法</a><p>库存与进货</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../docs/source/17-进货平衡库存与收益模型.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">小黑托昵进货平衡库存与收益模型</a><ul>
+<li><a href="#_2">使用说明</a></li>
+<li><a href="#1">1. 进货平衡的核心目标</a></li>
+<li><a href="#2-4">2. 先把货分成 4 种角色</a><ul>
+<li><a href="#21">2.1 主销保量类</a></li>
+<li><a href="#22">2.2 高频复购类</a></li>
+<li><a href="#23">2.3 场景补充类</a></li>
+<li><a href="#24">2.4 连带补充类</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 用四象限判断值不值得深进</a><ul>
+<li><a href="#31">3.1 高周转 + 高毛利</a></li>
+<li><a href="#32">3.2 高周转 + 低毛利</a></li>
+<li><a href="#33">3.3 低周转 + 高毛利</a></li>
+<li><a href="#34">3.4 低周转 + 低毛利</a></li>
+</ul>
+</li>
+<li><a href="#4">4. 小门店更适合的进货预算分配</a></li>
+<li><a href="#5">5. 一套最实用的进货量算法</a><ul>
+<li><a href="#51">5.1 基础进货量</a></li>
+<li><a href="#52">5.2 完整建议进货量</a></li>
+<li><a href="#53">5.3 没有历史销量时怎么办</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 怎么平衡“收益”和“压货风险”</a><ul>
+<li><a href="#61">6.1 先看预计收益</a></li>
+<li><a href="#62">6.2 再看库存压力</a></li>
+<li><a href="#63">6.3 一条门店能直接用的判断线</a></li>
+</ul>
+</li>
+<li><a href="#7">7. 季节切换时的进货规则</a><ul>
+<li><a href="#71">7.1 季节切换前</a></li>
+<li><a href="#72">7.2 季节切换中</a></li>
+<li><a href="#73">7.3 季节切换后</a></li>
+</ul>
+</li>
+<li><a href="#8">8. 一张进货判断表就够用</a></li>
+<li><a href="#9-5">9. 当前最先执行的 5 件事</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

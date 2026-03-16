@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵库存预警与补货计算手册 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>小黑托昵库存预警与补货计算手册</h1>
+      <p>配套文档：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵库存预警与补货计算手册</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">库存与进货</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-13</span><span class="meta-chip">适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="_1">小黑托昵库存预警与补货计算手册<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-13<br />
+适用对象：1 个老板 / 老板娘 + 2 位员工的小团队门店<br />
+配套文档：
+- <code>docs/source/07-店铺日常经营复盘表.md</code>
+- <code>docs/source/15-门店营业额增长框架.md</code>
+- <code>docs/source/18-门店库存与营收核心计算方法.md</code></p>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>什么时候该补货、补多少、哪些货已经开始危险</code>。</li>
+<li>目标不是做复杂 ERP，而是让门店先有一套能用的库存预警规则。</li>
+<li>默认优先管理 <code>秋衣秋裤 / 打底、内裤、家居服、背心、袜品</code> 这 5 类。</li>
+</ul>
+<h2 id="1">1. 库存管理的目标<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<p>先把库存管理理解成同时解决这 4 件事：</p>
+<ol>
+<li>不断码</li>
+<li>不压太多货</li>
+<li>不靠感觉补货</li>
+<li>不让慢货吃掉营业额空间</li>
+</ol>
+<h2 id="2">2. 先统一库存记录口径<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 门店最小记录单位<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>对小团队门店，先不用一上来管太复杂。<br />
+建议按这个层级记：</p>
+<ol>
+<li><code>品类</code></li>
+<li><code>款号 / 系列</code></li>
+<li><code>尺码</code></li>
+<li><code>当前在手件数</code></li>
+<li><code>在途件数</code></li>
+</ol>
+<h3 id="22">2.2 先重点盯住什么<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>不是所有货都要一样细盯，先盯：</p>
+<ol>
+<li>高频主销款</li>
+<li>高频尺码</li>
+<li>季节切换款</li>
+<li>最近 14 天卖得最快的款</li>
+</ol>
+<h2 id="3-4">3. 先记住 4 个关键数字<a class="headerlink" href="#3-4" title="Permanent link">¶</a></h2>
+<h3 id="31">3.1 当前可售库存<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
+<p><code>当前可售库存 = 在手库存 - 已预留 / 不可售件数</code></p>
+<h3 id="32-14">3.2 近 14 天日均销量<a class="headerlink" href="#32-14" title="Permanent link">¶</a></h3>
+<p><code>近14天日均销量 = 近14天销售件数 ÷ 14</code></p>
+<h3 id="33">3.3 库存覆盖天数<a class="headerlink" href="#33" title="Permanent link">¶</a></h3>
+<p><code>库存覆盖天数 = 当前可售库存 ÷ 近14天日均销量</code></p>
+<p>这条最关键，因为它直接告诉你：</p>
+<ul>
+<li>还能卖几天</li>
+<li>是不是快断了</li>
+<li>是不是压太多了</li>
+</ul>
+<h3 id="34">3.4 补货提前期<a class="headerlink" href="#34" title="Permanent link">¶</a></h3>
+<p><code>补货提前期</code> 指的是从你下单到货真正能上架卖，需要多少天。</p>
+<p>对门店来说，这个数字必须记清楚，因为补货晚不晚，主要就卡在这里。</p>
+<h2 id="4">4. 一套门店能直接执行的预警线<a class="headerlink" href="#4" title="Permanent link">¶</a></h2>
+<h3 id="41">4.1 按覆盖天数看预警<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>库存覆盖天数</th>
+<th>说明</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>红灯</td>
+<td><code>&lt;= 3天</code></td>
+<td>很容易断货</td>
+<td>当天处理</td>
+</tr>
+<tr>
+<td>黄灯</td>
+<td><code>4-7天</code></td>
+<td>需要准备补货</td>
+<td>24 小时内确认</td>
+</tr>
+<tr>
+<td>绿灯</td>
+<td><code>8-21天</code></td>
+<td>相对健康</td>
+<td>继续观察</td>
+</tr>
+<tr>
+<td>黑灯</td>
+<td><code>&gt; 45天</code></td>
+<td>压货风险高</td>
+<td>暂停补货、考虑去化</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42">4.2 哪些情况直接算红灯<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>下面 3 种情况，不用等算式，直接按红灯处理：</p>
+<ol>
+<li>主销尺码已经缺码</li>
+<li>周末前库存明显不够</li>
+<li>商场活动前核心款不齐</li>
+</ol>
+<h2 id="5">5. 安全库存和补货点怎么算<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<h3 id="51">5.1 安全库存<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>最适合小店的简化算法：</p>
+<p><code>安全库存 = 近14天日均销量 × 安全天数</code></p>
+<p>建议先这样设：</p>
+<table>
+<thead>
+<tr>
+<th>品类</th>
+<th>建议安全天数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>秋衣秋裤 / 打底</td>
+<td><code>7-10天</code></td>
+</tr>
+<tr>
+<td>内裤</td>
+<td><code>7-10天</code></td>
+</tr>
+<tr>
+<td>家居服</td>
+<td><code>5-7天</code></td>
+</tr>
+<tr>
+<td>背心</td>
+<td><code>5-7天</code></td>
+</tr>
+<tr>
+<td>袜品</td>
+<td><code>3-5天</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="52">5.2 补货点<a class="headerlink" href="#52" title="Permanent link">¶</a></h3>
+<p><code>补货点 = 近14天日均销量 × 补货提前期 + 安全库存</code></p>
+<p>解释：</p>
+<ul>
+<li>前半段保证你等货时不断</li>
+<li>后半段给你留一点缓冲</li>
+</ul>
+<h3 id="53">5.3 建议补货量<a class="headerlink" href="#53" title="Permanent link">¶</a></h3>
+<p><code>建议补货量 = 目标库存 - 当前可售库存 - 在途件数</code></p>
+<p>其中：</p>
+<p><code>目标库存 = 近14天日均销量 × 目标覆盖天数 + 安全库存</code></p>
+<p>建议先用这组目标覆盖天数：</p>
+<table>
+<thead>
+<tr>
+<th>品类</th>
+<th>目标覆盖天数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>秋衣秋裤 / 打底</td>
+<td><code>10-14天</code></td>
+</tr>
+<tr>
+<td>内裤</td>
+<td><code>10-14天</code></td>
+</tr>
+<tr>
+<td>家居服</td>
+<td><code>7-10天</code></td>
+</tr>
+<tr>
+<td>背心</td>
+<td><code>7-10天</code></td>
+</tr>
+<tr>
+<td>袜品</td>
+<td><code>5-7天</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="6">6. 一个门店能直接算的例子<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<p>假设某款秋衣秋裤 M 码：</p>
+<ol>
+<li>近 14 天卖了 <code>28 件</code></li>
+<li>日均销量 = <code>28 ÷ 14 = 2</code></li>
+<li>补货提前期 = <code>4 天</code></li>
+<li>安全天数 = <code>8 天</code></li>
+<li>当前可售库存 = <code>18 件</code></li>
+<li>在途件数 = <code>0 件</code></li>
+</ol>
+<p>那么：</p>
+<ol>
+<li><code>安全库存 = 2 × 8 = 16</code></li>
+<li><code>补货点 = 2 × 4 + 16 = 24</code></li>
+<li>当前库存 <code>18 &lt; 24</code>，已经该补</li>
+<li>如果目标覆盖天数按 <code>14 天</code></li>
+<li><code>目标库存 = 2 × 14 + 16 = 44</code></li>
+<li><code>建议补货量 = 44 - 18 - 0 = 26</code></li>
+</ol>
+<p>这个结果的意思不是必须一口气补 26 件，而是告诉你：</p>
+<ul>
+<li>这款已经进入补货区间</li>
+<li>需要结合预算和季节节点，决定分几次补</li>
+</ul>
+<h2 id="7">7. 每天 / 每周怎么执行<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<h3 id="71">7.1 每天<a class="headerlink" href="#71" title="Permanent link">¶</a></h3>
+<p>每天至少看这 3 件事：</p>
+<ol>
+<li>有没有红灯 SKU</li>
+<li>有没有主销尺码快断</li>
+<li>今天卖得最快的款是不是要提前补</li>
+</ol>
+<h3 id="72">7.2 每周<a class="headerlink" href="#72" title="Permanent link">¶</a></h3>
+<p>每周固定做这 4 件事：</p>
+<ol>
+<li>看一遍主销款覆盖天数</li>
+<li>看一遍黑灯慢货</li>
+<li>定本周补货单</li>
+<li>定哪些货先不再进</li>
+</ol>
+<h2 id="8-1-2">8. 1 个老板 + 2 位员工怎么分工<a class="headerlink" href="#8-1-2" title="Permanent link">¶</a></h2>
+<h3 id="81">8.1 老板 / 老板娘<a class="headerlink" href="#81" title="Permanent link">¶</a></h3>
+<p>主要负责：</p>
+<ol>
+<li>看红黄黑灯</li>
+<li>拍板补货和停补</li>
+<li>判断季节和活动节点</li>
+</ol>
+<h3 id="82-a">8.2 员工 A<a class="headerlink" href="#82-a" title="Permanent link">¶</a></h3>
+<p>主要负责：</p>
+<ol>
+<li>日常点主销尺码</li>
+<li>提醒红灯款</li>
+<li>记录当天卖得最快的类目</li>
+</ol>
+<h3 id="83-b">8.3 员工 B<a class="headerlink" href="#83-b" title="Permanent link">¶</a></h3>
+<p>主要负责：</p>
+<ol>
+<li>记录在手和在途</li>
+<li>盯陈列和补位</li>
+<li>标记慢货和缺码</li>
+</ol>
+<h2 id="9-5">9. 当前最先执行的 5 件事<a class="headerlink" href="#9-5" title="Permanent link">¶</a></h2>
+<p>如果你今天就开始管库存，先做这 5 件：</p>
+<ol>
+<li>给主销款和主销尺码建一张表</li>
+<li>每天记 <code>当前可售库存</code></li>
+<li>每周算一次 <code>库存覆盖天数</code></li>
+<li>用 <code>红灯 / 黄灯 / 绿灯 / 黑灯</code> 做最小预警</li>
+<li>补货时先按公式算，再结合预算决定深浅</li>
+</ol>
+<p>先把这 5 条跑顺，库存管理就会从“凭感觉”变成“有边界”。</p>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="15-门店营业额增长框架.html">小黑托昵门店营业额增长框架</a><p>引流与成交</p></div><div class="footer-card"><div class="label">下一篇</div><a href="17-进货平衡库存与收益模型.html">小黑托昵进货平衡库存与收益模型</a><p>库存与进货</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../docs/source/16-库存预警与补货计算手册.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">小黑托昵库存预警与补货计算手册</a><ul>
+<li><a href="#_2">使用说明</a></li>
+<li><a href="#1">1. 库存管理的目标</a></li>
+<li><a href="#2">2. 先统一库存记录口径</a><ul>
+<li><a href="#21">2.1 门店最小记录单位</a></li>
+<li><a href="#22">2.2 先重点盯住什么</a></li>
+</ul>
+</li>
+<li><a href="#3-4">3. 先记住 4 个关键数字</a><ul>
+<li><a href="#31">3.1 当前可售库存</a></li>
+<li><a href="#32-14">3.2 近 14 天日均销量</a></li>
+<li><a href="#33">3.3 库存覆盖天数</a></li>
+<li><a href="#34">3.4 补货提前期</a></li>
+</ul>
+</li>
+<li><a href="#4">4. 一套门店能直接执行的预警线</a><ul>
+<li><a href="#41">4.1 按覆盖天数看预警</a></li>
+<li><a href="#42">4.2 哪些情况直接算红灯</a></li>
+</ul>
+</li>
+<li><a href="#5">5. 安全库存和补货点怎么算</a><ul>
+<li><a href="#51">5.1 安全库存</a></li>
+<li><a href="#52">5.2 补货点</a></li>
+<li><a href="#53">5.3 建议补货量</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 一个门店能直接算的例子</a></li>
+<li><a href="#7">7. 每天 / 每周怎么执行</a><ul>
+<li><a href="#71">7.1 每天</a></li>
+<li><a href="#72">7.2 每周</a></li>
+</ul>
+</li>
+<li><a href="#8-1-2">8. 1 个老板 + 2 位员工怎么分工</a><ul>
+<li><a href="#81">8.1 老板 / 老板娘</a></li>
+<li><a href="#82-a">8.2 员工 A</a></li>
+<li><a href="#83-b">8.3 员工 B</a></li>
+</ul>
+</li>
+<li><a href="#9-5">9. 当前最先执行的 5 件事</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

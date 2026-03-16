@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-03-16T23:28:42.944099+08:00",
+  "overall_status": "ok",
+  "mode_label": "复用本地抓取缓存",
+  "sync_window": "2025-03-01 -> 2026-03-16",
+  "analysis_db_file": "/Users/lizhihui/Workspace/Black-Tony/reports/calibration/black_tony_analysis.sqlite",
+  "output_dir": "/Users/lizhihui/Workspace/Black-Tony/reports/dashboard-history",
+  "pages_dir": "/Users/lizhihui/Workspace/Black-Tony/site/dashboard",
+  "pages_data_dir": "/Users/lizhihui/Workspace/Black-Tony/site/dashboard/data",
+  "pages_dashboard_html": "/Users/lizhihui/Workspace/Black-Tony/site/dashboard/index.html",
+  "pages_manifest_json": "/Users/lizhihui/Workspace/Black-Tony/site/dashboard/data/manifest.json",
+  "check_script": "/Users/lizhihui/Workspace/Black-Tony/scripts/tools/check_pages_ready.py",
+  "scan_counts": {},
+  "analysis_summary": {
+    "batch_id": "sales_calibration_20260316_232831",
+    "db_path": "/Users/lizhihui/Workspace/Black-Tony/reports/calibration/black_tony_analysis.sqlite",
+    "store_name": "咸阳沣西吾悦专卖店",
+    "master_row_count": 9745,
+    "validation_row_count": 9326,
+    "daily_flow_row_count": 3988,
+    "product_snapshot_row_count": 1340,
+    "movement_row_count": 307,
+    "inventory_detail_row_count": 983,
+    "inventory_sales_row_count": 1340,
+    "stock_flow_row_count": 1546,
+    "size_breakdown_row_count": 11646,
+    "vip_analysis_row_count": 1182,
+    "member_rank_row_count": 1190,
+    "guide_report_row_count": 6,
+    "retail_detail_row_count": 1340,
+    "daily_summary_row_count": 365,
+    "monthly_summary_row_count": 13,
+    "sku_summary_row_count": 1218,
+    "quality_check_count": 10,
+    "problem_order_count": 0,
+    "problem_sku_count": 0
+  },
+  "check_status": "ok",
+  "steps": [
+    {
+      "name": "抓取 JSON",
+      "status": "skipped",
+      "detail": "已跳过抓取，沿用当前 reports/capture-cache。",
+      "command": null
+    },
+    {
+      "name": "数据同步 -> SQLite",
+      "status": "ok",
+      "detail": "批次 sales_calibration_20260316_232831，销售 9745 行，库存 983 行。",
+      "command": [
+        "python3",
+        "-m",
+        "scripts.tools.build_analysis_db",
+        "--db-path",
+        "/Users/lizhihui/Workspace/Black-Tony/reports/calibration/black_tony_analysis.sqlite",
+        "--notes",
+        "static publish pipeline"
+      ]
+    },
+    {
+      "name": "SQLite -> 本地分析 -> 导出 Pages",
+      "status": "ok",
+      "detail": "已生成 HTML / Markdown / CSV / JSON 到 reports/ 和 site/。",
+      "command": [
+        "python3",
+        "-m",
+        "scripts.dashboard.main",
+        "--cost-file",
+        "/Users/lizhihui/Workspace/Black-Tony/data/local/store_cost_snapshot.json",
+        "--cost-history-file",
+        "/Users/lizhihui/Workspace/Black-Tony/data/local/store_cost_history.json",
+        "--analysis-db-file",
+        "/Users/lizhihui/Workspace/Black-Tony/reports/calibration/black_tony_analysis.sqlite",
+        "--output-dir",
+        "/Users/lizhihui/Workspace/Black-Tony/reports/dashboard-history",
+        "--pages-dir",
+        "/Users/lizhihui/Workspace/Black-Tony/site/dashboard"
+      ]
+    },
+    {
+      "name": "文档中心构建",
+      "status": "ok",
+      "detail": "已刷新 site/manuals。",
+      "command": [
+        "python3",
+        "-m",
+        "scripts.docs_site.build"
+      ]
+    },
+    {
+      "name": "Pages 自检",
+      "status": "ok",
+      "detail": "site/ 静态发布目录检查通过。",
+      "command": [
+        "python3",
+        "-m",
+        "scripts.tools.check_pages_ready"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵店铺经营基础框架 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>小黑托昵店铺经营基础框架</h1>
+      <p>仓库定位：这份文档把项目从“只做抖音号”扩展为“内容增长 + 店铺经营”的双主线文档仓</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵店铺经营基础框架</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">店铺经营基础</span><span class="meta-chip">版本：v1.2</span><span class="meta-chip">更新时间：2026-03-13</span><span class="meta-chip">适用对象：单城市门店、线下成交为主、抖音内容作为引流补充</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="_1">小黑托昵店铺经营基础框架<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.2<br />
+更新日期：2026-03-13<br />
+适用对象：单城市门店、线下成交为主、抖音内容作为引流补充<br />
+仓库定位：这份文档把项目从“只做抖音号”扩展为“内容增长 + 店铺经营”的双主线文档仓</p>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>店铺经营怎么稳</code>，不是单纯解决抖音怎么发。</li>
+<li>默认当前门店的增长结构分成两条线：</li>
+<li><code>内容增长线</code>：抖音起号、老号重整、AI 学习、内容执行</li>
+<li><code>店铺经营线</code>：进店接待、产品结构、复购、会员、库存、日常经营</li>
+<li>先把抖音流量导进店，再把店内接待和复购做稳，才算项目真正跑起来。</li>
+</ul>
+<h2 id="1">1. 店铺经营的总目标<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<h3 id="11">1.1 核心目标<a class="headerlink" href="#11" title="Permanent link">¶</a></h3>
+<p>店铺经营不只看当天卖了多少，而是看这 4 件事是否同时在变好：</p>
+<ol>
+<li>进店成交是否更稳</li>
+<li>客单是否更清楚</li>
+<li>老客复购是否更明显</li>
+<li>门店对抖音流量的承接是否更顺</li>
+</ol>
+<h3 id="12">1.2 这个仓库未来的双主线<a class="headerlink" href="#12" title="Permanent link">¶</a></h3>
+<p>后面整个仓库都按这两个系统推进：</p>
+<h4 id="a">A. 内容增长系统<a class="headerlink" href="#a" title="Permanent link">¶</a></h4>
+<ul>
+<li>负责获客</li>
+<li>负责建立“老板娘可信”的认知</li>
+<li>负责让宝妈主动问地址、尺码、来店时间</li>
+</ul>
+<h4 id="b">B. 店铺经营系统<a class="headerlink" href="#b" title="Permanent link">¶</a></h4>
+<ul>
+<li>负责成交</li>
+<li>负责服务体验</li>
+<li>负责复购</li>
+<li>负责把流量变成可持续经营</li>
+</ul>
+<p>结论：</p>
+<ul>
+<li>抖音不是目的，是门店经营的一部分</li>
+<li>门店经营也不能脱离内容，因为内容是新的获客入口</li>
+</ul>
+<h2 id="2-6">2. 店铺经营的 6 个核心模块<a class="headerlink" href="#2-6" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 进店接待<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>顾客一进店，尽快知道她是随便看看，还是带着明确问题来的</li>
+<li>如果是抖音来的，要立刻接上她在线上提过的问题</li>
+</ul>
+<p>最小 SOP：</p>
+<ol>
+<li>先问：<code>是自己看看，还是我先帮你缩一下厚薄和尺码？</code></li>
+<li>如果对方提到抖音：
+   - 接话：<code>那我先按你线上说的情况，带你从这两类开始看</code></li>
+<li>不先讲品牌故事，先讲怎么选</li>
+</ol>
+<h3 id="22">2.2 产品结构<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>不让货很多但顾客还是不会选</li>
+<li>让老板娘能快速把顾客引导到正确范围</li>
+</ul>
+<p>建议先按用户决策去整理，不先按品牌话术去整理：</p>
+<ol>
+<li><code>换季厚薄</code></li>
+<li><code>年龄段</code></li>
+<li><code>尺码</code></li>
+<li><code>居家 / 通勤 / 活动量</code></li>
+</ol>
+<h3 id="22a">2.2A 当前最适合门店的产品矩阵<a class="headerlink" href="#22a" title="Permanent link">¶</a></h3>
+<p>基于公开可见商品线，门店经营和内容表达统一按 <code>儿童贴身棉品</code> 来理解，优先覆盖这 5 类：</p>
+<ol>
+<li><code>内裤</code></li>
+<li><code>背心 / 发育期近身打底</code></li>
+<li><code>秋衣秋裤 / 单裤 / 打底</code></li>
+<li><code>家居服 / 睡衣</code></li>
+<li><code>袜品 / 连裤袜</code></li>
+</ol>
+<p>门店不要把这 5 类平均对待，优先级建议是：</p>
+<ol>
+<li><code>秋衣秋裤 / 打底</code>
+   最容易接住换季、厚薄、尺码问题</li>
+<li><code>内裤</code>
+   最容易接住舒适感、尺码、复购问题</li>
+<li><code>家居服</code>
+   最容易接住场景和体感问题</li>
+<li><code>背心</code>
+   最容易接住年龄段和过渡期问题</li>
+<li><code>袜品</code>
+   更适合作为补充成交和内容搭配，不建议单独做主线</li>
+</ol>
+<h3 id="22b">2.2B 产品结构的门店决策树<a class="headerlink" href="#22b" title="Permanent link">¶</a></h3>
+<p>顾客进店后，优先不是问“你想买哪一款”，而是先分到哪一类：</p>
+<ol>
+<li><code>换季问题</code>
+   先看秋衣秋裤、打底、家居服</li>
+<li><code>舒适和贴身感问题</code>
+   先看内裤、背心</li>
+<li><code>尺码和试穿问题</code>
+   先看秋衣秋裤、内裤、背心</li>
+<li><code>补充搭配问题</code>
+   再带到袜品</li>
+</ol>
+<p>判断是否做得好：</p>
+<ul>
+<li>顾客进店后 3-5 分钟内，老板娘能帮她把范围明显缩小</li>
+</ul>
+<h3 id="23">2.3 成交承接<a class="headerlink" href="#23" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>不让顾客“看懂了视频”，却“进店后还是不知道怎么买”</li>
+</ul>
+<p>门店承接重点只保留 3 个：</p>
+<ol>
+<li>先判断厚薄</li>
+<li>再缩尺码</li>
+<li>最后再选具体款</li>
+</ol>
+<p>这和抖音内容必须一致。<br />
+如果线上讲的是“怎么选”，线下却一上来推活动，转化会掉。</p>
+<h3 id="24">2.4 老客复购<a class="headerlink" href="#24" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>不是等顾客自然回头，而是主动识别哪些顾客值得做复购经营</li>
+</ul>
+<p>最值得记录的老客类型：</p>
+<ol>
+<li>已经在店里买过贴身棉品</li>
+<li>对老板娘建议认可度高</li>
+<li>购买后很少退换纠结</li>
+<li>会再带孩子或再次来店</li>
+</ol>
+<p>经营动作：</p>
+<ul>
+<li>把老客高频问题沉淀回内容</li>
+<li>把内容里的高频问题反过来用于老客接待</li>
+</ul>
+<h3 id="25">2.5 会员与私域沉淀<a class="headerlink" href="#25" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>不让抖音流量和门店顾客只停留在一次成交</li>
+</ul>
+<p>建议门店记录 3 类顾客：</p>
+<ol>
+<li><code>抖音来的</code></li>
+<li><code>老客复购</code></li>
+<li><code>自然进店</code></li>
+</ol>
+<p>哪怕前期不做复杂系统，也至少要做到：</p>
+<ul>
+<li>知道今天有多少抖音来的顾客</li>
+<li>知道哪些是值得二次触达的顾客</li>
+</ul>
+<h3 id="26">2.6 日常经营基本盘<a class="headerlink" href="#26" title="Permanent link">¶</a></h3>
+<p>每天必须看的不只是营业额，还包括：</p>
+<ol>
+<li>到店人数</li>
+<li>成交人数</li>
+<li>抖音到店人数</li>
+<li>问尺码 / 地址 / 到店时间的人数</li>
+<li>老客复购人数</li>
+<li>哪类产品最近最常被问</li>
+</ol>
+<h2 id="3">3. 抖音和店铺经营怎么真正打通<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<h3 id="31">3.1 内容负责把问题带进来<a class="headerlink" href="#31" title="Permanent link">¶</a></h3>
+<p>抖音内容最理想的结果，不是播放高，而是把这 3 类问题带进店：</p>
+<ol>
+<li><code>店在哪</code></li>
+<li><code>孩子穿什么码</code></li>
+<li><code>最近适不适合来</code></li>
+</ol>
+<p>结合当前产品线，优先把下面这 3 类问题带进店：</p>
+<ol>
+<li><code>秋衣秋裤 / 打底现在怎么选厚薄</code></li>
+<li><code>内裤 / 背心到底怎么缩尺码</code></li>
+<li><code>家居服 / 袜品适不适合顺手一起看</code></li>
+</ol>
+<h3 id="32">3.2 门店负责把问题接住<a class="headerlink" href="#32" title="Permanent link">¶</a></h3>
+<p>如果顾客进店后，店员或老板娘接不上这 3 类问题，内容再好也会浪费。</p>
+<p>所以线下必须做到：</p>
+<ul>
+<li>看过抖音来的顾客，先接线上问题</li>
+<li>接待时沿用线上同样的话术逻辑</li>
+<li>把线下高频问题再送回抖音做内容</li>
+</ul>
+<h3 id="33">3.3 最小闭环<a class="headerlink" href="#33" title="Permanent link">¶</a></h3>
+<p>固定闭环就是：</p>
+<ol>
+<li>抖音内容提出真实问题</li>
+<li>顾客评论 / 私信 / 到店</li>
+<li>门店按同样逻辑完成接待</li>
+<li>老客或到店反馈再回到内容里</li>
+</ol>
+<h2 id="4-90">4. 店铺经营未来 90 天怎么推进<a class="headerlink" href="#4-90" title="Permanent link">¶</a></h2>
+<h3 id="phase-aday-1-30">Phase A（Day 1-30）：先把接待和记录做稳<a class="headerlink" href="#phase-aday-1-30" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>让门店能接住抖音来的流量</li>
+<li>把日常记录从“凭感觉”变成“有简单数据”</li>
+</ul>
+<p>必须完成：</p>
+<ol>
+<li>到店接待统一话术</li>
+<li>每天记录抖音到店、地址咨询、尺码咨询</li>
+<li>先分清哪类产品和哪类顾客最值得复购经营</li>
+</ol>
+<h3 id="phase-bday-31-60">Phase B（Day 31-60）：开始做复购和产品结构优化<a class="headerlink" href="#phase-bday-31-60" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>让老客经营开始形成节奏</li>
+<li>让货架和讲解方式更贴近顾客决策，而不是只贴近品牌陈列</li>
+</ul>
+<p>必须完成：</p>
+<ol>
+<li>老客复购记录表</li>
+<li>产品整理逻辑按“怎么选”而不是“怎么摆”</li>
+<li>把最常被问的 5 类产品问题写成接待话术</li>
+</ol>
+<h3 id="phase-cday-61-90">Phase C（Day 61-90）：做内容与门店的一体化经营<a class="headerlink" href="#phase-cday-61-90" title="Permanent link">¶</a></h3>
+<p>目标：</p>
+<ul>
+<li>把抖音和店铺变成同一个经营系统，而不是两个分开的动作</li>
+</ul>
+<p>必须完成：</p>
+<ol>
+<li>能明确说出：哪类内容最能带来哪类到店顾客</li>
+<li>能明确说出：哪类到店问题最值得再拍成内容</li>
+<li>把门店接待、复购、内容题型形成固定循环</li>
+</ol>
+<h2 id="5">5. 每天 / 每周 / 每月建议动作<a class="headerlink" href="#5" title="Permanent link">¶</a></h2>
+<h3 id="_3">每天<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<ul>
+<li>记录抖音到店人数</li>
+<li>记录强购买问题数量</li>
+<li>记录老客复购人数</li>
+<li>记录最常被问的 1 个问题</li>
+</ul>
+<h3 id="_4">每周<a class="headerlink" href="#_4" title="Permanent link">¶</a></h3>
+<ul>
+<li>复盘哪类内容带来咨询</li>
+<li>复盘哪类顾客最常成交</li>
+<li>更新一版评论 / 私信 / 接待话术</li>
+</ul>
+<h3 id="_5">每月<a class="headerlink" href="#_5" title="Permanent link">¶</a></h3>
+<ul>
+<li>复盘产品结构是否需要调整</li>
+<li>复盘哪些顾客值得重点做复购经营</li>
+<li>复盘抖音和店铺之间是否真的形成闭环</li>
+</ul>
+<h2 id="6">6. 这条店铺经营线和管理线最值得补的文档<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<p>目前已经补上的：</p>
+<ol>
+<li><code>店铺日常经营复盘表</code></li>
+<li><code>小团队门店分工与排班手册</code></li>
+<li><code>员工培训与带教SOP</code></li>
+<li><code>老板周复盘与执行校准</code></li>
+<li><code>门店接待话术SOP</code></li>
+<li><code>抖音到店承接SOP</code></li>
+<li><code>商场引流与营业额增长方法</code></li>
+<li><code>门店营业额增长框架</code></li>
+<li><code>库存预警与补货计算手册</code></li>
+<li><code>进货平衡库存与收益模型</code></li>
+<li><code>门店库存与营收核心计算方法</code></li>
+<li><code>老客复购经营清单</code></li>
+<li><code>会员与私域跟进清单</code></li>
+<li><code>低冲突扩品与产品线丰富策略</code></li>
+</ol>
+<p>后面继续扩仓库时，最建议再补：</p>
+<ol>
+<li><code>门店基础数据记录模板</code></li>
+<li><code>店内成交异议处理话术</code></li>
+<li><code>新员工带教打分表</code></li>
+</ol>
+<h2 id="7">7. 当前结论<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<p>这个仓库后面不应该再被理解成“抖音号项目”。<br />
+更准确的定位应该是：</p>
+<p><code>小黑托昵门店增长与经营文档仓</code></p>
+<p>其中：</p>
+<ul>
+<li>抖音负责获客和建立信任</li>
+<li>门店负责接待、成交和复购</li>
+<li>两条线必须持续互相喂数据、喂问题、喂内容</li>
+</ul>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="05-PhaseA前14天执行清单.html">小黑托昵 Phase A 前 14 天执行清单</a><p>内容增长线</p></div><div class="footer-card"><div class="label">下一篇</div><a href="07-店铺日常经营复盘表.html">小黑托昵店铺日常经营复盘表</a><p>店铺经营基础</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../docs/source/06-店铺经营基础框架.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">小黑托昵店铺经营基础框架</a><ul>
+<li><a href="#_2">使用说明</a></li>
+<li><a href="#1">1. 店铺经营的总目标</a><ul>
+<li><a href="#11">1.1 核心目标</a></li>
+<li><a href="#12">1.2 这个仓库未来的双主线</a><ul>
+<li><a href="#a">A. 内容增长系统</a></li>
+<li><a href="#b">B. 店铺经营系统</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-6">2. 店铺经营的 6 个核心模块</a><ul>
+<li><a href="#21">2.1 进店接待</a></li>
+<li><a href="#22">2.2 产品结构</a></li>
+<li><a href="#22a">2.2A 当前最适合门店的产品矩阵</a></li>
+<li><a href="#22b">2.2B 产品结构的门店决策树</a></li>
+<li><a href="#23">2.3 成交承接</a></li>
+<li><a href="#24">2.4 老客复购</a></li>
+<li><a href="#25">2.5 会员与私域沉淀</a></li>
+<li><a href="#26">2.6 日常经营基本盘</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 抖音和店铺经营怎么真正打通</a><ul>
+<li><a href="#31">3.1 内容负责把问题带进来</a></li>
+<li><a href="#32">3.2 门店负责把问题接住</a></li>
+<li><a href="#33">3.3 最小闭环</a></li>
+</ul>
+</li>
+<li><a href="#4-90">4. 店铺经营未来 90 天怎么推进</a><ul>
+<li><a href="#phase-aday-1-30">Phase A（Day 1-30）：先把接待和记录做稳</a></li>
+<li><a href="#phase-bday-31-60">Phase B（Day 31-60）：开始做复购和产品结构优化</a></li>
+<li><a href="#phase-cday-61-90">Phase C（Day 61-90）：做内容与门店的一体化经营</a></li>
+</ul>
+</li>
+<li><a href="#5">5. 每天 / 每周 / 每月建议动作</a><ul>
+<li><a href="#_3">每天</a></li>
+<li><a href="#_4">每周</a></li>
+<li><a href="#_5">每月</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 这条店铺经营线和管理线最值得补的文档</a></li>
+<li><a href="#7">7. 当前结论</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

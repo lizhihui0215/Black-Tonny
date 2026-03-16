@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>小黑托昵低冲突扩品与产品线丰富策略 | 小黑托昵文档中心</title>
+  <style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #0f172a;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+}
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+.hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+}
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.hero p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: 0.94;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.hero-actions a,
+.small-link,
+.nav-chip {
+  text-decoration: none;
+}
+.hero-actions a {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 18px;
+  background: rgba(248, 250, 252, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+.top-nav-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+.top-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  text-decoration: none;
+}
+.top-nav-link.is-active {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+.breadcrumbs,
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+}
+.nav-chip,
+.meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.nav-chip {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.meta-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.section {
+  margin-top: 22px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.section h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+.section-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+  margin-top: 22px;
+}
+.main-column {
+  min-width: 0;
+}
+.side-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-self: start;
+}
+.rail-panel {
+  position: sticky;
+  top: 88px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.rail-panel h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.rail-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rail-links a {
+  display: block;
+  text-decoration: none;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.rail-links a.current {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+}
+.card-kicker {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.card p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.card a {
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+}
+.doc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 18px;
+}
+.doc-article {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.doc-article h1,
+.doc-article h2,
+.doc-article h3,
+.doc-article h4 {
+  color: #0f172a;
+  line-height: 1.4;
+}
+.doc-article h1 {
+  font-size: 34px;
+  margin-top: 0;
+}
+.doc-article h2 {
+  font-size: 24px;
+  margin-top: 28px;
+}
+.doc-article h3 {
+  font-size: 20px;
+  margin-top: 24px;
+}
+.doc-article p,
+.doc-article li {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #334155;
+}
+.doc-article a {
+  color: #1d4ed8;
+}
+.doc-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  display: block;
+  overflow-x: auto;
+}
+.doc-article th,
+.doc-article td {
+  border: 1px solid #dbe4f0;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.doc-article th {
+  background: #f8fafc;
+}
+.doc-article pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.doc-article code {
+  font-family: "SFMono-Regular", SFMono-Regular, Consolas, monospace;
+  font-size: 0.95em;
+}
+.doc-article blockquote {
+  border-left: 4px solid #93c5fd;
+  margin: 18px 0;
+  padding: 6px 0 6px 14px;
+  color: #475569;
+  background: #f8fbff;
+}
+.toc-panel {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+.toc-panel h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+.toc-panel p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #475569;
+}
+.toc-panel .toc {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.toc-panel ul {
+  margin: 0 0 0 18px;
+  padding: 0;
+}
+.doc-footer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+}
+.footer-card .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.footer-card a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+.footer-card p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.footer-note {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #64748b;
+}
+@media (max-width: 880px) {
+  .page-shell,
+  .doc-layout {
+    grid-template-columns: 1fr;
+  }
+  .side-rail,
+  .toc-panel,
+  .rail-panel {
+    position: static;
+  }
+  .rail-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    padding: 14px 12px 28px;
+  }
+  .hero {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  .hero h1 {
+    font-size: 26px;
+  }
+  .hero p,
+  .section-note,
+  .doc-article p,
+  .doc-article li {
+    font-size: 14px;
+  }
+  .top-nav-links,
+  .hero-actions a {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .top-nav-link {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .section,
+  .doc-article,
+  .toc-panel,
+  .rail-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .rail-links {
+    grid-template-columns: 1fr;
+  }
+  .doc-article h1 {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav"><div class="top-nav-links"><a class="top-nav-link" href="../index.html">首页</a><a class="top-nav-link" href="../dashboard/index.html">仪表盘</a><a class="top-nav-link" href="../dashboard/details.html">详细页</a><a class="top-nav-link is-active" href="index.html">文档中心</a><a class="top-nav-link" href="../costs/index.html">成本维护台</a></div></nav>
+    <section class="hero">
+      <h1>小黑托昵低冲突扩品与产品线丰富策略</h1>
+      <p>配套文档：</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="../index.html">返回 Pages 首页</a>
+        <a class="btn-secondary" href="index.html">进入文档中心</a>
+        <a class="btn-secondary" href="../dashboard/index.html">打开经营仪表盘</a>
+      </div>
+      <div class="breadcrumbs">
+        <a class="nav-chip" href="../index.html">Pages 首页</a>
+        <a class="nav-chip" href="index.html">文档中心</a>
+        <span class="nav-chip">小黑托昵低冲突扩品与产品线丰富策略</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-chip">会员与扩品</span><span class="meta-chip">版本：v1.0</span><span class="meta-chip">更新时间：2026-03-13</span><span class="meta-chip">适用对象：商场内儿童贴身棉品门店、1 个老板 / 老板娘 + 2 位员工</span>
+      </div>
+    </section>
+
+    <div class="page-shell">
+      <div class="main-column">
+        <div class="doc-layout" style="margin-top:0;">
+          <article class="doc-article">
+            <h1 id="_1">小黑托昵低冲突扩品与产品线丰富策略<a class="headerlink" href="#_1" title="Permanent link">¶</a></h1>
+<p>版本：v1.0<br />
+更新日期：2026-03-13<br />
+适用对象：商场内儿童贴身棉品门店、1 个老板 / 老板娘 + 2 位员工<br />
+配套文档：
+- <code>docs/source/15-门店营业额增长框架.md</code>
+- <code>docs/source/17-进货平衡库存与收益模型.md</code>
+- <code>docs/source/18-门店库存与营收核心计算方法.md</code></p>
+<h2 id="_2">使用说明<a class="headerlink" href="#_2" title="Permanent link">¶</a></h2>
+<ul>
+<li>这份文档解决的是 <code>怎么在不明显冲突、不明显加重库存风险的前提下，慢慢把产品线做丰富</code>。</li>
+<li>重点不是“大扩品”，而是先做 <code>同客群、同场景、低库存压力</code> 的补充。</li>
+<li>这份文档里关于商场环境的判断，部分来自公开资料，部分是基于公开资料的推断。我会把两者分开写。</li>
+</ul>
+<h2 id="1">1. 先说结论<a class="headerlink" href="#1" title="Permanent link">¶</a></h2>
+<p>对你们现在这种门店，扩品最稳的方向不是跨很远，而是围绕：</p>
+<ol>
+<li>同一批宝妈</li>
+<li>同一类穿着问题</li>
+<li>同一个进店决策链</li>
+<li>更低尺码风险和更低压货风险</li>
+</ol>
+<p>先围绕 <code>儿童贴身棉品</code> 的邻近类做深，再考虑跨到更远的大类。</p>
+<h2 id="2">2. 公开环境判断依据<a class="headerlink" href="#2" title="Permanent link">¶</a></h2>
+<h3 id="21">2.1 我能确认的公开信息<a class="headerlink" href="#21" title="Permanent link">¶</a></h3>
+<p>根据新城控股官方项目页，<code>西安西咸吾悦广场</code> / <code>西安沣西吾悦广场</code> 的项目定位里明确包含 <code>儿童零售及体验</code>、<code>母婴儿童</code> 等业态，并提到标杆品牌包含 <code>孩子王</code> 等儿童消费品牌，整体是家庭消费明显的综合体环境。<br />
+参考：</p>
+<ul>
+<li><a href="https://www.seazen.com.cn/Business/details1-1139.html">新城控股官方：西安西咸吾悦广场</a></li>
+<li><a href="https://www.seazen.com.cn/business/b-operation-details-1166.html">新城控股官方：西安沣西吾悦广场</a></li>
+</ul>
+<h3 id="22">2.2 我做的推断<a class="headerlink" href="#22" title="Permanent link">¶</a></h3>
+<p>基于上面的公开信息，我的推断是：</p>
+<ol>
+<li>亲子、家庭、儿童消费是有效客群</li>
+<li>同客群的补充品比跨很远的大类更容易被商场接受和被顾客接受</li>
+<li>与大型母婴综合店、儿童运动店、儿童娱乐店强冲突的扩品，风险更高</li>
+</ol>
+<p>这部分是推断，不是你的租约结论。<br />
+最终能不能上某个类，仍建议你以 <code>租约品类约定 + 商场招商主管口径</code> 为准。</p>
+<h2 id="3">3. 什么叫低冲突扩品<a class="headerlink" href="#3" title="Permanent link">¶</a></h2>
+<p>对你们来说，低冲突扩品至少满足 5 条中的 4 条：</p>
+<ol>
+<li><code>同客群</code>
+   还是同一批宝妈和孩子</li>
+<li><code>同场景</code>
+   还是围绕贴身、换季、居家、打底、尺码这些问题</li>
+<li><code>低尺码复杂度</code>
+   不会一下子把库存结构搞得很重</li>
+<li><code>低陈列压力</code>
+   不需要大面积陈列和重体验</li>
+<li><code>低业态冲突</code>
+   不明显撞上大型儿童综合店、运动店、玩具店的核心品类</li>
+</ol>
+<h2 id="4-5">4. 最推荐先试的 5 类低冲突补充品<a class="headerlink" href="#4-5" title="Permanent link">¶</a></h2>
+<h3 id="41">4.1 打底裤 / 安全裤 / 单裤<a class="headerlink" href="#41" title="Permanent link">¶</a></h3>
+<p>为什么适合：</p>
+<ol>
+<li>和当前贴身、换季、打底逻辑完全一致</li>
+<li>更容易和秋衣秋裤、家居服形成场景连带</li>
+<li>不需要太复杂的新讲解体系</li>
+</ol>
+<h3 id="42">4.2 袜品细分<a class="headerlink" href="#42" title="Permanent link">¶</a></h3>
+<p>建议方向：</p>
+<ol>
+<li>基础袜</li>
+<li>连裤袜</li>
+<li>防滑袜</li>
+<li>季节型袜品</li>
+</ol>
+<p>为什么适合：</p>
+<ol>
+<li>连带空间大</li>
+<li>库存单价压力相对低</li>
+<li>更适合做顺手带单</li>
+</ol>
+<h3 id="43">4.3 背心细分<a class="headerlink" href="#43" title="Permanent link">¶</a></h3>
+<p>建议方向：</p>
+<ol>
+<li>基础背心</li>
+<li>发育期小背心</li>
+<li>季节过渡背心</li>
+</ol>
+<p>为什么适合：</p>
+<ol>
+<li>和贴身类主线一致</li>
+<li>更容易接住年龄段和成长替换问题</li>
+</ol>
+<h3 id="44">4.4 家居服单件补充<a class="headerlink" href="#44" title="Permanent link">¶</a></h3>
+<p>建议方向：</p>
+<ol>
+<li>家居单上衣</li>
+<li>家居单裤</li>
+<li>过渡季轻家居</li>
+</ol>
+<p>为什么适合：</p>
+<ol>
+<li>更容易降低整套购买门槛</li>
+<li>有助于拉场景成交</li>
+</ol>
+<h3 id="45">4.5 贴身洗护小配件<a class="headerlink" href="#45" title="Permanent link">¶</a></h3>
+<p>这类要先确认租约和商场口径。<br />
+如果允许，优先考虑：</p>
+<ol>
+<li>洗衣袋</li>
+<li>基础收纳小配件</li>
+</ol>
+<p>为什么只建议小试：</p>
+<ol>
+<li>它不是你的主线</li>
+<li>可能更容易碰到品类边界</li>
+<li>但如果允许，能增强“贴身类解决方案”感觉</li>
+</ol>
+<h2 id="5-6">5. 当前不建议优先扩的 6 类<a class="headerlink" href="#5-6" title="Permanent link">¶</a></h2>
+<p>下面这些，不是永远不能做，而是对你们当前阶段风险更高：</p>
+<h3 id="51">5.1 大童外穿服饰<a class="headerlink" href="#51" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ol>
+<li>尺码复杂</li>
+<li>款式深度要求高</li>
+<li>更容易和普通童装店正面冲突</li>
+</ol>
+<h3 id="52">5.2 儿童鞋类<a class="headerlink" href="#52" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ol>
+<li>试穿和尺码复杂度高</li>
+<li>陈列和库存压力明显增加</li>
+</ol>
+<h3 id="53">5.3 玩具 / 文具 / 大母婴用品<a class="headerlink" href="#53" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ol>
+<li>和当前门店主线距离太远</li>
+<li>更容易进入强冲突区域</li>
+</ol>
+<h3 id="54">5.4 大件家纺<a class="headerlink" href="#54" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ol>
+<li>占空间</li>
+<li>不利于小店轻库存</li>
+</ol>
+<h3 id="55">5.5 大型运动类<a class="headerlink" href="#55" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ol>
+<li>更容易和儿童运动品牌冲突</li>
+<li>顾客心智不一致</li>
+</ol>
+<h3 id="56">5.6 高单价重体验类<a class="headerlink" href="#56" title="Permanent link">¶</a></h3>
+<p>原因：</p>
+<ol>
+<li>决策链更长</li>
+<li>会拖慢你们当前接待效率</li>
+</ol>
+<h2 id="6">6. 一套最稳的扩品方法<a class="headerlink" href="#6" title="Permanent link">¶</a></h2>
+<h3 id="61">6.1 先试一个类，不同时开很多类<a class="headerlink" href="#61" title="Permanent link">¶</a></h3>
+<p>建议顺序：</p>
+<ol>
+<li>先选 1 个最贴近主线的类</li>
+<li>先试 2-4 周</li>
+<li>看结果再决定继续还是停</li>
+</ol>
+<h3 id="62">6.2 扩品预算先轻<a class="headerlink" href="#62" title="Permanent link">¶</a></h3>
+<p>建议：</p>
+<ol>
+<li>第一次试投预算控制在补货预算的 <code>5%-10%</code></li>
+<li>不要一上来压深</li>
+<li>先看连带，不先看大规模单独销售</li>
+</ol>
+<h3 id="63-3">6.3 扩品先看 3 个指标<a class="headerlink" href="#63-3" title="Permanent link">¶</a></h3>
+<ol>
+<li><code>连带率</code></li>
+<li><code>售罄率</code></li>
+<li><code>库存覆盖天数</code></li>
+</ol>
+<h2 id="7">7. 怎么判断一个扩品值不值得继续<a class="headerlink" href="#7" title="Permanent link">¶</a></h2>
+<h3 id="71">7.1 扩品连带率<a class="headerlink" href="#71" title="Permanent link">¶</a></h3>
+<p><code>扩品连带率 = 含扩品订单数 ÷ 总成交单数</code></p>
+<h3 id="72">7.2 扩品营业额贡献<a class="headerlink" href="#72" title="Permanent link">¶</a></h3>
+<p><code>扩品营业额贡献 = 扩品营业额 ÷ 总营业额</code></p>
+<h3 id="73">7.3 扩品售罄率<a class="headerlink" href="#73" title="Permanent link">¶</a></h3>
+<p><code>扩品售罄率 = 扩品销售件数 ÷ 扩品可售总件数</code></p>
+<h3 id="74">7.4 扩品覆盖天数<a class="headerlink" href="#74" title="Permanent link">¶</a></h3>
+<p><code>扩品覆盖天数 = 扩品当前可售库存 ÷ 扩品日均销量</code></p>
+<h2 id="8">8. 一条门店最实用的保留 / 淘汰线<a class="headerlink" href="#8" title="Permanent link">¶</a></h2>
+<p>先试 4 周后，按这个逻辑判断：</p>
+<h3 id="81">8.1 值得保留<a class="headerlink" href="#81" title="Permanent link">¶</a></h3>
+<ol>
+<li>连带率稳定</li>
+<li>售罄率不差</li>
+<li>没有明显拖慢库存</li>
+<li>顾客容易理解和接受</li>
+</ol>
+<h3 id="82">8.2 继续观察<a class="headerlink" href="#82" title="Permanent link">¶</a></h3>
+<ol>
+<li>有一点成交</li>
+<li>但连带和周转还不稳定</li>
+</ol>
+<h3 id="83">8.3 及时停<a class="headerlink" href="#83" title="Permanent link">¶</a></h3>
+<ol>
+<li>周转慢</li>
+<li>连带弱</li>
+<li>明显占空间</li>
+<li>顾客经常看不懂为什么你要卖它</li>
+</ol>
+<h2 id="9-5">9. 当前最先执行的 5 件事<a class="headerlink" href="#9-5" title="Permanent link">¶</a></h2>
+<p>如果你现在就想开始试扩品，先做这 5 条：</p>
+<ol>
+<li>先从 <code>打底裤 / 安全裤 / 单裤</code> 或 <code>袜品细分</code> 里二选一</li>
+<li>第一次试投只给 <code>5%-10%</code> 预算</li>
+<li>先试 2-4 周，不同时试太多类</li>
+<li>每周看 <code>扩品连带率、售罄率、覆盖天数</code></li>
+<li>任何跨出贴身棉品主线的类，先问租约或商场口径</li>
+</ol>
+<p>先把这 5 条跑顺，扩品会更像“稳步加营业额”，而不是“增加一堆库存压力”。</p>
+            <div class="doc-footer">
+              <div class="footer-card"><div class="label">上一篇</div><a href="20-会员与私域跟进清单.html">小黑托昵会员与私域跟进清单</a><p>会员与扩品</p></div><div class="footer-card"><div class="label">下一篇</div><a href="22-库存销售看板工具使用说明.html">库存销售看板工具使用说明</a><p>看板与数据</p></div><div class="footer-card"><div class="label">源文件</div><a href="../../docs/source/21-低冲突扩品与产品线丰富策略.md">查看 Markdown 源文档</a><p>如果你要继续修改内容，优先改这份源文件。</p></div>
+            </div>
+            <div class="footer-note">
+              这页内容由 Markdown 自动生成。继续编辑时，优先修改源 Markdown，再重新运行生成脚本。
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-panel"><h2>常用导航</h2><p>不管你现在在哪份手册里，都能从这里直接回到最常用的页面。</p><div class="rail-links"><a class="" href="../index.html">Pages 首页</a><a class="" href="../dashboard/index.html">经营仪表盘</a><a class="" href="../dashboard/details.html">详细经营页</a><a class="current" href="index.html">文档中心</a><a class="" href="../costs/index.html">成本维护台</a></div></section>
+        <section class="toc-panel"><h2>页内目录</h2><p>先扫一眼目录，再按需要往下看，手机上也能直接跳到对应章节。</p><div class="toc">
+<ul>
+<li><a href="#_1">小黑托昵低冲突扩品与产品线丰富策略</a><ul>
+<li><a href="#_2">使用说明</a></li>
+<li><a href="#1">1. 先说结论</a></li>
+<li><a href="#2">2. 公开环境判断依据</a><ul>
+<li><a href="#21">2.1 我能确认的公开信息</a></li>
+<li><a href="#22">2.2 我做的推断</a></li>
+</ul>
+</li>
+<li><a href="#3">3. 什么叫低冲突扩品</a></li>
+<li><a href="#4-5">4. 最推荐先试的 5 类低冲突补充品</a><ul>
+<li><a href="#41">4.1 打底裤 / 安全裤 / 单裤</a></li>
+<li><a href="#42">4.2 袜品细分</a></li>
+<li><a href="#43">4.3 背心细分</a></li>
+<li><a href="#44">4.4 家居服单件补充</a></li>
+<li><a href="#45">4.5 贴身洗护小配件</a></li>
+</ul>
+</li>
+<li><a href="#5-6">5. 当前不建议优先扩的 6 类</a><ul>
+<li><a href="#51">5.1 大童外穿服饰</a></li>
+<li><a href="#52">5.2 儿童鞋类</a></li>
+<li><a href="#53">5.3 玩具 / 文具 / 大母婴用品</a></li>
+<li><a href="#54">5.4 大件家纺</a></li>
+<li><a href="#55">5.5 大型运动类</a></li>
+<li><a href="#56">5.6 高单价重体验类</a></li>
+</ul>
+</li>
+<li><a href="#6">6. 一套最稳的扩品方法</a><ul>
+<li><a href="#61">6.1 先试一个类，不同时开很多类</a></li>
+<li><a href="#62">6.2 扩品预算先轻</a></li>
+<li><a href="#63-3">6.3 扩品先看 3 个指标</a></li>
+</ul>
+</li>
+<li><a href="#7">7. 怎么判断一个扩品值不值得继续</a><ul>
+<li><a href="#71">7.1 扩品连带率</a></li>
+<li><a href="#72">7.2 扩品营业额贡献</a></li>
+<li><a href="#73">7.3 扩品售罄率</a></li>
+<li><a href="#74">7.4 扩品覆盖天数</a></li>
+</ul>
+</li>
+<li><a href="#8">8. 一条门店最实用的保留 / 淘汰线</a><ul>
+<li><a href="#81">8.1 值得保留</a></li>
+<li><a href="#82">8.2 继续观察</a></li>
+<li><a href="#83">8.3 及时停</a></li>
+</ul>
+</li>
+<li><a href="#9-5">9. 当前最先执行的 5 件事</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

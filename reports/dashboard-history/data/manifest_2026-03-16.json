@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-03-16T23:28:41.974746+08:00",
+  "date_tag": "2026-03-16",
+  "store_name": "咸阳沣西吾悦专卖店",
+  "analysis_batch_id": "sales_calibration_20260316_232831",
+  "available_pages": {
+    "dashboard": "data/dashboard.json",
+    "details": "data/details.json",
+    "monthly": "data/monthly.json",
+    "quarterly": "data/quarterly.json"
+  },
+  "available_exports": {
+    "summary_markdown": "summary.md",
+    "report_markdown": "report.md",
+    "replenish_csv": "补货建议清单.csv",
+    "clearance_csv": "去化建议清单.csv",
+    "category_risk_csv": "品类风险概览.csv"
+  },
+  "pipeline": [
+    "抓取 JSON",
+    "数据同步",
+    "SQLite",
+    "本地分析",
+    "导出 JSON",
+    "Pages 展示"
+  ]
+}
