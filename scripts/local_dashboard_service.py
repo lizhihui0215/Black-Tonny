@@ -112,6 +112,7 @@ class JobState:
     total_reports: int = 0
     ok_reports: int = 0
     partial_reports: int = 0
+    warning_reports: int = 0
     opened_only_reports: int = 0
     error_reports: int = 0
 
@@ -148,6 +149,7 @@ def snapshot_state() -> dict[str, Any]:
             "total_reports": STATE.total_reports,
             "ok_reports": STATE.ok_reports,
             "partial_reports": STATE.partial_reports,
+            "warning_reports": STATE.warning_reports,
             "opened_only_reports": STATE.opened_only_reports,
             "error_reports": STATE.error_reports,
         }
@@ -204,6 +206,7 @@ def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_da
         total_reports=0,
         ok_reports=0,
         partial_reports=0,
+        warning_reports=0,
         opened_only_reports=0,
         error_reports=0,
     )
@@ -223,16 +226,20 @@ def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_da
             total_reports=int(scan_index.get("totalReports") or 0) if isinstance(scan_index, dict) else 0,
             ok_reports=int(counts.get("ok") or 0),
             partial_reports=int(counts.get("partial") or 0),
+            warning_reports=int(counts.get("warning") or 0),
             opened_only_reports=int(counts.get("opened-only") or 0),
             error_reports=int(counts.get("error") or 0),
         )
+        warning_count = int(counts.get("warning") or 0)
+        error_count = int(counts.get("error") or 0)
         append_step(
             "执行全量同步",
-            "ok",
+            "warning" if warning_count or error_count else "ok",
             (
                 f"已按 {sync_start_date} 到 {sync_end_date} 运行全量同步。"
                 f" 成功 {counts.get('ok', 0)} 张，部分成功 {counts.get('partial', 0)} 张，"
-                f"仅打开未取数 {counts.get('opened-only', 0)} 张，失败 {counts.get('error', 0)} 张。"
+                f"沿用上次成功数据 {warning_count} 张，仅打开未取数 {counts.get('opened-only', 0)} 张，"
+                f"失败 {error_count} 张。"
             ),
         )
 
@@ -259,8 +266,14 @@ def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_da
         update_state(
             running=False,
             finished_at=now_text(),
-            status="success",
-            message="全量同步和重建已完成，可以刷新首页和仪表盘查看最新结果。",
+            status="warning" if warning_count or error_count else "success",
+            message=(
+                "全量同步和重建已完成，部分报表沿用了上次成功数据。"
+                if warning_count and not error_count
+                else "全量同步和重建已完成，但仍有少量报表未成功。"
+                if error_count
+                else "全量同步和重建已完成，可以刷新首页和仪表盘查看最新结果。"
+            ),
             last_scan_index=last_scan_index,
             last_dashboard=last_dashboard,
             last_success_at=now_text(),

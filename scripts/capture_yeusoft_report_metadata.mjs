@@ -39,6 +39,7 @@ const REPORT_GROUP_MAP = {
   储值按店汇总: "会员报表",
   储值卡汇总: "会员报表",
   储值卡明细: "会员报表",
+  会员中心: "会员报表",
   商品销售情况: "综合分析",
   商品品类分析: "综合分析",
   门店销售月报: "综合分析",
@@ -152,7 +153,34 @@ function extractRowCount(body) {
     return body.length;
   }
 
-  const directCandidates = ["retdata", "data", "Data", "list", "List", "rows", "Rows"];
+  const nestedPathCandidates = [
+    ["Data", "PageData", "Items"],
+    ["retdata", "PageData", "Items"],
+    ["data", "PageData", "Items"],
+    ["Data", "List"],
+    ["retdata", "List"],
+    ["data", "List"],
+    ["Data", "Items"],
+    ["retdata", "Items"],
+    ["data", "Items"],
+    ["PageData", "Items"],
+  ];
+  for (const pathKeys of nestedPathCandidates) {
+    let current = body;
+    let matched = true;
+    for (const key of pathKeys) {
+      if (!current || typeof current !== "object" || !(key in current)) {
+        matched = false;
+        break;
+      }
+      current = current[key];
+    }
+    if (matched && Array.isArray(current)) {
+      return current.length;
+    }
+  }
+
+  const directCandidates = ["retdata", "data", "Data", "list", "List", "rows", "Rows", "Items", "items"];
   for (const key of directCandidates) {
     if (Array.isArray(body[key])) {
       return body[key].length;
@@ -169,6 +197,28 @@ function extractRowCount(body) {
         return retdata[key].length;
       }
     }
+  }
+
+  const stack = [body];
+  const visited = new Set();
+  const recursiveCandidates = [];
+  while (stack.length) {
+    const current = stack.pop();
+    if (!current || typeof current !== "object" || visited.has(current)) {
+      continue;
+    }
+    visited.add(current);
+    for (const [key, value] of Object.entries(current)) {
+      if (Array.isArray(value) && ["Items", "items", "List", "list", "Rows", "rows", "Data", "data", "retdata", "TotalData"].includes(key)) {
+        recursiveCandidates.push(value.length);
+      } else if (value && typeof value === "object") {
+        stack.push(value);
+      }
+    }
+  }
+
+  if (recursiveCandidates.length) {
+    return Math.max(...recursiveCandidates);
   }
 
   return null;
@@ -310,10 +360,21 @@ async function login(page) {
 }
 
 async function waitForPosFrame(page) {
-  for (let i = 0; i < 60; i += 1) {
-    const frame = page.frames().find((item) => item.url().includes("/pos_internal/"));
+  const frameHints = ["/pos_internal/", "#/Cashier", "Cashier"];
+  for (let i = 0; i < 90; i += 1) {
+    const frame = page.frames().find((item) => frameHints.some((hint) => item.url().includes(hint)));
     if (frame) {
       return frame;
+    }
+    const mainFrame = page.mainFrame();
+    const mainFrameReady = await mainFrame
+      .evaluate(() => {
+        const app = document.querySelector("#app")?.__vue__?.$children?.[0];
+        return !!app && (typeof app?.jumpPage === "function" || typeof app?.addTab === "function" || !!app?.reportArrList);
+      })
+      .catch(() => false);
+    if (mainFrameReady) {
+      return mainFrame;
     }
     await page.waitForTimeout(1000);
   }
@@ -625,6 +686,17 @@ function buildDirectReportRequest(reportName, startDate, endDate, auth = {}) {
           BeginDate: startDate,
           Search: "",
         },
+      },
+    };
+  }
+
+  if (resolvedReportName === "会员中心") {
+    return {
+      url: `${ERP_API_URL}/eposapi/YisEposVipManage/SelVipInfoList`,
+      body: {
+        condition: "",
+        searchval: "",
+        VolumeNumber: "",
       },
     };
   }
@@ -1069,7 +1141,25 @@ export async function createYeusoftSession(options = {}) {
   console.log("[STEP] login");
   await login(page);
   console.log("[STEP] login ok");
-  const frame = await waitForPosFrame(page);
+  let frame;
+  let frameError;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      frame = await waitForPosFrame(page);
+      break;
+    } catch (error) {
+      frameError = error;
+      if (attempt === 3) {
+        throw error;
+      }
+      console.log(`[STEP] frame retry ${attempt} failed, refreshing page`);
+      await page.reload({ waitUntil: "domcontentloaded", timeout: 60000 }).catch(() => null);
+      await page.waitForTimeout(4000 * attempt);
+    }
+  }
+  if (!frame) {
+    throw frameError || new Error("pos_internal frame not found");
+  }
   console.log("[STEP] frame ok");
   const appState = await waitForOperationalApp(frame, page);
   console.log(`[STEP] app ready jump:${appState.hasJumpPage} addTab:${appState.hasAddTab} reportArr:${appState.hasReportArrList}`);
@@ -1108,39 +1198,62 @@ export async function captureReportInSession(session, reportName, options = {}) 
     start: options.startDate || session.startDate || START_DATE,
     end: options.endDate || session.endDate || END_DATE,
   };
-  console.log(`[STEP] start ${resolvedReportName}`);
-
-  const menuItem = session.menuLookup?.[resolvedReportName] || session.menuLookup?.[reportName] || null;
-  const openResult = await tryOpenReportByMenuItem(session.frame, session.page, resolvedReportName, menuItem);
-  if (openResult?.ok) {
-    console.log(
-      `[STEP] opened by menu item ${menuItem?.FuncUrl || REPORT_INTERNAL_NAME_MAP[resolvedReportName] || "unknown"} via ${openResult.method || "unknown"}`,
-    );
-  } else {
-    if (openResult?.reason) {
-      console.log(`[STEP] menu item open skipped: ${openResult.reason}`);
-    }
-    await revealReportMenu(session.frame, session.page);
-    console.log("[STEP] report menu open");
-    await ensureReportGroup(session.frame, session.page, menuItem?.groupName || resolvedReportName);
-    await clickReportMenuItem(session.frame, resolvedReportName);
-    console.log(`[STEP] clicked ${resolvedReportName}`);
-  }
-  await session.page.waitForTimeout(2500);
-
-  const dateRangeApplied = await trySetDateRange(
-    session.frame,
+  const directRequestPlan = buildDirectReportRequest(
+    resolvedReportName,
     requestedRange.start,
     requestedRange.end,
+    session.auth || {},
   );
-  if (dateRangeApplied) {
-    console.log("[STEP] date range updated");
-    await session.page.waitForTimeout(800);
-  }
-
+  console.log(`[STEP] start ${resolvedReportName}`);
   const captureLog = session.collector.start(resolvedReportName, {
     requestedRange,
   });
+
+  let directApiCaptured = false;
+  let dateRangeApplied = false;
+  let queryTriggered = false;
+  let menuItem = session.menuLookup?.[resolvedReportName] || session.menuLookup?.[reportName] || null;
+
+  if (directRequestPlan) {
+    directApiCaptured = await enrichReportWithDirectApi(session, resolvedReportName, captureLog, {
+      startDate: requestedRange.start,
+      endDate: requestedRange.end,
+    }).catch((error) => {
+      console.log(`[STEP] direct api skipped: ${String(error)}`);
+      return false;
+    });
+  }
+
+  if (!directApiCaptured) {
+    const openResult = await tryOpenReportByMenuItem(session.frame, session.page, resolvedReportName, menuItem);
+    if (openResult?.ok) {
+      console.log(
+        `[STEP] opened by menu item ${menuItem?.FuncUrl || REPORT_INTERNAL_NAME_MAP[resolvedReportName] || "unknown"} via ${openResult.method || "unknown"}`,
+      );
+    } else {
+      if (openResult?.reason) {
+        console.log(`[STEP] menu item open skipped: ${openResult.reason}`);
+      }
+      await revealReportMenu(session.frame, session.page);
+      console.log("[STEP] report menu open");
+      await ensureReportGroup(session.frame, session.page, menuItem?.groupName || resolvedReportName);
+      await clickReportMenuItem(session.frame, resolvedReportName);
+      console.log(`[STEP] clicked ${resolvedReportName}`);
+    }
+    await session.page.waitForTimeout(2500);
+
+    dateRangeApplied = await trySetDateRange(
+      session.frame,
+      requestedRange.start,
+      requestedRange.end,
+    );
+    if (dateRangeApplied) {
+      console.log("[STEP] date range updated");
+      await session.page.waitForTimeout(800);
+    }
+    queryTriggered = await clickQueryButton(session.frame, session.page);
+  }
+  await session.page.waitForTimeout(2000);
 
   const tabState = await session.frame.evaluate(() => {
     const app = document.querySelector("#app")?.__vue__?.$children?.[0];
@@ -1166,17 +1279,6 @@ export async function captureReportInSession(session, reportName, options = {}) 
       .filter(Boolean)
       .slice(0, 100);
   });
-
-  let directApiCaptured = false;
-  directApiCaptured = await enrichReportWithDirectApi(session, resolvedReportName, captureLog, {
-    startDate: requestedRange.start,
-    endDate: requestedRange.end,
-  }).catch((error) => {
-    console.log(`[STEP] direct api skipped: ${String(error)}`);
-    return false;
-  });
-  const queryTriggered = directApiCaptured ? false : await clickQueryButton(session.frame, session.page);
-  await session.page.waitForTimeout(2000);
 
   const screenshotPath = path.join(outputDir, `${sanitizeName(resolvedReportName)}.png`);
   console.log("[STEP] screenshot");

@@ -1265,6 +1265,170 @@ def parse_yeusoft_monthly_sales_report(capture_payload: dict | None) -> dict | N
     }
 
 
+def extract_retail_detail_size_labels(payload: dict) -> dict[str, str]:
+    title_rows = payload.get("Title") or []
+    if not title_rows or not isinstance(title_rows[0], dict):
+        return {}
+
+    mapping: dict[str, str] = {}
+    for column, raw_label in title_rows[0].items():
+        if not str(column).startswith("col"):
+            continue
+        decoded = decode_yeusoft_text(raw_label)
+        parts = [
+            part.strip()
+            for part in re.split(r"<br\s*/?>", decoded, flags=re.IGNORECASE)
+            if part and part.strip() and part.strip() != "\u3000"
+        ]
+        deduped: list[str] = []
+        for part in parts:
+            if part not in deduped:
+                deduped.append(part)
+        if deduped:
+            mapping[column] = "/".join(deduped[:2])
+    return mapping
+
+
+def parse_yeusoft_retail_detail(capture_payload: dict | None) -> dict | None:
+    body = extract_capture_response(capture_payload, "SelDeptSaleList")
+    if not body or body.get("errcode") != "1000":
+        return None
+
+    payload = (body.get("retdata") or [{}])[0]
+    rows = payload.get("Data") or []
+    if not rows:
+        return None
+
+    numeric_columns = ["RetailPrice", "TotalMoney", "TotalNum", "TotalRetailMoney", "Discount"]
+    numeric_columns.extend(column for column in rows[0].keys() if str(column).startswith("col"))
+    frame = normalize_yeusoft_frame(pd.DataFrame(rows), numeric_columns)
+    if frame.empty or "TotalMoney" not in frame.columns:
+        return None
+
+    for column in ("Type", "Type1", "Type2", "Years", "Season", "WareName", "Spec", "ColorName"):
+        if column in frame.columns:
+            frame[column] = frame[column].replace("", "未标记").fillna("未标记")
+
+    props = frame[frame["Type"].eq("道具")].copy() if "Type" in frame.columns else pd.DataFrame()
+    normal = frame[frame["Type"].ne("道具")].copy() if "Type" in frame.columns else frame.copy()
+    normal = normal[normal["TotalMoney"] > 0].copy()
+    if normal.empty:
+        return None
+
+    total_sales = float(normal["TotalMoney"].sum())
+    total_retail = float(normal["TotalRetailMoney"].sum())
+    weighted_discount = safe_ratio(total_sales, total_retail)
+    normal["deep_discount_sales"] = normal["TotalMoney"].where(normal["Discount"] < 0.75, 0.0)
+    deep_discount_sales_share = safe_ratio(normal["deep_discount_sales"].sum(), total_sales)
+
+    category_frame = (
+        normal.groupby("Type1", dropna=False)
+        .agg(
+            sales_amount=("TotalMoney", "sum"),
+            retail_amount=("TotalRetailMoney", "sum"),
+            deep_discount_sales=("deep_discount_sales", "sum"),
+        )
+        .reset_index()
+    )
+    category_frame = category_frame[category_frame["sales_amount"] > 0].copy()
+    if category_frame.empty:
+        return None
+    category_frame["discount_rate"] = category_frame.apply(
+        lambda row: safe_ratio(row["sales_amount"], row["retail_amount"]), axis=1
+    )
+    category_frame["deep_discount_share"] = category_frame.apply(
+        lambda row: safe_ratio(row["deep_discount_sales"], row["sales_amount"]), axis=1
+    )
+    category_frame = category_frame.sort_values(["deep_discount_share", "sales_amount"], ascending=[False, False])
+    top_discount_categories = [
+        {
+            "name": row["Type1"] or "未标记中类",
+            "sales_amount": float(row["sales_amount"]),
+            "discount_rate": float(row["discount_rate"]),
+            "deep_discount_share": float(row["deep_discount_share"]),
+        }
+        for _, row in category_frame.head(5).iterrows()
+        if float(row["sales_amount"]) >= 10000
+    ]
+
+    size_labels = extract_retail_detail_size_labels(payload)
+    size_columns = [column for column in frame.columns if str(column).startswith("col")]
+    size_rows: list[dict[str, object]] = []
+    total_size_qty = 0.0
+    if size_columns:
+        size_totals = normal[size_columns].sum().sort_values(ascending=False)
+        total_size_qty = float(size_totals.sum())
+        for column, qty in size_totals.items():
+            if qty <= 0:
+                continue
+            size_rows.append(
+                {
+                    "name": size_labels.get(column, column),
+                    "qty": float(qty),
+                    "share": safe_ratio(qty, total_size_qty),
+                }
+            )
+    core_size_names = "、".join(row["name"] for row in size_rows[:3]) if size_rows else "主销尺码待确认"
+
+    price_band_rows: list[dict[str, object]] = []
+    if "RetailPrice" in normal.columns:
+        price_frame = normal[normal["RetailPrice"] > 0].copy()
+        if not price_frame.empty:
+            price_bins = [0, 39, 59, 79, 99, 149, float("inf")]
+            price_labels = ["39元以下", "40-59元", "60-79元", "80-99元", "100-149元", "150元以上"]
+            price_frame["price_band"] = pd.cut(
+                price_frame["RetailPrice"],
+                bins=price_bins,
+                labels=price_labels,
+                include_lowest=True,
+                right=True,
+            )
+            grouped = (
+                price_frame.groupby("price_band", dropna=False, observed=False)["TotalMoney"]
+                .sum()
+                .sort_values(ascending=False)
+            )
+            price_band_rows = [
+                {
+                    "name": str(index),
+                    "sales_amount": float(value),
+                    "share": safe_ratio(value, total_sales),
+                }
+                for index, value in grouped.items()
+                if pd.notna(index) and float(value) > 0
+            ]
+
+    request_payload = extract_capture_request(capture_payload, "SelDeptSaleList") or {}
+    discount_category_names = (
+        "、".join(item["name"] for item in top_discount_categories[:3])
+        if top_discount_categories
+        else "暂无明显折扣依赖中类"
+    )
+    top_price_band = price_band_rows[0]["name"] if price_band_rows else "主价格带待确认"
+    markdown_pressure_high = weighted_discount < 0.78 or deep_discount_sales_share >= 0.45
+
+    return {
+        "capture_at": pd.to_datetime(capture_payload.get("capturedAt"), errors="coerce"),
+        "window_start": parse_yeusoft_request_date(request_payload.get("bdate")),
+        "window_end": parse_yeusoft_request_date(request_payload.get("edate")),
+        "row_count": int(len(normal)),
+        "sales_amount": total_sales,
+        "retail_amount": total_retail,
+        "weighted_discount_rate": weighted_discount,
+        "deep_discount_sales_share": deep_discount_sales_share,
+        "markdown_pressure_high": markdown_pressure_high,
+        "top_discount_categories": top_discount_categories,
+        "discount_category_names": discount_category_names,
+        "size_rows": size_rows[:6],
+        "core_size_names": core_size_names,
+        "top_size_share": size_rows[0]["share"] if size_rows else 0.0,
+        "price_band_rows": price_band_rows[:6],
+        "top_price_band": top_price_band,
+        "props_sales_amount": float(props["TotalMoney"].sum()) if not props.empty else 0.0,
+        "props_sales_share": safe_ratio(float(props["TotalMoney"].sum()), float(frame["TotalMoney"].sum())),
+    }
+
+
 def build_yeusoft_report_highlights(
     capture_bundle: dict[str, dict], current_season: str, next_season: str
 ) -> dict | None:
@@ -1285,6 +1449,7 @@ def build_yeusoft_report_highlights(
     vip_analysis = parse_yeusoft_vip_analysis(capture_bundle.get("会员综合分析"))
     guide_report = parse_yeusoft_guide_report(capture_bundle.get("导购员报表"))
     store_month_report = parse_yeusoft_monthly_sales_report(capture_bundle.get("门店销售月报"))
+    retail_detail = parse_yeusoft_retail_detail(capture_bundle.get("零售明细统计"))
 
     capture_dates = [
         value.get("capture_at")
@@ -1299,6 +1464,7 @@ def build_yeusoft_report_highlights(
             vip_analysis,
             guide_report,
             store_month_report,
+            retail_detail,
         )
         if value and pd.notna(value.get("capture_at"))
     ]
@@ -1314,6 +1480,7 @@ def build_yeusoft_report_highlights(
         "vip_analysis": vip_analysis,
         "guide_report": guide_report,
         "store_month_report": store_month_report,
+        "retail_detail": retail_detail,
         "capture_at": max(capture_dates) if capture_dates else pd.NaT,
     }
 
@@ -2031,6 +2198,13 @@ def build_metrics(
         & (product_sales_no_props["建议补货量"] >= 1)
         & ((product_sales_no_props["库存"] <= 2) | (product_sales_no_props["库存周数"] <= 2))
     )
+    retail_detail = (yeusoft_highlights or {}).get("retail_detail") if yeusoft_highlights else {}
+    discount_dependent_categories = {
+        str(item.get("name", "")).strip()
+        for item in (retail_detail or {}).get("top_discount_categories", [])
+        if str(item.get("name", "")).strip()
+    }
+    core_size_names = (retail_detail or {}).get("core_size_names", "主销尺码")
 
     replenish = product_sales_no_props[
         product_sales_no_props["补货候选"]
@@ -2046,7 +2220,22 @@ def build_metrics(
         ),
         axis=1,
     )
+    replenish[["补货原则", "主销尺码", "进货提醒", "控折扣原则", "预算建议", "进货顺序"]] = replenish.apply(
+        lambda row: pd.Series(
+            classify_replenish_rule(
+                row,
+                discount_dependent_categories,
+                core_size_names,
+            )
+        ),
+        axis=1,
+    )
     replenish.loc[replenish["库存"] < 0, "建议动作"] = "先校库存再补货"
+    replenish.loc[replenish["库存"] < 0, "补货原则"] = "先校库存"
+    replenish.loc[replenish["库存"] < 0, "进货提醒"] = "库存口径异常，先别下单"
+    replenish.loc[replenish["库存"] < 0, "控折扣原则"] = "先校库存，先别谈活动和折扣"
+    replenish.loc[replenish["库存"] < 0, "预算建议"] = "库存异常款先不下单，预算留给正常主销款"
+    replenish.loc[replenish["库存"] < 0, "进货顺序"] = "先查账、查盘点、查调拨，确认后再补"
     replenish = replenish.sort_values(
         ["销售金额", "库存周数", "库存"], ascending=[False, True, True]
     )
@@ -2057,11 +2246,15 @@ def build_metrics(
             销售额=("销售金额", "sum"),
             库存=("库存", "sum"),
             建议补货量=("建议补货量", "sum"),
+            补货原则=("补货原则", lambda values: "、".join(dedupe_preserve_order([str(v) for v in values if str(v).strip()])[:2])),
+            主销尺码=("主销尺码", lambda values: "、".join(dedupe_preserve_order([str(v) for v in values if str(v).strip()])[:1])),
+            控折扣原则=("控折扣原则", lambda values: "、".join(dedupe_preserve_order([str(v) for v in values if str(v).strip()])[:1])),
+            预算建议=("预算建议", lambda values: "、".join(dedupe_preserve_order([str(v) for v in values if str(v).strip()])[:1])),
         )
         .reset_index()
         .sort_values(["销售额", "建议补货量", "SKU数"], ascending=[False, False, False])
         if not replenish.empty
-        else pd.DataFrame(columns=["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量"])
+        else pd.DataFrame(columns=["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量", "补货原则", "主销尺码", "控折扣原则", "预算建议"])
     )
 
     seasonal_actions = product_sales_no_props[
@@ -3007,7 +3200,16 @@ def build_decision_engine(metrics: dict) -> dict[str, object]:
     top_clearance = top_labels_from_series(metrics["clearance_categories"]["大类"], time_strategy["top_clearance_category"], 2)
     top_seasonal = top_labels_from_series(metrics["seasonal_categories"]["中类"], "跨季品类", 2)
 
-    if profit and profit["projected_month_net_profit"] < 0 and signals["low_joint"]:
+    if profit and profit["projected_month_net_profit"] < 0 and signals["markdown_pressure_high"]:
+        mode = "稳毛利优先"
+        headline = "先稳毛利，别靠打折硬撑。"
+        summary = (
+            f"{time_strategy['phase']}阶段，最近日销{sales_trend['label']}，"
+            f"但按当前节奏月末净利约 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+            f" 当前实销折扣约 {format_num(signals['weighted_discount_rate'] * 10, 1)} 折，"
+            f"{signals['discount_category_names']} 这些中类折扣依赖偏重。先稳毛利、提组合，再谈放大量。"
+        )
+    elif profit and profit["projected_month_net_profit"] < 0 and signals["low_joint"]:
         mode = "提连带保利润"
         headline = "先提连带和客单，别只冲单数。"
         summary = (
@@ -3081,12 +3283,15 @@ def build_homepage_operating_signals(metrics: dict) -> dict[str, object]:
     vip_analysis = pos_highlights.get("vip_analysis") or {}
     guide_report = pos_highlights.get("guide_report") or {}
     store_month_report = pos_highlights.get("store_month_report") or {}
+    retail_detail = pos_highlights.get("retail_detail") or {}
 
     latest_month = store_month_report.get("latest_month") if store_month_report else None
     top2_share = float(category_analysis.get("top2_share", 0) or 0)
     dormant_ratio = float(vip_analysis.get("dormant_ratio", 0) or 0)
     top_guide_share = float(guide_report.get("top_guide_share", 0) or 0)
     latest_joint_rate = float((latest_month or {}).get("joint_rate", 0) or 0)
+    weighted_discount_rate = float(retail_detail.get("weighted_discount_rate", 0) or 0)
+    deep_discount_sales_share = float(retail_detail.get("deep_discount_sales_share", 0) or 0)
 
     growth_rows = category_analysis.get("growth_rows") or []
     growth_names = "、".join(item["name"] for item in growth_rows[:2]) if growth_rows else category_analysis.get(
@@ -3098,6 +3303,7 @@ def build_homepage_operating_signals(metrics: dict) -> dict[str, object]:
         "vip_analysis": vip_analysis,
         "guide_report": guide_report,
         "store_month_report": store_month_report,
+        "retail_detail": retail_detail,
         "latest_month": latest_month,
         "category_concentrated": top2_share >= 0.6,
         "top2_share": top2_share,
@@ -3115,7 +3321,80 @@ def build_homepage_operating_signals(metrics: dict) -> dict[str, object]:
         "latest_joint_rate": latest_joint_rate,
         "low_joint_days": int(store_month_report.get("low_joint_days", 0) or 0),
         "latest_month_label": (latest_month or {}).get("label", "最近月份"),
+        "markdown_pressure_high": bool(retail_detail.get("markdown_pressure_high")),
+        "weighted_discount_rate": weighted_discount_rate,
+        "deep_discount_sales_share": deep_discount_sales_share,
+        "discount_category_names": retail_detail.get("discount_category_names", "高折扣依赖中类"),
+        "core_size_names": retail_detail.get("core_size_names", "主销尺码"),
+        "top_size_share": float(retail_detail.get("top_size_share", 0) or 0),
+        "top_price_band": retail_detail.get("top_price_band", "主价格带"),
     }
+
+
+def classify_replenish_rule(
+    row: pd.Series,
+    discount_dependent_categories: set[str],
+    core_size_names: str,
+) -> tuple[str, str, str, str, str, str]:
+    category = str(row.get("中类", "") or "")
+    season_strategy = str(row.get("季节策略", "") or "")
+    stock_weeks = safe_float(row.get("库存周数"))
+    sales_amount = safe_float(row.get("销售金额"))
+    discount_sensitive = category in discount_dependent_categories
+
+    if season_strategy == "下一季试补":
+        return (
+            "小量试补",
+            core_size_names,
+            "只补样板尺码，先看真实动销再放量",
+            "只做轻活动，不额外加深折扣",
+            "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+            "先补核心样板尺码，再补相邻尺码，边缘尺码先不进",
+        )
+    if discount_sensitive and stock_weeks <= 1:
+        return (
+            "先稳毛利再补",
+            core_size_names,
+            "先保高毛利主销，不靠深折补量",
+            "先做组合和套装，不建议继续加深折扣",
+            "预算先给主销核心款和核心尺码，不做平均补货",
+            "先补核心尺码，再补主销色，最后才补边缘尺码",
+        )
+    if discount_sensitive:
+        return (
+            "控量补货",
+            core_size_names,
+            "折扣依赖偏重，补货先小单快返",
+            "清货折扣只给尾货，主销款维持当前折扣，不再靠更低折扣冲量",
+            "预算只留给快返和断码修复，原则上不做整类深补",
+            "先补近两周有成交的尺码，再看是否补主销色",
+        )
+    if stock_weeks <= 1:
+        return (
+            "优先保不断码",
+            core_size_names,
+            "先保核心尺码和主销色",
+            "可以做轻活动带连带，不建议先用降价换量",
+            "预算优先投给断码风险高的款，再补相邻尺码",
+            "先补核心尺码，再补主销色，最后补边缘尺码",
+        )
+    if sales_amount >= 10000:
+        return (
+            "按周销快返",
+            core_size_names,
+            "按近几周动销做小单多次补货",
+            "维持现有折扣，优先用搭配销售放大营业额",
+            "预算按销量排名分层，优先保前排款，不做平均铺货",
+            "先补销量前排款，再补次主销款，边缘款暂缓",
+        )
+    return (
+        "按周销快返",
+        core_size_names,
+        "按近几周动销做小单多次补货",
+        "维持正常折扣，先做场景推荐和组合带量",
+        "预算以小单快返为主，观察一周后再决定是否放量",
+        "先补主销尺码，再补相邻尺码，边缘款继续观察",
+    )
 
 
 def build_operational_playbooks(metrics: dict) -> list[dict]:
@@ -3318,6 +3597,7 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
     vip_analysis = yeusoft.get("vip_analysis") or {}
     guide_report = yeusoft.get("guide_report") or {}
     store_month_report = yeusoft.get("store_month_report") or {}
+    retail_detail = yeusoft.get("retail_detail") or {}
 
     period_label = "本月" if period_type == "monthly" else "本季度" if period_type == "quarterly" else "当前阶段"
     previous_label = "上月" if period_type == "monthly" else "上季度" if period_type == "quarterly" else "上一阶段"
@@ -3405,6 +3685,14 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         )
     else:
         sales_analysis.append("【经营判断】当前销售结构还算能打，但要继续盯主销品类是否稳定，不要让少数爆款突然断货。")
+    if retail_detail:
+        sales_analysis.append(
+            f"【直接数据】全量零售明细显示，当前实销折扣约 {format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折，深折扣销售占比约 {format_num(retail_detail['deep_discount_sales_share'] * 100, 1)}%。"
+        )
+        if retail_detail.get("markdown_pressure_high"):
+            sales_analysis.append(
+                f"【经营判断】当前销售不只是流量问题，{retail_detail['discount_category_names']} 这些品类已经有明显折扣依赖。继续靠深折扣冲营业额，会先伤毛利。"
+            )
 
     category_analysis: list[str] = []
     if not category_sales.empty:
@@ -3455,6 +3743,15 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         category_analysis.append(
             f"【经营判断】从全量品类分析看，前两品类贡献约 {format_num(category_highlight['top2_share'] * 100, 1)}%，销售更多靠少数品类撑着，扩品只能做补充，不能动摇主销预算。"
         )
+    if retail_detail and retail_detail.get("top_discount_categories"):
+        discount_text = "、".join(
+            f"{row['name']}({format_num(row['discount_rate'] * 10, 1)}折)"
+            for row in retail_detail["top_discount_categories"][:3]
+        )
+        category_analysis.append(f"【直接数据】折扣依赖更明显的中类是：{discount_text}。")
+        category_analysis.append(
+            "【经营判断】这说明部分品类现在更像“靠让利换成交”，如果不先调陈列、组合和尺码结构，后面利润会持续被拖薄。"
+        )
 
     sku_analysis: list[str] = []
     if not best_sellers.empty:
@@ -3473,6 +3770,13 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         )
     if not slow_skus.empty:
         sku_analysis.append("【经营判断】连续慢销款更像结构问题，不只是单品问题。先调陈列和搭配，如果 1-2 周仍不改善，再升级到清货动作。")
+    if retail_detail and retail_detail.get("size_rows"):
+        sku_analysis.append(
+            f"【直接数据】全量零售明细显示，主销尺码更集中在：{retail_detail['core_size_names']}。"
+        )
+        sku_analysis.append(
+            "【动作建议】补货不要全尺码平均补，先保这些主销尺码，再用小量补单观察边缘尺码是否真有动销。"
+        )
 
     inventory_actions = {
         "立即补货": [],
@@ -3570,6 +3874,7 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
     else:
         top_guide_name = "主力导购"
         top_guide_share = 0.0
+    retail_detail = yeusoft.get("retail_detail") or {}
 
     diagnosis_summary = (
         f"当前门店最需要优先处理的是 {strip_sentence_tail(decision['headline'])}。"
@@ -3602,6 +3907,14 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             "店员统一搭配话术：先卖主销，再顺带袜品/基础打底/家居服，提高连带。",
             f"店员排班和带教先盯 {top_guide_name} 的做法，当前销售占比约 {format_num(top_guide_share * 100, 1)}%。",
         ]
+        + (
+            [
+                f"重点复核 {retail_detail['discount_category_names']} 的折扣策略，"
+                f"主销尺码先保 {retail_detail['core_size_names']}，不要平均补货。"
+            ]
+            if retail_detail
+            else []
+        )
     )[:3]
 
     replenish_advice = dedupe_preserve_order(
@@ -3625,6 +3938,14 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             f"需要你拍板的不是所有货，而是 {top_risk_category} 怎么去化、{top_seasonal_category} 是否暂缓、{top_replenish_category} 补货预算给多少。",
             "如果这周只能做一个经营动作，就先把高库存慢销货位和清货策略定下来，不要让旧货继续占预算。",
         ]
+        + (
+            [
+                f"对 {retail_detail['discount_category_names']} 这几个中类，先拍板是稳毛利还是继续让利；"
+                f"补货预算先保 {retail_detail['core_size_names']} 这些主销尺码。"
+            ]
+            if retail_detail
+            else []
+        )
     )
     manager_advice = dedupe_preserve_order(
         [
@@ -3634,6 +3955,14 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             f"会员跟进先看 {top_members['VIP姓名'].head(3).tolist() if not top_members.empty else '高价值会员名单'}。",
             f"导购执行先对齐 {top_guide_name} 的成交路径，再让其他人照着练，避免每个人各讲各的。",
         ]
+        + (
+            [
+                f"补货清单先按 {retail_detail['core_size_names']} 排序，"
+                f"{retail_detail['discount_category_names']} 这些中类先控量补、先看毛利。"
+            ]
+            if retail_detail
+            else []
+        )
     )
     staff_advice = dedupe_preserve_order(
         [
@@ -3642,6 +3971,14 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
             "慢销款不要硬单推，改成组合推荐：基础款 + 袜品 / 家居服 / 第二件优惠。",
             "顾客犹豫时，先问使用场景和孩子年龄，再推最稳的基础款，不要先推难卖的货。",
         ]
+        + (
+            [
+                f"如果顾客在看 {retail_detail['discount_category_names']} 这些中类，先做组合和场景推荐，"
+                "不要一上来就主动降价。"
+            ]
+            if retail_detail
+            else []
+        )
     )
 
     risk_alerts = dedupe_preserve_order(
@@ -3962,6 +4299,11 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
             f" 店员销售主要集中在 {signals['top_guide_name']}，"
             "成交打法要尽快复制给其他人。"
         )
+    if signals["markdown_pressure_high"] and decision["mode"] != "稳毛利优先":
+        summary += (
+            f" 当前实销折扣约 {format_num(signals['weighted_discount_rate'] * 10, 1)} 折，"
+            f"{signals['discount_category_names']} 更依赖折扣，今天别急着做深折扣。"
+        )
     if signals["low_joint"]:
         summary += (
             f" 最近件单比约 {format_num(signals['latest_joint_rate'], 2)}，"
@@ -3973,7 +4315,12 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         if cards["negative_sku_count"] >= 30
         else "先打开“去化重点品类”，确认今天最该先处理的品类。"
     )
-    if signals["category_concentrated"]:
+    if signals["markdown_pressure_high"]:
+        first_watch_body = (
+            f"先看 {signals['discount_category_names']} 的折扣依赖，再看 {signals['core_size_names']} 这些主销尺码。"
+            "今天先稳毛利，再决定要不要做活动。"
+        )
+    elif signals["category_concentrated"]:
         first_watch_body = (
             f"先看 {signals['top_category_names']} 的补货和销售结构，"
             "今天的预算先保主销，再看其他品类。"
@@ -3992,7 +4339,12 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         f"先处理 {top_clearance_categories} 的库存压力；"
         f"补货只看 {top_replenish_categories} 这些当季主销品类。"
     )
-    if signals["low_joint"]:
+    if signals["markdown_pressure_high"]:
+        today_do_body = (
+            f"今天先把 {signals['discount_category_names']} 做高毛利搭配和门口陈列，"
+            f"补货只保 {signals['core_size_names']} 这些主销尺码，别直接靠深折扣冲量。"
+        )
+    elif signals["low_joint"]:
         today_do_body = (
             f"今天店员先做组合销售，重点把 {top_replenish_categories} 和袜品/内裤做搭配；"
             f"去化仍先盯 {top_clearance_categories}。"
@@ -4005,7 +4357,12 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
     owner_decision_body = (
         f"单独看 {top_seasonal_categories} 这些跨季品类，决定是去化、暂缓，还是等回到主销季再补。"
     )
-    if signals["category_concentrated"]:
+    if signals["markdown_pressure_high"]:
+        owner_decision_body = (
+            f"今天先拍板 {signals['discount_category_names']} 是否继续让利，"
+            f"同时确认 {signals['core_size_names']} 这些尺码的补货预算，别平均补货。"
+        )
+    elif signals["category_concentrated"]:
         owner_decision_body = (
             f"今天先拍板主销预算，优先给 {signals['top_category_names']}；"
             "其他补货只能做补充，不要平均分货。"
@@ -4048,6 +4405,8 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         dont_do.append("不要把成交全压在一个店员身上，头部打法要复制。")
     if signals["vip_dormant_high"]:
         dont_do.append("不要只等自然回购，沉默会员需要主动叫回。")
+    if signals["markdown_pressure_high"]:
+        dont_do.append("不要为了冲销量继续做深折扣，先看组合和尺码结构。")
     if signals["low_joint"]:
         dont_do.append("不要只盯单数，今天要想办法把每单带得更多。")
 
@@ -4068,6 +4427,10 @@ def build_boss_action_board(metrics: dict) -> dict[str, object]:
         meeting_script.append("今天加一件事：沉默会员先回访，不要只等老客自己回来。")
     if signals["guide_concentrated"]:
         meeting_script.append(f"今天带教重点：先复制 {signals['top_guide_name']} 的成交动作。")
+    if signals["markdown_pressure_high"]:
+        meeting_script.append(
+            f"今天毛利重点：{signals['discount_category_names']} 先稳折扣，主销尺码先保 {signals['core_size_names']}。"
+        )
     if signals["low_joint"]:
         meeting_script.append("今天门店目标：每单多带一件，不只看有没有成交。")
 
@@ -4103,6 +4466,8 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         conclusions.append("先去库存")
     elif cards["estimated_inventory_days"] > 120:
         conclusions.append("控制库存量")
+    if signals["markdown_pressure_high"]:
+        conclusions.append("先稳毛利")
     if signals["low_joint"]:
         conclusions.append("先提连带")
     if signals["vip_dormant_high"]:
@@ -4148,6 +4513,9 @@ def build_today_focus(metrics: dict) -> dict[str, object]:
         tasks.append(trim_text(f"调整{top_clearance}陈列", 12))
     if not replenish_categories.empty:
         tasks.append(trim_text(f"检查{top_replenish}断码", 12))
+    if signals["markdown_pressure_high"]:
+        tasks.append("检查折扣依赖")
+        tasks.append("确认主销尺码")
     if signals["low_joint"]:
         tasks.append("今天主推组合单")
     if signals["vip_dormant_high"]:
@@ -4436,6 +4804,19 @@ def build_yeusoft_highlight_cards(pos_highlights: dict | None) -> list[dict[str,
                 "note": (
                     f"第一品类贡献 {format_num(category_analysis['top1_share'] * 100, 1)}%，"
                     f"前两品类贡献 {format_num(category_analysis['top2_share'] * 100, 1)}%。"
+                ),
+            }
+        )
+
+    retail_detail = pos_highlights.get("retail_detail")
+    if retail_detail:
+        cards.append(
+            {
+                "title": "POS 折扣与尺码",
+                "value": f"{format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折 / {retail_detail['core_size_names']}",
+                "note": (
+                    f"{retail_detail['discount_category_names']} 折扣依赖偏重，"
+                    f"深折扣销售占比约 {format_num(retail_detail['deep_discount_sales_share'] * 100, 1)}%。"
                 ),
             }
         )
@@ -4729,11 +5110,11 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
       </div>
     """
 
-    replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量"]].copy()
+    replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量", "补货原则", "主销尺码", "控折扣原则", "预算建议"]].copy()
     seasonal_category_table = metrics["seasonal_categories"][["中类", "季节策略", "建议动作", "SKU数", "库存", "销售额"]].copy()
     clearance_category_table = metrics["clearance_categories"][["大类", "建议动作", "SKU数", "实际库存", "近期零售"]].copy()
 
-    replenish_table = metrics["replenish"][["款号", "中类", "颜色", "季节策略", "库存", "周均销量", "库存周数", "销售金额", "建议补货量", "建议动作"]].copy()
+    replenish_table = metrics["replenish"][["款号", "中类", "颜色", "季节策略", "库存", "周均销量", "库存周数", "销售金额", "建议补货量", "补货原则", "主销尺码", "控折扣原则", "预算建议", "进货顺序", "进货提醒", "建议动作"]].copy()
     seasonal_action_table = metrics["seasonal_actions"][["款号", "中类", "颜色", "季节", "季节策略", "库存", "库存周数", "销售金额", "建议动作"]].copy()
     clearance_cols = ["商品款号", "商品名称", "商品颜色", "大类", "中类", "实际库存", "近期零售", "零售价", "建议动作"]
     clearance_available_cols = [column for column in clearance_cols if column in metrics["clearance"].columns]
@@ -6201,10 +6582,10 @@ def build_detail_html(metrics: dict) -> str:
         "经营分析与销售建议",
         "consulting-analysis",
     )
-    replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量"]].copy()
+    replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量", "补货原则", "主销尺码", "控折扣原则", "预算建议"]].copy()
     seasonal_category_table = metrics["seasonal_categories"][["中类", "季节策略", "建议动作", "SKU数", "库存", "销售额"]].copy()
     clearance_category_table = metrics["clearance_categories"][["大类", "建议动作", "SKU数", "实际库存", "近期零售"]].copy()
-    replenish_table = metrics["replenish"][["款号", "中类", "颜色", "季节策略", "库存", "周均销量", "库存周数", "销售金额", "建议补货量", "建议动作"]].copy()
+    replenish_table = metrics["replenish"][["款号", "中类", "颜色", "季节策略", "库存", "周均销量", "库存周数", "销售金额", "建议补货量", "补货原则", "主销尺码", "控折扣原则", "预算建议", "进货顺序", "进货提醒", "建议动作"]].copy()
     seasonal_action_table = metrics["seasonal_actions"][["款号", "中类", "颜色", "季节", "季节策略", "库存", "库存周数", "销售金额", "建议动作"]].copy()
     clearance_cols = ["商品款号", "商品名称", "商品颜色", "大类", "中类", "实际库存", "近期零售", "零售价", "建议动作"]
     clearance_available_cols = [column for column in clearance_cols if column in metrics["clearance"].columns]
@@ -7693,6 +8074,7 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
     vip_analysis = pos_highlights.get("vip_analysis")
     guide_report = pos_highlights.get("guide_report")
     store_month_report = pos_highlights.get("store_month_report")
+    retail_detail = pos_highlights.get("retail_detail")
     rows = build_period_rows(metrics, period_type)
     latest = rows[-1] if rows else None
     previous = rows[-2] if len(rows) >= 2 else None
@@ -7783,6 +8165,14 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
             guidance.append(
                 f"最近{period_name}件单比约 {format_num(latest_joint.get('joint_rate', 0), 2)}，成交有了但每单带得不够，陈列和店员话术都要更偏组合。"
             )
+    if retail_detail:
+        guidance.append(
+            f"当前实销折扣约 {format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折，主价格带在 {retail_detail['top_price_band']}。"
+        )
+        if retail_detail.get("markdown_pressure_high"):
+            guidance.append(
+                f"{retail_detail['discount_category_names']} 这些中类折扣依赖偏重，这个阶段先稳毛利、提客单和做组合，不建议继续用深折扣硬冲。"
+            )
 
     if profit:
         if period_type == "monthly":
@@ -7844,6 +8234,44 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         purchase_guidance.append(
             f"从品类趋势看，{leading_name} 近期跑得更快，这期进货预算可以适度向它倾斜，但仍然只补核心款和核心尺码。"
         )
+    if retail_detail and retail_detail.get("size_rows"):
+        purchase_guidance.append(
+            f"从全量零售尺码结构看，主销尺码更集中在 {retail_detail['core_size_names']}。这期补货先保这些尺码，再观察边缘尺码是否真有成交。"
+        )
+    if retail_detail and retail_detail.get("markdown_pressure_high"):
+        purchase_guidance.append(
+            f"{retail_detail['discount_category_names']} 当前更依赖折扣成交，这期进货不要盲目放大，先保高毛利主销和核心尺码，避免新货继续靠让利卖。"
+        )
+        if top_replenish is not None:
+            purchase_guidance.append(
+                f"{period_name}补货顺序建议：先补 {top_replenish['中类']} 的 {retail_detail['core_size_names']}，"
+                f"再观察 {retail_detail['discount_category_names']} 的真实毛利和连带，暂时不要给这几个中类做平均深补。"
+            )
+    elif retail_detail and top_replenish is not None:
+        purchase_guidance.append(
+            f"{period_name}补货顺序建议：先补 {top_replenish['中类']} 的 {retail_detail['core_size_names']}，"
+            "再补相邻尺码，最后才补边缘尺码。先保成交，再追求尺码齐全。"
+        )
+
+    if product_sales and retail_detail:
+        cross_share = product_sales["cross_season_stock_share"]
+        current_share = product_sales["current_season_stock_share"]
+        if retail_detail.get("markdown_pressure_high") and cross_share >= 0.35:
+            purchase_guidance.append(
+                f"{period_name}预算建议：当季主销和核心尺码至少占 60%，断码快返约 25%，跨季去化和试单合计不超过 15%。当前先把预算留给 {retail_detail['core_size_names']} 这些主销尺码。"
+            )
+        elif retail_detail.get("markdown_pressure_high"):
+            purchase_guidance.append(
+                f"{period_name}预算建议：高毛利主销中类约 55%，基础刚需中类约 30%，{retail_detail['discount_category_names']} 这类折扣依赖中类只留 15% 左右快返预算。"
+            )
+        elif current_share < 0.35:
+            purchase_guidance.append(
+                f"{period_name}预算建议：当季主销至少 65%，下一季试单约 15%，其余 20% 留给断码修复和小单快返，先把当季结构拉起来。"
+            )
+        else:
+            purchase_guidance.append(
+                f"{period_name}预算建议：增长更快的主销中类约 50%，稳定基础中类约 30%，观察和试补中类约 20%。预算先看动销和尺码，不按品类平均分。"
+            )
 
     if top_clearance is not None and top_clearance["实际库存"] > 0:
         purchase_guidance.append(
@@ -7893,6 +8321,7 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
         "vip_analysis": vip_analysis,
         "guide_report": guide_report,
         "store_month_report": store_month_report,
+        "retail_detail": retail_detail,
         "profit": profit,
     }
 
@@ -8012,6 +8441,7 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     vip_analysis = period_summary["vip_analysis"]
     guide_report = period_summary["guide_report"]
     store_month_report = period_summary["store_month_report"]
+    retail_detail = period_summary["retail_detail"]
     profit = period_summary["profit"]
     charts = build_period_charts(period_summary, period_type)
     period_cards_html = build_period_cards(period_summary["rows"], period_type)
@@ -8099,6 +8529,19 @@ def build_period_page(metrics: dict, period_type: str) -> str:
                     "yellow" if latest_joint.get("joint_rate", 0) < 1.2 else "green",
                 )
             )
+    if retail_detail:
+        metric_cards.append(
+            (
+                "实销折扣率",
+                f"{format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折",
+                retail_detail["discount_category_names"],
+                "red"
+                if retail_detail["weighted_discount_rate"] < 0.75
+                else "yellow"
+                if retail_detail["weighted_discount_rate"] < 0.82
+                else "green",
+            )
+        )
     if profit and period_type == "monthly":
         metric_cards.append(
             (
@@ -8191,6 +8634,26 @@ def build_period_page(metrics: dict, period_type: str) -> str:
               <h3>店员执行提醒</h3>
               <div class="support-value">{html.escape(guide_report['top_guide_name'])}</div>
               <p>销售占比 {format_num(guide_report['top_guide_share'] * 100, 1)}%，VIP 销售占比 {format_num(guide_report['vip_sales_share'] * 100, 1)}。</p>
+            </article>
+            """
+        )
+    if retail_detail:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>折扣与尺码提醒</h3>
+              <div class="support-value">{format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折 / {html.escape(retail_detail['core_size_names'])}</div>
+              <p>{html.escape(retail_detail['discount_category_names'])} 折扣依赖更明显，补货先保 {html.escape(retail_detail['core_size_names'])} 这些主销尺码。</p>
+            </article>
+            """
+        )
+    if period_summary["purchase_guidance"]:
+        support_cards.append(
+            f"""
+            <article class="support-card">
+              <h3>进货预算与顺序</h3>
+              <div class="support-value">先保主销，再控折扣</div>
+              <p>{html.escape(period_summary['purchase_guidance'][0])}</p>
             </article>
             """
         )
@@ -8521,6 +8984,7 @@ def build_markdown_summary(metrics: dict) -> str:
         movement = pos_highlights.get("movement")
         daily_flow = pos_highlights.get("daily_flow")
         category_highlight = pos_highlights.get("category_analysis")
+        retail_detail = pos_highlights.get("retail_detail")
         vip_analysis = pos_highlights.get("vip_analysis")
         guide_report = pos_highlights.get("guide_report")
         lines.extend([
@@ -8552,6 +9016,11 @@ def build_markdown_summary(metrics: dict) -> str:
         if category_highlight:
             lines.append(
                 f"- 品类结构：前两品类贡献约 {format_num(category_highlight['top2_share'] * 100, 1)}%，主要集中在 {category_highlight['top_category_names']}。"
+            )
+        if retail_detail:
+            lines.append(
+                f"- 折扣与尺码：当前实销折扣约 {format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折，"
+                f"{retail_detail['discount_category_names']} 折扣依赖偏重，主销尺码集中在 {retail_detail['core_size_names']}。"
             )
         if vip_analysis:
             lines.append(
@@ -8664,7 +9133,7 @@ def build_markdown_summary(metrics: dict) -> str:
         lines.append("## 补货重点品类 Top 5")
         for _, row in replenish_categories.iterrows():
             lines.append(
-                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，销售额 {format_num(row['销售额'], 2)}，建议补货量 {format_num(row['建议补货量'])}"
+                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，销售额 {format_num(row['销售额'], 2)}，建议补货量 {format_num(row['建议补货量'])}，补货原则 {row['补货原则']}，主销尺码 {row['主销尺码']}，控折扣原则 {row['控折扣原则']}，预算建议 {row['预算建议']}"
             )
     if not seasonal_categories.empty:
         lines.append("")
@@ -8685,7 +9154,7 @@ def build_markdown_summary(metrics: dict) -> str:
         lines.append("## 补货 SKU 明细 Top 5")
         for _, row in replenish.iterrows():
             lines.append(
-                f"- {row['款号']} / {row['颜色']}：库存 {format_num(row['库存'])}，周均销量 {format_num(row['周均销量'], 1)}，建议补货 {format_num(row['建议补货量'])}"
+                f"- {row['款号']} / {row['颜色']}：库存 {format_num(row['库存'])}，周均销量 {format_num(row['周均销量'], 1)}，建议补货 {format_num(row['建议补货量'])}，补货原则 {row['补货原则']}，主销尺码 {row['主销尺码']}，控折扣原则 {row['控折扣原则']}，预算建议 {row['预算建议']}，顺序 {row['进货顺序']}，提醒 {row['进货提醒']}"
             )
     if not seasonal_actions.empty:
         lines.append("")
@@ -8800,6 +9269,7 @@ def build_business_report(metrics: dict) -> str:
         movement = pos_highlights.get("movement")
         daily_flow = pos_highlights.get("daily_flow")
         category_highlight = pos_highlights.get("category_analysis")
+        retail_detail = pos_highlights.get("retail_detail")
         vip_analysis = pos_highlights.get("vip_analysis")
         guide_report = pos_highlights.get("guide_report")
         lines.extend([
@@ -8832,6 +9302,11 @@ def build_business_report(metrics: dict) -> str:
         if category_highlight:
             lines.append(
                 f"- 品类结构：前两品类贡献约 {format_num(category_highlight['top2_share'] * 100, 1)}%，主要集中在 {category_highlight['top_category_names']}。"
+            )
+        if retail_detail:
+            lines.append(
+                f"- 折扣与尺码：当前实销折扣约 {format_num(retail_detail['weighted_discount_rate'] * 10, 1)} 折，"
+                f"{retail_detail['discount_category_names']} 折扣依赖偏重，主销尺码集中在 {retail_detail['core_size_names']}。"
             )
         if vip_analysis:
             lines.append(
@@ -8935,7 +9410,7 @@ def build_business_report(metrics: dict) -> str:
         lines.append("")
         for _, row in replenish_categories.iterrows():
             lines.append(
-                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，销售额 {format_num(row['销售额'], 2)}，建议补货量 {format_num(row['建议补货量'])}"
+                f"- {row['中类']} / {row['季节策略']}：SKU数 {format_num(row['SKU数'])}，销售额 {format_num(row['销售额'], 2)}，建议补货量 {format_num(row['建议补货量'])}，补货原则 {row['补货原则']}，主销尺码 {row['主销尺码']}"
             )
         lines.append("")
 
