@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>咸阳沣西吾悦专卖店 库存和销售关系页</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin:0; padding:0; background:#f8fafc; color:#0f172a; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { line-height:1.7; }
+    .page { max-width:1440px; margin:0 auto; padding:18px; }
+    .top-nav { display:flex; justify-content:flex-start; margin-bottom:16px; }
+    .top-nav-links { display:flex; gap:10px; flex-wrap:wrap; }
+    .top-nav-link { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:800; color:#334155; background:#fff; border:1px solid #dbe4f0; text-decoration:none; }
+    .top-nav-link.is-active { background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }
+    .hero { background:linear-gradient(135deg, #0f172a 0%, #0f766e 100%); color:#fff; padding:24px; border-radius:22px; box-shadow:0 18px 48px rgba(15, 23, 42, 0.18); margin-bottom:18px; }
+    .hero h1 { margin:0 0 10px; font-size:30px; line-height:1.25; }
+    .hero p { margin:0; opacity:0.96; }
+    .hero-note { margin-top:12px; font-size:13px; opacity:0.88; }
+    .hero-status { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .hero-status-chip { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); }
+    .page-shell { display:grid; grid-template-columns:minmax(0, 1fr) 260px; gap:18px; }
+    .main-column { min-width:0; }
+    .side-rail { display:flex; flex-direction:column; gap:16px; align-self:start; }
+    .rail-card { position:sticky; top:88px; background:#fff; border-radius:18px; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); }
+    .rail-card h3 { margin:0 0 8px; font-size:17px; }
+    .rail-card p { margin:0 0 12px; font-size:12px; line-height:1.8; color:#64748b; }
+    .rail-links { display:flex; flex-direction:column; gap:8px; }
+    .rail-links a { display:block; text-decoration:none; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:10px 12px; font-size:13px; font-weight:700; }
+    .rail-links a.current { background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }
+    .quick-nav { display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px; }
+    .quick-nav a { text-decoration:none; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }
+    .module { background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(15,23,42,0.08); padding:18px; margin-bottom:18px; }
+    .module-header { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+    .module-title { margin:0; font-size:22px; }
+    .module-note { margin:0; font-size:13px; color:#64748b; line-height:1.8; }
+    .overview-card { background:#fffdf7; border:1px solid #fde68a; border-radius:16px; padding:18px; }
+    .overview-headline { font-size:26px; font-weight:800; color:#92400e; margin:0 0 10px; line-height:1.35; }
+    .overview-summary { margin:0; font-size:14px; line-height:1.8; color:#5b4636; }
+    .metrics-grid, .analysis-grid, .findings-grid, .cards-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; }
+    .metric-card, .analysis-card, .finding-card, .chart-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }
+    .metric-card { box-shadow:0 8px 24px rgba(15,23,42,0.06); }
+    .metric-meta { font-size:11px; font-weight:800; letter-spacing:0.04em; text-transform:uppercase; color:#2563eb; margin-bottom:8px; }
+    .metric-title { font-size:14px; color:#64748b; margin-bottom:8px; }
+    .metric-value { font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }
+    .metric-note { font-size:13px; color:#64748b; line-height:1.7; }
+    .metric-green { border-color:#bbf7d0; background:#f0fdf4; }
+    .metric-green .metric-value { color:#166534; }
+    .metric-yellow { border-color:#fde68a; background:#fffbeb; }
+    .metric-yellow .metric-value { color:#92400e; }
+    .metric-red { border-color:#fecaca; background:#fff7f7; }
+    .metric-red .metric-value { color:#991b1b; }
+    .analysis-card h3, .finding-card h3 { margin:0; font-size:17px; color:#0f172a; }
+    .analysis-list { margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }
+    .priority-red { background:#fff7f7; border-color:#fecaca; }
+    .priority-yellow { background:#fffbeb; border-color:#fde68a; }
+    .priority-green { background:#f0fdf4; border-color:#bbf7d0; }
+    .finding-red { background:#fff7f7; border-color:#fecaca; }
+    .finding-yellow { background:#fffbeb; border-color:#fde68a; }
+    .finding-green { background:#f0fdf4; border-color:#bbf7d0; }
+    .finding-top { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+    .finding-conclusion { margin:0 0 10px; font-size:16px; font-weight:800; color:#0f172a; line-height:1.6; }
+    .finding-text { margin:0 0 8px; font-size:13px; color:#475569; line-height:1.8; }
+    .chart-card { overflow:hidden; }
+    .mini-chip { display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; white-space:nowrap; }
+    .mini-chip-green { background:#dcfce7; color:#166534; }
+    .mini-chip-yellow { background:#fef3c7; color:#92400e; }
+    .mini-chip-red { background:#fee2e2; color:#991b1b; }
+    .mini-chip-neutral, .mini-chip-soft { background:#f1f5f9; color:#334155; }
+    .empty-card { border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }
+    
+    .tooltip-badge::after,
+    .tooltip-badge::before {
+      display: none !important;
+      content: none !important;
+    }
+    .floating-tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      max-width: min(420px, calc(100vw - 24px));
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.7;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.28);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      white-space: normal;
+      word-break: break-word;
+    }
+    .floating-tooltip.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 960px) {
+      .page-shell { grid-template-columns:1fr; }
+      .rail-card { position:static; }
+      .rail-links { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .page { padding:12px; }
+      .hero { padding:18px; border-radius:16px; }
+      .hero h1 { font-size:24px; }
+      .hero-status-chip, .top-nav-link { width:100%; }
+      .top-nav-links { width:100%; }
+      .quick-nav { flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+      .module { padding:14px; margin-bottom:14px; }
+      .overview-headline { font-size:22px; }
+      .metric-value { font-size:24px; }
+      .rail-links { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link is-active" href="./relationship.html">库存销售关系页</a>
+        <a class="top-nav-link" href="./monthly.html">月度页</a>
+        <a class="top-nav-link" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>咸阳沣西吾悦专卖店 库存和销售关系页</h1>
+      <p>这个页面不再把库存和销售分开看，而是直接回答三个问题：库存有没有压过销售、哪些品类该补、哪些品类该先去化。</p>
+      <div class="hero-note">当前判断：库存和销售关系先别急着下结论，先校库存。 近 8 天经营销售额 9,441.77 元，当前经营库存额 528,367.00 元，库存覆盖天数约 354.8 天。 当前最需要盯的压货品类是 少女文胸，库存金额/销售金额约 2.04。 补货机会先看 裤类，建议补货量约 2,673。 去化先盯 袜品，当前实际库存约 791。</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">关系模式：库存口径先纠偏</div>
+        <div class="hero-status-chip">数据时间：2026-03-17（北京时间）</div>
+        <div class="hero-status-chip">当前季节：春季 / 春夏换季期</div>
+      </div>
+    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <nav class="quick-nav">
+          <a href="#relationship-overview">关系结论</a>
+          <a href="#relationship-metrics">核心指标</a>
+          <a href="#relationship-actions">关键建议</a>
+          <a href="#relationship-findings">关键发现</a>
+          <a href="#relationship-charts">关系图表</a>
+          <a href="#relationship-details">详细信息</a>
+          <a href="#relationship-basis">数据口径</a>
+        </nav>
+        <section class="module" id="relationship-overview">
+          <div class="module-header">
+            <h2 class="module-title">关系结论</h2>
+            <p class="module-note">先看一句话结论，再看证据和动作，不需要先钻明细表。</p>
+          </div>
+          <div class="overview-card">
+            <div class="overview-headline">库存和销售关系先别急着下结论，先校库存。</div>
+            <p class="overview-summary">近 8 天经营销售额 9,441.77 元，当前经营库存额 528,367.00 元，库存覆盖天数约 354.8 天。 当前最需要盯的压货品类是 少女文胸，库存金额/销售金额约 2.04。 补货机会先看 裤类，建议补货量约 2,673。 去化先盯 袜品，当前实际库存约 791。</p>
+          </div>
+        </section>
+        <section class="module" id="relationship-metrics">
+          <div class="module-header">
+            <h2 class="module-title">核心指标</h2>
+            <p class="module-note">把库存、销售、补货、去化和口径风险放在一张屏里看，先判断问题重心在哪。</p>
+          </div>
+          <div class="metrics-grid">
+        <div class="metric-card metric-neutral">
+          <div class="metric-meta">直接观察</div>
+          <div class="metric-title">近段经营销售额</div>
+          <div class="metric-value">9,441.77 元</div>
+          <div class="metric-note">近 8 天，直接来自校准销售主表。</div>
+        </div>
+        
+        <div class="metric-card metric-neutral">
+          <div class="metric-meta">直接观察</div>
+          <div class="metric-title">当前经营库存额</div>
+          <div class="metric-value">528,367.00 元</div>
+          <div class="metric-note">来自最新库存快照，当前仍是零售价口径库存额。</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-meta">估算</div>
+          <div class="metric-title">库存覆盖天数</div>
+          <div class="metric-value">354.8 天</div>
+          <div class="metric-note">用最近销售速度估算库存还能卖多久。</div>
+        </div>
+        
+        <div class="metric-card metric-green">
+          <div class="metric-meta">估算</div>
+          <div class="metric-title">高压货品类数</div>
+          <div class="metric-value">0</div>
+          <div class="metric-note">库存金额明显高于销售金额的品类数量。</div>
+        </div>
+        
+        <div class="metric-card metric-yellow">
+          <div class="metric-meta">估算</div>
+          <div class="metric-title">建议补货 SKU</div>
+          <div class="metric-value">341</div>
+          <div class="metric-note">卖得动但库存偏浅，先保不断码。</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-meta">估算</div>
+          <div class="metric-title">建议去化 SKU</div>
+          <div class="metric-value">62</div>
+          <div class="metric-note">库存高、近期卖得慢，先停补再去化。</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-meta">直接观察</div>
+          <div class="metric-title">负库存 SKU</div>
+          <div class="metric-value">105</div>
+          <div class="metric-note">账货不一致会直接扭曲补货和去化判断。</div>
+        </div>
+        
+        <div class="metric-card metric-red">
+          <div class="metric-meta">预测</div>
+          <div class="metric-title">月末净利预测</div>
+          <div class="metric-value">-7,893.98 元</div>
+          <div class="metric-note">库存动作要同时兼顾利润和保本节奏。</div>
+        </div>
+        </div>
+        </section>
+        <section class="module" id="relationship-actions">
+          <div class="module-header">
+            <h2 class="module-title">关键建议</h2>
+            <p class="module-note">今天、未来 7 天、未来 30 天分别做什么，直接从库存和销售的关系倒推动作。</p>
+          </div>
+          <div class="analysis-grid">
+        <article class="analysis-card priority-red">
+          <h3>今天先做什么</h3>
+          <ul class="analysis-list">
+            <li>先纠偏负库存和断码，再看补货与去化。</li><li>今天先查负库存和断码，避免春夏补货判断失真。</li><li>今天补货优先看 裤类，但冬季类补货先人工复核，不做深补。</li><li>今天去化先盯 袜品，先停补再想组合去化。</li>
+          </ul>
+        </article>
+        
+        <article class="analysis-card priority-yellow">
+          <h3>未来 7 天重点</h3>
+          <ul class="analysis-list">
+            <li>本周重点盯 少女文胸 的库存压力。</li><li>本周把补货重心转到 夏季，尤其是 裤类 这类能直接起量的商品。</li><li>本周减少厚款和冬款的新进货，旧货先靠搭配和小组合去化。</li><li>本周检查门店陈列，让春款在前，夏款预热，厚款退到后区。</li>
+          </ul>
+        </article>
+        
+        <article class="analysis-card priority-yellow">
+          <h3>未来 30 天重点</h3>
+          <ul class="analysis-list">
+            <li>本月目标是把库存结构拉回到更适合当前销售节奏的位置。</li><li>本月经营目标不是压更多货，而是把春款卖动、为夏款腾货位。</li><li>本月把高压货品类做成专项表，先控进货，再安排去化节奏。</li><li>本月会员触达重点围绕换季、开学、出游、早晚温差场景去做。</li>
+          </ul>
+        </article>
+        </div>
+        </section>
+        <section class="module" id="relationship-findings">
+          <div class="module-header">
+            <h2 class="module-title">关键发现</h2>
+            <p class="module-note">每条都拆成结论、证据和动作，方便老板拍板，也方便店员执行。</p>
+          </div>
+          <div class="findings-grid">
+        <article class="finding-card finding-red">
+          <div class="finding-top">
+            <span class="mini-chip mini-chip-red">估算</span>
+            <h3>整体库存覆盖</h3>
+          </div>
+          <p class="finding-conclusion">库存和销售关系先别急着下结论，先校库存。</p>
+          <p class="finding-text"><strong>证据：</strong>最近销售趋势为 下滑，当前库存覆盖 354.8 天，经营库存额 528,367.00 元。</p>
+          <p class="finding-text"><strong>建议动作：</strong>先盯高压货和负库存，再决定补货节奏。</p>
+        </article>
+        
+        <article class="finding-card finding-yellow">
+          <div class="finding-top">
+            <span class="mini-chip mini-chip-yellow">直接观察</span>
+            <h3>压货最重的品类</h3>
+          </div>
+          <p class="finding-conclusion">少女文胸 当前最需要先处理。</p>
+          <p class="finding-text"><strong>证据：</strong>库存金额/销售金额 2.04，库存量/销售量 1.42。</p>
+          <p class="finding-text"><strong>建议动作：</strong>先停补、看货位、做组合去化，再决定是否恢复补货。</p>
+        </article>
+        
+        <article class="finding-card finding-yellow">
+          <div class="finding-top">
+            <span class="mini-chip mini-chip-yellow">估算</span>
+            <h3>补货机会</h3>
+          </div>
+          <p class="finding-conclusion">裤类 还在跑量，先保不断码。</p>
+          <p class="finding-text"><strong>证据：</strong>当前建议补货量约 2,673，对应销售额约 77,075.84 元。</p>
+          <p class="finding-text"><strong>建议动作：</strong>先补核心尺码和主销色，不要把补货预算平均铺开。</p>
+        </article>
+        
+        <article class="finding-card finding-red">
+          <div class="finding-top">
+            <span class="mini-chip mini-chip-red">估算</span>
+            <h3>去化压力</h3>
+          </div>
+          <p class="finding-conclusion">袜品 更适合先去化，不适合继续深补。</p>
+          <p class="finding-text"><strong>证据：</strong>当前去化清单里约 24 个 SKU，实际库存约 791，近期零售约 33。</p>
+          <p class="finding-text"><strong>建议动作：</strong>今天先做陈列前移和组合促销，把预算让给主销品类。</p>
+        </article>
+        
+        <article class="finding-card finding-red">
+          <div class="finding-top">
+            <span class="mini-chip mini-chip-red">直接观察</span>
+            <h3>库存口径风险</h3>
+          </div>
+          <p class="finding-conclusion">负库存会让库存和销售关系判断失真。</p>
+          <p class="finding-text"><strong>证据：</strong>当前负库存 SKU 105 个，负库存金额约 -16,764.00 元。</p>
+          <p class="finding-text"><strong>建议动作：</strong>先查账、查盘点、查调拨，再执行补货和去化。</p>
+        </article>
+        </div>
+        </section>
+        <section class="module" id="relationship-charts">
+          <div class="module-header">
+            <h2 class="module-title">关系图表</h2>
+            <p class="module-note">先看品类库存额和销售额的关系，再看动作数量分布，就知道预算该往哪边倾斜。</p>
+          </div>
+          <div class="cards-grid"><section class='chart-card'><div>                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.4.0.min.js" integrity="sha256-KEmPoupLpFyGMyGAiOsiNDbKDKAvxXAn/W+oQa0ZAfk=" crossorigin="anonymous"></script>                <div id="cf491343-1247-448c-af95-32c4e1a7c525" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("cf491343-1247-448c-af95-32c4e1a7c525")) {                    Plotly.newPlot(                        "cf491343-1247-448c-af95-32c4e1a7c525",                        [{"customdata":[[2.038779080410892,1.424731182795699,"\u9700\u5173\u6ce8"],[1.2568813904592346,0.9647435897435898,"\u76f8\u5bf9\u5065\u5eb7"],[1.0125865291774163,0.7479826194909994,"\u76f8\u5bf9\u5065\u5eb7"],[0.27575563973067035,0.20439189189189189,"\u76f8\u5bf9\u5065\u5eb7"]],"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003e\u9500\u552e\u989d\uff1a%{x:.2f}\u003cbr\u003e\u5e93\u5b58\u989d\uff1a%{y:.2f}\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d\uff1a%{customdata[0]:.2f}\u003cbr\u003e\u5e93\u5b58\u91cf\u002f\u9500\u552e\u91cf\uff1a%{customdata[1]:.2f}\u003cbr\u003e\u72b6\u6001\uff1a%{customdata[2]}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#f59e0b","#16a34a","#16a34a","#16a34a"],"line":{"color":"#ffffff","width":1.5},"opacity":0.82,"size":[30.310232643287137,24.055051123673877,22.10069223341933,18.0]},"mode":"markers+text","name":"\u54c1\u7c7b\u5173\u7cfb","text":["\u5c11\u5973\u6587\u80f8","\u889c\u54c1","\u5185\u88e4","\u8863\u7740\u7cfb\u5217"],"textposition":"top center","x":{"dtype":"f8","bdata":"4XoUrqfKx0CuR+F6PInxQKRwPQqP3PVAAAAAgEP7JEE="},"y":{"dtype":"f8","bdata":"AAAAAMBA2EAAAAAAcAr2QAAAAAAAI\u002fZAAAAAAKAkB0E="},"type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":20},"title":{"text":"\u54c1\u7c7b\u5e93\u5b58\u989d vs \u9500\u552e\u989d"},"height":420,"xaxis":{"title":{"text":"\u9500\u552e\u989d"}},"yaxis":{"title":{"text":"\u5e93\u5b58\u989d"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="c1365308-3665-47b4-a31f-9295038ba861" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("c1365308-3665-47b4-a31f-9295038ba861")) {                    Plotly.newPlot(                        "c1365308-3665-47b4-a31f-9295038ba861",                        [{"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003e\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d\uff1a%{x:.2f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#16a34a","#16a34a","#16a34a","#f59e0b"]},"orientation":"h","text":["0.28","1.01","1.26","2.04"],"textposition":"outside","x":{"dtype":"f8","bdata":"nyuV+\u002fql0T+U\u002frLujTPwPyCTL6kvHPQ\u002f5BERaGtPAEA="},"y":["\u8863\u7740\u7cfb\u5217","\u5185\u88e4","\u889c\u54c1","\u5c11\u5973\u6587\u80f8"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":40,"t":60,"b":20},"title":{"text":"\u54c1\u7c7b\u5e93\u5b58\u91d1\u989d\u002f\u9500\u552e\u91d1\u989d\u6392\u5e8f"},"height":420,"xaxis":{"title":{"text":"\u5e93\u5b58\u91d1\u989d \u002f \u9500\u552e\u91d1\u989d"}},"yaxis":{"title":{"text":"\u54c1\u7c7b"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section><section class='chart-card'><div>                            <div id="1b681ae9-5a6a-4614-8e23-47c7640b6c68" class="plotly-graph-div" style="height:360px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("1b681ae9-5a6a-4614-8e23-47c7640b6c68")) {                    Plotly.newPlot(                        "1b681ae9-5a6a-4614-8e23-47c7640b6c68",                        [{"marker":{"color":["#f59e0b","#dc2626","#2563eb","#7c3aed"]},"text":["341","62","522","105"],"textposition":"outside","x":["\u5efa\u8bae\u8865\u8d27 SKU","\u5efa\u8bae\u53bb\u5316 SKU","\u8de8\u5b63\u5904\u7406 SKU","\u8d1f\u5e93\u5b58 SKU"],"y":{"dtype":"i2","bdata":"VQE+AAoCaQA="},"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":60,"b":40},"title":{"text":"\u5e93\u5b58\u4e0e\u9500\u552e\u5173\u7cfb\u7684\u52a8\u4f5c\u6570\u91cf\u5206\u5e03"},"height":360,"yaxis":{"title":{"text":"\u6570\u91cf"}}},                        {"responsive": true, "displaylogo": false, "scrollZoom": false, "modeBarButtonsToRemove": ["lasso2d", "select2d", "autoScale2d", "toggleSpikelines", "hoverClosestCartesian", "hoverCompareCartesian"]}                    )                };            </script>        </div></section></div>
+        </section>
+        <section class="module" id="relationship-details">
+          <div class="module-header">
+            <h2 class="module-title">详细信息</h2>
+            <p class="module-note">先看品类，再下钻到补货款、去化款和负库存款，执行时按这个顺序走更稳。</p>
+          </div>
+          <div class="tables tables-single">
+    <section class="table-card is-compact">
+      <div class="table-header">
+        <h3>库存和销售关系总表</h3>
+        <button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' data-collapse-label='收起额外列'>展开全部列</button>
+      </div>
+      <p class='table-tip'>先看库存金额/销售金额，再看关系判断和建议动作，老板可以先按品类定优先级。</p>
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr><th data-mobile-hidden="0">大类</th><th data-mobile-hidden="0">零售额</th><th data-mobile-hidden="0">库存额</th><th data-mobile-hidden="1">库存金额/销售金额</th><th data-mobile-hidden="1">库存量/销售量</th><th data-mobile-hidden="1">状态</th><th data-mobile-hidden="1">关系判断</th><th data-mobile-hidden="1">建议动作</th></tr></thead>
+          <tbody><tr><td data-mobile-hidden="0" data-col-name="大类">少女文胸</td><td data-mobile-hidden="0" data-col-name="零售额">12181.31</td><td data-mobile-hidden="0" data-col-name="库存额">24835.0</td><td data-mobile-hidden="1" data-col-name="库存金额/销售金额">2.038779080410892</td><td data-mobile-hidden="1" data-col-name="库存量/销售量">1.424731182795699</td><td data-mobile-hidden="1" data-col-name="状态"><span class='badge badge-yellow tooltip-badge' title="为什么：库存和销售开始失衡，但还没到最严重。怎么做：连续盯 1-2 周，必要时先收紧补货。好处：能更早止损。注意：不要因为短期一两天销量回升就放松。" data-tip="为什么：库存和销售开始失衡，但还没到最严重。怎么做：连续盯 1-2 周，必要时先收紧补货。好处：能更早止损。注意：不要因为短期一两天销量回升就放松。" tabindex="0" role="note">需关注</span></td><td data-mobile-hidden="1" data-col-name="关系判断">库存偏重</td><td data-mobile-hidden="1" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" data-tip="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" tabindex="0" role="note">观察并做组合去化</span></td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="0" data-col-name="零售额">71827.78</td><td data-mobile-hidden="0" data-col-name="库存额">90279.0</td><td data-mobile-hidden="1" data-col-name="库存金额/销售金额">1.2568813904592346</td><td data-mobile-hidden="1" data-col-name="库存量/销售量">0.9647435897435898</td><td data-mobile-hidden="1" data-col-name="状态"><span class='badge badge-green tooltip-badge' title="为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。" data-tip="为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。" tabindex="0" role="note">相对健康</span></td><td data-mobile-hidden="1" data-col-name="关系判断">库存与销售相对平衡</td><td data-mobile-hidden="1" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前补货优先级不高。怎么做：先把预算和货位留给主销品类。好处：能减少无效投入。注意：后续要定期复核，不是永久冻结。" data-tip="为什么：当前补货优先级不高。怎么做：先把预算和货位留给主销品类。好处：能减少无效投入。注意：后续要定期复核，不是永久冻结。" tabindex="0" role="note">暂缓补货</span></td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">内裤</td><td data-mobile-hidden="0" data-col-name="零售额">89544.94</td><td data-mobile-hidden="0" data-col-name="库存额">90672.0</td><td data-mobile-hidden="1" data-col-name="库存金额/销售金额">1.0125865291774163</td><td data-mobile-hidden="1" data-col-name="库存量/销售量">0.7479826194909994</td><td data-mobile-hidden="1" data-col-name="状态"><span class='badge badge-green tooltip-badge' title="为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。" data-tip="为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。" tabindex="0" role="note">相对健康</span></td><td data-mobile-hidden="1" data-col-name="关系判断">库存与销售相对平衡</td><td data-mobile-hidden="1" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前补货优先级不高。怎么做：先把预算和货位留给主销品类。好处：能减少无效投入。注意：后续要定期复核，不是永久冻结。" data-tip="为什么：当前补货优先级不高。怎么做：先把预算和货位留给主销品类。好处：能减少无效投入。注意：后续要定期复核，不是永久冻结。" tabindex="0" role="note">暂缓补货</span></td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">衣着系列</td><td data-mobile-hidden="0" data-col-name="零售额">687521.75</td><td data-mobile-hidden="0" data-col-name="库存额">189588.0</td><td data-mobile-hidden="1" data-col-name="库存金额/销售金额">0.27575563973067035</td><td data-mobile-hidden="1" data-col-name="库存量/销售量">0.20439189189189189</td><td data-mobile-hidden="1" data-col-name="状态"><span class='badge badge-green tooltip-badge' title="为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。" data-tip="为什么：库存与销售关系还算平衡。怎么做：维持当前补货节奏，重点防断货。好处：能把精力留给问题更大的区域。注意：健康不代表不用看，仍要持续复盘。" tabindex="0" role="note">相对健康</span></td><td data-mobile-hidden="1" data-col-name="关系判断">销售快于库存</td><td data-mobile-hidden="1" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：补货紧迫，但还没到必须当天清完。怎么做：先补最能带营业额的款，后续再补次重点。好处：预算利用率更高。注意：别被低销售款分走预算。" data-tip="为什么：补货紧迫，但还没到必须当天清完。怎么做：先补最能带营业额的款，后续再补次重点。好处：预算利用率更高。注意：别被低销售款分走预算。" tabindex="0" role="note">优先补货</span></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="table-card is-compact">
+      <div class="table-header">
+        <h3>补货重点品类</h3>
+        <button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' data-collapse-label='收起额外列'>展开全部列</button>
+      </div>
+      <p class='table-tip'>这些品类说明销售还在跑，但库存已经偏浅，先保主销不断码。</p>
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr><th data-mobile-hidden="0">中类</th><th data-mobile-hidden="0">季节策略</th><th data-mobile-hidden="0">SKU数</th><th data-mobile-hidden="1">销售额</th><th data-mobile-hidden="1">库存</th><th data-mobile-hidden="1">建议补货量</th><th data-mobile-hidden="1">补货原则</th><th data-mobile-hidden="1">主销尺码</th></tr></thead>
+          <tbody><tr><td data-mobile-hidden="0" data-col-name="中类">裤类</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">54</td><td data-mobile-hidden="1" data-col-name="销售额">77075.84</td><td data-mobile-hidden="1" data-col-name="库存">43.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">2673.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">衣类</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">85</td><td data-mobile-hidden="1" data-col-name="销售额">73382.0</td><td data-mobile-hidden="1" data-col-name="库存">39.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">3473.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">常规内裤</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">35</td><td data-mobile-hidden="1" data-col-name="销售额">50099.36</td><td data-mobile-hidden="1" data-col-name="库存">264.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">3628.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">家居服</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">59</td><td data-mobile-hidden="1" data-col-name="销售额">38813.02</td><td data-mobile-hidden="1" data-col-name="库存">24.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">952.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">防晒服</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">12</td><td data-mobile-hidden="1" data-col-name="销售额">24413.22</td><td data-mobile-hidden="1" data-col-name="库存">20.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">384.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">儿童袜</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">44</td><td data-mobile-hidden="1" data-col-name="销售额">22777.16</td><td data-mobile-hidden="1" data-col-name="库存">119.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">3433.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">家居服</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-green tooltip-badge' title="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" data-tip="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" tabindex="0" role="note">当季主推</span></td><td data-mobile-hidden="0" data-col-name="SKU数">19</td><td data-mobile-hidden="1" data-col-name="销售额">13230.26</td><td data-mobile-hidden="1" data-col-name="库存">0.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">296.0</td><td data-mobile-hidden="1" data-col-name="补货原则">先稳毛利再补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">裤类</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-green tooltip-badge' title="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" data-tip="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" tabindex="0" role="note">当季主推</span></td><td data-mobile-hidden="0" data-col-name="SKU数">12</td><td data-mobile-hidden="1" data-col-name="销售额">10067.630000000001</td><td data-mobile-hidden="1" data-col-name="库存">13.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">419.0</td><td data-mobile-hidden="1" data-col-name="补货原则">先稳毛利再补</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">少女文胸</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">14</td><td data-mobile-hidden="1" data-col-name="销售额">6114.37</td><td data-mobile-hidden="1" data-col-name="库存">24.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">400.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补、先校库存</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">连裤袜</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-yellow tooltip-badge' title="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" data-tip="为什么：这类商品接近主销窗口，但还没到最强主卖期。怎么做：先小量试补 1-2 个颜色和核心尺码，观察 1 周左右。好处：能提前卡位，不至于季节一到就断货。注意：不要一次压深，避免变成跨季库存。" tabindex="0" role="note">下一季试补</span></td><td data-mobile-hidden="0" data-col-name="SKU数">1</td><td data-mobile-hidden="1" data-col-name="销售额">2967.36</td><td data-mobile-hidden="1" data-col-name="库存">18.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">354.0</td><td data-mobile-hidden="1" data-col-name="补货原则">小量试补</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">亲子家居</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-green tooltip-badge' title="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" data-tip="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" tabindex="0" role="note">当季主推</span></td><td data-mobile-hidden="0" data-col-name="SKU数">2</td><td data-mobile-hidden="1" data-col-name="销售额">1724.34</td><td data-mobile-hidden="1" data-col-name="库存">6.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">22.0</td><td data-mobile-hidden="1" data-col-name="补货原则">优先保不断码、按周销快返</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr><tr><td data-mobile-hidden="0" data-col-name="中类">儿童袜</td><td data-mobile-hidden="0" data-col-name="季节策略"><span class='badge badge-green tooltip-badge' title="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" data-tip="为什么：这类商品正在主销季，补货最容易直接转成营业额。怎么做：先补销量高、库存浅的中类，再补核心尺码和主销色。好处：能减少断码和错失成交。注意：别平均补货，避免把预算摊薄。" tabindex="0" role="note">当季主推</span></td><td data-mobile-hidden="0" data-col-name="SKU数">2</td><td data-mobile-hidden="1" data-col-name="销售额">1267.33</td><td data-mobile-hidden="1" data-col-name="库存">7.0</td><td data-mobile-hidden="1" data-col-name="建议补货量">253.0</td><td data-mobile-hidden="1" data-col-name="补货原则">优先保不断码</td><td data-mobile-hidden="1" data-col-name="主销尺码">130/M、120/S、110/XS</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="table-card is-compact">
+      <div class="table-header">
+        <h3>去化重点品类</h3>
+        <button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' data-collapse-label='收起额外列'>展开全部列</button>
+      </div>
+      <p class='table-tip'>这些品类说明库存承压更明显，先停补、再看陈列和组合去化。</p>
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr><th data-mobile-hidden="0">大类</th><th data-mobile-hidden="0">建议动作</th><th data-mobile-hidden="0">SKU数</th><th data-mobile-hidden="1">实际库存</th><th data-mobile-hidden="1">近期零售</th></tr></thead>
+          <tbody><tr><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-red tooltip-badge' title="为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。" data-tip="为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。" tabindex="0" role="note">先停补再去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">24</td><td data-mobile-hidden="1" data-col-name="实际库存">791.0</td><td data-mobile-hidden="1" data-col-name="近期零售">33.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" data-tip="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" tabindex="0" role="note">观察并做组合去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">15</td><td data-mobile-hidden="1" data-col-name="实际库存">235.0</td><td data-mobile-hidden="1" data-col-name="近期零售">6.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">少女文胸</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" data-tip="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" tabindex="0" role="note">观察并做组合去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">12</td><td data-mobile-hidden="1" data-col-name="实际库存">202.0</td><td data-mobile-hidden="1" data-col-name="近期零售">5.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">内裤</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-red tooltip-badge' title="为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。" data-tip="为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。" tabindex="0" role="note">先停补再去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">5</td><td data-mobile-hidden="1" data-col-name="实际库存">169.0</td><td data-mobile-hidden="1" data-col-name="近期零售">6.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">衣着系列</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-red tooltip-badge' title="为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。" data-tip="为什么：现有库存已经够多，再补只会更压。怎么做：先停新补货，再做组合价、第二件优惠、门口清货位。好处：能先回收现金流。注意：去化阶段不要追求毛利最大化。" tabindex="0" role="note">先停补再去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">3</td><td data-mobile-hidden="1" data-col-name="实际库存">66.0</td><td data-mobile-hidden="1" data-col-name="近期零售">3.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">衣着系列</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" data-tip="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" tabindex="0" role="note">观察并做组合去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">2</td><td data-mobile-hidden="1" data-col-name="实际库存">23.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="大类">内裤</td><td data-mobile-hidden="0" data-col-name="建议动作"><span class='badge badge-yellow tooltip-badge' title="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" data-tip="为什么：当前不适合深补，但也不一定要立刻清仓。怎么做：用搭配销售、组合价和会员提醒慢慢去化。好处：能温和出货。注意：连续 1-2 周无改善就要升级动作。" tabindex="0" role="note">观察并做组合去化</span></td><td data-mobile-hidden="0" data-col-name="SKU数">1</td><td data-mobile-hidden="1" data-col-name="实际库存">10.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="table-card is-compact">
+      <div class="table-header">
+        <h3>低库存畅销款</h3>
+        <button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' data-collapse-label='收起额外列'>展开全部列</button>
+      </div>
+      <p class='table-tip'>这里适合老板或店员直接挑具体款，优先保销量高、库存浅的 SKU。</p>
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr><th data-mobile-hidden="0">款号</th><th data-mobile-hidden="0">颜色</th><th data-mobile-hidden="0">中类</th><th data-mobile-hidden="1">季节</th><th data-mobile-hidden="1">销售数</th><th data-mobile-hidden="1">销售金额</th><th data-mobile-hidden="1">库存</th><th data-mobile-hidden="1">周期售罄</th></tr></thead>
+          <tbody><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81001X</td><td data-mobile-hidden="0" data-col-name="颜色">灰蓝色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">10.0</td><td data-mobile-hidden="1" data-col-name="销售金额">5182.93</td><td data-mobile-hidden="1" data-col-name="库存">1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.9090909090909091</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1Y90914Z</td><td data-mobile-hidden="0" data-col-name="颜色">紫红色</td><td data-mobile-hidden="0" data-col-name="中类">防晒服</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">18.0</td><td data-mobile-hidden="1" data-col-name="销售金额">4841.37</td><td data-mobile-hidden="1" data-col-name="库存">2.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.9</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81002X</td><td data-mobile-hidden="0" data-col-name="颜色">藕粉色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">8.0</td><td data-mobile-hidden="1" data-col-name="销售金额">4599.91</td><td data-mobile-hidden="1" data-col-name="库存">2.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.8</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81001X</td><td data-mobile-hidden="0" data-col-name="颜色">杏粉色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">9.0</td><td data-mobile-hidden="1" data-col-name="销售金额">4539.5</td><td data-mobile-hidden="1" data-col-name="库存">1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.9</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1T20195Z</td><td data-mobile-hidden="0" data-col-name="颜色">白色</td><td data-mobile-hidden="0" data-col-name="中类">衣类</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">33.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3923.49</td><td data-mobile-hidden="1" data-col-name="库存">0.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1Y90915X</td><td data-mobile-hidden="0" data-col-name="颜色">米黄色</td><td data-mobile-hidden="0" data-col-name="中类">衣类</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">20.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3671.19</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0526315789473684</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1B80998X</td><td data-mobile-hidden="0" data-col-name="颜色">浅咖色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">16.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3627.58</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0666666666666667</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81000X</td><td data-mobile-hidden="0" data-col-name="颜色">浅咖色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">11.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3340.56</td><td data-mobile-hidden="1" data-col-name="库存">0.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1K60603X</td><td data-mobile-hidden="0" data-col-name="颜色">橘粉色</td><td data-mobile-hidden="0" data-col-name="中类">裤类</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">29.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3141.31</td><td data-mobile-hidden="1" data-col-name="库存">1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.9666666666666667</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1Y90914Z</td><td data-mobile-hidden="0" data-col-name="颜色">绿色</td><td data-mobile-hidden="0" data-col-name="中类">防晒服</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">12.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3089.21</td><td data-mobile-hidden="1" data-col-name="库存">1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.9230769230769231</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1K60604X</td><td data-mobile-hidden="0" data-col-name="颜色">深咖色</td><td data-mobile-hidden="0" data-col-name="中类">裤类</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">28.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3081.59</td><td data-mobile-hidden="1" data-col-name="库存">1.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">0.9655172413793104</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1T20182X</td><td data-mobile-hidden="0" data-col-name="颜色">白色</td><td data-mobile-hidden="0" data-col-name="中类">衣类</td><td data-mobile-hidden="1" data-col-name="季节">夏</td><td data-mobile-hidden="1" data-col-name="销售数">39.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3075.76</td><td data-mobile-hidden="1" data-col-name="库存">0.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81000X</td><td data-mobile-hidden="0" data-col-name="颜色">米灰色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">10.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3073.46</td><td data-mobile-hidden="1" data-col-name="库存">0.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81005Z</td><td data-mobile-hidden="0" data-col-name="颜色">咖色</td><td data-mobile-hidden="0" data-col-name="中类">羽绒系列</td><td data-mobile-hidden="1" data-col-name="季节">冬</td><td data-mobile-hidden="1" data-col-name="销售数">7.0</td><td data-mobile-hidden="1" data-col-name="销售金额">3062.61</td><td data-mobile-hidden="1" data-col-name="库存">0.0</td><td data-mobile-hidden="1" data-col-name="周期售罄">1.0</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="table-card is-compact">
+      <div class="table-header">
+        <h3>高库存慢销款</h3>
+        <button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' data-collapse-label='收起额外列'>展开全部列</button>
+      </div>
+      <p class='table-tip'>这里先看实际库存和近期零售，再决定清货位、组合价还是暂缓补货。</p>
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr><th data-mobile-hidden="0">商品款号</th><th data-mobile-hidden="0">商品名称</th><th data-mobile-hidden="0">大类</th><th data-mobile-hidden="1">中类</th><th data-mobile-hidden="1">实际库存</th><th data-mobile-hidden="1">近期零售</th><th data-mobile-hidden="1">动销率</th><th data-mobile-hidden="1">零售价</th></tr></thead>
+          <tbody><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX2K10296</td><td data-mobile-hidden="0" data-col-name="商品名称">抑菌男平角内裤</td><td data-mobile-hidden="0" data-col-name="大类">内裤</td><td data-mobile-hidden="1" data-col-name="中类">常规内裤</td><td data-mobile-hidden="1" data-col-name="实际库存">51.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0196078431372549</td><td data-mobile-hidden="1" data-col-name="零售价">66.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1W30935</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵童袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">47.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.02127659574468085</td><td data-mobile-hidden="1" data-col-name="零售价">16.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1W30936</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵童袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">47.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.02127659574468085</td><td data-mobile-hidden="1" data-col-name="零售价">16.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1W30930</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵童袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">36.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0</td><td data-mobile-hidden="1" data-col-name="零售价">16.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1W30939</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵童袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">35.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.02857142857142857</td><td data-mobile-hidden="1" data-col-name="零售价">16.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX3K10312</td><td data-mobile-hidden="0" data-col-name="商品名称">高端抑菌无痕男平角内… <span class='inline-tip tooltip-badge' title='高端抑菌无痕男平角内裤' data-tip='高端抑菌无痕男平角内裤' tabindex='0' role='note'>详情</span></td><td data-mobile-hidden="0" data-col-name="大类">内裤</td><td data-mobile-hidden="1" data-col-name="中类">常规内裤</td><td data-mobile-hidden="1" data-col-name="实际库存">33.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0</td><td data-mobile-hidden="1" data-col-name="零售价">128.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1T20214X</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵针织外套</td><td data-mobile-hidden="0" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="中类">衣类</td><td data-mobile-hidden="1" data-col-name="实际库存">24.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0</td><td data-mobile-hidden="1" data-col-name="零售价">248.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX3K50355</td><td data-mobile-hidden="0" data-col-name="商品名称">高端抑菌无痕女平角内… <span class='inline-tip tooltip-badge' title='高端抑菌无痕女平角内裤' data-tip='高端抑菌无痕女平角内裤' tabindex='0' role='note'>详情</span></td><td data-mobile-hidden="0" data-col-name="大类">内裤</td><td data-mobile-hidden="1" data-col-name="中类">常规内裤</td><td data-mobile-hidden="1" data-col-name="实际库存">24.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0</td><td data-mobile-hidden="1" data-col-name="零售价">118.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1W30949</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵中筒袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">24.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0</td><td data-mobile-hidden="1" data-col-name="零售价">22.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX2W30952</td><td data-mobile-hidden="0" data-col-name="商品名称">宝宝对对袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">24.0</td><td data-mobile-hidden="1" data-col-name="近期零售">0.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.0</td><td data-mobile-hidden="1" data-col-name="零售价">22.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX2W30954</td><td data-mobile-hidden="0" data-col-name="商品名称">宝宝对对袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">23.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.043478260869565216</td><td data-mobile-hidden="1" data-col-name="零售价">28.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX2W30950</td><td data-mobile-hidden="0" data-col-name="商品名称">宝宝对对袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">23.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.043478260869565216</td><td data-mobile-hidden="1" data-col-name="零售价">26.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX2W30953</td><td data-mobile-hidden="0" data-col-name="商品名称">宝宝对对袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">23.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.043478260869565216</td><td data-mobile-hidden="1" data-col-name="零售价">22.0</td></tr><tr><td data-mobile-hidden="0" data-col-name="商品款号">TOX1W30941</td><td data-mobile-hidden="0" data-col-name="商品名称">小黑托昵童袜</td><td data-mobile-hidden="0" data-col-name="大类">袜品</td><td data-mobile-hidden="1" data-col-name="中类">儿童袜</td><td data-mobile-hidden="1" data-col-name="实际库存">23.0</td><td data-mobile-hidden="1" data-col-name="近期零售">1.0</td><td data-mobile-hidden="1" data-col-name="动销率">0.043478260869565216</td><td data-mobile-hidden="1" data-col-name="零售价">16.0</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    
+    <section class="table-card is-compact">
+      <div class="table-header">
+        <h3>负库存异常清单</h3>
+        <button type='button' class='table-toggle' data-table-toggle data-expand-label='展开全部列' data-collapse-label='收起额外列'>展开全部列</button>
+      </div>
+      <p class='table-tip'>先查账、查盘点、查调拨。这个问题不先处理，库存和销售关系就会继续失真。</p>
+      <div class="table-scroll">
+        <table class="data-table" border="0">
+          <thead><tr><th data-mobile-hidden="0">款号</th><th data-mobile-hidden="0">品名</th><th data-mobile-hidden="0">颜色</th><th data-mobile-hidden="1">尺码</th><th data-mobile-hidden="1">库存</th><th data-mobile-hidden="1">库存额</th><th data-mobile-hidden="1">大类</th><th data-mobile-hidden="1">小类</th></tr></thead>
+          <tbody><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81007Z</td><td data-mobile-hidden="0" data-col-name="品名">羽绒衣</td><td data-mobile-hidden="0" data-col-name="颜色">藏青色</td><td data-mobile-hidden="1" data-col-name="尺码">120/S</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-648.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">羽绒衣</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1Y81005Z</td><td data-mobile-hidden="0" data-col-name="品名">羽绒衣</td><td data-mobile-hidden="0" data-col-name="颜色">灰紫色</td><td data-mobile-hidden="1" data-col-name="尺码">160/XXL</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-498.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">羽绒衣</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNQ1K60642Z</td><td data-mobile-hidden="0" data-col-name="品名">小黑托昵休闲裤</td><td data-mobile-hidden="0" data-col-name="颜色">黑色</td><td data-mobile-hidden="1" data-col-name="尺码">140/L</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-328.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">单裤</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNC1Y90861D</td><td data-mobile-hidden="0" data-col-name="品名">小黑托昵家居服</td><td data-mobile-hidden="0" data-col-name="颜色">款色</td><td data-mobile-hidden="1" data-col-name="尺码">170/XXXL</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-318.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">长袖套装</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1Y90866D</td><td data-mobile-hidden="0" data-col-name="品名">小黑托昵家居服</td><td data-mobile-hidden="0" data-col-name="颜色">款色</td><td data-mobile-hidden="1" data-col-name="尺码">160/XXL</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-318.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">短袖套装</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNX1K60603X</td><td data-mobile-hidden="0" data-col-name="品名">防蚊裤</td><td data-mobile-hidden="0" data-col-name="颜色">米白色</td><td data-mobile-hidden="1" data-col-name="尺码">110/XS</td><td data-mobile-hidden="1" data-col-name="库存">-2.0</td><td data-mobile-hidden="1" data-col-name="库存额">-296.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">防蚊裤</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1K60647Z</td><td data-mobile-hidden="0" data-col-name="品名">小黑托昵休闲裤</td><td data-mobile-hidden="0" data-col-name="颜色">浅杏色</td><td data-mobile-hidden="1" data-col-name="尺码">150/XL</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-288.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">单裤</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1K60647Z</td><td data-mobile-hidden="0" data-col-name="品名">小黑托昵休闲裤</td><td data-mobile-hidden="0" data-col-name="颜色">韩粉色</td><td data-mobile-hidden="1" data-col-name="尺码">150/XL</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-288.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">单裤</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1B80999X</td><td data-mobile-hidden="0" data-col-name="品名">羽绒马甲</td><td data-mobile-hidden="0" data-col-name="颜色">杏粉色</td><td data-mobile-hidden="1" data-col-name="尺码">100/XXS</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-288.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">羽绒马甲</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TNC1Y90861Z</td><td data-mobile-hidden="0" data-col-name="品名">小黑托昵家居服</td><td data-mobile-hidden="0" data-col-name="颜色">款色</td><td data-mobile-hidden="1" data-col-name="尺码">130/M</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-288.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">长袖套装</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1B80998X</td><td data-mobile-hidden="0" data-col-name="品名">羽绒马甲</td><td data-mobile-hidden="0" data-col-name="颜色">浅咖色</td><td data-mobile-hidden="1" data-col-name="尺码">100/XXS</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-278.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">羽绒马甲</td></tr><tr><td data-mobile-hidden="0" data-col-name="款号">TND1B80998X</td><td data-mobile-hidden="0" data-col-name="品名">羽绒马甲</td><td data-mobile-hidden="0" data-col-name="颜色">浅咖色</td><td data-mobile-hidden="1" data-col-name="尺码">110/XS</td><td data-mobile-hidden="1" data-col-name="库存">-1.0</td><td data-mobile-hidden="1" data-col-name="库存额">-278.0</td><td data-mobile-hidden="1" data-col-name="大类">衣着系列</td><td data-mobile-hidden="1" data-col-name="小类">羽绒马甲</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    </div>
+        </section>
+        <section class="module" id="relationship-basis">
+          <div class="module-header">
+            <h2 class="module-title">数据口径与提醒</h2>
+            <p class="module-note">这里明确哪些是直接观察、哪些是估算、哪些带预测性质，避免把页面结论当成绝对真值。</p>
+          </div>
+          <div class="analysis-grid">
+        <article class="analysis-card">
+          <h3>直接观察</h3>
+          <ul class="analysis-list">
+            <li>近 8 天经营销售额、订单数和客单价来自 SQLite 校准销售主表。</li><li>当前库存额、库存量、库存金额/销售金额来自最新库存与库存零售快照。</li><li>负库存、去化清单、慢销清单都来自最新库存和进销存快照的直接结果。</li>
+          </ul>
+        </article>
+        
+        <article class="analysis-card">
+          <h3>估算口径</h3>
+          <ul class="analysis-list">
+            <li>库存覆盖天数是按最近销售速度估算的，不是未来实际销量承诺。</li><li>补货、去化、跨季处理属于规则型建议，适合当经营决策参考，不是自动下单结果。</li><li>品类关系判断是把销售和库存放在同一个画面里做结构解释，方便老板优先级排序。</li>
+          </ul>
+        </article>
+        
+        <article class="analysis-card">
+          <h3>预测口径</h3>
+          <ul class="analysis-list">
+            <li>当前月末净利预测约 -7,893.98 元，这里只用于提醒库存动作要不要更保守。</li>
+          </ul>
+        </article>
+        
+        <article class="analysis-card">
+          <h3>提醒与缺口</h3>
+          <ul class="analysis-list">
+            <li>出入库缺少 SKU 行级明细：false</li><li>店铺零售校验尾段缺口：17</li>
+          </ul>
+        </article>
+        </div>
+        </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>老板平时切页主要看这几个入口，关系页适合放在“看完首页之后、下钻详细页之前”。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="./index.html">进入仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a class="current" href="./relationship.html">当前关系页</a>
+            <a href="./monthly.html">进入月度页</a>
+            <a href="./quarterly.html">进入季度页</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速看某一块，点这里直接跳，不用来回滚动。</p>
+          <div class="rail-links">
+            <a href="#relationship-overview">关系结论</a>
+            <a href="#relationship-metrics">核心指标</a>
+            <a href="#relationship-actions">关键建议</a>
+            <a href="#relationship-findings">关键发现</a>
+            <a href="#relationship-charts">关系图表</a>
+            <a href="#relationship-details">详细信息</a>
+            <a href="#relationship-basis">数据口径</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+  
+  <script>
+    (function () {
+      if (window.__blackTonnyTooltipInit) return;
+      window.__blackTonnyTooltipInit = true;
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'floating-tooltip';
+      document.body.appendChild(tooltip);
+
+      let activeTarget = null;
+
+      function hideTooltip() {
+        activeTarget = null;
+        tooltip.classList.remove('is-visible');
+      }
+
+      function showTooltip(target) {
+        const message = target.getAttribute('data-tip') || target.getAttribute('title');
+        if (!message) return;
+        activeTarget = target;
+        tooltip.textContent = message;
+        tooltip.classList.add('is-visible');
+
+        const rect = target.getBoundingClientRect();
+        const ttRect = tooltip.getBoundingClientRect();
+        const margin = 12;
+        let left = rect.left + rect.width / 2 - ttRect.width / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - ttRect.width - margin));
+        let top = rect.top - ttRect.height - 12;
+        if (top < margin) {
+          top = rect.bottom + 12;
+        }
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      }
+
+      function attachTooltip(target) {
+        target.addEventListener('mouseenter', () => showTooltip(target));
+        target.addEventListener('mouseleave', hideTooltip);
+        target.addEventListener('focus', () => showTooltip(target));
+        target.addEventListener('blur', hideTooltip);
+        target.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (activeTarget === target && tooltip.classList.contains('is-visible')) {
+            hideTooltip();
+          } else {
+            showTooltip(target);
+          }
+        });
+      }
+
+      document.querySelectorAll('.tooltip-badge').forEach(attachTooltip);
+      window.addEventListener('scroll', hideTooltip, { passive: true });
+      window.addEventListener('resize', () => {
+        if (activeTarget) showTooltip(activeTarget);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.tooltip-badge')) {
+          hideTooltip();
+        }
+      });
+    })();
+  </script>
+    
+</body>
+</html>

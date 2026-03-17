@@ -1,13 +1,14 @@
 {
-  "generated_at": "2026-03-17T02:02:00.477183+08:00",
+  "generated_at": "2026-03-17T20:11:42.821067+08:00",
   "date_tag": "2026-03-17",
   "store_name": "咸阳沣西吾悦专卖店",
-  "analysis_batch_id": "sales_calibration_20260317_020150",
+  "analysis_batch_id": "sales_calibration_20260317_195522",
   "available_pages": {
     "dashboard": "data/dashboard.json",
     "details": "data/details.json",
     "monthly": "data/monthly.json",
-    "quarterly": "data/quarterly.json"
+    "quarterly": "data/quarterly.json",
+    "relationship": "data/relationship.json"
   },
   "available_exports": {
     "summary_markdown": "summary.md",

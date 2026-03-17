@@ -17,7 +17,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptSaleList",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "depts": "",
       "spenum": "",
@@ -32,16 +32,16 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-list",
-    "row_count": 1340,
+    "row_count": 1341,
     "columns": [
       "DeptName",
       "WareName",
@@ -177,7 +177,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposPerson/SelPersonSale",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "name": "",
       "page": 0,
@@ -190,11 +190,11 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
@@ -269,7 +269,7 @@
       "parameter": {
         "WareClause": "",
         "Depart": "  ",
-        "EndDate": "2026-03-16",
+        "EndDate": "2026-03-17",
         "BeginDate": "2025-03-01",
         "Operater": "",
         "Tiem": ""
@@ -282,11 +282,11 @@
     "capture_record_count": 83877,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "range_matched": true,
     "response_found": true,
@@ -431,7 +431,7 @@
       "parameter": {
         "BeginDate": "20250301",
         "Depart": "'A0190248'",
-        "EndDate": "20260316",
+        "EndDate": "20260317",
         "Operater": "",
         "Tiem": "1",
         "WareClause": ""
@@ -441,19 +441,19 @@
     "expected_request_matched": true,
     "capture_quality": "full-range-data",
     "report_mode": "date-range",
-    "capture_record_count": 9745,
+    "capture_record_count": 9764,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-dict",
-    "row_count": 9745,
+    "row_count": 9764,
     "columns": [
       "零售单号",
       "明细流水",
@@ -589,7 +589,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockWaitList",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "depts": "",
       "spenum": "",
@@ -605,16 +605,16 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-list",
-    "row_count": 983,
+    "row_count": 981,
     "columns": [
       "DeptName",
       "WareName",
@@ -848,7 +848,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockSaleList",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "depts": "",
       "spenum": "",
@@ -863,16 +863,16 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-list",
-    "row_count": 1340,
+    "row_count": 1341,
     "columns": [
       "DeptName",
       "WareName",
@@ -1088,7 +1088,7 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "",
@@ -1154,7 +1154,7 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "",
@@ -1220,7 +1220,7 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "",
@@ -1277,7 +1277,7 @@
     "request_method": "POST",
     "request_payload": {
       "bdate": "20250301",
-      "edate": "20260316",
+      "edate": "20260317",
       "warecause": "",
       "spenum": "",
       "depts": "",
@@ -1292,16 +1292,16 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-list",
-    "row_count": 983,
+    "row_count": 981,
     "columns": [
       "Num",
       "DeptName",
@@ -1456,7 +1456,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelInSalesReport",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "sort": "",
       "spenum": "",
@@ -1471,11 +1471,11 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
@@ -1533,7 +1533,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelOutInStockReport",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "datetype": "1",
       "type": "已出库,已入库,在途",
@@ -1550,11 +1550,11 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
@@ -1589,36 +1589,69 @@
     "status": "高度怀疑",
     "reason": "截图在，但当前 capture-cache 只有 opened-only，没有请求体和响应体，没法和 JSON 做精确对照。",
     "notes": [
-      "这张表必须重新补抓成功响应后，才能继续做字段确认和 SQLite 同步。",
-      "当前 capture-cache 没有抓到这个接口的响应体。"
+      "这张表必须重新补抓成功响应后，才能继续做字段确认和 SQLite 同步。"
     ],
     "capture_path": "/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/日进销存.json",
     "image_paths": [
       "/Users/lizhihui/Workspace/Black-Tony/scripts/yeusoft/API-images/日进销存.png"
     ],
     "url_keyword": "SelInSalesReportByDay",
-    "request_url": "",
+    "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelInSalesReportByDay",
     "request_method": "POST",
-    "request_payload": {},
+    "request_payload": {
+      "bdate": "20250301",
+      "edate": "20250331",
+      "warecause": "",
+      "spenum": "",
+      "page": 0,
+      "pagesize": 0
+    },
     "expected_request": {},
     "expected_request_matched": true,
-    "capture_quality": "opened-only",
+    "capture_quality": "full-range-data",
     "report_mode": "date-range",
-    "capture_record_count": 0,
+    "capture_record_count": 382,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-14"
+      "end": "2026-03-17"
     },
     "request_range": {
-      "start": "",
-      "end": ""
+      "start": "20250301",
+      "end": "20260317"
     },
-    "range_matched": false,
-    "response_found": false,
-    "response_shape": "missing-response",
-    "row_count": 0,
-    "columns": [],
-    "response_meta": {},
+    "range_matched": true,
+    "response_found": true,
+    "response_shape": "erp-retdata-dict",
+    "row_count": 31,
+    "columns": [
+      "Num",
+      "Date",
+      "DeptName",
+      "DeptCode",
+      "LastAmount",
+      "LastAmountPrice",
+      "InAmount",
+      "InAmountPrice",
+      "TBInAmount",
+      "TBInAmountPrice",
+      "RetuAmount",
+      "RetuAmountPrice",
+      "TBOutAmount",
+      "TBOutAmountPrice",
+      "SaleAmount",
+      "SaleAmountPrice",
+      "BSOutAmount",
+      "BSOutAmountPrice",
+      "ZMStockNum",
+      "ZMStockNumPrice",
+      "StockNum",
+      "StockNumPrice",
+      "WaitStockNum",
+      "WaitStockNumPrice"
+    ],
+    "response_meta": {
+      "shape": "erp-retdata-dict"
+    },
     "sqlite_targets": [],
     "sqlite_note": "当前无响应，也未入 SQLite。"
   },
@@ -1640,7 +1673,7 @@
     "request_method": "POST",
     "request_payload": {
       "salebdate": "20250301",
-      "saleedate": "20260316",
+      "saleedate": "20260317",
       "birthbdate": "",
       "birthedate": "",
       "page": 0,
@@ -1657,16 +1690,16 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-list",
-    "row_count": 1182,
+    "row_count": 1184,
     "columns": [
       "Num",
       "OperName",
@@ -1719,7 +1752,7 @@
     "request_method": "POST",
     "request_payload": {
       "bdate": "20250301",
-      "edate": "20260316",
+      "edate": "20260317",
       "page": 0,
       "pagesize": 0
     },
@@ -1727,19 +1760,19 @@
     "expected_request_matched": true,
     "capture_quality": "full-range-data",
     "report_mode": "date-range",
-    "capture_record_count": 1191,
+    "capture_record_count": 1193,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-dict",
-    "row_count": 1191,
+    "row_count": 1193,
     "columns": [
       "Num",
       "UserName",
@@ -1776,7 +1809,7 @@
       "menuid": "E004004003",
       "gridid": "E004004003_main",
       "parameter": {
-        "EndDate": "2026-03-16",
+        "EndDate": "2026-03-17",
         "BeginDate": "2025-03-01"
       }
     },
@@ -1787,11 +1820,11 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "range_matched": true,
     "response_found": true,
@@ -1860,7 +1893,7 @@
       "menuid": "E004004004",
       "gridid": "E004004004_main",
       "parameter": {
-        "EndDate": "2026-03-16",
+        "EndDate": "2026-03-17",
         "BeginDate": "2025-03-01",
         "Search": ""
       }
@@ -1872,11 +1905,11 @@
     "capture_record_count": 19,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "range_matched": true,
     "response_found": true,
@@ -1952,7 +1985,7 @@
       "menuid": "E004004005",
       "gridid": "E004004005_main",
       "parameter": {
-        "EndDate": "2026-03-16",
+        "EndDate": "2026-03-17",
         "BeginDate": "2025-03-01",
         "Search": ""
       }
@@ -1964,11 +1997,11 @@
     "capture_record_count": 78,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "range_matched": true,
     "response_found": true,
@@ -2047,7 +2080,7 @@
     "request_url": "https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelSaleReportData",
     "request_method": "POST",
     "request_payload": {
-      "edate": "20260316",
+      "edate": "20260317",
       "bdate": "20250301",
       "warecause": "",
       "spenum": ""
@@ -2056,19 +2089,19 @@
     "expected_request_matched": true,
     "capture_quality": "full-range-data",
     "report_mode": "date-range",
-    "capture_record_count": 1340,
+    "capture_record_count": 1341,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-dict",
-    "row_count": 1340,
+    "row_count": 1341,
     "columns": [
       "Num",
       "WareCode",
@@ -2133,7 +2166,7 @@
       "warecause": "",
       "type": 3,
       "bdate": "20250301",
-      "edate": "20260316"
+      "edate": "20260317"
     },
     "expected_request": {
       "type": 3
@@ -2144,11 +2177,11 @@
     "capture_record_count": 1,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "20250301",
-      "end": "20260316"
+      "end": "20260317"
     },
     "range_matched": true,
     "response_found": true,
@@ -2638,11 +2671,11 @@
     "request_payload": {
       "Type": "1",
       "BeginDate": "2025-03-01",
-      "EndDate": "2026-03-16",
+      "EndDate": "2026-03-17",
       "YBeginDate": "2024-02-29",
-      "YEndDate": "2025-03-15",
+      "YEndDate": "2025-03-16",
       "MBeginDate": "2025-01-31",
-      "MEndDate": "2026-02-15",
+      "MEndDate": "2026-02-16",
       "PageIndex": 1,
       "PageSize": 2000
     },
@@ -2650,19 +2683,19 @@
     "expected_request_matched": true,
     "capture_quality": "full-range-data",
     "report_mode": "date-range",
-    "capture_record_count": 365,
+    "capture_record_count": 366,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "jyapi-page-items",
-    "row_count": 365,
+    "row_count": 366,
     "columns": [
       "DeptName",
       "Date",
@@ -2687,7 +2720,7 @@
     "response_meta": {
       "page_index": 0,
       "page_size": 0,
-      "total_count": 365
+      "total_count": 366
     },
     "sqlite_targets": [],
     "sqlite_note": "当前未入 SQLite，仅在 `scripts.dashboard.yeusoft` 中做页面解析。"
@@ -2714,25 +2747,25 @@
       "Search": "",
       "LastDate": "",
       "BeginDate": "2025-03-01",
-      "EndDate": "2026-03-16"
+      "EndDate": "2026-03-17"
     },
     "expected_request": {},
     "expected_request_matched": true,
     "capture_quality": "full-range-data",
     "report_mode": "date-range",
-    "capture_record_count": 3988,
+    "capture_record_count": 3996,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "range_matched": true,
     "response_found": true,
     "response_shape": "jyapi-columns-list",
-    "row_count": 3988,
+    "row_count": 3996,
     "columns": [
       "Area",
       "Organization",
@@ -2840,21 +2873,21 @@
     },
     "expected_request": {},
     "expected_request_matched": true,
-    "capture_quality": "partial-range-data",
-    "report_mode": "date-range",
-    "capture_record_count": 1297,
+    "capture_quality": "snapshot-data",
+    "report_mode": "snapshot",
+    "capture_record_count": 1300,
     "requested_range": {
       "start": "2025-03-01",
-      "end": "2026-03-16"
+      "end": "2026-03-17"
     },
     "request_range": {
       "start": "",
       "end": ""
     },
-    "range_matched": false,
+    "range_matched": true,
     "response_found": true,
     "response_shape": "erp-retdata-dict",
-    "row_count": 1297,
+    "row_count": 1300,
     "columns": [
       "Num",
       "VipCode",

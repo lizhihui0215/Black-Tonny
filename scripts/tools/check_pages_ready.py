@@ -46,6 +46,7 @@ def main() -> int:
             file_exists(DASHBOARD_DIR / "details.html", "site/dashboard/details.html exists"),
             file_exists(DASHBOARD_DIR / "monthly.html", "site/dashboard/monthly.html exists"),
             file_exists(DASHBOARD_DIR / "quarterly.html", "site/dashboard/quarterly.html exists"),
+            file_exists(DASHBOARD_DIR / "relationship.html", "site/dashboard/relationship.html exists"),
             file_exists(DASHBOARD_DIR / "summary.md", "site/dashboard/summary.md exists"),
             file_exists(DASHBOARD_DIR / "report.md", "site/dashboard/report.md exists"),
             file_exists(DASHBOARD_DIR / "补货建议清单.csv", "site/dashboard/补货建议清单.csv exists"),
@@ -55,6 +56,7 @@ def main() -> int:
             file_exists(DASHBOARD_DIR / "data" / "details.json", "site/dashboard/data/details.json exists"),
             file_exists(DASHBOARD_DIR / "data" / "monthly.json", "site/dashboard/data/monthly.json exists"),
             file_exists(DASHBOARD_DIR / "data" / "quarterly.json", "site/dashboard/data/quarterly.json exists"),
+            file_exists(DASHBOARD_DIR / "data" / "relationship.json", "site/dashboard/data/relationship.json exists"),
             file_exists(DASHBOARD_DIR / "data" / "manifest.json", "site/dashboard/data/manifest.json exists"),
         ]
     )
@@ -80,6 +82,10 @@ def main() -> int:
             text_contains(dashboard_index, "./details.html", "dashboard links to detail page"),
             text_contains(dashboard_index, "./monthly.html", "dashboard links to monthly page"),
             text_contains(dashboard_index, "./quarterly.html", "dashboard links to quarterly page"),
+            text_contains(dashboard_index, "./relationship.html", "dashboard links to relationship page"),
+            text_contains(DASHBOARD_DIR / "relationship.html", "./details.html", "relationship page links to detail page"),
+            text_contains(DASHBOARD_DIR / "relationship.html", "./monthly.html", "relationship page links to monthly page"),
+            text_contains(DASHBOARD_DIR / "relationship.html", "./quarterly.html", "relationship page links to quarterly page"),
             text_contains(readme, "GitHub Pages开启清单", "README links to Pages checklist"),
         ]
     )

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Repo Scan"
+  short_description: "Scan repo and map analysis flow"
+  brand_color: "#2563EB"
+  default_prompt: "Use $scan-repo to inspect this repository, document the data flow, and identify safe extension points."
+
+policy:
+  allow_implicit_invocation: false

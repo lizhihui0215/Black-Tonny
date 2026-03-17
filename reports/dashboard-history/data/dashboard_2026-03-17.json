@@ -1,10 +1,10 @@
 {
   "meta": {
     "page_type": "dashboard",
-    "generated_at": "2026-03-17T02:02:00.477183+08:00",
+    "generated_at": "2026-03-17T20:11:42.821067+08:00",
     "store_name": "咸阳沣西吾悦专卖店",
-    "analysis_batch_id": "sales_calibration_20260317_020150",
-    "data_capture_at": "2026-03-17T02:01:58",
+    "analysis_batch_id": "sales_calibration_20260317_195522",
+    "data_capture_at": "2026-03-17T19:55:31",
     "pipeline": [
       "抓取 JSON",
       "数据同步",
@@ -18,79 +18,79 @@
   },
   "summary_cards": {
     "store_name": "咸阳沣西吾悦专卖店",
-    "sales_amount": 9312.16,
-    "sales_qty": 128.0,
+    "sales_amount": 9441.77,
+    "sales_qty": 131.0,
     "sales_orders": 55,
     "sales_days": 8,
-    "avg_order_value": 169.31199999999998,
-    "items_per_order": 2.327272727272727,
-    "member_sales_ratio": 0.6527121527121527,
-    "sales_detail_start": "2026-03-09T13:17:12",
-    "sales_detail_end": "2026-03-16T13:25:12",
-    "inventory_qty": 5823.0,
-    "inventory_amount": 530282.0,
+    "avg_order_value": 171.66854545454547,
+    "items_per_order": 2.381818181818182,
+    "member_sales_ratio": 0.7396738111604074,
+    "sales_detail_start": "2026-03-10T13:18:35",
+    "sales_detail_end": "2026-03-17T19:25:38",
+    "inventory_qty": 5810.0,
+    "inventory_amount": 528367.0,
     "negative_sku_count": 105,
     "negative_inventory_amount": -16764.0,
-    "daily_sales_amount": 1164.02,
-    "daily_sales_qty": 16.0,
-    "estimated_inventory_days": 363.9375,
-    "props_sales_amount": 4835.839999999999,
-    "props_sales_qty": 30.0,
-    "props_sales_orders": 25,
-    "props_inventory_qty": 1249.0,
-    "props_inventory_amount": 250824.0,
+    "daily_sales_amount": 1180.22125,
+    "daily_sales_qty": 16.375,
+    "estimated_inventory_days": 354.80916030534354,
+    "props_sales_amount": 5377.2300000000005,
+    "props_sales_qty": 33.0,
+    "props_sales_orders": 27,
+    "props_inventory_qty": 1245.0,
+    "props_inventory_amount": 249972.0,
     "receipt_qty": 12642.0,
     "receipt_records": 151,
-    "member_count": 1182,
-    "member_amount_sum": 681238.4000000001,
-    "cumulative_sales_qty": 9016.0,
-    "cumulative_sales_amount": 859786.57,
-    "cumulative_receipt_qty": 14308.0,
-    "historical_stock_qty": 4853.0,
+    "member_count": 1184,
+    "member_amount_sum": 682965.4000000001,
+    "cumulative_sales_qty": 9029.0,
+    "cumulative_sales_amount": 861076.1099999999,
+    "cumulative_receipt_qty": 14314.0,
+    "historical_stock_qty": 4846.0,
     "history_first_arrival": "2025-03-17T00:00:00",
     "history_first_sale": "2025-03-17T00:00:00",
-    "props_cumulative_sales_qty": 281.0,
-    "props_cumulative_sales_amount": 41674.43,
+    "props_cumulative_sales_qty": 285.0,
+    "props_cumulative_sales_amount": 42423.89,
     "current_season_name": "春季",
     "phase_name": "春夏换季期",
     "next_season_name": "夏季",
     "sales_source_label": "SQLite 校准销售主表（最近 8 天滚动窗口）",
     "cumulative_sales_source_label": "SQLite 校准累计快照",
-    "month_to_date_sales_amount": 22186.7,
+    "month_to_date_sales_amount": 23476.24,
     "month_to_date_sales_source": "SQLite 校准销售月累计",
-    "analysis_batch_id": "sales_calibration_20260317_020150",
-    "data_capture_at": "2026-03-17T02:01:58",
+    "analysis_batch_id": "sales_calibration_20260317_195522",
+    "data_capture_at": "2026-03-17T19:55:31",
     "profit_snapshot": {
       "snapshot_name": "月度成本快照",
       "snapshot_datetime": "2026-03-14T19:08:00+08:00",
-      "sales_amount": 22186.7,
-      "purchase_cost": 11537.084,
-      "gross_profit": 10649.616,
+      "sales_amount": 23476.24,
+      "purchase_cost": 12207.644800000002,
+      "gross_profit": 11268.5952,
       "gross_margin_rate": 0.48,
       "monthly_operating_expense": 24001.55,
       "salary_total": 7500.0,
       "total_expense": 31501.55,
       "operating_expense_source": "当前成本快照",
-      "net_profit": -20851.934,
-      "net_margin_rate": -0.9398393632221106,
-      "average_daily_gross_profit": 719.7037281772105,
-      "expense_ratio": 1.4198393632221105,
-      "salary_ratio": 0.3380403575114821,
-      "operating_expense_ratio": 1.0817990057106284,
-      "expense_coverage_ratio": 0.33806641260509407,
+      "net_profit": -20232.9548,
+      "net_margin_rate": -0.86184818352513,
+      "average_daily_gross_profit": 761.5344982166322,
+      "expense_ratio": 1.34184818352513,
+      "salary_ratio": 0.3194719426961046,
+      "operating_expense_ratio": 1.0223762408290253,
+      "expense_coverage_ratio": 0.35771557907468043,
       "breakeven_sales": 65628.22916666667,
       "breakeven_daily_sales": 2117.0396505376348,
-      "breakeven_progress_ratio": 0.338066412605094,
+      "breakeven_progress_ratio": 0.35771557907468043,
       "breakeven_available": true,
-      "average_daily_sales": 1499.382767035855,
+      "average_daily_sales": 1586.5302046179838,
       "remaining_days": 16.202777777777776,
-      "remaining_sales_to_breakeven": 43441.529166666674,
-      "remaining_daily_sales_needed": 2681.1161494942576,
-      "projected_month_sales": 46480.8657781115,
-      "projected_remaining_sales": 24294.165778111503,
-      "projected_month_gross_profit": 22310.81557349352,
-      "projected_remaining_gross_profit": 11661.19957349352,
-      "projected_month_net_profit": -9190.734426506478,
+      "remaining_sales_to_breakeven": 42151.989166666666,
+      "remaining_daily_sales_needed": 2601.5285616320934,
+      "projected_month_sales": 49182.4363431575,
+      "projected_remaining_sales": 25706.196343157495,
+      "projected_month_gross_profit": 23607.5694447156,
+      "projected_remaining_gross_profit": 12338.974244715597,
+      "projected_month_net_profit": -7893.980555284401,
       "projected_monthly_status": "red",
       "forecast_headline": "按当前节奏月底还有亏损风险",
       "fixed_cost_daily_burden": 774.2435483870968,
@@ -173,21 +173,21 @@
     },
     "yeusoft_highlights": {
       "sales_overview": {
-        "capture_at": "2026-03-16T13:50:02.175000+00:00",
+        "capture_at": "2026-03-17T11:50:45.458000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
+        "window_end": "2026-03-17T00:00:00",
         "store_name": "咸阳沣西吾悦专卖店",
-        "sales_amount": 859786.57,
-        "sales_qty": 9016.0,
-        "order_count": 3866,
-        "avg_order_value": 222.39693998965336,
-        "member_sales_ratio": 0.7535113045555014,
+        "sales_amount": 861076.11,
+        "sales_qty": 9029.0,
+        "order_count": 3873,
+        "avg_order_value": 222.3279395817196,
+        "member_sales_ratio": 0.7538305760219036,
         "top_categories": [
           {
             "name": "衣类",
-            "sales_amount": 188907.93,
-            "sales_qty": 1730.0,
-            "order_count": 1355
+            "sales_amount": 189130.55,
+            "sales_qty": 1733.0,
+            "order_count": 1357
           },
           {
             "name": "裤类",
@@ -197,9 +197,9 @@
           },
           {
             "name": "儿童内衣套装",
-            "sales_amount": 118456.22,
-            "sales_qty": 733.0,
-            "order_count": 596
+            "sales_amount": 118729.81,
+            "sales_qty": 735.0,
+            "order_count": 597
           }
         ],
         "top_category_labels": "衣类、裤类、儿童内衣套装",
@@ -216,8 +216,8 @@
           },
           {
             "name": "张静",
-            "sales_amount": 239965.68,
-            "order_count": 985
+            "sales_amount": 240641.28,
+            "order_count": 990
           }
         ],
         "top_guide_name": "赵婷宇",
@@ -344,13 +344,13 @@
           },
           {
             "label": "2026-03",
-            "sales_amount": 22186.7,
-            "sales_qty": 309.0,
-            "order_count": 132,
-            "avg_order_value": 168.08106060606062,
-            "member_ratio": 0.7493254968066455,
+            "sales_amount": 23476.24,
+            "sales_qty": 322.0,
+            "order_count": 139,
+            "avg_order_value": 168.8938129496403,
+            "member_ratio": 0.7612658585872354,
             "top_category": "衣类",
-            "top_category_sales": 4580.49
+            "top_category_sales": 4803.11
           }
         ],
         "quarterly_rows": [
@@ -396,24 +396,24 @@
           },
           {
             "label": "2026Q1",
-            "sales_amount": 152269.52,
-            "sales_qty": 1588.0,
-            "order_count": 718,
-            "avg_order_value": 212.07454038997213,
-            "member_ratio": 0.6738609933228923,
+            "sales_amount": 153559.06,
+            "sales_qty": 1601.0,
+            "order_count": 725,
+            "avg_order_value": 211.8056,
+            "member_ratio": 0.6763201728377343,
             "top_category": "儿童内衣套装",
-            "top_category_sales": 26045.56
+            "top_category_sales": 26319.15
           }
         ],
         "latest_month": {
           "label": "2026-03",
-          "sales_amount": 22186.7,
-          "sales_qty": 309.0,
-          "order_count": 132,
-          "avg_order_value": 168.08106060606062,
-          "member_ratio": 0.7493254968066455,
+          "sales_amount": 23476.24,
+          "sales_qty": 322.0,
+          "order_count": 139,
+          "avg_order_value": 168.8938129496403,
+          "member_ratio": 0.7612658585872354,
           "top_category": "衣类",
-          "top_category_sales": 4580.49
+          "top_category_sales": 4803.11
         },
         "previous_month": {
           "label": "2026-02",
@@ -427,13 +427,13 @@
         },
         "latest_quarter": {
           "label": "2026Q1",
-          "sales_amount": 152269.52,
-          "sales_qty": 1588.0,
-          "order_count": 718,
-          "avg_order_value": 212.07454038997213,
-          "member_ratio": 0.6738609933228923,
+          "sales_amount": 153559.06,
+          "sales_qty": 1601.0,
+          "order_count": 725,
+          "avg_order_value": 211.8056,
+          "member_ratio": 0.6763201728377343,
           "top_category": "儿童内衣套装",
-          "top_category_sales": 26045.56
+          "top_category_sales": 26319.15
         },
         "previous_quarter": {
           "label": "2025Q4",
@@ -447,30 +447,30 @@
         }
       },
       "product_sales": {
-        "capture_at": "2026-03-16T13:51:20.685000+00:00",
+        "capture_at": "2026-03-17T11:53:12.898000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
-        "style_count": 1218,
-        "cumulative_sales_qty": 9016.0,
-        "cumulative_sales_amount": 859786.57,
-        "cumulative_arrival_qty": 14308.0,
-        "current_stock_qty": 4853.0,
-        "sellout_rate": 0.6301369863013698,
-        "current_season_stock_share": 0.024933031114774365,
-        "next_season_stock_share": 0.41170410055635687,
-        "cross_season_stock_share": 0.5633628683288687,
+        "window_end": "2026-03-17T00:00:00",
+        "style_count": 1219,
+        "cumulative_sales_qty": 9029.0,
+        "cumulative_sales_amount": 861076.11,
+        "cumulative_arrival_qty": 14314.0,
+        "current_stock_qty": 4846.0,
+        "sellout_rate": 0.6307810535140422,
+        "current_season_stock_share": 0.024762690879075525,
+        "next_season_stock_share": 0.41167973586463064,
+        "cross_season_stock_share": 0.5635575732562939,
         "top_stock_labels": "2025秋、2026夏、2025夏",
-        "fast_sellout_count": 563,
-        "backlog_count": 144
+        "fast_sellout_count": 566,
+        "backlog_count": 145
       },
       "member_rank": {
-        "capture_at": "2026-03-16T13:51:10.419000+00:00",
+        "capture_at": "2026-03-17T11:53:03.128000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
-        "member_count": 1190,
-        "total_amount": 682515.47,
+        "window_end": "2026-03-17T00:00:00",
+        "member_count": 1192,
+        "total_amount": 684242.47,
         "top10_amount": 45239.079999999994,
-        "top10_share": 0.06628286388878482,
+        "top10_share": 0.06611556865214753,
         "top_members": [
           {
             "name": "妞宝",
@@ -501,56 +501,56 @@
         "top_names": "妞宝、年年、史振尧"
       },
       "stock_analysis": {
-        "capture_at": "2026-03-16T13:50:14.814000+00:00",
-        "last_year_label": "【截止20250316】",
-        "current_year_label": "【截止20260316】",
-        "total_inventory_qty": 7072.0,
-        "total_inventory_amount": 781106.0,
+        "capture_at": "2026-03-17T11:50:57.679000+00:00",
+        "last_year_label": "【截止20250317】",
+        "current_year_label": "【截止20260317】",
+        "total_inventory_qty": 7055.0,
+        "total_inventory_amount": 778339.0,
         "total_style_count": 1082.0,
-        "current_season_inventory_share": 0.36103038512058544,
-        "next_season_inventory_share": 0.2387140797791849,
-        "cross_season_inventory_share": 0.4006703315555123,
+        "current_season_inventory_share": 0.36109330253270105,
+        "next_season_inventory_share": 0.23787706898921934,
+        "cross_season_inventory_share": 0.4014458995373481,
         "top_rows": [
           {
             "label": "2026春",
             "year": "2026",
             "season": "春",
-            "inventory_qty": 1321.0,
-            "inventory_amount": 274857.0,
+            "inventory_qty": 1316.0,
+            "inventory_amount": 273907.0,
             "style_count": 37.0,
             "season_strategy": "当季主推",
-            "inventory_amount_share": 0.3518818188568517,
-            "inventory_qty_share": 0.18679298642533937
+            "inventory_amount_share": 0.35191221305883424,
+            "inventory_qty_share": 0.1865343727852587
           },
           {
             "label": "2025秋",
             "year": "2025",
             "season": "秋",
-            "inventory_qty": 2533.0,
-            "inventory_amount": 202536.0,
+            "inventory_qty": 2531.0,
+            "inventory_amount": 202269.0,
             "style_count": 370.0,
             "season_strategy": "暂缓补货",
-            "inventory_amount_share": 0.25929387304667995,
-            "inventory_qty_share": 0.3581730769230769
+            "inventory_amount_share": 0.2598726261950127,
+            "inventory_qty_share": 0.35875265768958187
           },
           {
             "label": "2026夏",
             "year": "2026",
             "season": "夏",
-            "inventory_qty": 2011.0,
-            "inventory_amount": 113394.0,
+            "inventory_qty": 2008.0,
+            "inventory_amount": 112976.0,
             "style_count": 122.0,
             "season_strategy": "下一季试补",
-            "inventory_amount_share": 0.14517107793308462,
-            "inventory_qty_share": 0.2843608597285068
+            "inventory_amount_share": 0.14515012096271676,
+            "inventory_qty_share": 0.28462083628632173
           }
         ],
         "top_labels": "2026春、2025秋、2026夏"
       },
       "movement": {
-        "capture_at": "2026-03-16T13:50:25.777000+00:00",
+        "capture_at": "2026-03-17T11:51:07.470000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
+        "window_end": "2026-03-17T00:00:00",
         "record_count": 307,
         "inbound_count": 151,
         "inbound_qty": 12642.0,
@@ -563,72 +563,72 @@
         "latest_doc_time": "2026-03-12T16:05:47"
       },
       "daily_flow": {
-        "capture_at": "2026-03-16T13:51:29.818000+00:00",
+        "capture_at": "2026-03-17T11:53:21.620000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
-        "order_count": 3988,
-        "sales_qty": 9297.0,
-        "tag_money": 1171082.0,
-        "actual_money": 935577.0000000001,
-        "average_discount": 0.7817953861584963,
+        "window_end": "2026-03-17T00:00:00",
+        "order_count": 3996,
+        "sales_qty": 9314.0,
+        "tag_money": 1173849.0,
+        "actual_money": 937616.0000000002,
+        "average_discount": 0.7815690690690917,
         "payment_breakdown": [
           {
             "label": "现金",
-            "amount": 911978.9400000001,
-            "share": 0.9747769985794862
+            "amount": 914017.9400000002,
+            "share": 0.974831850139076
           },
           {
             "label": "券",
             "amount": 34600.0,
-            "share": 0.036982525222402855
+            "share": 0.036902100646746636
           },
           {
             "label": "抹零",
             "amount": 4487.0,
-            "share": 0.004795970828697156
+            "share": 0.004785541202368559
           }
         ],
         "dominant_payment": {
           "label": "现金",
-          "amount": 911978.9400000001,
-          "share": 0.9747769985794862
+          "amount": 914017.9400000002,
+          "share": 0.974831850139076
         },
-        "latest_make_date": "2026-03-16T13:25:12"
+        "latest_make_date": "2026-03-17T19:25:38"
       },
       "category_analysis": {
-        "capture_at": "2026-03-16T13:51:23.512000+00:00",
+        "capture_at": "2026-03-17T11:53:15.681000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
+        "window_end": "2026-03-17T00:00:00",
         "top_categories": [
           {
             "name": "道具",
-            "sales_amount": 250824.0,
-            "share": 0.3209807660315063
+            "sales_amount": 249972.0,
+            "share": 0.3210271966177923
           },
           {
             "name": "常规内裤",
-            "sales_amount": 100574.0,
-            "share": 0.12870506635271234
+            "sales_amount": 100364.0,
+            "share": 0.1288927302311783
           },
           {
             "name": "家居服",
-            "sales_amount": 83972.0,
-            "share": 0.10745940135392805
+            "sales_amount": 83416.0,
+            "share": 0.10712721678055848
           },
           {
             "name": "儿童袜",
-            "sales_amount": 72721.0,
-            "share": 0.0930614386445363
+            "sales_amount": 72649.0,
+            "share": 0.09329966879124858
           },
           {
             "name": "儿童内衣套装",
-            "sales_amount": 67697.0,
-            "share": 0.08663219994113357
+            "sales_amount": 67241.0,
+            "share": 0.08635443060733591
           }
         ],
         "top_category_names": "道具、常规内裤、家居服",
-        "top1_share": 0.3209807660315063,
-        "top2_share": 0.44968583238421866,
+        "top1_share": 0.3210271966177923,
+        "top2_share": 0.4499199268489706,
         "period_rows": [
           {
             "label": "23夏",
@@ -662,52 +662,52 @@
           },
           {
             "label": "25夏",
-            "sales_amount": 69717.0,
+            "sales_amount": 68823.0,
             "top_category": "家居服",
-            "top_category_sales": 26150.0
+            "top_category_sales": 25594.0
           },
           {
             "label": "25秋",
-            "sales_amount": 202536.0,
+            "sales_amount": 202269.0,
             "top_category": "常规内裤",
             "top_category_sales": 50819.0
           },
           {
             "label": "25冬",
-            "sales_amount": 108648.0,
+            "sales_amount": 108410.0,
             "top_category": "裤类",
             "top_category_sales": 34510.0
           },
           {
             "label": "26春",
-            "sales_amount": 274857.0,
+            "sales_amount": 273907.0,
             "top_category": "道具",
-            "top_category_sales": 247737.0
+            "top_category_sales": 246885.0
           },
           {
             "label": "26夏",
-            "sales_amount": 113394.0,
+            "sales_amount": 112976.0,
             "top_category": "儿童袜",
-            "top_category_sales": 34806.0
+            "top_category_sales": 34734.0
           }
         ],
         "latest_period": {
           "label": "26夏",
-          "sales_amount": 113394.0,
+          "sales_amount": 112976.0,
           "top_category": "儿童袜",
-          "top_category_sales": 34806.0
+          "top_category_sales": 34734.0
         },
         "previous_period": {
           "label": "26春",
-          "sales_amount": 274857.0,
+          "sales_amount": 273907.0,
           "top_category": "道具",
-          "top_category_sales": 247737.0
+          "top_category_sales": 246885.0
         },
         "growth_rows": [
           {
             "name": "儿童袜",
-            "delta_sales": 34806.0,
-            "latest_sales": 34806.0
+            "delta_sales": 34734.0,
+            "latest_sales": 34734.0
           },
           {
             "name": "常规内裤",
@@ -723,7 +723,7 @@
         "decline_rows": [
           {
             "name": "道具",
-            "delta_sales": -245790.0,
+            "delta_sales": -244938.0,
             "latest_sales": 1947.0
           },
           {
@@ -739,17 +739,17 @@
         ]
       },
       "vip_analysis": {
-        "capture_at": "2026-03-16T13:51:07.790000+00:00",
+        "capture_at": "2026-03-17T11:53:00.612000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
-        "member_count": 1182,
+        "window_end": "2026-03-17T00:00:00",
+        "member_count": 1184,
         "vip_card_count": 4156,
-        "total_member_sales": 681238.4,
-        "avg_member_sale": 102.0,
-        "total_member_orders": 6679.0,
-        "active_recent_count": 349,
-        "dormant_count": 595,
-        "dormant_ratio": 0.5033840947546532,
+        "total_member_sales": 682965.4,
+        "avg_member_sale": 102.04,
+        "total_member_orders": 6693.0,
+        "active_recent_count": 353,
+        "dormant_count": 597,
+        "dormant_ratio": 0.504222972972973,
         "top_members": [
           {
             "name": "妞宝",
@@ -790,12 +790,12 @@
         "top_member_names": "妞宝、年年、史振尧"
       },
       "guide_report": {
-        "capture_at": "2026-03-16T13:49:49.627000+00:00",
+        "capture_at": "2026-03-17T11:50:32.411000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
+        "window_end": "2026-03-17T00:00:00",
         "guide_count": 6,
-        "total_sales": 901460.6699999999,
-        "vip_sales_share": 0.7571213838979798,
+        "total_sales": 903499.6699999999,
+        "vip_sales_share": 0.7573241836380528,
         "top_guides": [
           {
             "name": "赵婷宇",
@@ -813,17 +813,17 @@
           },
           {
             "name": "张静",
-            "sales_amount": 254201.35,
-            "sales_qty": 2272.0,
-            "vip_money": 198410.17,
+            "sales_amount": 255357.35,
+            "sales_qty": 2281.0,
+            "vip_money": 199566.17,
             "discount_rate": 0.8
           },
           {
             "name": "刘梅",
-            "sales_amount": 4194.2,
-            "sales_qty": 41.0,
-            "vip_money": 3509.2,
-            "discount_rate": 0.81
+            "sales_amount": 5077.2,
+            "sales_qty": 49.0,
+            "vip_money": 4080.2,
+            "discount_rate": 0.78
           },
           {
             "name": "朱亚娣",
@@ -834,13 +834,13 @@
           }
         ],
         "top_guide_name": "赵婷宇",
-        "top_guide_share": 0.41234839452285815
+        "top_guide_share": 0.41141781490634083
       },
       "store_month_report": {
-        "capture_at": "2026-03-16T13:51:26.661000+00:00",
+        "capture_at": "2026-03-17T11:53:18.543000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
-        "row_count": 365,
+        "window_end": "2026-03-17T00:00:00",
+        "row_count": 366,
         "monthly_rows": [
           {
             "label": "2025-03",
@@ -928,10 +928,10 @@
           },
           {
             "label": "2026-03",
-            "order_count": 376.0,
-            "sales_qty": 401.0,
-            "joint_rate": 1.0664893617021276,
-            "avg_joint_rate": 1.0631249999999999
+            "order_count": 393.0,
+            "sales_qty": 418.0,
+            "joint_rate": 1.063613231552163,
+            "avg_joint_rate": 1.0594117647058823
           }
         ],
         "quarterly_rows": [
@@ -965,50 +965,50 @@
           },
           {
             "label": "2026Q1",
-            "order_count": 1708.0,
-            "sales_qty": 1820.0,
-            "joint_rate": 1.0655737704918034,
-            "avg_joint_rate": 1.07
+            "order_count": 1725.0,
+            "sales_qty": 1837.0,
+            "joint_rate": 1.064927536231884,
+            "avg_joint_rate": 1.0690789473684212
           }
         ],
         "latest_month": {
           "label": "2026-03",
-          "order_count": 376.0,
-          "sales_qty": 401.0,
-          "joint_rate": 1.0664893617021276,
-          "avg_joint_rate": 1.0631249999999999
+          "order_count": 393.0,
+          "sales_qty": 418.0,
+          "joint_rate": 1.063613231552163,
+          "avg_joint_rate": 1.0594117647058823
         },
         "latest_quarter": {
           "label": "2026Q1",
-          "order_count": 1708.0,
-          "sales_qty": 1820.0,
-          "joint_rate": 1.0655737704918034,
-          "avg_joint_rate": 1.07
+          "order_count": 1725.0,
+          "sales_qty": 1837.0,
+          "joint_rate": 1.064927536231884,
+          "avg_joint_rate": 1.0690789473684212
         },
-        "low_joint_days": 202
+        "low_joint_days": 203
       },
       "retail_detail": {
-        "capture_at": "2026-03-16T13:49:46.346000+00:00",
+        "capture_at": "2026-03-17T11:50:29.240000+00:00",
         "window_start": "2025-03-01T00:00:00",
-        "window_end": "2026-03-16T00:00:00",
-        "row_count": 1217,
-        "sales_amount": 859786.24,
-        "retail_amount": 1121500.0,
-        "weighted_discount_rate": 0.7666395363352653,
-        "deep_discount_sales_share": 0.40378411964350586,
+        "window_end": "2026-03-17T00:00:00",
+        "row_count": 1218,
+        "sales_amount": 861075.78,
+        "retail_amount": 1123415.0,
+        "weighted_discount_rate": 0.7664805793050654,
+        "deep_discount_sales_share": 0.4041571579216872,
         "markdown_pressure_high": true,
         "top_discount_categories": [
           {
             "name": "家居服",
-            "sales_amount": 114144.35,
-            "discount_rate": 0.7040558461424589,
-            "deep_discount_share": 0.7016222879187625
+            "sales_amount": 114478.14,
+            "discount_rate": 0.7037013769363167,
+            "deep_discount_share": 0.7024922836796614
           },
           {
             "name": "常规内裤",
-            "sales_amount": 89436.22,
-            "discount_rate": 0.7223025173435847,
-            "deep_discount_share": 0.6244179371623712
+            "sales_amount": 89544.94,
+            "discount_rate": 0.7219561238722577,
+            "deep_discount_share": 0.6248739459761768
           },
           {
             "name": "裤类",
@@ -1018,83 +1018,285 @@
           },
           {
             "name": "防晒服",
-            "sales_amount": 24660.62,
-            "discount_rate": 0.7504296756131702,
-            "deep_discount_share": 0.4629920091222362
+            "sales_amount": 24905.22,
+            "discount_rate": 0.7515153892576947,
+            "deep_discount_share": 0.4584448561385926
           }
         ],
         "discount_category_names": "家居服、常规内裤、裤类",
         "size_rows": [
           {
             "name": "130/M",
-            "qty": 1460.0,
-            "share": 0.1619343389529725
+            "qty": 1461.0,
+            "share": 0.16181193930667848
           },
           {
             "name": "120/S",
-            "qty": 1329.0,
-            "share": 0.14740461401952085
+            "qty": 1330.0,
+            "share": 0.1473031343448887
           },
           {
             "name": "110/XS",
-            "qty": 1295.0,
-            "share": 0.14363354037267081
+            "qty": 1297.0,
+            "share": 0.14364824454535385
           },
           {
             "name": "140/L",
-            "qty": 1164.0,
-            "share": 0.12910381543921917
+            "qty": 1168.0,
+            "share": 0.12936094805626316
           },
           {
             "name": "100/XXS",
             "qty": 1155.0,
-            "share": 0.1281055900621118
+            "share": 0.12792114298371912
           },
           {
             "name": "150/XL",
             "qty": 923.0,
-            "share": 0.10237355811889974
+            "share": 0.10222616015062576
           }
         ],
         "core_size_names": "130/M、120/S、110/XS",
-        "top_size_share": 0.1619343389529725,
+        "top_size_share": 0.16181193930667848,
         "price_band_rows": [
           {
             "name": "150元以上",
-            "sales_amount": 512723.72,
-            "share": 0.5963385969052029
+            "sales_amount": 513575.7,
+            "share": 0.5964349618566672
           },
           {
             "name": "100-149元",
-            "sales_amount": 174779.25,
-            "share": 0.20328221349529854
+            "sales_amount": 174856.04,
+            "share": 0.2030669588685911
           },
           {
             "name": "60-79元",
-            "sales_amount": 103894.73,
-            "share": 0.12083786081526496
+            "sales_amount": 104126.56,
+            "share": 0.12092612801163678
           },
           {
             "name": "80-99元",
-            "sales_amount": 26188.81,
-            "share": 0.030459675651473558
+            "sales_amount": 26274.81,
+            "share": 0.030513934557536853
           },
           {
             "name": "39元以下",
             "sales_amount": 22765.27,
-            "share": 0.02647782546508304
+            "share": 0.026438172491624373
           },
           {
             "name": "40-59元",
-            "sales_amount": 19434.46,
-            "share": 0.022603827667677025
+            "sales_amount": 19477.4,
+            "share": 0.022619844213943634
           }
         ],
         "top_price_band": "150元以上",
-        "props_sales_amount": 41674.43,
-        "props_sales_share": 0.04622989264745184
+        "props_sales_amount": 42423.89,
+        "props_sales_share": 0.04695506972348976
       },
-      "capture_at": "2026-03-16T13:51:29.818000+00:00"
+      "capture_at": "2026-03-17T11:53:21.620000+00:00"
+    }
+  },
+  "inventory_sales_relationship": {
+    "mode": "库存口径先纠偏",
+    "tone": "red",
+    "headline": "库存和销售关系先别急着下结论，先校库存。",
+    "summary": "近 8 天经营销售额 9,441.77 元，当前经营库存额 528,367.00 元，库存覆盖天数约 354.8 天。 当前最需要盯的压货品类是 少女文胸，库存金额/销售金额约 2.04。 补货机会先看 裤类，建议补货量约 2,673。 去化先盯 袜品，当前实际库存约 791。",
+    "metric_cards": [
+      {
+        "title": "近段经营销售额",
+        "value": "9,441.77 元",
+        "note": "近 8 天，直接来自校准销售主表。",
+        "tone": "neutral",
+        "value_type": "直接观察"
+      },
+      {
+        "title": "当前经营库存额",
+        "value": "528,367.00 元",
+        "note": "来自最新库存快照，当前仍是零售价口径库存额。",
+        "tone": "neutral",
+        "value_type": "直接观察"
+      },
+      {
+        "title": "库存覆盖天数",
+        "value": "354.8 天",
+        "note": "用最近销售速度估算库存还能卖多久。",
+        "tone": "red",
+        "value_type": "估算"
+      },
+      {
+        "title": "高压货品类数",
+        "value": "0",
+        "note": "库存金额明显高于销售金额的品类数量。",
+        "tone": "green",
+        "value_type": "估算"
+      },
+      {
+        "title": "建议补货 SKU",
+        "value": "341",
+        "note": "卖得动但库存偏浅，先保不断码。",
+        "tone": "yellow",
+        "value_type": "估算"
+      },
+      {
+        "title": "建议去化 SKU",
+        "value": "62",
+        "note": "库存高、近期卖得慢，先停补再去化。",
+        "tone": "red",
+        "value_type": "估算"
+      },
+      {
+        "title": "负库存 SKU",
+        "value": "105",
+        "note": "账货不一致会直接扭曲补货和去化判断。",
+        "tone": "red",
+        "value_type": "直接观察"
+      },
+      {
+        "title": "月末净利预测",
+        "value": "-7,893.98 元",
+        "note": "库存动作要同时兼顾利润和保本节奏。",
+        "tone": "red",
+        "value_type": "预测"
+      }
+    ],
+    "findings": [
+      {
+        "value_type": "估算",
+        "tone": "red",
+        "title": "整体库存覆盖",
+        "conclusion": "库存和销售关系先别急着下结论，先校库存。",
+        "evidence": "最近销售趋势为 下滑，当前库存覆盖 354.8 天，经营库存额 528,367.00 元。",
+        "action": "先盯高压货和负库存，再决定补货节奏。"
+      },
+      {
+        "value_type": "直接观察",
+        "tone": "yellow",
+        "title": "压货最重的品类",
+        "conclusion": "少女文胸 当前最需要先处理。",
+        "evidence": "库存金额/销售金额 2.04，库存量/销售量 1.42。",
+        "action": "先停补、看货位、做组合去化，再决定是否恢复补货。"
+      },
+      {
+        "value_type": "估算",
+        "tone": "yellow",
+        "title": "补货机会",
+        "conclusion": "裤类 还在跑量，先保不断码。",
+        "evidence": "当前建议补货量约 2,673，对应销售额约 77,075.84 元。",
+        "action": "先补核心尺码和主销色，不要把补货预算平均铺开。"
+      },
+      {
+        "value_type": "估算",
+        "tone": "red",
+        "title": "去化压力",
+        "conclusion": "袜品 更适合先去化，不适合继续深补。",
+        "evidence": "当前去化清单里约 24 个 SKU，实际库存约 791，近期零售约 33。",
+        "action": "今天先做陈列前移和组合促销，把预算让给主销品类。"
+      },
+      {
+        "value_type": "直接观察",
+        "tone": "red",
+        "title": "库存口径风险",
+        "conclusion": "负库存会让库存和销售关系判断失真。",
+        "evidence": "当前负库存 SKU 105 个，负库存金额约 -16,764.00 元。",
+        "action": "先查账、查盘点、查调拨，再执行补货和去化。"
+      }
+    ],
+    "recommendations": [
+      {
+        "title": "今天先做什么",
+        "tone": "red",
+        "items": [
+          "先纠偏负库存和断码，再看补货与去化。",
+          "今天先查负库存和断码，避免春夏补货判断失真。",
+          "今天补货优先看 裤类，但冬季类补货先人工复核，不做深补。",
+          "今天去化先盯 袜品，先停补再想组合去化。"
+        ]
+      },
+      {
+        "title": "未来 7 天重点",
+        "tone": "yellow",
+        "items": [
+          "本周重点盯 少女文胸 的库存压力。",
+          "本周把补货重心转到 夏季，尤其是 裤类 这类能直接起量的商品。",
+          "本周减少厚款和冬款的新进货，旧货先靠搭配和小组合去化。",
+          "本周检查门店陈列，让春款在前，夏款预热，厚款退到后区。"
+        ]
+      },
+      {
+        "title": "未来 30 天重点",
+        "tone": "yellow",
+        "items": [
+          "本月目标是把库存结构拉回到更适合当前销售节奏的位置。",
+          "本月经营目标不是压更多货，而是把春款卖动、为夏款腾货位。",
+          "本月把高压货品类做成专项表，先控进货，再安排去化节奏。",
+          "本月会员触达重点围绕换季、开学、出游、早晚温差场景去做。"
+        ]
+      }
+    ],
+    "category_matrix": [
+      {
+        "大类": "少女文胸",
+        "零售额": 12181.31,
+        "库存额": 24835.0,
+        "库存金额/销售金额": 2.038779080410892,
+        "库存量/销售量": 1.424731182795699,
+        "状态": "需关注",
+        "关系判断": "库存偏重",
+        "建议动作": "观察并做组合去化"
+      },
+      {
+        "大类": "袜品",
+        "零售额": 71827.78,
+        "库存额": 90279.0,
+        "库存金额/销售金额": 1.2568813904592346,
+        "库存量/销售量": 0.9647435897435898,
+        "状态": "相对健康",
+        "关系判断": "库存与销售相对平衡",
+        "建议动作": "暂缓补货"
+      },
+      {
+        "大类": "内裤",
+        "零售额": 89544.94,
+        "库存额": 90672.0,
+        "库存金额/销售金额": 1.0125865291774163,
+        "库存量/销售量": 0.7479826194909994,
+        "状态": "相对健康",
+        "关系判断": "库存与销售相对平衡",
+        "建议动作": "暂缓补货"
+      },
+      {
+        "大类": "衣着系列",
+        "零售额": 687521.75,
+        "库存额": 189588.0,
+        "库存金额/销售金额": 0.27575563973067035,
+        "库存量/销售量": 0.20439189189189189,
+        "状态": "相对健康",
+        "关系判断": "销售快于库存",
+        "建议动作": "优先补货"
+      }
+    ],
+    "top_risk_category": "少女文胸",
+    "top_replenish_category": "裤类",
+    "top_clearance_category": "袜品",
+    "data_basis": {
+      "direct": [
+        "近 8 天经营销售额、订单数和客单价来自 SQLite 校准销售主表。",
+        "当前库存额、库存量、库存金额/销售金额来自最新库存与库存零售快照。",
+        "负库存、去化清单、慢销清单都来自最新库存和进销存快照的直接结果。"
+      ],
+      "estimated": [
+        "库存覆盖天数是按最近销售速度估算的，不是未来实际销量承诺。",
+        "补货、去化、跨季处理属于规则型建议，适合当经营决策参考，不是自动下单结果。",
+        "品类关系判断是把销售和库存放在同一个画面里做结构解释，方便老板优先级排序。"
+      ],
+      "forecast": [
+        "当前月末净利预测约 -7,893.98 元，这里只用于提醒库存动作要不要更保守。"
+      ],
+      "caveats": [
+        "出入库缺少 SKU 行级明细：false",
+        "店铺零售校验尾段缺口：17"
+      ]
     }
   },
   "today_focus": {
@@ -1115,7 +1317,7 @@
     {
       "level": "red",
       "title": "库存压力",
-      "value": "363.9 天",
+      "value": "354.8 天",
       "note": "库存覆盖偏长，先控补货再做去化"
     },
     {
@@ -1133,18 +1335,18 @@
     {
       "level": "red",
       "title": "缺货风险",
-      "value": "339",
+      "value": "341",
       "note": "建议补货 SKU 偏多，畅销货有断货风险"
     },
     {
-      "level": "yellow",
+      "level": "green",
       "title": "会员经营",
-      "value": "65.3%",
-      "note": "会员贡献中等，还有提升空间"
+      "value": "74.0%",
+      "note": "会员贡献高，适合继续做复购经营"
     }
   ],
   "time_strategy": {
-    "beijing_time": "2026-03-17 02:02",
+    "beijing_time": "2026-03-17 20:11",
     "season": "春季",
     "phase": "春夏换季期",
     "next_season": "夏季",
@@ -1167,20 +1369,20 @@
       "本月把高压货品类做成专项表，先控进货，再安排去化节奏。",
       "本月会员触达重点围绕换季、开学、出游、早晚温差场景去做。"
     ],
-    "inventory_days": 363.9375
+    "inventory_days": 354.80916030534354
   },
   "decision": {
     "mode": "稳毛利优先",
     "stage": "换季切换",
     "headline": "先稳毛利，别靠打折硬撑。",
-    "summary": "春夏换季期阶段，最近日销下滑，但按当前节奏月末净利约 -9,190.73 元。 当前实销折扣约 7.7 折，家居服、常规内裤、裤类 这些中类折扣依赖偏重。先稳毛利、提组合，再谈放大量。",
+    "summary": "春夏换季期阶段，最近日销下滑，但按当前节奏月末净利约 -7,893.98 元。 当前实销折扣约 7.7 折，家居服、常规内裤、裤类 这些中类折扣依赖偏重。先稳毛利、提组合，再谈放大量。",
     "sales_trend": {
       "label": "下滑",
       "direction": "down",
-      "recent_avg": 1083.24,
-      "previous_avg": 1476.17,
-      "ratio": 0.7338179207001904,
-      "detail": "最近 3 天日销均值 1,083.24 元，对比前段为 下滑。"
+      "recent_avg": 1150.6866666666667,
+      "previous_avg": 1545.3033333333333,
+      "ratio": 0.7446348181910348,
+      "detail": "最近 3 天日销均值 1,150.69 元，对比前段为 下滑。"
     },
     "season": "春季",
     "phase": "春夏换季期",
@@ -1191,9 +1393,9 @@
   "consulting_analysis": {
     "period_label": "当前阶段",
     "focus_title": "本月最值得关注的 5 个问题",
-    "diagnosis_summary": "当前门店最需要优先处理的是 先稳毛利，别靠打折硬撑。从数据看，销售主力仍集中在 衣着系列，但库存压力主要压在 少女文胸，补货应优先给 裤类，去化则先盯 袜品。 按当前口径，本月净利预测约 -9,190.73 元，还没有真正过保本线。",
+    "diagnosis_summary": "当前门店最需要优先处理的是 先稳毛利，别靠打折硬撑。从数据看，销售主力仍集中在 衣着系列，但库存压力主要压在 少女文胸，补货应优先给 裤类，去化则先盯 袜品。 按当前口径，本月净利预测约 -7,893.98 元，还没有真正过保本线。",
     "focus_issues": [
-      "库存覆盖天数约 363.9 天，库存压力偏重。",
+      "库存覆盖天数约 354.8 天，库存压力偏重。",
       "负库存 SKU 还有 105 个，库存口径还没完全干净。",
       "少女文胸 是当前压货最重的品类，继续补货会进一步拖慢周转。",
       "衣着系列 贡献占比较高，结构上仍有“靠少数品类撑销售”的风险。",
@@ -1206,10 +1408,10 @@
     ],
     "replenish_advice": [
       "裤类（建议补货量 2,673）",
-      "衣类（建议补货量 3,468）",
-      "常规内裤（建议补货量 3,613）",
-      "家居服（建议补货量 929）",
-      "防晒服（建议补货量 379）"
+      "衣类（建议补货量 3,473）",
+      "常规内裤（建议补货量 3,628）",
+      "家居服（建议补货量 952）",
+      "防晒服（建议补货量 384）"
     ],
     "clearance_advice": [
       "裤类（优先去化）",
@@ -1279,21 +1481,21 @@
       ]
     },
     "sales_analysis": [
-      "【直接数据】当前阶段销售额 22,186.70 元，较上一阶段下降 60.5%。",
-      "【直接数据】变化主要来自单量，订单数较上一阶段回落 55.1%，客单价变化相对更小。",
+      "【直接数据】当前阶段销售额 23,476.24 元，较上一阶段下降 58.2%。",
+      "【直接数据】变化主要来自单量，订单数较上一阶段回落 52.7%，客单价变化相对更小。",
       "【直接数据】当前主销中类是 衣类，说明阶段性增长/下滑主要先看这个中类有没有继续撑住。",
-      "【经营判断】销售看起来不算差，但结构并不轻松，衣着系列 单类大约贡献了 57.9% 销售，存在“靠少数品类硬撑”的风险。",
+      "【经营判断】销售看起来不算差，但结构并不轻松，衣着系列 单类大约贡献了 59.9% 销售，存在“靠少数品类硬撑”的风险。",
       "【直接数据】全量零售明细显示，当前实销折扣约 7.7 折，深折扣销售占比约 40.4%。",
       "【经营判断】当前销售不只是流量问题，家居服、常规内裤、裤类 这些品类已经有明显折扣依赖。继续靠深折扣冲营业额，会先伤毛利。"
     ],
     "category_analysis": [
-      "【直接数据】品类贡献排序靠前的是：衣着系列(5,392.45元)、内裤(1,992.12元)、袜品(1,504.38元)。",
-      "【直接数据】阶段性增长更快的品类主要是：儿童袜(+34,806.00元)、常规内裤(+25,874.00元)、少女文胸(+19,370.00元)。",
-      "【直接数据】阶段性回落更明显的品类主要是：道具(-245,790.00元)、家居服(-9,468.00元)、亲子家居(-1,628.00元)。",
+      "【直接数据】品类贡献排序靠前的是：衣着系列(5,656.05元)、内裤(1,941.62元)、袜品(1,420.89元)。",
+      "【直接数据】阶段性增长更快的品类主要是：儿童袜(+34,734.00元)、常规内裤(+25,874.00元)、少女文胸(+19,370.00元)。",
+      "【直接数据】阶段性回落更明显的品类主要是：道具(-244,938.00元)、家居服(-9,468.00元)、亲子家居(-1,628.00元)。",
       "【直接数据】品类风险排序靠前的是：少女文胸(需关注)、袜品(相对健康)、内裤(相对健康)。",
-      "【直接数据】品类动作建议里，补货优先级靠前的是：裤类(2,673)、衣类(3,468)、常规内裤(3,613)。",
+      "【直接数据】品类动作建议里，补货优先级靠前的是：裤类(2,673)、衣类(3,473)、常规内裤(3,628)。",
       "【直接数据】去化优先级靠前的是：袜品(791)、袜品(235)、少女文胸(202)。",
-      "【经营判断】前两大品类大约贡献了 79.3% 销售，结构偏集中。短期靠它们撑得住，长期要防一旦主力品类失速，整体营业额会一起掉。",
+      "【经营判断】前两大品类大约贡献了 80.5% 销售，结构偏集中。短期靠它们撑得住，长期要防一旦主力品类失速，整体营业额会一起掉。",
       "【直接数据】折扣依赖更明显的中类是：家居服(7.0折)、常规内裤(7.2折)、裤类(7.6折)。",
       "【经营判断】这说明部分品类现在更像“靠让利换成交”，如果不先调陈列、组合和尺码结构，后面利润会持续被拖薄。"
     ],
@@ -1308,26 +1510,26 @@
       "【动作建议】补货不要全尺码平均补，先保这些主销尺码，再用小量补单观察边缘尺码是否真有动销。"
     ],
     "inventory_analysis": [
-      "【直接数据】当前经营库存覆盖天数约 363.9 天，库存压力判断为 偏重。",
+      "【直接数据】当前经营库存覆盖天数约 354.8 天，库存压力判断为 偏重。",
       "【直接数据】库存压力最大的品类先看 少女文胸，而补货优先品类先看 裤类，说明库存结构已经出现“该补的不一定多、该去化的反而压得深”的失衡。",
       "【经营判断】当前更适合先去化再补货；如果先补，会把现金继续压进旧货和错季货里。"
     ],
     "member_analysis": [
-      "【直接数据】会员销售额占比约 65.3%，最近客单价约 169.31 元。",
-      "【直接数据】店员平均连带约 2.29，平均单效约 169.35 元。",
+      "【直接数据】会员销售额占比约 74.0%，最近客单价约 171.67 元。",
+      "【直接数据】店员平均连带约 2.36，平均单效约 168.95 元。",
       "【经营判断】当前销售已经明显依赖会员，说明复购稳定性不错，下一步更该做的是把高价值会员的回访和搭配销售做深。",
-      "【直接数据】会员基盘里目前有 1,182 位会员，近 60 天活跃 349 位，沉默占比约 50.3%。",
+      "【直接数据】会员基盘里目前有 1,184 位会员，近 60 天活跃 353 位，沉默占比约 50.4%。",
       "【经营判断】会员沉默占比偏高，说明老客不是没有，而是唤醒不够。这个阶段更适合做一对一回访，而不是只等自然复购。",
       "【经营判断】连带不算太差，但仍建议用基础打底 + 袜品 + 家居服组合继续放大客单。",
       "【动作建议】会员回访先盯 妞宝、年年、史振尧，优先做换季提醒、到店试穿和组合推荐。",
-      "【直接数据】导购总销里 VIP 销售占比约 75.7%，头部导购 赵婷宇 贡献约 41.2%。"
+      "【直接数据】导购总销里 VIP 销售占比约 75.7%，头部导购 赵婷宇 贡献约 41.1%。"
     ],
     "rhythm_analysis": [
       "【经营判断】当前更像 去库存阶段，不是简单追销售额。",
       "【直接数据】按当前节奏月末仍有亏损风险，本周应该先保毛利、控补货、做去化，而不是盲目冲低价促销。",
-      "【直接数据】后面每天至少还要卖 2,681.12 元才能过保本；如果继续慢半拍，月底就会靠最后几天硬冲。",
+      "【直接数据】后面每天至少还要卖 2,601.53 元才能过保本；如果继续慢半拍，月底就会靠最后几天硬冲。",
       "【经营判断】当前节奏更像转化或结构问题，不只是客流问题。先看主销品类和连带，再看活动。",
-      "【直接数据】最近月度件单比约 1.07，低连带天数 202 天。",
+      "【直接数据】最近月度件单比约 1.06，低连带天数 203 天。",
       "【经营判断】当前节奏还有一个明显短板是连带偏弱。进店有单，但每单件数不高，店员执行要先盯组合成交。"
     ],
     "basis_notes": {
@@ -1418,25 +1620,25 @@
   ],
   "insights": [
     {
-      "summary": "近 8 天经营销售额 9,312.16 元，客单价 169.31 元。"
+      "summary": "近 8 天经营销售额 9,441.77 元，客单价 171.67 元。"
     },
     {
       "summary": "日销趋势当前只覆盖最近 8 天。",
-      "detail": "当前趋势来自 SQLite 校准销售主表（最近 8 天滚动窗口），时间范围是 2026-03-09 到 2026-03-16。",
+      "detail": "当前趋势来自 SQLite 校准销售主表（最近 8 天滚动窗口），时间范围是 2026-03-10 到 2026-03-17。",
       "label": "时间范围"
     },
     {
-      "summary": "历史累计销售额约 859,786.57 元。",
+      "summary": "历史累计销售额约 861,076.11 元。",
       "detail": "这个口径来自 SQLite 校准累计快照，自 2025-03-17 以来累计计算。",
       "label": "口径"
     },
     {
-      "summary": "库存覆盖天数约 363.9 天。",
-      "detail": "当前账面库存 5,823 件，零售价口径库存额约 530,282.00 元。",
+      "summary": "库存覆盖天数约 354.8 天。",
+      "detail": "当前账面库存 5,810 件，零售价口径库存额约 528,367.00 元。",
       "label": "库存说明"
     },
     {
-      "summary": "会员销售额占比约 65.3%。",
+      "summary": "会员销售额占比约 74.0%。",
       "detail": "会员经营已经是核心收入来源，适合继续做回访和复购。",
       "label": "看法"
     },
@@ -1447,21 +1649,21 @@
     },
     {
       "summary": "道具已从主经营口径剥离，只保留参考值。",
-      "detail": "当前道具销售额约 4,835.84 元，道具库存额约 250,824.00 元。",
+      "detail": "当前道具销售额约 5,377.23 元，道具库存额约 249,972.00 元。",
       "label": "参考值"
     },
     {
-      "summary": "补货/跨季/去化待处理 SKU：339 / 522 / 62。",
+      "summary": "补货/跨季/去化待处理 SKU：341 / 522 / 62。",
       "detail": "建议优先补货的 SKU、跨季不建议补货的 SKU 和建议先去化的 SKU 已分别筛出，可继续下钻到补货去化区查看。",
       "label": "说明"
     },
     {
-      "summary": "最近月份 2026-03 销售额约 22,186.70 元。",
+      "summary": "最近月份 2026-03 销售额约 23,476.24 元。",
       "detail": "数据来自 POS 销售清单全量；当前主销中类是 衣类。",
       "label": "主销"
     },
     {
-      "summary": "累计售罄率约 63.0%。",
+      "summary": "累计售罄率约 63.1%。",
       "detail": "当前库存主要压在 2025秋、2026夏、2025夏。",
       "label": "库存结构"
     },
@@ -1476,17 +1678,17 @@
       "label": "季节结构"
     },
     {
-      "summary": "2025-03-01 到 2026-03-16 内净入库 12,170 件。",
+      "summary": "2025-03-01 到 2026-03-17 内净入库 12,170 件。",
       "detail": "入库 12,642 件 / 1,613,873.00 元；出库 472 件 / 90,459.00 元。",
       "label": "出入库"
     },
     {
-      "summary": "当日流水 935,577.00 元。",
-      "detail": "3,988 单 / 9,297 件，现金占比 97.5%。",
+      "summary": "当日流水 937,616.00 元。",
+      "detail": "3,996 单 / 9,314 件，现金占比 97.5%。",
       "label": "当日结构"
     },
     {
-      "summary": "当前毛利约 10,649.62 元，净利润约 -20,851.93 元。",
+      "summary": "当前毛利约 11,268.60 元，净利润约 -20,232.95 元。",
       "detail": "销售口径来自 POS销售清单（月累计）；毛利率口径来自 默认毛利率（48%）；总费用约 31,501.55 元。",
       "label": "利润口径"
     },
@@ -1496,13 +1698,13 @@
       "label": "保本日销"
     },
     {
-      "summary": "当前保本进度约 33.8%。",
+      "summary": "当前保本进度约 35.8%。",
       "detail": "固定费用约 24,001.55 元；人工费用约 7,500.00 元。",
       "label": "费用结构"
     },
     {
-      "summary": "月末销售约 46,480.87 元，净利约 -9,190.73 元。",
-      "detail": "当前月已实现销售 22,186.70 元；剩余 16.2 天预计新增销售 24,294.17 元。",
+      "summary": "月末销售约 49,182.44 元，净利约 -7,893.98 元。",
+      "detail": "当前月已实现销售 23,476.24 元；剩余 16.2 天预计新增销售 25,706.20 元。",
       "label": "预测拆解"
     },
     {
@@ -1518,12 +1720,6 @@
   ],
   "tables": {
     "sales_daily": [
-      {
-        "日期": "2026-03-09",
-        "销售额": 1159.93,
-        "销量": 10.0,
-        "订单数": 7
-      },
       {
         "日期": "2026-03-10",
         "销售额": 474.0,
@@ -1565,31 +1761,37 @@
         "销售额": 562.0,
         "销量": 6.0,
         "订单数": 2
+      },
+      {
+        "日期": "2026-03-17",
+        "销售额": 1289.54,
+        "销量": 13.0,
+        "订单数": 7
       }
     ],
     "sales_by_category": [
       {
         "商品大类": "衣着系列",
-        "销售额": 5392.45,
-        "销量": 40.0,
-        "订单数": 29
+        "销售额": 5656.05,
+        "销量": 44.0,
+        "订单数": 28
       },
       {
         "商品大类": "道具",
-        "销售额": 4835.84,
-        "销量": 30.0,
-        "订单数": 25
+        "销售额": 5377.2300000000005,
+        "销量": 33.0,
+        "订单数": 27
       },
       {
         "商品大类": "内裤",
-        "销售额": 1992.12,
+        "销售额": 1941.62,
         "销量": 38.0,
-        "订单数": 16
+        "订单数": 17
       },
       {
         "商品大类": "袜品",
-        "销售额": 1504.3799999999999,
-        "销量": 44.0,
+        "销售额": 1420.8899999999999,
+        "销量": 43.0,
         "订单数": 24
       },
       {
@@ -1602,20 +1804,20 @@
     "sales_by_category_ex_props": [
       {
         "商品大类": "衣着系列",
-        "销售额": 5392.45,
-        "销量": 40.0,
-        "订单数": 29
+        "销售额": 5656.05,
+        "销量": 44.0,
+        "订单数": 28
       },
       {
         "商品大类": "内裤",
-        "销售额": 1992.12,
+        "销售额": 1941.62,
         "销量": 38.0,
-        "订单数": 16
+        "订单数": 17
       },
       {
         "商品大类": "袜品",
-        "销售额": 1504.3799999999999,
-        "销量": 44.0,
+        "销售额": 1420.8899999999999,
+        "销量": 43.0,
         "订单数": 24
       },
       {
@@ -1628,20 +1830,20 @@
     "inventory_by_category": [
       {
         "大类": "衣着系列",
-        "库存量": 1383.0,
-        "库存额": 286775.0,
+        "库存量": 1375.0,
+        "库存额": 285191.0,
         "在途库存": 0.0
       },
       {
         "大类": "袜品",
-        "库存量": 2726.0,
-        "库存额": 104113.0,
+        "库存量": 2724.0,
+        "库存额": 103992.0,
         "在途库存": 0.0
       },
       {
         "大类": "内裤",
-        "库存量": 1294.0,
-        "库存额": 100574.0,
+        "库存量": 1291.0,
+        "库存额": 100364.0,
         "在途库存": 0.0
       },
       {
@@ -1654,30 +1856,30 @@
     "stock_sales_ratio": [
       {
         "大类": "衣着系列",
-        "零售额": 686447.15,
-        "库存额": 190764.0,
-        "零售量": 4728.0,
-        "库存量": 970.0,
-        "库存金额/销售金额": 0.2779004909554945,
-        "库存量/销售量": 0.20516074450084604
+        "零售额": 687521.75,
+        "库存额": 189588.0,
+        "零售量": 4736.0,
+        "库存量": 968.0,
+        "库存金额/销售金额": 0.27575563973067035,
+        "库存量/销售量": 0.20439189189189189
       },
       {
         "大类": "内裤",
-        "零售额": 89436.22,
-        "库存额": 90882.0,
-        "零售量": 1608.0,
-        "库存量": 1208.0,
-        "库存金额/销售金额": 1.0161654864214968,
-        "库存量/销售量": 0.7512437810945274
+        "零售额": 89544.94,
+        "库存额": 90672.0,
+        "零售量": 1611.0,
+        "库存量": 1205.0,
+        "库存金额/销售金额": 1.0125865291774163,
+        "库存量/销售量": 0.7479826194909994
       },
       {
         "大类": "袜品",
-        "零售额": 71721.56,
-        "库存额": 90400.0,
-        "零售量": 2494.0,
-        "库存量": 2410.0,
-        "库存金额/销售金额": 1.260429918144558,
-        "库存量/销售量": 0.9663191659983962
+        "零售额": 71827.78,
+        "库存额": 90279.0,
+        "零售量": 2496.0,
+        "库存量": 2408.0,
+        "库存金额/销售金额": 1.2568813904592346,
+        "库存量/销售量": 0.9647435897435898
       },
       {
         "大类": "少女文胸",
@@ -1692,27 +1894,27 @@
     "guide_perf": [
       {
         "导购员": "张静",
-        "实收金额": 3702.73,
-        "票数": 21,
-        "单效": 176.3204761904762,
-        "连带": 2.380952380952381,
-        "会员销额": 2959.73
-      },
-      {
-        "导购员": "郭文攀",
-        "实收金额": 3170.65,
-        "票数": 22,
-        "单效": 144.12045454545455,
-        "连带": 2.1818181818181817,
-        "会员销额": 1189.65
+        "实收金额": 4265.33,
+        "票数": 25,
+        "单效": 170.6132,
+        "连带": 2.24,
+        "会员销额": 3522.33
       },
       {
         "导购员": "刘梅",
-        "实收金额": 2438.7799999999997,
-        "票数": 13,
-        "单效": 187.59846153846152,
-        "连带": 2.3076923076923075,
-        "会员销额": 1928.78
+        "实收金额": 3052.72,
+        "票数": 15,
+        "单效": 203.51466666666664,
+        "连带": 2.4,
+        "会员销额": 2499.7799999999997
+      },
+      {
+        "导购员": "郭文攀",
+        "实收金额": 2123.72,
+        "票数": 16,
+        "单效": 132.7325,
+        "连带": 2.4375,
+        "会员销额": 961.72
       }
     ],
     "top_members": [
@@ -2131,21 +2333,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "糖糖",
-        "服务导购": "郭文攀",
-        "购买金额": 2145.0,
-        "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 165.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "可可",
         "服务导购": "郭文攀",
         "购买金额": 2145.0,
         "购买总数": 0.0,
         "消费次数/年": 6.0,
         "平均单笔消费额": 153.21,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "糖糖",
+        "服务导购": "郭文攀",
+        "购买金额": 2145.0,
+        "购买总数": 0.0,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 165.0,
         "储值余额": 0.0
       },
       {
@@ -2482,21 +2684,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "刘梅",
-        "服务导购": "郭文攀",
-        "购买金额": 1551.0,
-        "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 96.94,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "屈琪铮",
         "服务导购": "郭文攀",
         "购买金额": 1551.0,
         "购买总数": 0.0,
         "消费次数/年": 4.0,
         "平均单笔消费额": 103.4,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "刘梅",
+        "服务导购": "郭文攀",
+        "购买金额": 1551.0,
+        "购买总数": 0.0,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 96.94,
         "储值余额": 0.0
       },
       {
@@ -2590,21 +2792,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "泡泡",
-        "服务导购": "郭文攀",
-        "购买金额": 1431.0,
-        "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 143.1,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "甜汤",
         "服务导购": "郭文攀",
         "购买金额": 1431.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 130.09,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "泡泡",
+        "服务导购": "郭文攀",
+        "购买金额": 1431.0,
+        "购买总数": 0.0,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 143.1,
         "储值余额": 0.0
       },
       {
@@ -2671,15 +2873,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 1372.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 124.73,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "袁田",
         "服务导购": "郭文攀",
         "购买金额": 1372.0,
@@ -2689,12 +2882,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "暖暖",
+        "VIP姓名": "一一",
         "服务导购": "郭文攀",
-        "购买金额": 1358.0,
+        "购买金额": 1372.0,
         "购买总数": 0.0,
-        "消费次数/年": 5.0,
-        "平均单笔消费额": 169.75,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 124.73,
         "储值余额": 0.0
       },
       {
@@ -2704,6 +2897,15 @@
         "购买总数": 0.0,
         "消费次数/年": 9.0,
         "平均单笔消费额": 79.88,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "暖暖",
+        "服务导购": "郭文攀",
+        "购买金额": 1358.0,
+        "购买总数": 0.0,
+        "消费次数/年": 5.0,
+        "平均单笔消费额": 169.75,
         "储值余额": 0.0
       },
       {
@@ -2725,21 +2927,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "李真",
-        "服务导购": "郭文攀",
-        "购买金额": 1346.0,
-        "购买总数": 0.0,
-        "消费次数/年": 5.0,
-        "平均单笔消费额": 112.17,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "希希",
         "服务导购": "郭文攀",
         "购买金额": 1346.0,
         "购买总数": 0.0,
         "消费次数/年": 5.0,
         "平均单笔消费额": 89.73,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "李真",
+        "服务导购": "郭文攀",
+        "购买金额": 1346.0,
+        "购买总数": 0.0,
+        "消费次数/年": 5.0,
+        "平均单笔消费额": 112.17,
         "储值余额": 0.0
       },
       {
@@ -2896,15 +3098,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "曹珊菲",
-        "服务导购": "郭文攀",
-        "购买金额": 1205.0,
-        "购买总数": 1.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 133.89,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "贝贝",
         "服务导购": "郭文攀",
         "购买金额": 1205.0,
@@ -2923,12 +3116,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "哲哲",
+        "VIP姓名": "曹珊菲",
         "服务导购": "郭文攀",
-        "购买金额": 1186.0,
-        "购买总数": 0.0,
-        "消费次数/年": 5.0,
-        "平均单笔消费额": 131.78,
+        "购买金额": 1205.0,
+        "购买总数": 1.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 133.89,
         "储值余额": 0.0
       },
       {
@@ -2938,6 +3131,15 @@
         "购买总数": 0.0,
         "消费次数/年": 5.0,
         "平均单笔消费额": 107.82,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "哲哲",
+        "服务导购": "郭文攀",
+        "购买金额": 1186.0,
+        "购买总数": 0.0,
+        "消费次数/年": 5.0,
+        "平均单笔消费额": 131.78,
         "储值余额": 0.0
       },
       {
@@ -3166,15 +3368,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "桃子",
-        "服务导购": "郭文攀",
-        "购买金额": 1090.0,
-        "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 121.11,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "元宝",
         "服务导购": "郭文攀",
         "购买金额": 1090.0,
@@ -3184,12 +3377,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "甜心",
+        "VIP姓名": "桃子",
         "服务导购": "郭文攀",
-        "购买金额": 1082.0,
+        "购买金额": 1090.0,
         "购买总数": 0.0,
-        "消费次数/年": 5.0,
-        "平均单笔消费额": 83.23,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 121.11,
         "储值余额": 0.0
       },
       {
@@ -3199,6 +3392,15 @@
         "购买总数": 0.0,
         "消费次数/年": 7.0,
         "平均单笔消费额": 51.52,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "甜心",
+        "服务导购": "郭文攀",
+        "购买金额": 1082.0,
+        "购买总数": 0.0,
+        "消费次数/年": 5.0,
+        "平均单笔消费额": 83.23,
         "储值余额": 0.0
       },
       {
@@ -3769,21 +3971,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "欣欣",
-        "服务导购": "郭文攀",
-        "购买金额": 857.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 214.25,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "柚子",
         "服务导购": "郭文攀",
         "购买金额": 857.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 107.13,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "欣欣",
+        "服务导购": "郭文攀",
+        "购买金额": 857.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 214.25,
         "储值余额": 0.0
       },
       {
@@ -4048,21 +4250,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多咪",
-        "服务导购": "郭文攀",
-        "购买金额": 774.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 258.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "lyne",
         "服务导购": "郭文攀",
         "购买金额": 774.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 86.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "多咪",
+        "服务导购": "郭文攀",
+        "购买金额": 774.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 258.0,
         "储值余额": 0.0
       },
       {
@@ -4201,21 +4403,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "琪琪",
-        "服务导购": "郭文攀",
-        "购买金额": 730.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 81.11,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "张",
         "服务导购": "郭文攀",
         "购买金额": 730.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 182.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "琪琪",
+        "服务导购": "郭文攀",
+        "购买金额": 730.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 81.11,
         "储值余额": 0.0
       },
       {
@@ -4228,12 +4430,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多多",
+        "VIP姓名": "ππ",
         "服务导购": "郭文攀",
         "购买金额": 728.0,
         "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 80.89,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 104.0,
         "储值余额": 0.0
       },
       {
@@ -4246,12 +4448,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "ππ",
+        "VIP姓名": "多多",
         "服务导购": "郭文攀",
         "购买金额": 728.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 104.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 80.89,
         "储值余额": 0.0
       },
       {
@@ -4270,6 +4472,15 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 121.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "小丸子",
+        "服务导购": "郭文攀",
+        "购买金额": 725.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 241.67,
         "储值余额": 0.0
       },
       {
@@ -4336,15 +4547,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "彬彬",
-        "服务导购": "郭文攀",
-        "购买金额": 710.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 101.43,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "杨溪桐",
         "服务导购": "郭文攀",
         "购买金额": 710.0,
@@ -4354,12 +4556,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "丸子",
+        "VIP姓名": "彬彬",
         "服务导购": "郭文攀",
-        "购买金额": 708.0,
+        "购买金额": 710.0,
         "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 177.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 101.43,
         "储值余额": 0.0
       },
       {
@@ -4372,21 +4574,21 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "丸子",
+        "服务导购": "郭文攀",
+        "购买金额": 708.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 177.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "王",
         "服务导购": "郭文攀",
         "购买金额": 706.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 176.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "兮兮",
-        "服务导购": "郭文攀",
-        "购买金额": 703.0,
-        "购买总数": 0.0,
-        "消费次数/年": 6.0,
-        "平均单笔消费额": 58.58,
         "储值余额": 0.0
       },
       {
@@ -4399,6 +4601,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "兮兮",
+        "服务导购": "郭文攀",
+        "购买金额": 703.0,
+        "购买总数": 0.0,
+        "消费次数/年": 6.0,
+        "平均单笔消费额": 58.58,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "麦芽",
         "服务导购": "郭文攀",
         "购买金额": 700.0,
@@ -4408,12 +4619,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "许多",
+        "VIP姓名": "罗欣钰",
         "服务导购": "郭文攀",
-        "购买金额": 693.0,
+        "购买金额": 700.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
-        "平均单笔消费额": 86.63,
+        "平均单笔消费额": 87.5,
         "储值余额": 0.0
       },
       {
@@ -4426,21 +4637,21 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "许多",
+        "服务导购": "郭文攀",
+        "购买金额": 693.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 86.63,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "壮壮",
         "服务导购": "郭文攀",
         "购买金额": 692.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 138.4,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "诺宝",
-        "服务导购": "郭文攀",
-        "购买金额": 691.0,
-        "购买总数": 0.0,
-        "消费次数/年": 5.0,
-        "平均单笔消费额": 43.19,
         "储值余额": 0.0
       },
       {
@@ -4453,12 +4664,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张",
+        "VIP姓名": "诺宝",
         "服务导购": "郭文攀",
-        "购买金额": 689.0,
+        "购买金额": 691.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 62.64,
+        "消费次数/年": 5.0,
+        "平均单笔消费额": 43.19,
         "储值余额": 0.0
       },
       {
@@ -4468,6 +4679,15 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 45.93,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "张",
+        "服务导购": "郭文攀",
+        "购买金额": 689.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 62.64,
         "储值余额": 0.0
       },
       {
@@ -4498,15 +4718,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "李",
-        "服务导购": "郭文攀",
-        "购买金额": 679.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 135.8,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "妞妞",
         "服务导购": "郭文攀",
         "购买金额": 679.0,
@@ -4516,12 +4727,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "啾啾",
+        "VIP姓名": "李",
         "服务导购": "郭文攀",
-        "购买金额": 678.0,
+        "购买金额": 679.0,
         "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 169.5,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 135.8,
         "储值余额": 0.0
       },
       {
@@ -4530,6 +4741,15 @@
         "购买金额": 678.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
+        "平均单笔消费额": 169.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "啾啾",
+        "服务导购": "郭文攀",
+        "购买金额": 678.0,
+        "购买总数": 0.0,
+        "消费次数/年": 4.0,
         "平均单笔消费额": 169.5,
         "储值余额": 0.0
       },
@@ -4723,21 +4943,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "瑜",
-        "服务导购": "郭文攀",
-        "购买金额": 638.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 106.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "糖豆",
         "服务导购": "郭文攀",
         "购买金额": 638.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 91.14,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "瑜",
+        "服务导购": "郭文攀",
+        "购买金额": 638.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 106.33,
         "储值余额": 0.0
       },
       {
@@ -4768,6 +4988,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "涵涵",
+        "服务导购": "郭文攀",
+        "购买金额": 632.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 126.4,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "康楠",
         "服务导购": "郭文攀",
         "购买金额": 632.0,
@@ -4783,15 +5012,6 @@
         "购买总数": 1.0,
         "消费次数/年": 4.0,
         "平均单笔消费额": 90.29,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "涵涵",
-        "服务导购": "郭文攀",
-        "购买金额": 632.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 126.4,
         "储值余额": 0.0
       },
       {
@@ -4858,12 +5078,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "玥玥",
+        "VIP姓名": "端木先生",
         "服务导购": "郭文攀",
         "购买金额": 615.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
-        "平均单笔消费额": 87.86,
+        "平均单笔消费额": 123.0,
         "储值余额": 0.0
       },
       {
@@ -4876,12 +5096,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "端木先生",
+        "VIP姓名": "玥玥",
         "服务导购": "郭文攀",
         "购买金额": 615.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
-        "平均单笔消费额": 123.0,
+        "平均单笔消费额": 87.86,
         "储值余额": 0.0
       },
       {
@@ -5020,21 +5240,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "茉茉",
-        "服务导购": "郭文攀",
-        "购买金额": 592.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 98.67,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "乐乐",
         "服务导购": "郭文攀",
         "购买金额": 592.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 118.4,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "茉茉",
+        "服务导购": "郭文攀",
+        "购买金额": 592.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 98.67,
         "储值余额": 0.0
       },
       {
@@ -5047,21 +5267,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "壮壮",
-        "服务导购": "郭文攀",
-        "购买金额": 590.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 118.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "柒月",
         "服务导购": "郭文攀",
         "购买金额": 590.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 65.56,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "壮壮",
+        "服务导购": "郭文攀",
+        "购买金额": 590.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 118.0,
         "储值余额": 0.0
       },
       {
@@ -5083,15 +5303,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "乐乐",
-        "服务导购": "郭文攀",
-        "购买金额": 583.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 97.17,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "梁子溢",
         "服务导购": "郭文攀",
         "购买金额": 583.0,
@@ -5101,12 +5312,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "米",
+        "VIP姓名": "乐乐",
         "服务导购": "郭文攀",
-        "购买金额": 581.0,
+        "购买金额": 583.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
-        "平均单笔消费额": 193.67,
+        "平均单笔消费额": 97.17,
         "储值余额": 0.0
       },
       {
@@ -5116,6 +5327,15 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 83.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "米",
+        "服务导购": "郭文攀",
+        "购买金额": 581.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 193.67,
         "储值余额": 0.0
       },
       {
@@ -5146,15 +5366,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "潘斌",
-        "服务导购": "郭文攀",
-        "购买金额": 577.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 192.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "悠悠",
         "服务导购": "郭文攀",
         "购买金额": 577.0,
@@ -5164,12 +5375,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "毛豆豆",
+        "VIP姓名": "潘斌",
         "服务导购": "郭文攀",
-        "购买金额": 576.0,
+        "购买金额": 577.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 96.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 192.33,
         "储值余额": 0.0
       },
       {
@@ -5179,6 +5390,15 @@
         "购买总数": 0.0,
         "消费次数/年": 5.0,
         "平均单笔消费额": 48.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "毛豆豆",
+        "服务导购": "郭文攀",
+        "购买金额": 576.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 96.0,
         "储值余额": 0.0
       },
       {
@@ -5272,12 +5492,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "柚子",
+        "VIP姓名": "月月",
         "服务导购": "郭文攀",
         "购买金额": 563.0,
         "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 140.75,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 80.43,
         "储值余额": 0.0
       },
       {
@@ -5290,16 +5510,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "月月",
+        "VIP姓名": "柚子",
         "服务导购": "郭文攀",
         "购买金额": 563.0,
         "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 80.43,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 140.75,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "景屹",
+        "VIP姓名": "橙子",
         "服务导购": "郭文攀",
         "购买金额": 560.0,
         "购买总数": 0.0,
@@ -5308,7 +5528,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "橙子",
+        "VIP姓名": "景屹",
         "服务导购": "郭文攀",
         "购买金额": 560.0,
         "购买总数": 0.0,
@@ -5335,7 +5555,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "灿灿",
+        "VIP姓名": "开心",
         "服务导购": "郭文攀",
         "购买金额": 558.0,
         "购买总数": 0.0,
@@ -5344,7 +5564,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "开心",
+        "VIP姓名": "灿灿",
         "服务导购": "郭文攀",
         "购买金额": 558.0,
         "购买总数": 0.0,
@@ -5371,21 +5591,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "李荀",
-        "服务导购": "郭文攀",
-        "购买金额": 554.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 138.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "汉堡",
         "服务导购": "郭文攀",
         "购买金额": 554.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 79.14,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "李荀",
+        "服务导购": "郭文攀",
+        "购买金额": 554.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 138.5,
         "储值余额": 0.0
       },
       {
@@ -5443,6 +5663,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "小雁",
+        "服务导购": "郭文攀",
+        "购买金额": 540.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 180.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "淘宝",
         "服务导购": "郭文攀",
         "购买金额": 540.0,
@@ -5458,15 +5687,6 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 135.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "小雁",
-        "服务导购": "郭文攀",
-        "购买金额": 540.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 180.0,
         "储值余额": 0.0
       },
       {
@@ -5497,21 +5717,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张嘉淑",
-        "服务导购": "郭文攀",
-        "购买金额": 526.0,
-        "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 131.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "年糕",
         "服务导购": "郭文攀",
         "购买金额": 526.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 75.14,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "张嘉淑",
+        "服务导购": "郭文攀",
+        "购买金额": 526.0,
+        "购买总数": 0.0,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 131.5,
         "储值余额": 0.0
       },
       {
@@ -5551,7 +5771,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "艾米",
+        "VIP姓名": "王",
         "服务导购": "郭文攀",
         "购买金额": 522.0,
         "购买总数": 0.0,
@@ -5560,7 +5780,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "王",
+        "VIP姓名": "艾米",
         "服务导购": "郭文攀",
         "购买金额": 522.0,
         "购买总数": 0.0,
@@ -5587,21 +5807,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "杨",
-        "服务导购": "",
-        "购买金额": 519.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 103.8,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "巨好",
         "服务导购": "郭文攀",
         "购买金额": 519.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 173.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "杨",
+        "服务导购": "",
+        "购买金额": 519.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 103.8,
         "储值余额": 0.0
       },
       {
@@ -5650,21 +5870,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "妍妍",
-        "服务导购": "郭文攀",
-        "购买金额": 504.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 28.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "杨笛",
         "服务导购": "郭文攀",
         "购买金额": 504.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 63.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "妍妍",
+        "服务导购": "郭文攀",
+        "购买金额": 504.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 28.0,
         "储值余额": 0.0
       },
       {
@@ -5686,21 +5906,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "樱桃",
-        "服务导购": "郭文攀",
-        "购买金额": 500.0,
-        "购买总数": 0.0,
-        "消费次数/年": 4.0,
-        "平均单笔消费额": 45.45,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "西北",
         "服务导购": "郭文攀",
         "购买金额": 500.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 62.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "樱桃",
+        "服务导购": "郭文攀",
+        "购买金额": 500.0,
+        "购买总数": 0.0,
+        "消费次数/年": 4.0,
+        "平均单笔消费额": 45.45,
         "储值余额": 0.0
       },
       {
@@ -5713,15 +5933,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "果果",
-        "服务导购": "郭文攀",
-        "购买金额": 496.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 165.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "豆豆",
         "服务导购": "郭文攀",
         "购买金额": 496.0,
@@ -5731,12 +5942,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "雨点",
+        "VIP姓名": "果果",
         "服务导购": "郭文攀",
-        "购买金额": 494.0,
+        "购买金额": 496.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 123.5,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 165.33,
         "储值余额": 0.0
       },
       {
@@ -5755,6 +5966,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 494.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "雨点",
+        "服务导购": "郭文攀",
+        "购买金额": 494.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 123.5,
         "储值余额": 0.0
       },
       {
@@ -5875,21 +6095,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "兔小喵",
-        "服务导购": "郭文攀",
-        "购买金额": 468.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 78.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "王啕啕",
         "服务导购": "郭文攀",
         "购买金额": 468.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 93.6,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "兔小喵",
+        "服务导购": "郭文攀",
+        "购买金额": 468.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 78.0,
         "储值余额": 0.0
       },
       {
@@ -5911,6 +6131,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "昕昕",
+        "服务导购": "郭文攀",
+        "购买金额": 465.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 66.43,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "丸子",
         "服务导购": "郭文攀",
         "购买金额": 465.0,
@@ -5926,15 +6155,6 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 116.25,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "昕昕",
-        "服务导购": "郭文攀",
-        "购买金额": 465.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 66.43,
         "储值余额": 0.0
       },
       {
@@ -5992,21 +6212,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "茂茂",
-        "服务导购": "郭文攀",
-        "购买金额": 454.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 227.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "童童",
         "服务导购": "郭文攀",
         "购买金额": 454.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 113.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "茂茂",
+        "服务导购": "郭文攀",
+        "购买金额": 454.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 227.0,
         "储值余额": 0.0
       },
       {
@@ -6019,21 +6239,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "十二",
-        "服务导购": "郭文攀",
-        "购买金额": 452.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 75.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "李悦知",
         "服务导购": "郭文攀",
         "购买金额": 452.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 150.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "十二",
+        "服务导购": "郭文攀",
+        "购买金额": 452.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 75.33,
         "储值余额": 0.0
       },
       {
@@ -6073,6 +6293,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "阳阳",
+        "服务导购": "郭文攀",
+        "购买金额": 443.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 88.6,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "小橙子",
         "服务导购": "郭文攀",
         "购买金额": 442.0,
@@ -6100,16 +6329,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "赵婷",
-        "服务导购": "郭文攀",
-        "购买金额": 436.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 218.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "仔仔",
+        "VIP姓名": "夏七月",
         "服务导购": "郭文攀",
         "购买金额": 436.0,
         "购买总数": 0.0,
@@ -6127,11 +6347,20 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "夏七月",
+        "VIP姓名": "仔仔",
         "服务导购": "郭文攀",
         "购买金额": 436.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
+        "平均单笔消费额": 218.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "赵婷",
+        "服务导购": "郭文攀",
+        "购买金额": 436.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
         "平均单笔消费额": 218.0,
         "储值余额": 0.0
       },
@@ -6181,6 +6410,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "刘可欣",
+        "服务导购": "郭文攀",
+        "购买金额": 428.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 71.33,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "夏天",
         "服务导购": "郭文攀",
         "购买金额": 428.0,
@@ -6196,15 +6434,6 @@
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 107.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "刘可欣",
-        "服务导购": "郭文攀",
-        "购买金额": 428.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 71.33,
         "储值余额": 0.0
       },
       {
@@ -6226,6 +6455,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "邓",
+        "服务导购": "郭文攀",
+        "购买金额": 426.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 142.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "元宝",
         "服务导购": "郭文攀",
         "购买金额": 426.0,
@@ -6241,15 +6479,6 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 85.2,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "邓",
-        "服务导购": "郭文攀",
-        "购买金额": 426.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 142.0,
         "储值余额": 0.0
       },
       {
@@ -6271,15 +6500,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "叮当",
-        "服务导购": "郭文攀",
-        "购买金额": 424.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 84.8,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "佑佑",
         "服务导购": "郭文攀",
         "购买金额": 424.0,
@@ -6289,12 +6509,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "Kimi",
+        "VIP姓名": "叮当",
         "服务导购": "郭文攀",
-        "购买金额": 423.0,
+        "购买金额": 424.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 105.75,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 84.8,
         "储值余额": 0.0
       },
       {
@@ -6304,6 +6524,15 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 84.6,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "Kimi",
+        "服务导购": "郭文攀",
+        "购买金额": 423.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 105.75,
         "储值余额": 0.0
       },
       {
@@ -6343,20 +6572,20 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "郭昊辰",
-        "服务导购": "郭文攀",
-        "购买金额": 418.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 69.67,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "丸子",
         "服务导购": "郭文攀",
         "购买金额": 418.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
+        "平均单笔消费额": 209.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "杜",
+        "服务导购": "郭文攀",
+        "购买金额": 418.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
         "平均单笔消费额": 209.0,
         "储值余额": 0.0
       },
@@ -6370,12 +6599,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "杜",
+        "VIP姓名": "郭昊辰",
         "服务导购": "郭文攀",
         "购买金额": 418.0,
         "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 209.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 69.67,
         "储值余额": 0.0
       },
       {
@@ -6424,15 +6653,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "孙丹",
-        "服务导购": "郭文攀",
-        "购买金额": 407.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 67.83,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "泡泡",
         "服务导购": "郭文攀",
         "购买金额": 407.0,
@@ -6442,12 +6662,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "可可",
+        "VIP姓名": "孙丹",
         "服务导购": "郭文攀",
-        "购买金额": 406.0,
+        "购买金额": 407.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 135.33,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 67.83,
         "储值余额": 0.0
       },
       {
@@ -6457,6 +6677,15 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 101.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "可可",
+        "服务导购": "郭文攀",
+        "购买金额": 406.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 135.33,
         "储值余额": 0.0
       },
       {
@@ -6487,21 +6716,21 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "朱奕铭",
+        "服务导购": "郭文攀",
+        "购买金额": 401.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 100.25,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "李",
         "服务导购": "郭文攀",
         "购买金额": 401.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 80.2,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "多乐",
-        "服务导购": "郭文攀",
-        "购买金额": 401.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 200.5,
         "储值余额": 0.0
       },
       {
@@ -6514,12 +6743,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "朱奕铭",
+        "VIP姓名": "多乐",
         "服务导购": "郭文攀",
         "购买金额": 401.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 100.25,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 200.5,
         "储值余额": 0.0
       },
       {
@@ -6586,21 +6815,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "优优",
-        "服务导购": "郭文攀",
-        "购买金额": 394.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 65.67,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "豆豆",
         "服务导购": "郭文攀",
         "购买金额": 394.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 197.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "优优",
+        "服务导购": "郭文攀",
+        "购买金额": 394.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 65.67,
         "储值余额": 0.0
       },
       {
@@ -6640,6 +6869,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "张",
+        "服务导购": "郭文攀",
+        "购买金额": 384.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 192.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "任佩佩",
         "服务导购": "郭文攀",
         "购买金额": 384.0,
@@ -6658,30 +6896,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张",
-        "服务导购": "郭文攀",
-        "购买金额": 384.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 192.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "猪猪",
         "服务导购": "郭文攀",
         "购买金额": 383.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 95.75,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "多多",
-        "服务导购": "郭文攀",
-        "购买金额": 382.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 76.4,
         "储值余额": 0.0
       },
       {
@@ -6694,6 +6914,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "多多",
+        "服务导购": "郭文攀",
+        "购买金额": 382.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 76.4,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "小糯米",
         "服务导购": "郭文攀",
         "购买金额": 381.0,
@@ -6703,8 +6932,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小鱼儿",
-        "服务导购": "郭文攀",
+        "VIP姓名": "Ian",
+        "服务导购": "张静",
         "购买金额": 380.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
@@ -6712,8 +6941,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "Ian",
-        "服务导购": "张静",
+        "VIP姓名": "小鱼儿",
+        "服务导购": "郭文攀",
         "购买金额": 380.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
@@ -6748,24 +6977,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小满",
-        "服务导购": "郭文攀",
-        "购买金额": 375.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 187.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "郭奕凡",
-        "服务导购": "郭文攀",
-        "购买金额": 375.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 187.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "凡凡",
         "服务导购": "郭文攀",
         "购买金额": 375.0,
@@ -6776,6 +6987,24 @@
       },
       {
         "VIP姓名": "mini",
+        "服务导购": "郭文攀",
+        "购买金额": 375.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 187.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "小满",
+        "服务导购": "郭文攀",
+        "购买金额": 375.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 187.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "郭奕凡",
         "服务导购": "郭文攀",
         "购买金额": 375.0,
         "购买总数": 0.0,
@@ -6820,15 +7049,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "念念",
-        "服务导购": "郭文攀",
-        "购买金额": 370.0,
-        "购买总数": 0.0,
-        "消费次数/年": 7.0,
-        "平均单笔消费额": 52.86,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "小唯",
         "服务导购": "郭文攀",
         "购买金额": 370.0,
@@ -6847,12 +7067,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "孙宇辰",
+        "VIP姓名": "念念",
         "服务导购": "郭文攀",
-        "购买金额": 368.0,
+        "购买金额": 370.0,
         "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 61.33,
+        "消费次数/年": 7.0,
+        "平均单笔消费额": 52.86,
         "储值余额": 0.0
       },
       {
@@ -6862,6 +7082,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 73.6,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "孙宇辰",
+        "服务导购": "郭文攀",
+        "购买金额": 368.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 61.33,
         "储值余额": 0.0
       },
       {
@@ -7027,15 +7256,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "熙熙",
-        "服务导购": "郭文攀",
-        "购买金额": 347.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 57.83,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "团儿",
         "服务导购": "郭文攀",
         "购买金额": 347.0,
@@ -7045,12 +7265,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "艾米",
+        "VIP姓名": "熙熙",
         "服务导购": "郭文攀",
-        "购买金额": 346.0,
+        "购买金额": 347.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 49.43,
+        "平均单笔消费额": 57.83,
         "储值余额": 0.0
       },
       {
@@ -7060,6 +7280,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 115.33,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "艾米",
+        "服务导购": "郭文攀",
+        "购买金额": 346.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 49.43,
         "储值余额": 0.0
       },
       {
@@ -7081,21 +7310,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "花花",
-        "服务导购": "郭文攀",
-        "购买金额": 342.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 85.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "张诗语",
         "服务导购": "郭文攀",
         "购买金额": 342.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 57.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "花花",
+        "服务导购": "郭文攀",
+        "购买金额": 342.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 85.5,
         "储值余额": 0.0
       },
       {
@@ -7108,20 +7337,20 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "年糕",
-        "服务导购": "郭文攀",
-        "购买金额": 340.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 170.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "小鱼",
         "服务导购": "郭文攀",
         "购买金额": 340.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
+        "平均单笔消费额": 170.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "年糕",
+        "服务导购": "郭文攀",
+        "购买金额": 340.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
         "平均单笔消费额": 170.0,
         "储值余额": 0.0
       },
@@ -7162,21 +7391,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "杭嘉雨",
-        "服务导购": "郭文攀",
-        "购买金额": 331.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 110.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "宝儿",
         "服务导购": "郭文攀",
         "购买金额": 331.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 165.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "杭嘉雨",
+        "服务导购": "郭文攀",
+        "购买金额": 331.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 110.33,
         "储值余额": 0.0
       },
       {
@@ -7198,21 +7427,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "呦呦",
-        "服务导购": "郭文攀",
-        "购买金额": 329.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 82.25,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "李",
         "服务导购": "郭文攀",
         "购买金额": 329.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 47.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "呦呦",
+        "服务导购": "郭文攀",
+        "购买金额": 329.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 82.25,
         "储值余额": 0.0
       },
       {
@@ -7243,20 +7472,20 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "皮皮",
-        "服务导购": "郭文攀",
-        "购买金额": 325.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 108.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "安安",
         "服务导购": "郭文攀",
         "购买金额": 325.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
+        "平均单笔消费额": 108.33,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "皮皮",
+        "服务导购": "郭文攀",
+        "购买金额": 325.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
         "平均单笔消费额": 108.33,
         "储值余额": 0.0
       },
@@ -7342,17 +7571,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "好好",
-        "服务导购": "郭文攀",
-        "购买金额": 316.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 158.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "团团",
-        "服务导购": "郭文攀",
+        "VIP姓名": "爪八鱼",
+        "服务导购": "",
         "购买金额": 316.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
@@ -7369,12 +7589,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "爪八鱼",
-        "服务导购": "",
+        "VIP姓名": "团团",
+        "服务导购": "郭文攀",
         "购买金额": 316.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 79.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "好好",
+        "服务导购": "郭文攀",
+        "购买金额": 316.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 158.0,
         "储值余额": 0.0
       },
       {
@@ -7405,25 +7634,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "周盛谦",
-        "服务导购": "郭文攀",
-        "购买金额": 315.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 315.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "小七",
-        "服务导购": "郭文攀",
-        "购买金额": 315.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 315.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "百万",
         "服务导购": "郭文攀",
         "购买金额": 315.0,
         "购买总数": 0.0,
@@ -7441,12 +7652,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "佑佑",
+        "VIP姓名": "周盛谦",
         "服务导购": "郭文攀",
-        "购买金额": 314.0,
+        "购买金额": 315.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 157.0,
+        "平均单笔消费额": 315.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "百万",
+        "服务导购": "郭文攀",
+        "购买金额": 315.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 315.0,
         "储值余额": 0.0
       },
       {
@@ -7459,7 +7679,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "汤圆",
+        "VIP姓名": "佑佑",
         "服务导购": "郭文攀",
         "购买金额": 314.0,
         "购买总数": 0.0,
@@ -7468,12 +7688,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "扑通",
+        "VIP姓名": "汤圆",
         "服务导购": "郭文攀",
-        "购买金额": 313.0,
+        "购买金额": 314.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 62.6,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 157.0,
         "储值余额": 0.0
       },
       {
@@ -7492,6 +7712,15 @@
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 52.17,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "扑通",
+        "服务导购": "郭文攀",
+        "购买金额": 313.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 62.6,
         "储值余额": 0.0
       },
       {
@@ -7603,6 +7832,24 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "黄晨馨",
+        "服务导购": "郭文攀",
+        "购买金额": 304.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 101.33,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "布丁",
+        "服务导购": "郭文攀",
+        "购买金额": 304.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 152.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "暖暖",
         "服务导购": "郭文攀",
         "购买金额": 304.0,
@@ -7618,24 +7865,6 @@
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 152.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "布丁",
-        "服务导购": "郭文攀",
-        "购买金额": 304.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 152.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "黄晨馨",
-        "服务导购": "郭文攀",
-        "购买金额": 304.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 101.33,
         "储值余额": 0.0
       },
       {
@@ -7657,8 +7886,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "哈哈",
-        "服务导购": "张静",
+        "VIP姓名": "牛仔",
+        "服务导购": "郭文攀",
         "购买金额": 299.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
@@ -7675,8 +7904,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "牛仔",
-        "服务导购": "郭文攀",
+        "VIP姓名": "哈哈",
+        "服务导购": "张静",
         "购买金额": 299.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
@@ -7702,15 +7931,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "彤彤",
-        "服务导购": "郭文攀",
-        "购买金额": 296.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 74.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "一一",
         "服务导购": "郭文攀",
         "购买金额": 296.0,
@@ -7725,6 +7945,15 @@
         "购买金额": 296.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
+        "平均单笔消费额": 74.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "彤彤",
+        "服务导购": "郭文攀",
+        "购买金额": 296.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
         "平均单笔消费额": 74.0,
         "储值余额": 0.0
       },
@@ -7837,6 +8066,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "张煜瑶",
+        "服务导购": "郭文攀",
+        "购买金额": 281.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 93.67,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "七七",
         "服务导购": "郭文攀",
         "购买金额": 281.0,
@@ -7846,12 +8084,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张煜瑶",
+        "VIP姓名": "汤圆",
         "服务导购": "郭文攀",
-        "购买金额": 281.0,
+        "购买金额": 279.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 93.67,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 93.0,
         "储值余额": 0.0
       },
       {
@@ -7882,15 +8120,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "汤圆",
-        "服务导购": "郭文攀",
-        "购买金额": 279.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 93.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "满满",
         "服务导购": "郭文攀",
         "购买金额": 278.6,
@@ -7900,7 +8129,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "柠檬",
+        "VIP姓名": "小七",
         "服务导购": "郭文攀",
         "购买金额": 278.0,
         "购买总数": 0.0,
@@ -7918,16 +8147,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小七",
+        "VIP姓名": "李静敏",
         "服务导购": "郭文攀",
         "购买金额": 278.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 139.0,
+        "平均单笔消费额": 92.67,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "李静敏",
+        "VIP姓名": "杨珂",
         "服务导购": "郭文攀",
         "购买金额": 278.0,
         "购买总数": 0.0,
@@ -7945,12 +8174,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "杨珂",
+        "VIP姓名": "柠檬",
         "服务导购": "郭文攀",
         "购买金额": 278.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 92.67,
+        "平均单笔消费额": 139.0,
         "储值余额": 0.0
       },
       {
@@ -7960,15 +8189,6 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 92.33,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "卡卡",
-        "服务导购": "郭文攀",
-        "购买金额": 276.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 69.0,
         "储值余额": 0.0
       },
       {
@@ -7990,6 +8210,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "卡卡",
+        "服务导购": "郭文攀",
+        "购买金额": 276.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 69.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "觉觉",
         "服务导购": "郭文攀",
         "购买金额": 273.0,
@@ -7999,11 +8228,11 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小可",
+        "VIP姓名": "一一",
         "服务导购": "郭文攀",
         "购买金额": 272.0,
         "购买总数": 0.0,
-        "消费次数/年": 1.0,
+        "消费次数/年": 2.0,
         "平均单笔消费额": 68.0,
         "储值余额": 0.0
       },
@@ -8017,21 +8246,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "一一",
+        "VIP姓名": "小可",
         "服务导购": "郭文攀",
         "购买金额": 272.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 68.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "朵朵",
-        "服务导购": "郭文攀",
-        "购买金额": 271.0,
-        "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 271.0,
+        "平均单笔消费额": 68.0,
         "储值余额": 0.0
       },
       {
@@ -8044,12 +8264,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "阳阳",
+        "VIP姓名": "朵朵",
         "服务导购": "郭文攀",
-        "购买金额": 270.0,
+        "购买金额": 271.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 67.5,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 271.0,
         "储值余额": 0.0
       },
       {
@@ -8080,21 +8300,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "仔仔",
-        "服务导购": "郭文攀",
-        "购买金额": 267.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 133.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "小宝",
         "服务导购": "郭文攀",
         "购买金额": 267.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 53.4,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "仔仔",
+        "服务导购": "郭文攀",
+        "购买金额": 267.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 133.5,
         "储值余额": 0.0
       },
       {
@@ -8296,43 +8516,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "甜甜",
-        "服务导购": "郭文攀",
-        "购买金额": 245.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 245.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "逸逸",
-        "服务导购": "郭文攀",
-        "购买金额": 245.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 245.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "高琪",
-        "服务导购": "郭文攀",
-        "购买金额": 245.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 245.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "夏天",
-        "服务导购": "郭文攀",
-        "购买金额": 245.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 245.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "小石头",
         "服务导购": "郭文攀",
         "购买金额": 245.0,
         "购买总数": 0.0,
@@ -8350,6 +8534,42 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "夏天",
+        "服务导购": "郭文攀",
+        "购买金额": 245.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 245.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "甜甜",
+        "服务导购": "郭文攀",
+        "购买金额": 245.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 245.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "小石头",
+        "服务导购": "郭文攀",
+        "购买金额": 245.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 245.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "高琪",
+        "服务导购": "郭文攀",
+        "购买金额": 245.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 245.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "沫沫",
         "服务导购": "郭文攀",
         "购买金额": 244.0,
@@ -8359,7 +8579,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "棒棒",
+        "VIP姓名": "小麦",
         "服务导购": "郭文攀",
         "购买金额": 243.0,
         "购买总数": 0.0,
@@ -8377,16 +8597,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "闫女士",
-        "服务导购": "管理员",
-        "购买金额": 243.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 243.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "小麦",
+        "VIP姓名": "棒棒",
         "服务导购": "郭文攀",
         "购买金额": 243.0,
         "购买总数": 0.0,
@@ -8400,6 +8611,15 @@
         "购买金额": 243.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
+        "平均单笔消费额": 243.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "闫女士",
+        "服务导购": "管理员",
+        "购买金额": 243.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
         "平均单笔消费额": 243.0,
         "储值余额": 0.0
       },
@@ -8467,15 +8687,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "王佳馨",
-        "服务导购": "郭文攀",
-        "购买金额": 237.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 39.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "雷诗琪",
         "服务导购": "郭文攀",
         "购买金额": 237.0,
@@ -8485,25 +8696,34 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "天天",
+        "VIP姓名": "王佳馨",
         "服务导购": "郭文攀",
-        "购买金额": 236.0,
+        "购买金额": 237.0,
         "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 236.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "卓",
-        "服务导购": "郭文攀",
-        "购买金额": 236.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 236.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 39.5,
         "储值余额": 0.0
       },
       {
         "VIP姓名": "呦呦",
+        "服务导购": "郭文攀",
+        "购买金额": 236.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 236.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "夏天",
+        "服务导购": "郭文攀",
+        "购买金额": 236.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 78.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "天天",
         "服务导购": "郭文攀",
         "购买金额": 236.0,
         "购买总数": 0.0,
@@ -8521,12 +8741,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "夏天",
+        "VIP姓名": "卓",
         "服务导购": "郭文攀",
         "购买金额": 236.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 78.67,
+        "平均单笔消费额": 236.0,
         "储值余额": 0.0
       },
       {
@@ -8539,15 +8759,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "悠悠",
-        "服务导购": "郭文攀",
-        "购买金额": 235.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 117.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "多乐",
         "服务导购": "郭文攀",
         "购买金额": 235.0,
@@ -8557,12 +8768,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "一一",
+        "VIP姓名": "悠悠",
         "服务导购": "郭文攀",
-        "购买金额": 233.0,
+        "购买金额": 235.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
-        "平均单笔消费额": 77.67,
+        "平均单笔消费额": 117.5,
         "储值余额": 0.0
       },
       {
@@ -8575,7 +8786,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张帆",
+        "VIP姓名": "一一",
+        "服务导购": "郭文攀",
+        "购买金额": 233.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 77.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "九月",
         "服务导购": "郭文攀",
         "购买金额": 232.0,
         "购买总数": 0.0,
@@ -8584,7 +8804,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "九月",
+        "VIP姓名": "张帆",
         "服务导购": "郭文攀",
         "购买金额": 232.0,
         "购买总数": 0.0,
@@ -8620,15 +8840,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "六六",
-        "服务导购": "郭文攀",
-        "购买金额": 227.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 75.67,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "沐沐",
         "服务导购": "郭文攀",
         "购买金额": 227.0,
@@ -8639,6 +8850,15 @@
       },
       {
         "VIP姓名": "桐桐",
+        "服务导购": "郭文攀",
+        "购买金额": 227.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 75.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "六六",
         "服务导购": "郭文攀",
         "购买金额": 227.0,
         "购买总数": 0.0,
@@ -8674,15 +8894,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "汐汐",
-        "服务导购": "郭文攀",
-        "购买金额": 225.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 112.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "焦晨睿",
         "服务导购": "郭文攀",
         "购买金额": 225.0,
@@ -8701,12 +8912,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "毛豆",
+        "VIP姓名": "汐汐",
         "服务导购": "郭文攀",
-        "购买金额": 224.0,
+        "购买金额": 225.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 37.33,
+        "平均单笔消费额": 112.5,
         "储值余额": 0.0
       },
       {
@@ -8716,6 +8927,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 74.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "毛豆",
+        "服务导购": "郭文攀",
+        "购买金额": 224.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 37.33,
         "储值余额": 0.0
       },
       {
@@ -8737,6 +8957,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "董丁",
+        "服务导购": "郭文攀",
+        "购买金额": 222.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 37.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "夕夕",
         "服务导购": "郭文攀",
         "购买金额": 222.0,
@@ -8755,15 +8984,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "董丁",
-        "服务导购": "郭文攀",
-        "购买金额": 222.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 37.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "澄澄",
         "服务导购": "郭文攀",
         "购买金额": 220.0,
@@ -8773,12 +8993,30 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "米尼",
+        "服务导购": "郭文攀",
+        "购买金额": 218.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 218.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "田莎莎",
         "服务导购": "郭文攀",
         "购买金额": 218.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 218.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "妞妞",
+        "服务导购": "郭文攀",
+        "购买金额": 218.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 72.67,
         "储值余额": 0.0
       },
       {
@@ -8797,24 +9035,6 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 43.6,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "妞妞",
-        "服务导购": "郭文攀",
-        "购买金额": 218.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 72.67,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "米尼",
-        "服务导购": "郭文攀",
-        "购买金额": 218.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 218.0,
         "储值余额": 0.0
       },
       {
@@ -8845,8 +9065,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多多",
-        "服务导购": "赵婷宇",
+        "VIP姓名": "六一",
+        "服务导购": "郭文攀",
         "购买金额": 216.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
@@ -8854,8 +9074,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "六一",
-        "服务导购": "郭文攀",
+        "VIP姓名": "多多",
+        "服务导购": "赵婷宇",
         "购买金额": 216.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
@@ -8868,24 +9088,6 @@
         "购买金额": 215.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
-        "平均单笔消费额": 107.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "沐沐",
-        "服务导购": "郭文攀",
-        "购买金额": 215.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 107.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "宝宝",
-        "服务导购": "郭文攀",
-        "购买金额": 215.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
         "平均单笔消费额": 107.5,
         "储值余额": 0.0
       },
@@ -8908,21 +9110,30 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "宝宝",
+        "服务导购": "郭文攀",
+        "购买金额": 215.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 107.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "沐沐",
+        "服务导购": "郭文攀",
+        "购买金额": 215.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 107.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "姚飞艳",
         "服务导购": "",
         "购买金额": 214.0,
         "购买总数": 0.0,
         "消费次数/年": 2.0,
         "平均单笔消费额": 26.75,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "鼎鼎",
-        "服务导购": "郭文攀",
-        "购买金额": 214.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 107.0,
         "储值余额": 0.0
       },
       {
@@ -8935,21 +9146,21 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "鼎鼎",
+        "服务导购": "郭文攀",
+        "购买金额": 214.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 107.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "夏天",
         "服务导购": "郭文攀",
         "购买金额": 212.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 106.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "阿杜",
-        "服务导购": "郭文攀",
-        "购买金额": 211.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 105.5,
         "储值余额": 0.0
       },
       {
@@ -8962,43 +9173,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多多",
+        "VIP姓名": "阿杜",
         "服务导购": "郭文攀",
-        "购买金额": 209.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 209.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "蛋蛋",
-        "服务导购": "郭文攀",
-        "购买金额": 209.0,
+        "购买金额": 211.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 104.5,
+        "平均单笔消费额": 105.5,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "辰辰",
-        "服务导购": "郭文攀",
-        "购买金额": 209.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 209.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "皮皮",
-        "服务导购": "郭文攀",
-        "购买金额": 209.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 209.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "麦麦",
+        "VIP姓名": "樊语熙",
         "服务导购": "郭文攀",
         "购买金额": 209.0,
         "购买总数": 0.0,
@@ -9016,25 +9200,16 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "蛋蛋",
+        "服务导购": "郭文攀",
+        "购买金额": 209.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 104.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "童童",
-        "服务导购": "郭文攀",
-        "购买金额": 209.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 209.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "乐乐",
-        "服务导购": "郭文攀",
-        "购买金额": 209.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 209.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "溪儿",
         "服务导购": "郭文攀",
         "购买金额": 209.0,
         "购买总数": 0.0,
@@ -9052,7 +9227,52 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "樊语熙",
+        "VIP姓名": "乐乐",
+        "服务导购": "郭文攀",
+        "购买金额": 209.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 209.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "麦麦",
+        "服务导购": "郭文攀",
+        "购买金额": 209.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 209.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "辰辰",
+        "服务导购": "郭文攀",
+        "购买金额": 209.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 209.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "溪儿",
+        "服务导购": "郭文攀",
+        "购买金额": 209.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 209.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "多多",
+        "服务导购": "郭文攀",
+        "购买金额": 209.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 209.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "皮皮",
         "服务导购": "郭文攀",
         "购买金额": 209.0,
         "购买总数": 0.0,
@@ -9070,6 +9290,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "南卡",
+        "服务导购": "郭文攀",
+        "购买金额": 207.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 103.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "王欣怡",
         "服务导购": "郭文攀",
         "购买金额": 207.0,
@@ -9079,21 +9308,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "玛奇朵",
-        "服务导购": "郭文攀",
-        "购买金额": 206.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 103.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "左左",
         "服务导购": "郭文攀",
         "购买金额": 206.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 68.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "玛奇朵",
+        "服务导购": "郭文攀",
+        "购买金额": 206.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 103.0,
         "储值余额": 0.0
       },
       {
@@ -9115,15 +9344,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "柠檬",
-        "服务导购": "郭文攀",
-        "购买金额": 202.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 101.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "端端",
         "服务导购": "郭文攀",
         "购买金额": 202.0,
@@ -9133,21 +9353,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "睿睿",
+        "VIP姓名": "柠檬",
         "服务导购": "郭文攀",
-        "购买金额": 201.0,
+        "购买金额": 202.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 100.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 201.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 50.25,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 101.0,
         "储值余额": 0.0
       },
       {
@@ -9169,6 +9380,24 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "一一",
+        "服务导购": "郭文攀",
+        "购买金额": 201.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 50.25,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "睿睿",
+        "服务导购": "郭文攀",
+        "购买金额": 201.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 100.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "多多",
         "服务导购": "郭文攀",
         "购买金额": 199.0,
@@ -9187,15 +9416,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 198.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 28.29,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "伊诺",
         "服务导购": "郭文攀",
         "购买金额": 198.0,
@@ -9205,12 +9425,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小宇",
+        "VIP姓名": "一一",
         "服务导购": "郭文攀",
-        "购买金额": 196.0,
+        "购买金额": 198.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 65.33,
+        "平均单笔消费额": 28.29,
         "储值余额": 0.0
       },
       {
@@ -9223,21 +9443,21 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "小宇",
+        "服务导购": "郭文攀",
+        "购买金额": 196.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 65.33,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "汤圆",
         "服务导购": "郭文攀",
         "购买金额": 195.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 97.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "五月",
-        "服务导购": "郭文攀",
-        "购买金额": 194.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 38.8,
         "储值余额": 0.0
       },
       {
@@ -9250,12 +9470,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "泡芙",
+        "VIP姓名": "五月",
         "服务导购": "郭文攀",
-        "购买金额": 192.0,
+        "购买金额": 194.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 192.0,
+        "平均单笔消费额": 38.8,
         "储值余额": 0.0
       },
       {
@@ -9277,6 +9497,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "泡芙",
+        "服务导购": "郭文攀",
+        "购买金额": 192.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 192.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "果果",
         "服务导购": "郭文攀",
         "购买金额": 190.0,
@@ -9286,7 +9515,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "魏晨茜",
+        "VIP姓名": "汤圆",
         "服务导购": "郭文攀",
         "购买金额": 190.0,
         "购买总数": 0.0,
@@ -9295,7 +9524,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "汤圆",
+        "VIP姓名": "魏晨茜",
         "服务导购": "郭文攀",
         "购买金额": 190.0,
         "购买总数": 0.0,
@@ -9331,24 +9560,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "MINUO",
-        "服务导购": "郭文攀",
-        "购买金额": 186.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 31.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "跳跳",
-        "服务导购": "郭文攀",
-        "购买金额": 186.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 62.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "跳跳",
         "服务导购": "郭文攀",
         "购买金额": 186.0,
@@ -9364,6 +9575,24 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 93.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "跳跳",
+        "服务导购": "郭文攀",
+        "购买金额": 186.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 62.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "MINUO",
+        "服务导购": "郭文攀",
+        "购买金额": 186.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 31.0,
         "储值余额": 0.0
       },
       {
@@ -9430,21 +9659,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 182.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 45.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "岳好",
         "服务导购": "郭文攀",
         "购买金额": 182.0,
         "购买总数": 0.0,
         "消费次数/年": 3.0,
         "平均单笔消费额": 60.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "一一",
+        "服务导购": "郭文攀",
+        "购买金额": 182.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 45.5,
         "储值余额": 0.0
       },
       {
@@ -9475,6 +9704,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "笑笑",
+        "服务导购": "郭文攀",
+        "购买金额": 179.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 89.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "橙橙",
         "服务导购": "郭文攀",
         "购买金额": 179.0,
@@ -9493,16 +9731,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "笑笑",
-        "服务导购": "郭文攀",
-        "购买金额": 179.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 89.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "依一",
+        "VIP姓名": "沐沐",
         "服务导购": "郭文攀",
         "购买金额": 178.0,
         "购买总数": 0.0,
@@ -9520,7 +9749,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "沐沐",
+        "VIP姓名": "依一",
         "服务导购": "郭文攀",
         "购买金额": 178.0,
         "购买总数": 0.0,
@@ -9565,12 +9794,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多多",
+        "VIP姓名": "安安",
         "服务导购": "郭文攀",
         "购买金额": 175.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 87.5,
+        "平均单笔消费额": 175.0,
         "储值余额": 0.0
       },
       {
@@ -9583,93 +9812,21 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "多多",
+        "服务导购": "郭文攀",
+        "购买金额": 175.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 87.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "恩恩",
         "服务导购": "郭文攀",
         "购买金额": 175.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 58.33,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "安安",
-        "服务导购": "郭文攀",
-        "购买金额": 175.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 175.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "拿铁",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 174.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 174.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "希",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 87.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "栩栩",
-        "服务导购": "",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 87.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "布布",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 87.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "嘟嘟",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 174.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "球球",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 174.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "孙",
-        "服务导购": "郭文攀",
-        "购买金额": 174.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 174.0,
         "储值余额": 0.0
       },
       {
@@ -9691,12 +9848,84 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "刘依依",
+        "VIP姓名": "希",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
+        "平均单笔消费额": 87.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "拿铁",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 174.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "布布",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 87.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "嘟嘟",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 174.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "一一",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 174.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "球球",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 174.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "栩栩",
+        "服务导购": "",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 87.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "孙",
+        "服务导购": "郭文攀",
+        "购买金额": 174.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 174.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "帅帅",
         "服务导购": "郭文攀",
         "购买金额": 172.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 172.0,
+        "平均单笔消费额": 43.0,
         "储值余额": 0.0
       },
       {
@@ -9709,12 +9938,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "董文婷",
+        "VIP姓名": "刘依依",
         "服务导购": "郭文攀",
-        "购买金额": 171.0,
+        "购买金额": 172.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 85.5,
+        "平均单笔消费额": 172.0,
         "储值余额": 0.0
       },
       {
@@ -9727,6 +9956,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "董文婷",
+        "服务导购": "郭文攀",
+        "购买金额": 171.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 85.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "杨树苗",
         "服务导购": "郭文攀",
         "购买金额": 171.0,
@@ -9736,16 +9974,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "米乐",
-        "服务导购": "郭文攀",
-        "购买金额": 169.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 84.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "树苗",
+        "VIP姓名": "曼曼",
         "服务导购": "郭文攀",
         "购买金额": 169.0,
         "购买总数": 0.0,
@@ -9763,7 +9992,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "曼曼",
+        "VIP姓名": "米乐",
+        "服务导购": "郭文攀",
+        "购买金额": 169.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 84.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "轩轩",
         "服务导购": "郭文攀",
         "购买金额": 169.0,
         "购买总数": 0.0,
@@ -9781,7 +10019,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "轩轩",
+        "VIP姓名": "树苗",
         "服务导购": "郭文攀",
         "购买金额": 169.0,
         "购买总数": 0.0,
@@ -9808,24 +10046,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "葛靖驰",
-        "服务导购": "郭文攀",
-        "购买金额": 165.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 165.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "石头",
-        "服务导购": "郭文攀",
-        "购买金额": 165.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 165.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "夏天",
         "服务导购": "郭文攀",
         "购买金额": 165.0,
@@ -9844,6 +10064,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "石头",
+        "服务导购": "郭文攀",
+        "购买金额": 165.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 165.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "贺星硕",
         "服务导购": "郭文攀",
         "购买金额": 165.0,
@@ -9853,12 +10082,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "刘雨诺",
+        "VIP姓名": "葛靖驰",
         "服务导购": "郭文攀",
-        "购买金额": 164.0,
+        "购买金额": 165.0,
         "购买总数": 0.0,
-        "消费次数/年": 5.0,
-        "平均单笔消费额": 16.4,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 165.0,
         "储值余额": 0.0
       },
       {
@@ -9868,6 +10097,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 82.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "刘雨诺",
+        "服务导购": "郭文攀",
+        "购买金额": 164.0,
+        "购买总数": 0.0,
+        "消费次数/年": 5.0,
+        "平均单笔消费额": 16.4,
         "储值余额": 0.0
       },
       {
@@ -9898,15 +10136,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "途途",
-        "服务导购": "郭文攀",
-        "购买金额": 160.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 80.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "樱樱",
         "服务导购": "郭文攀",
         "购买金额": 160.0,
@@ -9916,79 +10145,16 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "途途",
+        "服务导购": "郭文攀",
+        "购买金额": 160.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 80.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "优米",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "妍妍",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "喜妹",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "王蒙哲",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "嘟嘟",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "Timmy",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "小小雪",
-        "服务导购": "",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 159.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 53.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "张张",
         "服务导购": "郭文攀",
         "购买金额": 159.0,
         "购买总数": 0.0,
@@ -10006,6 +10172,78 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "妍妍",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "Timmy",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "王蒙哲",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "一一",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "嘟嘟",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "小小雪",
+        "服务导购": "",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "张张",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "喜妹",
+        "服务导购": "郭文攀",
+        "购买金额": 159.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 53.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "萱萱",
         "服务导购": "郭文攀",
         "购买金额": 158.0,
@@ -10015,16 +10253,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "郑洋",
-        "服务导购": "郭文攀",
-        "购买金额": 157.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 157.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "四月",
+        "VIP姓名": "小米",
         "服务导购": "郭文攀",
         "购买金额": 157.0,
         "购买总数": 0.0,
@@ -10042,7 +10271,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小米",
+        "VIP姓名": "四月",
+        "服务导购": "郭文攀",
+        "购买金额": 157.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 157.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "郑洋",
         "服务导购": "郭文攀",
         "购买金额": 157.0,
         "购买总数": 0.0,
@@ -10060,6 +10298,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "开心",
+        "服务导购": "郭文攀",
+        "购买金额": 155.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 38.75,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "依依",
         "服务导购": "郭文攀",
         "购买金额": 155.0,
@@ -10069,12 +10316,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "开心",
+        "VIP姓名": "邵妮娜",
         "服务导购": "郭文攀",
-        "购买金额": 155.0,
+        "购买金额": 154.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 38.75,
+        "平均单笔消费额": 51.33,
         "储值余额": 0.0
       },
       {
@@ -10096,15 +10343,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "邵妮娜",
-        "服务导购": "郭文攀",
-        "购买金额": 154.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 51.33,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "馨馨",
         "服务导购": "郭文攀",
         "购买金额": 150.0,
@@ -10123,7 +10361,34 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "可可",
+        "服务导购": "郭文攀",
+        "购买金额": 149.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 149.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "王梓凯",
+        "服务导购": "郭文攀",
+        "购买金额": 149.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 149.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "吴奕泊",
+        "服务导购": "郭文攀",
+        "购买金额": 149.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 149.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "欢宝",
         "服务导购": "郭文攀",
         "购买金额": 149.0,
         "购买总数": 0.0,
@@ -10141,15 +10406,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "欢宝",
-        "服务导购": "郭文攀",
-        "购买金额": 149.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 149.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "高兴",
         "服务导购": "郭文攀",
         "购买金额": 149.0,
@@ -10159,43 +10415,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "吴奕泊",
-        "服务导购": "郭文攀",
-        "购买金额": 149.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 149.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "可可",
-        "服务导购": "郭文攀",
-        "购买金额": 149.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 149.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "晨晨",
-        "服务导购": "郭文攀",
-        "购买金额": 148.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 148.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "沐沐",
-        "服务导购": "郭文攀",
-        "购买金额": 148.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 148.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "橙子",
+        "VIP姓名": "毛头",
         "服务导购": "郭文攀",
         "购买金额": 148.0,
         "购买总数": 0.0,
@@ -10213,15 +10433,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "嘟嘟",
-        "服务导购": "郭文攀",
-        "购买金额": 148.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 148.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "泡泡",
         "服务导购": "郭文攀",
         "购买金额": 148.0,
@@ -10231,7 +10442,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "毛头",
+        "VIP姓名": "晨晨",
         "服务导购": "郭文攀",
         "购买金额": 148.0,
         "购买总数": 0.0,
@@ -10246,6 +10457,33 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 74.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "嘟嘟",
+        "服务导购": "郭文攀",
+        "购买金额": 148.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 148.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "橙子",
+        "服务导购": "郭文攀",
+        "购买金额": 148.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 148.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "沐沐",
+        "服务导购": "郭文攀",
+        "购买金额": 148.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 148.0,
         "储值余额": 0.0
       },
       {
@@ -10267,7 +10505,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张",
+        "VIP姓名": "黄宸嘉",
         "服务导购": "郭文攀",
         "购买金额": 144.0,
         "购买总数": 0.0,
@@ -10276,7 +10514,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "黄宸嘉",
+        "VIP姓名": "张",
         "服务导购": "郭文攀",
         "购买金额": 144.0,
         "购买总数": 0.0,
@@ -10303,79 +10541,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "果果",
+        "VIP姓名": "尼莫",
         "服务导购": "郭文攀",
         "购买金额": 139.0,
         "购买总数": 0.0,
-        "消费次数/年": 1.0,
+        "消费次数/年": 2.0,
         "平均单笔消费额": 139.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "薛梓涵",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 46.33,
         "储值余额": 0.0
       },
       {
         "VIP姓名": "米丫",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 139.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "泡泡",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 69.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "昕昕",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 139.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "澄宝",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 139.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "多多",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 139.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "可心",
-        "服务导购": "郭文攀",
-        "购买金额": 139.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 139.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "安安",
         "服务导购": "郭文攀",
         "购买金额": 139.0,
         "购买总数": 0.0,
@@ -10393,20 +10568,20 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "嘻宝",
+        "VIP姓名": "米果",
         "服务导购": "郭文攀",
         "购买金额": 139.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 34.75,
+        "平均单笔消费额": 139.0,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "尼莫",
+        "VIP姓名": "果果",
         "服务导购": "郭文攀",
         "购买金额": 139.0,
         "购买总数": 0.0,
-        "消费次数/年": 2.0,
+        "消费次数/年": 1.0,
         "平均单笔消费额": 139.0,
         "储值余额": 0.0
       },
@@ -10420,7 +10595,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "米果",
+        "VIP姓名": "泡泡",
+        "服务导购": "郭文攀",
+        "购买金额": 139.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 69.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "澄宝",
         "服务导购": "郭文攀",
         "购买金额": 139.0,
         "购买总数": 0.0,
@@ -10429,16 +10613,61 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "圆圆",
+        "VIP姓名": "可心",
         "服务导购": "郭文攀",
-        "购买金额": 137.0,
+        "购买金额": 139.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 68.5,
+        "平均单笔消费额": 139.0,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "妍妍",
+        "VIP姓名": "多多",
+        "服务导购": "郭文攀",
+        "购买金额": 139.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 139.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "薛梓涵",
+        "服务导购": "郭文攀",
+        "购买金额": 139.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 46.33,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "嘻宝",
+        "服务导购": "郭文攀",
+        "购买金额": 139.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 34.75,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "安安",
+        "服务导购": "郭文攀",
+        "购买金额": 139.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 139.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "昕昕",
+        "服务导购": "郭文攀",
+        "购买金额": 139.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 139.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "笑笑",
         "服务导购": "郭文攀",
         "购买金额": 137.0,
         "购买总数": 0.0,
@@ -10456,29 +10685,29 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "Tiger",
-        "服务导购": "郭文攀",
-        "购买金额": 137.0,
-        "购买总数": 0.0,
-        "消费次数/年": 3.0,
-        "平均单笔消费额": 137.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "笑笑",
-        "服务导购": "郭文攀",
-        "购买金额": 137.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 137.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "何女士",
         "服务导购": "郭文攀",
         "购买金额": 137.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
+        "平均单笔消费额": 137.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "妍妍",
+        "服务导购": "郭文攀",
+        "购买金额": 137.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 137.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "Tiger",
+        "服务导购": "郭文攀",
+        "购买金额": 137.0,
+        "购买总数": 0.0,
+        "消费次数/年": 3.0,
         "平均单笔消费额": 137.0,
         "储值余额": 0.0
       },
@@ -10489,6 +10718,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 137.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "圆圆",
+        "服务导购": "郭文攀",
+        "购买金额": 137.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 68.5,
         "储值余额": 0.0
       },
       {
@@ -10528,34 +10766,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "王传皓",
-        "服务导购": "郭文攀",
-        "购买金额": 130.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 130.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "泡泡糖",
-        "服务导购": "郭文攀",
-        "购买金额": 130.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 130.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "乖乖",
-        "服务导购": "郭文攀",
-        "购买金额": 130.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 130.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "米豆",
+        "VIP姓名": "黄熙岳",
         "服务导购": "郭文攀",
         "购买金额": 130.0,
         "购买总数": 0.0,
@@ -10573,7 +10784,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "黄熙岳",
+        "VIP姓名": "王传皓",
         "服务导购": "郭文攀",
         "购买金额": 130.0,
         "购买总数": 0.0,
@@ -10582,43 +10793,34 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "蜜桃",
+        "VIP姓名": "乖乖",
         "服务导购": "郭文攀",
-        "购买金额": 129.0,
+        "购买金额": 130.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 43.0,
+        "平均单笔消费额": 130.0,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "喜宝宝",
+        "VIP姓名": "泡泡糖",
         "服务导购": "郭文攀",
-        "购买金额": 129.0,
+        "购买金额": 130.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 43.0,
+        "平均单笔消费额": 130.0,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "妞妞",
+        "VIP姓名": "米豆",
         "服务导购": "郭文攀",
-        "购买金额": 129.0,
+        "购买金额": 130.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 43.0,
+        "平均单笔消费额": 130.0,
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "希希",
-        "服务导购": "郭文攀",
-        "购买金额": 129.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 43.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "罗欣钰",
+        "VIP姓名": "月月",
         "服务导购": "郭文攀",
         "购买金额": 129.0,
         "购买总数": 0.0,
@@ -10636,7 +10838,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "刘清",
+        "VIP姓名": "妞妞",
+        "服务导购": "郭文攀",
+        "购买金额": 129.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 43.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "喜宝宝",
         "服务导购": "郭文攀",
         "购买金额": 129.0,
         "购买总数": 0.0,
@@ -10663,16 +10874,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "月月",
-        "服务导购": "郭文攀",
-        "购买金额": 129.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 43.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "嘟嘟",
+        "VIP姓名": "希希",
         "服务导购": "郭文攀",
         "购买金额": 129.0,
         "购买总数": 0.0,
@@ -10699,15 +10901,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "朱荟昕",
-        "服务导购": "郭文攀",
-        "购买金额": 129.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 43.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "闫琛和",
         "服务导购": "郭文攀",
         "购买金额": 129.0,
@@ -10717,7 +10910,43 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "嘟嘟",
+        "服务导购": "郭文攀",
+        "购买金额": 129.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 43.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "朱荟昕",
+        "服务导购": "郭文攀",
+        "购买金额": 129.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 43.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "刘清",
+        "服务导购": "郭文攀",
+        "购买金额": 129.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 43.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "淘淘",
+        "服务导购": "郭文攀",
+        "购买金额": 129.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 43.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "蜜桃",
         "服务导购": "郭文攀",
         "购买金额": 129.0,
         "购买总数": 0.0,
@@ -10753,7 +10982,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小强子",
+        "VIP姓名": "苗苗",
         "服务导购": "郭文攀",
         "购买金额": 127.0,
         "购买总数": 0.0,
@@ -10771,7 +11000,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "苗苗",
+        "VIP姓名": "小强子",
         "服务导购": "郭文攀",
         "购买金额": 127.0,
         "购买总数": 0.0,
@@ -10786,6 +11015,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 125.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "麦兜",
+        "服务导购": "郭文攀",
+        "购买金额": 124.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 62.0,
         "储值余额": 0.0
       },
       {
@@ -10807,25 +11045,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "麦兜",
-        "服务导购": "郭文攀",
-        "购买金额": 124.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 62.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "米乐",
-        "服务导购": "郭文攀",
-        "购买金额": 121.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 121.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "夏夏",
+        "VIP姓名": "王一茜",
         "服务导购": "郭文攀",
         "购买金额": 121.0,
         "购买总数": 0.0,
@@ -10835,15 +11055,6 @@
       },
       {
         "VIP姓名": "夏天",
-        "服务导购": "郭文攀",
-        "购买金额": 121.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 121.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "可心",
         "服务导购": "郭文攀",
         "购买金额": 121.0,
         "购买总数": 0.0,
@@ -10870,16 +11081,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "果",
-        "服务导购": "郭文攀",
-        "购买金额": 121.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 121.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "王一茜",
+        "VIP姓名": "夏夏",
         "服务导购": "郭文攀",
         "购买金额": 121.0,
         "购买总数": 0.0,
@@ -10897,7 +11099,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "南卡",
+        "VIP姓名": "可心",
+        "服务导购": "郭文攀",
+        "购买金额": 121.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 121.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "果",
         "服务导购": "郭文攀",
         "购买金额": 121.0,
         "购买总数": 0.0,
@@ -10912,6 +11123,24 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 121.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "米乐",
+        "服务导购": "郭文攀",
+        "购买金额": 121.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 121.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "朵朵",
+        "服务导购": "郭文攀",
+        "购买金额": 119.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 19.83,
         "储值余额": 0.0
       },
       {
@@ -10933,15 +11162,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "朵朵",
-        "服务导购": "郭文攀",
-        "购买金额": 119.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 19.83,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "童童",
         "服务导购": "郭文攀",
         "购买金额": 116.0,
@@ -10960,7 +11180,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "欢乐",
+        "VIP姓名": "九九",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -10969,7 +11189,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "邱添",
+        "VIP姓名": "邵霄霄",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -10978,7 +11198,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "伊伊",
+        "VIP姓名": "桃子",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -10996,7 +11216,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "九九",
+        "VIP姓名": "伊伊",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -11005,16 +11225,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "张喜乐",
-        "服务导购": "郭文攀",
-        "购买金额": 113.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 113.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "芮芮",
+        "VIP姓名": "邱添",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -11032,6 +11243,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "张喜乐",
+        "服务导购": "郭文攀",
+        "购买金额": 113.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 113.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "拾月",
         "服务导购": "",
         "购买金额": 113.0,
@@ -11041,7 +11261,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "邵霄霄",
+        "VIP姓名": "欢乐",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -11050,7 +11270,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "桃子",
+        "VIP姓名": "芮芮",
         "服务导购": "郭文攀",
         "购买金额": 113.0,
         "购买总数": 0.0,
@@ -11095,7 +11315,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "果果",
+        "VIP姓名": "媛媛",
         "服务导购": "郭文攀",
         "购买金额": 109.0,
         "购买总数": 0.0,
@@ -11104,16 +11324,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "少少",
-        "服务导购": "郭文攀",
-        "购买金额": 109.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 109.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "媛媛",
+        "VIP姓名": "果果",
         "服务导购": "郭文攀",
         "购买金额": 109.0,
         "购买总数": 0.0,
@@ -11128,6 +11339,15 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 36.33,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "少少",
+        "服务导购": "郭文攀",
+        "购买金额": 109.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 109.0,
         "储值余额": 0.0
       },
       {
@@ -11149,15 +11369,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "棠棠",
-        "服务导购": "郭文攀",
-        "购买金额": 105.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 52.5,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "宥宥",
         "服务导购": "郭文攀",
         "购买金额": 105.0,
@@ -11167,30 +11378,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "炎炎",
+        "VIP姓名": "棠棠",
         "服务导购": "郭文攀",
-        "购买金额": 104.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 104.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "多米",
-        "服务导购": "郭文攀",
-        "购买金额": 104.0,
+        "购买金额": 105.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 104.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 104.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 104.0,
+        "平均单笔消费额": 52.5,
         "储值余额": 0.0
       },
       {
@@ -11212,7 +11405,34 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "一一",
+        "服务导购": "郭文攀",
+        "购买金额": 104.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 104.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "壮壮",
+        "服务导购": "郭文攀",
+        "购买金额": 104.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 104.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "多米",
+        "服务导购": "郭文攀",
+        "购买金额": 104.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 104.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "嘟嘟",
         "服务导购": "郭文攀",
         "购买金额": 104.0,
         "购买总数": 0.0,
@@ -11230,11 +11450,11 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "嘟嘟",
+        "VIP姓名": "炎炎",
         "服务导购": "郭文攀",
         "购买金额": 104.0,
         "购买总数": 0.0,
-        "消费次数/年": 1.0,
+        "消费次数/年": 2.0,
         "平均单笔消费额": 104.0,
         "储值余额": 0.0
       },
@@ -11257,16 +11477,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "肖天",
-        "服务导购": "郭文攀",
-        "购买金额": 102.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 102.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "安安",
+        "VIP姓名": "王文晞",
         "服务导购": "郭文攀",
         "购买金额": 102.0,
         "购买总数": 0.0,
@@ -11284,33 +11495,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "嘟嘟",
-        "服务导购": "郭文攀",
-        "购买金额": 102.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 102.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "王文晞",
-        "服务导购": "郭文攀",
-        "购买金额": 102.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 102.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "橘子",
-        "服务导购": "郭文攀",
-        "购买金额": 102.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 102.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "王菀菀",
         "服务导购": "郭文攀",
         "购买金额": 102.0,
@@ -11320,16 +11504,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "嘟",
-        "服务导购": "郭文攀",
-        "购买金额": 102.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 102.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "张",
+        "VIP姓名": "肖天",
         "服务导购": "郭文攀",
         "购买金额": 102.0,
         "购买总数": 0.0,
@@ -11347,7 +11522,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "夏天",
+        "VIP姓名": "嘟",
+        "服务导购": "郭文攀",
+        "购买金额": 102.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 102.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "安安",
         "服务导购": "郭文攀",
         "购买金额": 102.0,
         "购买总数": 0.0,
@@ -11365,6 +11549,42 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "嘟嘟",
+        "服务导购": "郭文攀",
+        "购买金额": 102.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 102.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "张",
+        "服务导购": "郭文攀",
+        "购买金额": 102.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 102.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "橘子",
+        "服务导购": "郭文攀",
+        "购买金额": 102.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 102.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "夏天",
+        "服务导购": "郭文攀",
+        "购买金额": 102.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 102.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "优优",
         "服务导购": "郭文攀",
         "购买金额": 100.0,
@@ -11374,7 +11594,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "杨乐乐",
+        "VIP姓名": "睿睿",
         "服务导购": "郭文攀",
         "购买金额": 99.0,
         "购买总数": 0.0,
@@ -11383,7 +11603,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "睿睿",
+        "VIP姓名": "杨乐乐",
         "服务导购": "郭文攀",
         "购买金额": 99.0,
         "购买总数": 0.0,
@@ -11401,17 +11621,8 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "沐沐",
+        "VIP姓名": "熙熙",
         "服务导购": "郭文攀",
-        "购买金额": 95.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 95.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "大虎",
-        "服务导购": "",
         "购买金额": 95.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
@@ -11446,7 +11657,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "熙熙",
+        "VIP姓名": "大虎",
+        "服务导购": "",
+        "购买金额": 95.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 95.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "沐沐",
         "服务导购": "郭文攀",
         "购买金额": 95.0,
         "购买总数": 0.0,
@@ -11464,12 +11684,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "奶香",
+        "VIP姓名": "小久",
         "服务导购": "郭文攀",
         "购买金额": 89.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 89.0,
+        "平均单笔消费额": 44.5,
         "储值余额": 0.0
       },
       {
@@ -11482,30 +11702,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小久",
+        "VIP姓名": "奶香",
         "服务导购": "郭文攀",
         "购买金额": 89.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 44.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "阳宝",
-        "服务导购": "郭文攀",
-        "购买金额": 86.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 86.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "韩苗苗",
-        "服务导购": "郭文攀",
-        "购买金额": 86.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 43.0,
+        "平均单笔消费额": 89.0,
         "储值余额": 0.0
       },
       {
@@ -11527,6 +11729,24 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "阳宝",
+        "服务导购": "郭文攀",
+        "购买金额": 86.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 86.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "韩苗苗",
+        "服务导购": "郭文攀",
+        "购买金额": 86.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 43.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "锦宝",
         "服务导购": "郭文攀",
         "购买金额": 85.0,
@@ -11545,25 +11765,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "鸽子",
-        "服务导购": "郭文攀",
-        "购买金额": 79.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 79.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "酥酥",
-        "服务导购": "郭文攀",
-        "购买金额": 79.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 39.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "可可",
         "服务导购": "郭文攀",
         "购买金额": 79.0,
         "购买总数": 0.0,
@@ -11581,12 +11783,21 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "李婷",
+        "VIP姓名": "鸽子",
         "服务导购": "郭文攀",
-        "购买金额": 77.0,
+        "购买金额": 79.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 77.0,
+        "平均单笔消费额": 79.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "可可",
+        "服务导购": "郭文攀",
+        "购买金额": 79.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 39.5,
         "储值余额": 0.0
       },
       {
@@ -11600,6 +11811,15 @@
       },
       {
         "VIP姓名": "OK",
+        "服务导购": "郭文攀",
+        "购买金额": 77.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 77.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "李婷",
         "服务导购": "郭文攀",
         "购买金额": 77.0,
         "购买总数": 0.0,
@@ -11626,25 +11846,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "依依",
-        "服务导购": "郭文攀",
-        "购买金额": 70.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 70.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "一一",
-        "服务导购": "郭文攀",
-        "购买金额": 70.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 70.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "颜小西",
+        "服务导购": "郭文攀",
+        "购买金额": 70.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 70.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "依依",
         "服务导购": "郭文攀",
         "购买金额": 70.0,
         "购买总数": 0.0,
@@ -11671,30 +11882,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "小豆包",
+        "VIP姓名": "一一",
         "服务导购": "郭文攀",
-        "购买金额": 69.0,
+        "购买金额": 70.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 13.8,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "小茉莉",
-        "服务导购": "郭文攀",
-        "购买金额": 69.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 13.8,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "程易宸",
-        "服务导购": "郭文攀",
-        "购买金额": 69.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 13.8,
+        "平均单笔消费额": 70.0,
         "储值余额": 0.0
       },
       {
@@ -11707,12 +11900,30 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "可乐",
+        "服务导购": "郭文攀",
+        "购买金额": 69.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 17.25,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "稳稳",
         "服务导购": "郭文攀",
         "购买金额": 69.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 17.25,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "可乐",
+        "服务导购": "郭文攀",
+        "购买金额": 69.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 13.8,
         "储值余额": 0.0
       },
       {
@@ -11725,15 +11936,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "可乐",
-        "服务导购": "郭文攀",
-        "购买金额": 69.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 17.25,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "泽泽",
         "服务导购": "郭文攀",
         "购买金额": 69.0,
@@ -11743,16 +11945,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "可乐",
-        "服务导购": "郭文攀",
-        "购买金额": 69.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 17.25,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "可乐",
+        "VIP姓名": "小豆包",
         "服务导购": "郭文攀",
         "购买金额": 69.0,
         "购买总数": 0.0,
@@ -11767,6 +11960,33 @@
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 34.5,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "可乐",
+        "服务导购": "郭文攀",
+        "购买金额": 69.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 17.25,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "程易宸",
+        "服务导购": "郭文攀",
+        "购买金额": 69.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 13.8,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "小茉莉",
+        "服务导购": "郭文攀",
+        "购买金额": 69.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 13.8,
         "储值余额": 0.0
       },
       {
@@ -11797,7 +12017,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "汤圆",
+        "VIP姓名": "粽子",
+        "服务导购": "郭文攀",
+        "购买金额": 63.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 63.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "二宝",
         "服务导购": "郭文攀",
         "购买金额": 63.0,
         "购买总数": 0.0,
@@ -11824,24 +12053,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "粽子",
-        "服务导购": "郭文攀",
-        "购买金额": 63.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 63.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "二宝",
-        "服务导购": "郭文攀",
-        "购买金额": 63.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 63.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "诺宝",
         "服务导购": "郭文攀",
         "购买金额": 63.0,
@@ -11851,12 +12062,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "郭若晴",
+        "VIP姓名": "汤圆",
         "服务导购": "郭文攀",
-        "购买金额": 62.0,
+        "购买金额": 63.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 62.0,
+        "平均单笔消费额": 63.0,
         "储值余额": 0.0
       },
       {
@@ -11878,12 +12089,12 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "可儿",
+        "VIP姓名": "郭若晴",
         "服务导购": "郭文攀",
-        "购买金额": 61.0,
+        "购买金额": 62.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
-        "平均单笔消费额": 61.0,
+        "平均单笔消费额": 62.0,
         "储值余额": 0.0
       },
       {
@@ -11896,25 +12107,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多多",
-        "服务导购": "郭文攀",
-        "购买金额": 61.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 20.33,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "桐桐",
-        "服务导购": "郭文攀",
-        "购买金额": 61.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 61.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "熊娇",
+        "VIP姓名": "可儿",
         "服务导购": "郭文攀",
         "购买金额": 61.0,
         "购买总数": 0.0,
@@ -11932,12 +12125,39 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "桐桐",
+        "服务导购": "郭文攀",
+        "购买金额": 61.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 61.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "可乐",
         "服务导购": "郭文攀",
         "购买金额": 61.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 61.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "熊娇",
+        "服务导购": "郭文攀",
+        "购买金额": 61.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 61.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "多多",
+        "服务导购": "郭文攀",
+        "购买金额": 61.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 20.33,
         "储值余额": 0.0
       },
       {
@@ -11950,15 +12170,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "旺仔",
-        "服务导购": "郭文攀",
-        "购买金额": 59.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 19.67,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "时月",
         "服务导购": "郭文攀",
         "购买金额": 59.0,
@@ -11968,7 +12179,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "贝贝",
+        "VIP姓名": "旺仔",
+        "服务导购": "郭文攀",
+        "购买金额": 59.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 19.67,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "曦曦",
         "服务导购": "郭文攀",
         "购买金额": 58.0,
         "购买总数": 0.0,
@@ -11977,7 +12197,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "曦曦",
+        "VIP姓名": "贝贝",
         "服务导购": "郭文攀",
         "购买金额": 58.0,
         "购买总数": 0.0,
@@ -12004,24 +12224,6 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "桃心",
-        "服务导购": "郭文攀",
-        "购买金额": 55.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 55.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "米乐",
-        "服务导购": "郭文攀",
-        "购买金额": 55.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 55.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "研研",
         "服务导购": "郭文攀",
         "购买金额": 55.0,
@@ -12040,6 +12242,33 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "桃心",
+        "服务导购": "郭文攀",
+        "购买金额": 55.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 55.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "米乐",
+        "服务导购": "郭文攀",
+        "购买金额": 55.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 55.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "小丸子",
+        "服务导购": "郭文攀",
+        "购买金额": 51.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 25.5,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "蛋蛋",
         "服务导购": "郭文攀",
         "购买金额": 51.0,
@@ -12049,34 +12278,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "水滴",
+        "VIP姓名": "甜甜",
         "服务导购": "郭文攀",
         "购买金额": 51.0,
         "购买总数": 0.0,
         "消费次数/年": 1.0,
         "平均单笔消费额": 25.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "刘萌",
-        "服务导购": "郭文攀",
-        "购买金额": 51.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 51.0,
         "储值余额": 0.0
       },
       {
         "VIP姓名": "正正",
-        "服务导购": "郭文攀",
-        "购买金额": 51.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 25.5,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "小丸子",
         "服务导购": "郭文攀",
         "购买金额": 51.0,
         "购买总数": 0.0,
@@ -12094,7 +12305,16 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "锁锁",
+        "VIP姓名": "刘萌",
+        "服务导购": "郭文攀",
+        "购买金额": 51.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 51.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "水滴",
         "服务导购": "郭文攀",
         "购买金额": 51.0,
         "购买总数": 0.0,
@@ -12103,7 +12323,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "甜甜",
+        "VIP姓名": "锁锁",
         "服务导购": "郭文攀",
         "购买金额": 51.0,
         "购买总数": 0.0,
@@ -12148,6 +12368,15 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "橙子",
+        "服务导购": "郭文攀",
+        "购买金额": 46.0,
+        "购买总数": 0.0,
+        "消费次数/年": 1.0,
+        "平均单笔消费额": 46.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "安安",
         "服务导购": "郭文攀",
         "购买金额": 46.0,
@@ -12157,16 +12386,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "橙子",
-        "服务导购": "郭文攀",
-        "购买金额": 46.0,
-        "购买总数": 0.0,
-        "消费次数/年": 1.0,
-        "平均单笔消费额": 46.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "橙子",
+        "VIP姓名": "韩子瑞",
         "服务导购": "郭文攀",
         "购买金额": 43.0,
         "购买总数": 0.0,
@@ -12175,7 +12395,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "韩子瑞",
+        "VIP姓名": "橙子",
         "服务导购": "郭文攀",
         "购买金额": 43.0,
         "购买总数": 0.0,
@@ -12229,7 +12449,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "多米",
+        "VIP姓名": "沫沫",
         "服务导购": "郭文攀",
         "购买金额": 26.0,
         "购买总数": 0.0,
@@ -12238,7 +12458,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "沫沫",
+        "VIP姓名": "多米",
         "服务导购": "郭文攀",
         "购买金额": 26.0,
         "购买总数": 0.0,
@@ -12274,52 +12494,7 @@
         "储值余额": 0.0
       },
       {
-        "VIP姓名": "岐乐",
-        "服务导购": "郭文攀",
-        "购买金额": 0.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 0.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "润润",
-        "服务导购": "郭文攀",
-        "购买金额": 0.0,
-        "购买总数": 0.0,
-        "消费次数/年": 0.0,
-        "平均单笔消费额": 0.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "kiki",
-        "服务导购": "郭文攀",
-        "购买金额": 0.0,
-        "购买总数": 0.0,
-        "消费次数/年": 2.0,
-        "平均单笔消费额": 0.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "杰瑞",
-        "服务导购": "郭文攀",
-        "购买金额": 0.0,
-        "购买总数": 0.0,
-        "消费次数/年": 0.0,
-        "平均单笔消费额": 0.0,
-        "储值余额": 0.0
-      },
-      {
         "VIP姓名": "晴晴",
-        "服务导购": "郭文攀",
-        "购买金额": 0.0,
-        "购买总数": 0.0,
-        "消费次数/年": 0.0,
-        "平均单笔消费额": 0.0,
-        "储值余额": 0.0
-      },
-      {
-        "VIP姓名": "王艺淼",
         "服务导购": "郭文攀",
         "购买金额": 0.0,
         "购买总数": 0.0,
@@ -12337,6 +12512,15 @@
         "储值余额": 300.0
       },
       {
+        "VIP姓名": "kiki",
+        "服务导购": "郭文攀",
+        "购买金额": 0.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 0.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "糖糖",
         "服务导购": "郭文攀",
         "购买金额": 0.0,
@@ -12346,7 +12530,43 @@
         "储值余额": 0.0
       },
       {
+        "VIP姓名": "王艺淼",
+        "服务导购": "郭文攀",
+        "购买金额": 0.0,
+        "购买总数": 0.0,
+        "消费次数/年": 0.0,
+        "平均单笔消费额": 0.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "岐乐",
+        "服务导购": "郭文攀",
+        "购买金额": 0.0,
+        "购买总数": 0.0,
+        "消费次数/年": 2.0,
+        "平均单笔消费额": 0.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "杰瑞",
+        "服务导购": "郭文攀",
+        "购买金额": 0.0,
+        "购买总数": 0.0,
+        "消费次数/年": 0.0,
+        "平均单笔消费额": 0.0,
+        "储值余额": 0.0
+      },
+      {
         "VIP姓名": "晨晨",
+        "服务导购": "郭文攀",
+        "购买金额": 0.0,
+        "购买总数": 0.0,
+        "消费次数/年": 0.0,
+        "平均单笔消费额": 0.0,
+        "储值余额": 0.0
+      },
+      {
+        "VIP姓名": "润润",
         "服务导购": "郭文攀",
         "购买金额": 0.0,
         "购买总数": 0.0,
@@ -14289,6 +14509,16 @@
         "季节": "冬"
       },
       {
+        "款号": "TNX1T20187Z",
+        "颜色": "紫色",
+        "销售数": 17.0,
+        "销售金额": 1472.94,
+        "库存": 0.0,
+        "周期售罄": 1.0,
+        "中类": "衣类",
+        "季节": "夏"
+      },
+      {
         "款号": "TNQ1K60642Z",
         "颜色": "黑色",
         "销售数": 6.0,
@@ -14355,16 +14585,6 @@
         "销售金额": 1406.28,
         "库存": -3.0,
         "周期售罄": 1.1764705882352942,
-        "中类": "衣类",
-        "季节": "夏"
-      },
-      {
-        "款号": "TNX1T20187Z",
-        "颜色": "紫色",
-        "销售数": 16.0,
-        "销售金额": 1396.15,
-        "库存": 1.0,
-        "周期售罄": 0.9411764705882353,
         "中类": "衣类",
         "季节": "夏"
       },
@@ -15457,6 +15677,16 @@
         "周期售罄": 1.0,
         "中类": "家居服",
         "季节": "春"
+      },
+      {
+        "款号": "TOX1Y91103X",
+        "颜色": "粉紫色",
+        "销售数": 4.0,
+        "销售金额": 920.14,
+        "库存": 1.0,
+        "周期售罄": 0.8,
+        "中类": "防晒服",
+        "季节": "夏"
       },
       {
         "款号": "TNQ1Y80955X",
@@ -16809,16 +17039,6 @@
         "季节": "夏"
       },
       {
-        "款号": "TOX1Y91103X",
-        "颜色": "粉紫色",
-        "销售数": 3.0,
-        "销售金额": 675.54,
-        "库存": 2.0,
-        "周期售罄": 0.6,
-        "中类": "防晒服",
-        "季节": "夏"
-      },
-      {
         "款号": "TND1K60660Z",
         "颜色": "深灰色",
         "销售数": 5.0,
@@ -18059,6 +18279,16 @@
         "季节": "春"
       },
       {
+        "款号": "TNX1Y80854D",
+        "颜色": "蓝灰色",
+        "销售数": 3.0,
+        "销售金额": 521.83,
+        "库存": 1.0,
+        "周期售罄": 0.75,
+        "中类": "家居服",
+        "季节": "夏"
+      },
+      {
         "款号": "TNX1T20189Z",
         "颜色": "浅灰色",
         "销售数": 6.0,
@@ -18677,6 +18907,16 @@
         "周期售罄": 1.0,
         "中类": "儿童内衣套装",
         "季节": "秋"
+      },
+      {
+        "款号": "TNX1Y90876Z",
+        "颜色": "款色",
+        "销售数": 3.0,
+        "销售金额": 456.62,
+        "库存": 0.0,
+        "周期售罄": 1.0,
+        "中类": "家居服",
+        "季节": "夏"
       },
       {
         "款号": "TNX1K60602X",
@@ -19519,6 +19759,16 @@
         "季节": "冬"
       },
       {
+        "款号": "TOC1T20200X",
+        "颜色": "灰绿色",
+        "销售数": 4.0,
+        "销售金额": 333.88,
+        "库存": 1.0,
+        "周期售罄": 0.8,
+        "中类": "衣类",
+        "季节": "春"
+      },
+      {
         "款号": "TMX1K60495X",
         "颜色": "米杏色",
         "销售数": 4.0,
@@ -19747,16 +19997,6 @@
         "周期售罄": 1.0,
         "中类": "衣类",
         "季节": "夏"
-      },
-      {
-        "款号": "TOC1T20200X",
-        "颜色": "灰绿色",
-        "销售数": 3.0,
-        "销售金额": 247.88,
-        "库存": 2.0,
-        "周期售罄": 0.6,
-        "中类": "衣类",
-        "季节": "春"
       },
       {
         "款号": "TMX1W30557",
@@ -20383,26 +20623,26 @@
       },
       {
         "大类": "袜品",
-        "零售额": 71721.56,
-        "库存额": 90400.0,
-        "库存金额/销售金额": 1.260429918144558,
-        "库存量/销售量": 0.9663191659983962,
+        "零售额": 71827.78,
+        "库存额": 90279.0,
+        "库存金额/销售金额": 1.2568813904592346,
+        "库存量/销售量": 0.9647435897435898,
         "状态": "相对健康"
       },
       {
         "大类": "内裤",
-        "零售额": 89436.22,
-        "库存额": 90882.0,
-        "库存金额/销售金额": 1.0161654864214968,
-        "库存量/销售量": 0.7512437810945274,
+        "零售额": 89544.94,
+        "库存额": 90672.0,
+        "库存金额/销售金额": 1.0125865291774163,
+        "库存量/销售量": 0.7479826194909994,
         "状态": "相对健康"
       },
       {
         "大类": "衣着系列",
-        "零售额": 686447.15,
-        "库存额": 190764.0,
-        "库存金额/销售金额": 0.2779004909554945,
-        "库存量/销售量": 0.20516074450084604,
+        "零售额": 687521.75,
+        "库存额": 189588.0,
+        "库存金额/销售金额": 0.27575563973067035,
+        "库存量/销售量": 0.20439189189189189,
         "状态": "相对健康"
       }
     ],
@@ -20808,6 +21048,26 @@
         "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
+        "款号": "TNX2K10237",
+        "颜色": "款色",
+        "中类": "常规内裤",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 50.0,
+        "销售金额": 2321.49,
+        "库存": 4.0,
+        "周均销量": 50.0,
+        "库存周数": 0.08,
+        "建议补货量": 196.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
+      },
+      {
         "款号": "TNX1K60614Z",
         "颜色": "粉色",
         "中类": "裤类",
@@ -20846,26 +21106,6 @@
         "控折扣原则": "先做组合和套装，不建议继续加深折扣",
         "预算建议": "预算先给主销核心款和核心尺码，不做平均补货",
         "进货顺序": "先补核心尺码，再补主销色，最后才补边缘尺码"
-      },
-      {
-        "款号": "TNX2K10237",
-        "颜色": "款色",
-        "中类": "常规内裤",
-        "季节": "夏",
-        "季节策略": "下一季试补",
-        "销售数": 49.0,
-        "销售金额": 2284.21,
-        "库存": 5.0,
-        "周均销量": 49.0,
-        "库存周数": 0.10204081632653061,
-        "建议补货量": 191.0,
-        "建议动作": "小量试补",
-        "补货原则": "小量试补",
-        "主销尺码": "130/M、120/S、110/XS",
-        "进货提醒": "只补样板尺码，先看真实动销再放量",
-        "控折扣原则": "只做轻活动，不额外加深折扣",
-        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
-        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
         "款号": "TNX1K60604X",
@@ -21348,6 +21588,26 @@
         "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
+        "款号": "TNX2K10249",
+        "颜色": "款色",
+        "中类": "常规内裤",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 37.0,
+        "销售金额": 1666.36,
+        "库存": 12.0,
+        "周均销量": 37.0,
+        "库存周数": 0.32432432432432434,
+        "建议补货量": 136.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
+      },
+      {
         "款号": "TNX3K10254",
         "颜色": "款色",
         "中类": "常规内裤",
@@ -21359,26 +21619,6 @@
         "周均销量": 18.0,
         "库存周数": 0.3888888888888889,
         "建议补货量": 65.0,
-        "建议动作": "小量试补",
-        "补货原则": "小量试补",
-        "主销尺码": "130/M、120/S、110/XS",
-        "进货提醒": "只补样板尺码，先看真实动销再放量",
-        "控折扣原则": "只做轻活动，不额外加深折扣",
-        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
-        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
-      },
-      {
-        "款号": "TNX2K10249",
-        "颜色": "款色",
-        "中类": "常规内裤",
-        "季节": "夏",
-        "季节策略": "下一季试补",
-        "销售数": 36.0,
-        "销售金额": 1630.64,
-        "库存": 13.0,
-        "周均销量": 36.0,
-        "库存周数": 0.3611111111111111,
-        "建议补货量": 131.0,
         "建议动作": "小量试补",
         "补货原则": "小量试补",
         "主销尺码": "130/M、120/S、110/XS",
@@ -21488,6 +21728,26 @@
         "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
+        "款号": "TNX2K10250",
+        "颜色": "款色",
+        "中类": "常规内裤",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 36.0,
+        "销售金额": 1539.25,
+        "库存": 6.0,
+        "周均销量": 36.0,
+        "库存周数": 0.16666666666666666,
+        "建议补货量": 138.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
+      },
+      {
         "款号": "TNX1K60610Z",
         "颜色": "米色",
         "中类": "裤类",
@@ -21499,26 +21759,6 @@
         "周均销量": 11.0,
         "库存周数": 0.0,
         "建议补货量": 44.0,
-        "建议动作": "小量试补",
-        "补货原则": "小量试补",
-        "主销尺码": "130/M、120/S、110/XS",
-        "进货提醒": "只补样板尺码，先看真实动销再放量",
-        "控折扣原则": "只做轻活动，不额外加深折扣",
-        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
-        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
-      },
-      {
-        "款号": "TNX2K10250",
-        "颜色": "款色",
-        "中类": "常规内裤",
-        "季节": "夏",
-        "季节策略": "下一季试补",
-        "销售数": 35.0,
-        "销售金额": 1503.53,
-        "库存": 7.0,
-        "周均销量": 35.0,
-        "库存周数": 0.2,
-        "建议补货量": 133.0,
         "建议动作": "小量试补",
         "补货原则": "小量试补",
         "主销尺码": "130/M、120/S、110/XS",
@@ -21579,6 +21819,26 @@
         "周均销量": 35.0,
         "库存周数": 0.11428571428571428,
         "建议补货量": 136.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
+      },
+      {
+        "款号": "TNX1T20187Z",
+        "颜色": "紫色",
+        "中类": "衣类",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 17.0,
+        "销售金额": 1472.94,
+        "库存": 0.0,
+        "周均销量": 17.0,
+        "库存周数": 0.0,
+        "建议补货量": 68.0,
         "建议动作": "小量试补",
         "补货原则": "小量试补",
         "主销尺码": "130/M、120/S、110/XS",
@@ -21659,26 +21919,6 @@
         "周均销量": 15.0,
         "库存周数": 0.6,
         "建议补货量": 51.0,
-        "建议动作": "小量试补",
-        "补货原则": "小量试补",
-        "主销尺码": "130/M、120/S、110/XS",
-        "进货提醒": "只补样板尺码，先看真实动销再放量",
-        "控折扣原则": "只做轻活动，不额外加深折扣",
-        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
-        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
-      },
-      {
-        "款号": "TNX1T20187Z",
-        "颜色": "紫色",
-        "中类": "衣类",
-        "季节": "夏",
-        "季节策略": "下一季试补",
-        "销售数": 16.0,
-        "销售金额": 1396.15,
-        "库存": 1.0,
-        "周均销量": 16.0,
-        "库存周数": 0.0625,
-        "建议补货量": 63.0,
         "建议动作": "小量试补",
         "补货原则": "小量试补",
         "主销尺码": "130/M、120/S、110/XS",
@@ -22828,6 +23068,26 @@
         "进货顺序": "先补核心尺码，再补主销色，最后才补边缘尺码"
       },
       {
+        "款号": "TOX1Y91103X",
+        "颜色": "粉紫色",
+        "中类": "防晒服",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 4.0,
+        "销售金额": 920.14,
+        "库存": 1.0,
+        "周均销量": 4.0,
+        "库存周数": 0.25,
+        "建议补货量": 15.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
+      },
+      {
         "款号": "TNC1Y90856D",
         "颜色": "款色",
         "中类": "家居服",
@@ -23786,26 +24046,6 @@
         "控折扣原则": "维持正常折扣，先做场景推荐和组合带量",
         "预算建议": "预算以小单快返为主，观察一周后再决定是否放量",
         "进货顺序": "先补主销尺码，再补相邻尺码，边缘款继续观察"
-      },
-      {
-        "款号": "TOX1Y91103X",
-        "颜色": "粉紫色",
-        "中类": "防晒服",
-        "季节": "夏",
-        "季节策略": "下一季试补",
-        "销售数": 3.0,
-        "销售金额": 675.54,
-        "库存": 2.0,
-        "周均销量": 3.0,
-        "库存周数": 0.6666666666666666,
-        "建议补货量": 10.0,
-        "建议动作": "小量试补",
-        "补货原则": "小量试补",
-        "主销尺码": "130/M、120/S、110/XS",
-        "进货提醒": "只补样板尺码，先看真实动销再放量",
-        "控折扣原则": "只做轻活动，不额外加深折扣",
-        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
-        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
         "款号": "TOX5W31004",
@@ -25108,6 +25348,26 @@
         "进货顺序": "先补核心尺码，再补主销色，最后才补边缘尺码"
       },
       {
+        "款号": "TNX1Y80854D",
+        "颜色": "蓝灰色",
+        "中类": "家居服",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 3.0,
+        "销售金额": 521.83,
+        "库存": 1.0,
+        "周均销量": 3.0,
+        "库存周数": 0.3333333333333333,
+        "建议补货量": 11.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
+      },
+      {
         "款号": "TNX1T20189Z",
         "颜色": "浅灰色",
         "中类": "衣类",
@@ -25806,6 +26066,26 @@
         "控折扣原则": "先做组合和套装，不建议继续加深折扣",
         "预算建议": "预算先给主销核心款和核心尺码，不做平均补货",
         "进货顺序": "先补核心尺码，再补主销色，最后才补边缘尺码"
+      },
+      {
+        "款号": "TNX1Y90876Z",
+        "颜色": "款色",
+        "中类": "家居服",
+        "季节": "夏",
+        "季节策略": "下一季试补",
+        "销售数": 3.0,
+        "销售金额": 456.62,
+        "库存": 0.0,
+        "周均销量": 3.0,
+        "库存周数": 0.0,
+        "建议补货量": 12.0,
+        "建议动作": "小量试补",
+        "补货原则": "小量试补",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "只补样板尺码，先看真实动销再放量",
+        "控折扣原则": "只做轻活动，不额外加深折扣",
+        "预算建议": "预算建议控制在常规补货的 30% 以内，先试单再决定是否扩量",
+        "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
         "款号": "TNX3W30781",
@@ -26708,6 +26988,26 @@
         "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
+        "款号": "TOC1T20200X",
+        "颜色": "灰绿色",
+        "中类": "衣类",
+        "季节": "春",
+        "季节策略": "当季主推",
+        "销售数": 4.0,
+        "销售金额": 333.88,
+        "库存": 1.0,
+        "周均销量": 4.0,
+        "库存周数": 0.25,
+        "建议补货量": 15.0,
+        "建议动作": "立即补货",
+        "补货原则": "优先保不断码",
+        "主销尺码": "130/M、120/S、110/XS",
+        "进货提醒": "先保核心尺码和主销色",
+        "控折扣原则": "可以做轻活动带连带，不建议先用降价换量",
+        "预算建议": "预算优先投给断码风险高的款，再补相邻尺码",
+        "进货顺序": "先补核心尺码，再补主销色，最后补边缘尺码"
+      },
+      {
         "款号": "TMX1K60495X",
         "颜色": "米杏色",
         "中类": "裤类",
@@ -27028,26 +27328,6 @@
         "进货顺序": "先补核心样板尺码，再补相邻尺码，边缘尺码先不进"
       },
       {
-        "款号": "TOC1T20200X",
-        "颜色": "灰绿色",
-        "中类": "衣类",
-        "季节": "春",
-        "季节策略": "当季主推",
-        "销售数": 3.0,
-        "销售金额": 247.88,
-        "库存": 2.0,
-        "周均销量": 3.0,
-        "库存周数": 0.6666666666666666,
-        "建议补货量": 10.0,
-        "建议动作": "立即补货",
-        "补货原则": "优先保不断码",
-        "主销尺码": "130/M、120/S、110/XS",
-        "进货提醒": "先保核心尺码和主销色",
-        "控折扣原则": "可以做轻活动带连带，不建议先用降价换量",
-        "预算建议": "预算优先投给断码风险高的款，再补相邻尺码",
-        "进货顺序": "先补核心尺码，再补主销色，最后补边缘尺码"
-      },
-      {
         "款号": "TMX1W30557",
         "颜色": "款色",
         "中类": "儿童袜",
@@ -27205,9 +27485,9 @@
         "中类": "衣类",
         "季节策略": "下一季试补",
         "SKU数": 85,
-        "销售额": 73305.21,
-        "库存": 40.0,
-        "建议补货量": 3468.0,
+        "销售额": 73382.0,
+        "库存": 39.0,
+        "建议补货量": 3473.0,
         "补货原则": "小量试补、先校库存",
         "主销尺码": "130/M、120/S、110/XS",
         "控折扣原则": "只做轻活动，不额外加深折扣",
@@ -27217,9 +27497,9 @@
         "中类": "常规内裤",
         "季节策略": "下一季试补",
         "SKU数": 35,
-        "销售额": 49990.64,
-        "库存": 267.0,
-        "建议补货量": 3613.0,
+        "销售额": 50099.36,
+        "库存": 264.0,
+        "建议补货量": 3628.0,
         "补货原则": "小量试补、先校库存",
         "主销尺码": "130/M、120/S、110/XS",
         "控折扣原则": "只做轻活动，不额外加深折扣",
@@ -27228,10 +27508,10 @@
       {
         "中类": "家居服",
         "季节策略": "下一季试补",
-        "SKU数": 57,
-        "销售额": 37834.57,
-        "库存": 23.0,
-        "建议补货量": 929.0,
+        "SKU数": 59,
+        "销售额": 38813.02,
+        "库存": 24.0,
+        "建议补货量": 952.0,
         "补货原则": "小量试补、先校库存",
         "主销尺码": "130/M、120/S、110/XS",
         "控折扣原则": "只做轻活动，不额外加深折扣",
@@ -27241,9 +27521,9 @@
         "中类": "防晒服",
         "季节策略": "下一季试补",
         "SKU数": 12,
-        "销售额": 24168.62,
-        "库存": 21.0,
-        "建议补货量": 379.0,
+        "销售额": 24413.22,
+        "库存": 20.0,
+        "建议补货量": 384.0,
         "补货原则": "小量试补",
         "主销尺码": "130/M、120/S、110/XS",
         "控折扣原则": "只做轻活动，不额外加深折扣",
@@ -27337,9 +27617,9 @@
         "中类": "衣类",
         "季节策略": "当季主推",
         "SKU数": 2,
-        "销售额": 506.7,
-        "库存": 4.0,
-        "建议补货量": 20.0,
+        "销售额": 592.7,
+        "库存": 3.0,
+        "建议补货量": 25.0,
         "补货原则": "优先保不断码",
         "主销尺码": "130/M、120/S、110/XS",
         "控折扣原则": "可以做轻活动带连带，不建议先用降价换量",
@@ -30013,19 +30293,6 @@
         "建议动作": "暂缓补货"
       },
       {
-        "款号": "TNQ1W60628",
-        "颜色": "白色",
-        "中类": "连裤袜",
-        "季节": "秋",
-        "季节策略": "暂缓补货",
-        "销售数": 16.0,
-        "销售金额": 682.13,
-        "库存": 43.0,
-        "周均销量": 16.0,
-        "库存周数": 2.6875,
-        "建议动作": "暂缓补货"
-      },
-      {
         "款号": "TNQ2W30890",
         "颜色": "款色",
         "中类": "儿童袜",
@@ -30036,6 +30303,19 @@
         "库存": 43.0,
         "周均销量": 5.0,
         "库存周数": 8.6,
+        "建议动作": "暂缓补货"
+      },
+      {
+        "款号": "TNQ1W60628",
+        "颜色": "白色",
+        "中类": "连裤袜",
+        "季节": "秋",
+        "季节策略": "暂缓补货",
+        "销售数": 17.0,
+        "销售金额": 725.07,
+        "库存": 42.0,
+        "周均销量": 17.0,
+        "库存周数": 2.4705882352941178,
         "建议动作": "暂缓补货"
       },
       {
@@ -34156,8 +34436,8 @@
         "季节策略": "暂缓补货",
         "建议动作": "暂缓补货",
         "SKU数": 8,
-        "销售额": 4991.09,
-        "库存": 260.0
+        "销售额": 5034.03,
+        "库存": 259.0
       },
       {
         "中类": "亲子袜",

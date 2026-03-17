@@ -1480,6 +1480,11 @@ def build_metrics(
     movement = data["movement"].copy()
     store_retail = data.get("store_retail", pd.DataFrame()).copy()
     analysis_snapshot = analysis_snapshot or load_analysis_db_snapshot(analysis_db_file, store_name)
+    quality_checks = (
+        analysis_snapshot.get("quality_checks", pd.DataFrame()).copy()
+        if analysis_snapshot
+        else pd.DataFrame()
+    )
     analysis_window_meta: dict[str, object] = {}
     if analysis_snapshot:
         analysis_sales, analysis_window_meta = build_sales_window_from_analysis(
@@ -2081,6 +2086,7 @@ def build_metrics(
         "insights": insights,
         "yeusoft_highlights": yeusoft_highlights,
         "profit_history": profit_history,
+        "quality_checks": quality_checks,
     }
 
 def decorate_table(df: pd.DataFrame) -> pd.DataFrame:
@@ -5182,6 +5188,7 @@ def build_html(metrics: dict) -> str:
         <a class="top-nav-link" href="../index.html">首页</a>
         <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
         <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
         <a class="top-nav-link" href="./monthly.html">月度页</a>
         <a class="top-nav-link" href="./quarterly.html">季度页</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
@@ -5215,6 +5222,7 @@ def build_html(metrics: dict) -> str:
           <h3 class="action-title">看详细页</h3>
           <p class="action-text">如果你已经看完首页结论，下一步通常就是去详细页看总览、经营策略和补货去化明细。</p>
           <a class="action-link" href="./details.html">直接看详细页</a>
+          <a class="action-link" href="./relationship.html">专门看库存和销售关系</a>
         </article>
         <article class="action-card">
           <div class="action-kicker">第 3 步</div>
@@ -5240,6 +5248,7 @@ def build_html(metrics: dict) -> str:
       <div class="module-header">
         <h2 class="module-title">1. 今日经营重点</h2>
         <a class="detail-link" href="./details.html">查看详细数据与图表</a>
+        <a class="detail-link" href="./relationship.html">查看库存和销售关系页</a>
       </div>
       <div class="focus-wrap">
         <div class="focus-panel">
@@ -5334,6 +5343,7 @@ def build_html(metrics: dict) -> str:
             <a href="../index.html">返回首页</a>
             <a class="current" href="./index.html">当前仪表盘</a>
             <a href="./details.html">进入详细页</a>
+            <a href="./relationship.html">进入关系页</a>
             <a href="./monthly.html">进入月度页</a>
             <a href="./quarterly.html">进入季度页</a>
             <a href="../manuals/index.html">进入文档中心</a>
@@ -7030,6 +7040,7 @@ def build_detail_html(metrics: dict) -> str:
         <a class="top-nav-link" href="../index.html">首页</a>
         <a class="top-nav-link" href="./index.html">仪表盘</a>
         <a class="top-nav-link is-active" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
         <a class="top-nav-link" href="./monthly.html">月度页</a>
         <a class="top-nav-link" href="./quarterly.html">季度页</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
@@ -7135,6 +7146,7 @@ def build_detail_html(metrics: dict) -> str:
             <a href="../index.html">返回首页</a>
             <a href="./index.html">回仪表盘</a>
             <a class="current" href="./details.html">当前详细页</a>
+            <a href="./relationship.html">进入关系页</a>
             <a href="./monthly.html">进入月度页</a>
             <a href="./quarterly.html">进入季度页</a>
             <a href="../manuals/index.html">进入文档中心</a>
@@ -7950,6 +7962,7 @@ def build_period_page(metrics: dict, period_type: str) -> str:
         <a class="top-nav-link" href="../index.html">首页</a>
         <a class="top-nav-link" href="./index.html">仪表盘</a>
         <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
         <a class="top-nav-link {'is-active' if period_type == 'monthly' else ''}" href="./monthly.html">月度页</a>
         <a class="top-nav-link {'is-active' if period_type == 'quarterly' else ''}" href="./quarterly.html">季度页</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
@@ -8032,6 +8045,7 @@ def build_period_page(metrics: dict, period_type: str) -> str:
             <a href="../index.html">返回首页</a>
             <a href="./index.html">进入仪表盘</a>
             <a href="./details.html">进入详细页</a>
+            <a href="./relationship.html">进入关系页</a>
             <a class="current" href="./{current_nav}">当前{period_label}页</a>
             <a href="./{other_period_nav}">进入{other_period_label}页</a>
           </div>
@@ -8052,6 +8066,797 @@ def build_period_page(metrics: dict, period_type: str) -> str:
       </aside>
     </div>
   </div>
+</body>
+</html>
+"""
+
+
+def build_inventory_sales_relationship(metrics: dict) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    actions = metrics["action_summary"]
+    decision = build_decision_engine(metrics)
+    time_strategy = build_time_strategy(metrics)
+    profit = cards.get("profit_snapshot")
+    category_risks = metrics.get("category_risks", pd.DataFrame()).copy()
+    replenish_categories = metrics.get("replenish_categories", pd.DataFrame()).copy()
+    clearance_categories = metrics.get("clearance_categories", pd.DataFrame()).copy()
+    quality_checks = metrics.get("quality_checks", pd.DataFrame()).copy()
+
+    sales_trend = decision["sales_trend"]
+    top_category_risk = category_risks.iloc[0] if not category_risks.empty else None
+    top_replenish = replenish_categories.iloc[0] if not replenish_categories.empty else None
+    top_clearance = clearance_categories.iloc[0] if not clearance_categories.empty else None
+
+    if cards["negative_sku_count"] >= 30:
+        tone = "red"
+        mode = "库存口径先纠偏"
+        headline = "库存和销售关系先别急着下结论，先校库存。"
+    elif cards["estimated_inventory_days"] >= 180 and sales_trend["direction"] != "up":
+        tone = "red"
+        mode = "库存压销售"
+        headline = "库存明显压过销售，先去库存再谈放量。"
+    elif actions["replenish_count"] >= 100 and cards["estimated_inventory_days"] < 180:
+        tone = "yellow"
+        mode = "销售在跑但结构偏紧"
+        headline = "主销还在跑，先保不断码，同时别让慢销库存继续堆高。"
+    elif actions["high_risk_category_count"] > 0 or actions["clearance_count"] >= 80:
+        tone = "yellow"
+        mode = "结构失衡"
+        headline = "不是没销量，而是库存和销售结构还没对齐。"
+    else:
+        tone = "green"
+        mode = "关系相对平衡"
+        headline = "库存和销售关系整体可控，重点做结构优化。"
+
+    summary_parts = [
+        f"近 {cards['sales_days']} 天经营销售额 {format_num(cards['sales_amount'], 2)} 元，",
+        f"当前经营库存额 {format_num(cards['inventory_amount'], 2)} 元，",
+        f"库存覆盖天数约 {format_num(cards['estimated_inventory_days'], 1)} 天。",
+    ]
+    if top_category_risk is not None:
+        summary_parts.append(
+            f" 当前最需要盯的压货品类是 {top_category_risk['大类']}，库存金额/销售金额约 {format_num(top_category_risk['库存金额/销售金额'], 2)}。"
+        )
+    if top_replenish is not None:
+        summary_parts.append(
+            f" 补货机会先看 {top_replenish['中类']}，建议补货量约 {format_num(top_replenish['建议补货量'])}。"
+        )
+    if top_clearance is not None:
+        summary_parts.append(
+            f" 去化先盯 {top_clearance['大类']}，当前实际库存约 {format_num(top_clearance['实际库存'])}。"
+        )
+    summary = "".join(summary_parts)
+
+    metric_cards = [
+        {
+            "title": "近段经营销售额",
+            "value": f"{format_num(cards['sales_amount'], 2)} 元",
+            "note": f"近 {cards['sales_days']} 天，直接来自校准销售主表。",
+            "tone": "neutral",
+            "value_type": "直接观察",
+        },
+        {
+            "title": "当前经营库存额",
+            "value": f"{format_num(cards['inventory_amount'], 2)} 元",
+            "note": "来自最新库存快照，当前仍是零售价口径库存额。",
+            "tone": "neutral",
+            "value_type": "直接观察",
+        },
+        {
+            "title": "库存覆盖天数",
+            "value": f"{format_num(cards['estimated_inventory_days'], 1)} 天",
+            "note": "用最近销售速度估算库存还能卖多久。",
+            "tone": tone,
+            "value_type": "估算",
+        },
+        {
+            "title": "高压货品类数",
+            "value": format_num(actions["high_risk_category_count"]),
+            "note": "库存金额明显高于销售金额的品类数量。",
+            "tone": "red" if actions["high_risk_category_count"] > 0 else "green",
+            "value_type": "估算",
+        },
+        {
+            "title": "建议补货 SKU",
+            "value": format_num(actions["replenish_count"]),
+            "note": "卖得动但库存偏浅，先保不断码。",
+            "tone": "yellow" if actions["replenish_count"] > 0 else "neutral",
+            "value_type": "估算",
+        },
+        {
+            "title": "建议去化 SKU",
+            "value": format_num(actions["clearance_count"]),
+            "note": "库存高、近期卖得慢，先停补再去化。",
+            "tone": "red" if actions["clearance_count"] > 0 else "green",
+            "value_type": "估算",
+        },
+        {
+            "title": "负库存 SKU",
+            "value": format_num(cards["negative_sku_count"]),
+            "note": "账货不一致会直接扭曲补货和去化判断。",
+            "tone": "red" if cards["negative_sku_count"] > 0 else "green",
+            "value_type": "直接观察",
+        },
+    ]
+    if profit:
+        metric_cards.append(
+            {
+                "title": "月末净利预测",
+                "value": f"{format_num(profit['projected_month_net_profit'], 2)} 元",
+                "note": "库存动作要同时兼顾利润和保本节奏。",
+                "tone": "green" if profit["projected_month_net_profit"] > 0 else "red",
+                "value_type": "预测",
+            }
+        )
+
+    findings: list[dict[str, str]] = [
+        {
+            "value_type": "估算",
+            "tone": tone,
+            "title": "整体库存覆盖",
+            "conclusion": headline,
+            "evidence": (
+                f"最近销售趋势为 {sales_trend['label']}，当前库存覆盖 {format_num(cards['estimated_inventory_days'], 1)} 天，"
+                f"经营库存额 {format_num(cards['inventory_amount'], 2)} 元。"
+            ),
+            "action": (
+                "先盯高压货和负库存，再决定补货节奏。"
+                if cards["estimated_inventory_days"] >= 180
+                else "先保主销不断码，再按周复盘库存结构。"
+            ),
+        }
+    ]
+    if top_category_risk is not None:
+        findings.append(
+            {
+                "value_type": "直接观察",
+                "tone": "red" if str(top_category_risk["状态"]) == "高压货" else "yellow",
+                "title": "压货最重的品类",
+                "conclusion": f"{top_category_risk['大类']} 当前最需要先处理。",
+                "evidence": (
+                    f"库存金额/销售金额 {format_num(top_category_risk['库存金额/销售金额'], 2)}，"
+                    f"库存量/销售量 {format_num(top_category_risk['库存量/销售量'], 2)}。"
+                ),
+                "action": "先停补、看货位、做组合去化，再决定是否恢复补货。",
+            }
+        )
+    if top_replenish is not None:
+        findings.append(
+            {
+                "value_type": "估算",
+                "tone": "yellow",
+                "title": "补货机会",
+                "conclusion": f"{top_replenish['中类']} 还在跑量，先保不断码。",
+                "evidence": (
+                    f"当前建议补货量约 {format_num(top_replenish['建议补货量'])}，"
+                    f"对应销售额约 {format_num(top_replenish['销售额'], 2)} 元。"
+                ),
+                "action": "先补核心尺码和主销色，不要把补货预算平均铺开。",
+            }
+        )
+    if top_clearance is not None:
+        findings.append(
+            {
+                "value_type": "估算",
+                "tone": "red",
+                "title": "去化压力",
+                "conclusion": f"{top_clearance['大类']} 更适合先去化，不适合继续深补。",
+                "evidence": (
+                    f"当前去化清单里约 {format_num(top_clearance['SKU数'])} 个 SKU，"
+                    f"实际库存约 {format_num(top_clearance['实际库存'])}，近期零售约 {format_num(top_clearance['近期零售'])}。"
+                ),
+                "action": "今天先做陈列前移和组合促销，把预算让给主销品类。",
+            }
+        )
+    if cards["negative_sku_count"] > 0:
+        findings.append(
+            {
+                "value_type": "直接观察",
+                "tone": "red",
+                "title": "库存口径风险",
+                "conclusion": "负库存会让库存和销售关系判断失真。",
+                "evidence": (
+                    f"当前负库存 SKU {format_num(cards['negative_sku_count'])} 个，"
+                    f"负库存金额约 {format_num(cards['negative_inventory_amount'], 2)} 元。"
+                ),
+                "action": "先查账、查盘点、查调拨，再执行补货和去化。",
+            }
+        )
+    if profit:
+        findings.append(
+            {
+                "value_type": "预测",
+                "tone": "red" if profit["projected_month_net_profit"] < 0 else "green",
+                "title": "利润约束",
+                "conclusion": (
+                    "当前库存动作要优先服务利润，不适合靠深折扣硬撑。"
+                    if profit["projected_month_net_profit"] < 0
+                    else "利润口径已相对可控，可以在守毛利前提下保主销。"
+                ),
+                "evidence": (
+                    f"当前总费用约 {format_num(profit['total_expense'], 2)} 元，"
+                    f"月末净利预测约 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+                ),
+                "action": (
+                    "先保高毛利主销和快周转，再决定活动和补货预算。"
+                    if profit["projected_month_net_profit"] < 0
+                    else "主销可以更主动快返，但仍然别平均补货。"
+                ),
+            }
+        )
+
+    category_matrix = category_risks.copy()
+    if not category_matrix.empty:
+        category_matrix["关系判断"] = category_matrix.apply(
+            lambda row: (
+                "库存明显压销售"
+                if safe_float(row.get("库存金额/销售金额")) >= 3
+                else "库存偏重"
+                if safe_float(row.get("库存金额/销售金额")) >= 1.5
+                else "销售快于库存"
+                if safe_float(row.get("库存金额/销售金额")) < 0.8 and safe_float(row.get("零售额")) > 0
+                else "库存与销售相对平衡"
+            ),
+            axis=1,
+        )
+        category_matrix["建议动作"] = category_matrix.apply(
+            lambda row: (
+                "先停补再去化"
+                if safe_float(row.get("库存金额/销售金额")) >= 3
+                else "观察并做组合去化"
+                if safe_float(row.get("库存金额/销售金额")) >= 1.5
+                else "优先补货"
+                if safe_float(row.get("库存金额/销售金额")) < 0.8 and safe_float(row.get("零售额")) > 0
+                else "暂缓补货"
+            ),
+            axis=1,
+        )
+        category_matrix = category_matrix[
+            ["大类", "零售额", "库存额", "库存金额/销售金额", "库存量/销售量", "状态", "关系判断", "建议动作"]
+        ].copy()
+
+    quality_warning_map = {
+        "retail_validation_tail_gap_days": "店铺零售校验尾段缺口",
+        "movement_has_sku_detail": "出入库缺少 SKU 行级明细",
+        "master_vs_store_retail_daily": "主表与店铺零售按天校验",
+        "master_vs_store_retail_orders": "主表与店铺零售按订单校验",
+        "master_vs_product_core_amount": "主表与商品销售累计销额校验",
+        "master_vs_product_core_qty": "主表与商品销售累计销量校验",
+        "master_vs_flow_orders": "主表与每日流水按订单校验",
+    }
+    quality_alerts: list[str] = []
+    if not quality_checks.empty and {"check_name", "status", "observed_value"}.issubset(quality_checks.columns):
+        warning_rows = quality_checks[quality_checks["status"].astype(str).isin(["warning", "fail"])].copy()
+        for _, row in warning_rows.head(5).iterrows():
+            check_name = quality_warning_map.get(str(row["check_name"]), str(row["check_name"]))
+            observed = str(row.get("observed_value", "") or "").strip()
+            quality_alerts.append(f"{check_name}：{observed or '需人工复核'}")
+
+    data_basis = {
+        "direct": [
+            f"近 {cards['sales_days']} 天经营销售额、订单数和客单价来自 SQLite 校准销售主表。",
+            "当前库存额、库存量、库存金额/销售金额来自最新库存与库存零售快照。",
+            "负库存、去化清单、慢销清单都来自最新库存和进销存快照的直接结果。",
+        ],
+        "estimated": [
+            "库存覆盖天数是按最近销售速度估算的，不是未来实际销量承诺。",
+            "补货、去化、跨季处理属于规则型建议，适合当经营决策参考，不是自动下单结果。",
+            "品类关系判断是把销售和库存放在同一个画面里做结构解释，方便老板优先级排序。",
+        ],
+        "forecast": [
+            (
+                f"当前月末净利预测约 {format_num(profit['projected_month_net_profit'], 2)} 元，"
+                "这里只用于提醒库存动作要不要更保守。"
+                if profit
+                else "本页不单独输出销量预测，主要基于当前库存与销售关系给动作建议。"
+            )
+        ],
+        "caveats": quality_alerts
+        or [
+            "库存金额当前还是零售价口径，不是进货成本口径。",
+            "出入库单据还没有 SKU 行级明细，所以库存原因解释仍然有盲区。",
+        ],
+    }
+
+    recommendations = [
+        {
+            "title": "今天先做什么",
+            "tone": "red" if tone == "red" else "yellow",
+            "items": dedupe_preserve_order(
+                [
+                    (
+                        "先纠偏负库存和断码，再看补货与去化。"
+                        if cards["negative_sku_count"] > 0
+                        else "先看去化重点品类和低库存畅销款。"
+                    )
+                ]
+                + list(time_strategy["daily_actions"])
+            )[:4],
+        },
+        {
+            "title": "未来 7 天重点",
+            "tone": "yellow",
+            "items": dedupe_preserve_order(
+                [
+                    (
+                        f"本周重点盯 {top_category_risk['大类']} 的库存压力。"
+                        if top_category_risk is not None
+                        else "本周继续按品类复盘库存和销售关系。"
+                    )
+                ]
+                + list(time_strategy["weekly_actions"])
+            )[:4],
+        },
+        {
+            "title": "未来 30 天重点",
+            "tone": "green" if tone == "green" else "yellow",
+            "items": dedupe_preserve_order(
+                [
+                    (
+                        "本月目标是把库存结构拉回到更适合当前销售节奏的位置。"
+                        if cards["estimated_inventory_days"] >= 120
+                        else "本月目标是稳住主销库存结构，同时避免慢销货继续堆高。"
+                    )
+                ]
+                + list(time_strategy["monthly_actions"])
+            )[:4],
+        },
+    ]
+
+    return {
+        "mode": mode,
+        "tone": tone,
+        "headline": headline,
+        "summary": summary,
+        "metric_cards": metric_cards,
+        "findings": findings[:5],
+        "recommendations": recommendations,
+        "category_matrix": category_matrix.fillna("").to_dict(orient="records") if not category_matrix.empty else [],
+        "top_risk_category": str(top_category_risk["大类"]) if top_category_risk is not None else "",
+        "top_replenish_category": str(top_replenish["中类"]) if top_replenish is not None else "",
+        "top_clearance_category": str(top_clearance["大类"]) if top_clearance is not None else "",
+        "data_basis": data_basis,
+    }
+
+
+def build_inventory_sales_charts(metrics: dict) -> list[str]:
+    charts: list[str] = []
+    category_risks = metrics.get("category_risks", pd.DataFrame()).head(10).copy()
+    color_map = {
+        "高压货": "#dc2626",
+        "需关注": "#f59e0b",
+        "相对健康": "#16a34a",
+    }
+
+    if not category_risks.empty:
+        marker_sizes = [
+            max(18.0, min(46.0, 14.0 + safe_float(value) * 8.0))
+            for value in category_risks["库存金额/销售金额"].tolist()
+        ]
+        marker_colors = [color_map.get(str(value), "#2563eb") for value in category_risks["状态"].tolist()]
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=category_risks["零售额"],
+                y=category_risks["库存额"],
+                mode="markers+text",
+                text=category_risks["大类"],
+                textposition="top center",
+                marker=dict(
+                    size=marker_sizes,
+                    color=marker_colors,
+                    opacity=0.82,
+                    line=dict(color="#ffffff", width=1.5),
+                ),
+                hovertemplate=(
+                    "<b>%{text}</b><br>"
+                    "销售额：%{x:.2f}<br>"
+                    "库存额：%{y:.2f}<br>"
+                    "库存金额/销售金额：%{customdata[0]:.2f}<br>"
+                    "库存量/销售量：%{customdata[1]:.2f}<br>"
+                    "状态：%{customdata[2]}<extra></extra>"
+                ),
+                customdata=category_risks[["库存金额/销售金额", "库存量/销售量", "状态"]].to_numpy(),
+                name="品类关系",
+            )
+        )
+        fig.update_layout(
+            title="品类库存额 vs 销售额",
+            height=420,
+            margin=dict(l=20, r=20, t=60, b=20),
+            xaxis_title="销售额",
+            yaxis_title="库存额",
+        )
+        charts.append(fig_to_html(fig, include_js=True))
+
+        ratio_frame = category_risks.sort_values("库存金额/销售金额", ascending=True)
+        fig2 = go.Figure(
+            go.Bar(
+                x=ratio_frame["库存金额/销售金额"],
+                y=ratio_frame["大类"],
+                orientation="h",
+                marker_color=[color_map.get(str(value), "#2563eb") for value in ratio_frame["状态"].tolist()],
+                text=[format_num(value, 2) for value in ratio_frame["库存金额/销售金额"].tolist()],
+                textposition="outside",
+                hovertemplate=(
+                    "<b>%{y}</b><br>库存金额/销售金额：%{x:.2f}<br>"
+                    "<extra></extra>"
+                ),
+            )
+        )
+        fig2.update_layout(
+            title="品类库存金额/销售金额排序",
+            height=420,
+            margin=dict(l=20, r=40, t=60, b=20),
+            xaxis_title="库存金额 / 销售金额",
+            yaxis_title="品类",
+        )
+        charts.append(fig_to_html(fig2))
+
+    action_frame = pd.DataFrame(
+        [
+            {"维度": "建议补货 SKU", "数量": metrics["action_summary"]["replenish_count"], "颜色": "#f59e0b"},
+            {"维度": "建议去化 SKU", "数量": metrics["action_summary"]["clearance_count"], "颜色": "#dc2626"},
+            {"维度": "跨季处理 SKU", "数量": metrics["action_summary"]["seasonal_hold_count"], "颜色": "#2563eb"},
+            {"维度": "负库存 SKU", "数量": metrics["summary_cards"]["negative_sku_count"], "颜色": "#7c3aed"},
+        ]
+    )
+    if not action_frame.empty:
+        fig3 = go.Figure(
+            go.Bar(
+                x=action_frame["维度"],
+                y=action_frame["数量"],
+                marker_color=action_frame["颜色"],
+                text=[format_num(value) for value in action_frame["数量"].tolist()],
+                textposition="outside",
+            )
+        )
+        fig3.update_layout(
+            title="库存与销售关系的动作数量分布",
+            height=360,
+            margin=dict(l=20, r=20, t=60, b=40),
+            yaxis_title="数量",
+        )
+        charts.append(fig_to_html(fig3))
+
+    return charts
+
+
+def build_relationship_html(metrics: dict) -> str:
+    cards = metrics["summary_cards"]
+    relationship = build_inventory_sales_relationship(metrics)
+    charts = build_inventory_sales_charts(metrics)
+    category_matrix = pd.DataFrame(relationship["category_matrix"])
+    replenish_category_table = metrics["replenish_categories"][
+        ["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量", "补货原则", "主销尺码"]
+    ].copy()
+    clearance_category_table = metrics["clearance_categories"][
+        ["大类", "建议动作", "SKU数", "实际库存", "近期零售"]
+    ].copy()
+    low_stock_table = metrics["low_stock_bestsellers"][
+        ["款号", "颜色", "中类", "季节", "销售数", "销售金额", "库存", "周期售罄"]
+    ].copy()
+    slow_moving_table = metrics["slow_moving"][
+        ["商品款号", "商品名称", "大类", "中类", "实际库存", "近期零售", "动销率", "零售价"]
+    ].copy()
+    negative_table = metrics["negative_inventory"].copy()
+
+    if not slow_moving_table.empty and "商品名称" in slow_moving_table.columns:
+        slow_moving_table["商品名称"] = slow_moving_table["商品名称"].apply(
+            lambda value: table_text_with_tip(value, 10, "详情")
+        )
+
+    metric_html = "".join(
+        f"""
+        <div class="metric-card metric-{item['tone']}">
+          <div class="metric-meta">{item['value_type']}</div>
+          <div class="metric-title">{item['title']}</div>
+          <div class="metric-value">{item['value']}</div>
+          <div class="metric-note">{item['note']}</div>
+        </div>
+        """
+        for item in relationship["metric_cards"]
+    )
+    finding_html = "".join(
+        f"""
+        <article class="finding-card finding-{item['tone']}">
+          <div class="finding-top">
+            <span class="mini-chip mini-chip-{item['tone']}">{html.escape(item['value_type'])}</span>
+            <h3>{html.escape(item['title'])}</h3>
+          </div>
+          <p class="finding-conclusion">{html.escape(item['conclusion'])}</p>
+          <p class="finding-text"><strong>证据：</strong>{html.escape(item['evidence'])}</p>
+          <p class="finding-text"><strong>建议动作：</strong>{html.escape(item['action'])}</p>
+        </article>
+        """
+        for item in relationship["findings"]
+    ) or render_empty("当前还没有可展示的关系结论。")
+    recommendation_html = "".join(
+        f"""
+        <article class="analysis-card priority-{item['tone']}">
+          <h3>{html.escape(item['title'])}</h3>
+          <ul class="analysis-list">
+            {"".join(f"<li>{html.escape(entry)}</li>" for entry in item['items'])}
+          </ul>
+        </article>
+        """
+        for item in relationship["recommendations"]
+    )
+    chart_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts) or render_empty("当前还没有可展示的库存-销售关系图表。")
+
+    category_matrix_html = (
+        table_html(
+            category_matrix,
+            "库存和销售关系总表",
+            12,
+            "先看库存金额/销售金额，再看关系判断和建议动作，老板可以先按品类定优先级。",
+        )
+        if not category_matrix.empty
+        else render_empty("当前还没有可展示的库存和销售关系总表。")
+    )
+    detail_tables_html = "".join(
+        [
+            category_matrix_html,
+            table_html(
+                replenish_category_table,
+                "补货重点品类",
+                12,
+                "这些品类说明销售还在跑，但库存已经偏浅，先保主销不断码。",
+            ),
+            table_html(
+                clearance_category_table,
+                "去化重点品类",
+                12,
+                "这些品类说明库存承压更明显，先停补、再看陈列和组合去化。",
+            ),
+            table_html(
+                low_stock_table,
+                "低库存畅销款",
+                14,
+                "这里适合老板或店员直接挑具体款，优先保销量高、库存浅的 SKU。",
+            ),
+            table_html(
+                slow_moving_table,
+                "高库存慢销款",
+                14,
+                "这里先看实际库存和近期零售，再决定清货位、组合价还是暂缓补货。",
+            ),
+            table_html(
+                negative_table,
+                "负库存异常清单",
+                12,
+                "先查账、查盘点、查调拨。这个问题不先处理，库存和销售关系就会继续失真。",
+            ),
+        ]
+    )
+    data_basis_html = "".join(
+        f"""
+        <article class="analysis-card">
+          <h3>{html.escape(title)}</h3>
+          <ul class="analysis-list">
+            {"".join(f"<li>{html.escape(item)}</li>" for item in values)}
+          </ul>
+        </article>
+        """
+        for title, values in [
+            ("直接观察", relationship["data_basis"]["direct"]),
+            ("估算口径", relationship["data_basis"]["estimated"]),
+            ("预测口径", relationship["data_basis"]["forecast"]),
+            ("提醒与缺口", relationship["data_basis"]["caveats"]),
+        ]
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{cards['store_name']} 库存和销售关系页</title>
+  <style>
+    :root {{
+      color-scheme: light;
+    }}
+    * {{ box-sizing: border-box; }}
+    html, body {{ margin:0; padding:0; background:#f8fafc; color:#0f172a; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
+    body {{ line-height:1.7; }}
+    .page {{ max-width:1440px; margin:0 auto; padding:18px; }}
+    .top-nav {{ display:flex; justify-content:flex-start; margin-bottom:16px; }}
+    .top-nav-links {{ display:flex; gap:10px; flex-wrap:wrap; }}
+    .top-nav-link {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:800; color:#334155; background:#fff; border:1px solid #dbe4f0; text-decoration:none; }}
+    .top-nav-link.is-active {{ background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }}
+    .hero {{ background:linear-gradient(135deg, #0f172a 0%, #0f766e 100%); color:#fff; padding:24px; border-radius:22px; box-shadow:0 18px 48px rgba(15, 23, 42, 0.18); margin-bottom:18px; }}
+    .hero h1 {{ margin:0 0 10px; font-size:30px; line-height:1.25; }}
+    .hero p {{ margin:0; opacity:0.96; }}
+    .hero-note {{ margin-top:12px; font-size:13px; opacity:0.88; }}
+    .hero-status {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }}
+    .hero-status-chip {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); }}
+    .page-shell {{ display:grid; grid-template-columns:minmax(0, 1fr) 260px; gap:18px; }}
+    .main-column {{ min-width:0; }}
+    .side-rail {{ display:flex; flex-direction:column; gap:16px; align-self:start; }}
+    .rail-card {{ position:sticky; top:88px; background:#fff; border-radius:18px; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); }}
+    .rail-card h3 {{ margin:0 0 8px; font-size:17px; }}
+    .rail-card p {{ margin:0 0 12px; font-size:12px; line-height:1.8; color:#64748b; }}
+    .rail-links {{ display:flex; flex-direction:column; gap:8px; }}
+    .rail-links a {{ display:block; text-decoration:none; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:10px 12px; font-size:13px; font-weight:700; }}
+    .rail-links a.current {{ background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }}
+    .quick-nav {{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px; }}
+    .quick-nav a {{ text-decoration:none; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }}
+    .module {{ background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(15,23,42,0.08); padding:18px; margin-bottom:18px; }}
+    .module-header {{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }}
+    .module-title {{ margin:0; font-size:22px; }}
+    .module-note {{ margin:0; font-size:13px; color:#64748b; line-height:1.8; }}
+    .overview-card {{ background:#fffdf7; border:1px solid #fde68a; border-radius:16px; padding:18px; }}
+    .overview-headline {{ font-size:26px; font-weight:800; color:#92400e; margin:0 0 10px; line-height:1.35; }}
+    .overview-summary {{ margin:0; font-size:14px; line-height:1.8; color:#5b4636; }}
+    .metrics-grid, .analysis-grid, .findings-grid, .cards-grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; }}
+    .metric-card, .analysis-card, .finding-card, .chart-card {{ background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }}
+    .metric-card {{ box-shadow:0 8px 24px rgba(15,23,42,0.06); }}
+    .metric-meta {{ font-size:11px; font-weight:800; letter-spacing:0.04em; text-transform:uppercase; color:#2563eb; margin-bottom:8px; }}
+    .metric-title {{ font-size:14px; color:#64748b; margin-bottom:8px; }}
+    .metric-value {{ font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }}
+    .metric-note {{ font-size:13px; color:#64748b; line-height:1.7; }}
+    .metric-green {{ border-color:#bbf7d0; background:#f0fdf4; }}
+    .metric-green .metric-value {{ color:#166534; }}
+    .metric-yellow {{ border-color:#fde68a; background:#fffbeb; }}
+    .metric-yellow .metric-value {{ color:#92400e; }}
+    .metric-red {{ border-color:#fecaca; background:#fff7f7; }}
+    .metric-red .metric-value {{ color:#991b1b; }}
+    .analysis-card h3, .finding-card h3 {{ margin:0; font-size:17px; color:#0f172a; }}
+    .analysis-list {{ margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }}
+    .priority-red {{ background:#fff7f7; border-color:#fecaca; }}
+    .priority-yellow {{ background:#fffbeb; border-color:#fde68a; }}
+    .priority-green {{ background:#f0fdf4; border-color:#bbf7d0; }}
+    .finding-red {{ background:#fff7f7; border-color:#fecaca; }}
+    .finding-yellow {{ background:#fffbeb; border-color:#fde68a; }}
+    .finding-green {{ background:#f0fdf4; border-color:#bbf7d0; }}
+    .finding-top {{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }}
+    .finding-conclusion {{ margin:0 0 10px; font-size:16px; font-weight:800; color:#0f172a; line-height:1.6; }}
+    .finding-text {{ margin:0 0 8px; font-size:13px; color:#475569; line-height:1.8; }}
+    .chart-card {{ overflow:hidden; }}
+    .mini-chip {{ display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; white-space:nowrap; }}
+    .mini-chip-green {{ background:#dcfce7; color:#166534; }}
+    .mini-chip-yellow {{ background:#fef3c7; color:#92400e; }}
+    .mini-chip-red {{ background:#fee2e2; color:#991b1b; }}
+    .mini-chip-neutral, .mini-chip-soft {{ background:#f1f5f9; color:#334155; }}
+    .empty-card {{ border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }}
+    {floating_tooltip_css()}
+    @media (max-width: 960px) {{
+      .page-shell {{ grid-template-columns:1fr; }}
+      .rail-card {{ position:static; }}
+      .rail-links {{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }}
+    }}
+    @media (max-width: 640px) {{
+      .page {{ padding:12px; }}
+      .hero {{ padding:18px; border-radius:16px; }}
+      .hero h1 {{ font-size:24px; }}
+      .hero-status-chip, .top-nav-link {{ width:100%; }}
+      .top-nav-links {{ width:100%; }}
+      .quick-nav {{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }}
+      .module {{ padding:14px; margin-bottom:14px; }}
+      .overview-headline {{ font-size:22px; }}
+      .metric-value {{ font-size:24px; }}
+      .rail-links {{ grid-template-columns:1fr; }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">首页</a>
+        <a class="top-nav-link" href="./index.html">仪表盘</a>
+        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link is-active" href="./relationship.html">库存销售关系页</a>
+        <a class="top-nav-link" href="./monthly.html">月度页</a>
+        <a class="top-nav-link" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>{cards['store_name']} 库存和销售关系页</h1>
+      <p>这个页面不再把库存和销售分开看，而是直接回答三个问题：库存有没有压过销售、哪些品类该补、哪些品类该先去化。</p>
+      <div class="hero-note">当前判断：{relationship['headline']} {relationship['summary']}</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">关系模式：{relationship['mode']}</div>
+        <div class="hero-status-chip">数据时间：{pd.Timestamp(cards['data_capture_at']).strftime('%Y-%m-%d')}（北京时间）</div>
+        <div class="hero-status-chip">当前季节：{cards['current_season_name']} / {cards['phase_name']}</div>
+      </div>
+    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <nav class="quick-nav">
+          <a href="#relationship-overview">关系结论</a>
+          <a href="#relationship-metrics">核心指标</a>
+          <a href="#relationship-actions">关键建议</a>
+          <a href="#relationship-findings">关键发现</a>
+          <a href="#relationship-charts">关系图表</a>
+          <a href="#relationship-details">详细信息</a>
+          <a href="#relationship-basis">数据口径</a>
+        </nav>
+        <section class="module" id="relationship-overview">
+          <div class="module-header">
+            <h2 class="module-title">关系结论</h2>
+            <p class="module-note">先看一句话结论，再看证据和动作，不需要先钻明细表。</p>
+          </div>
+          <div class="overview-card">
+            <div class="overview-headline">{relationship['headline']}</div>
+            <p class="overview-summary">{relationship['summary']}</p>
+          </div>
+        </section>
+        <section class="module" id="relationship-metrics">
+          <div class="module-header">
+            <h2 class="module-title">核心指标</h2>
+            <p class="module-note">把库存、销售、补货、去化和口径风险放在一张屏里看，先判断问题重心在哪。</p>
+          </div>
+          <div class="metrics-grid">{metric_html}</div>
+        </section>
+        <section class="module" id="relationship-actions">
+          <div class="module-header">
+            <h2 class="module-title">关键建议</h2>
+            <p class="module-note">今天、未来 7 天、未来 30 天分别做什么，直接从库存和销售的关系倒推动作。</p>
+          </div>
+          <div class="analysis-grid">{recommendation_html}</div>
+        </section>
+        <section class="module" id="relationship-findings">
+          <div class="module-header">
+            <h2 class="module-title">关键发现</h2>
+            <p class="module-note">每条都拆成结论、证据和动作，方便老板拍板，也方便店员执行。</p>
+          </div>
+          <div class="findings-grid">{finding_html}</div>
+        </section>
+        <section class="module" id="relationship-charts">
+          <div class="module-header">
+            <h2 class="module-title">关系图表</h2>
+            <p class="module-note">先看品类库存额和销售额的关系，再看动作数量分布，就知道预算该往哪边倾斜。</p>
+          </div>
+          <div class="cards-grid">{chart_html}</div>
+        </section>
+        <section class="module" id="relationship-details">
+          <div class="module-header">
+            <h2 class="module-title">详细信息</h2>
+            <p class="module-note">先看品类，再下钻到补货款、去化款和负库存款，执行时按这个顺序走更稳。</p>
+          </div>
+          <div class="tables tables-single">{detail_tables_html}</div>
+        </section>
+        <section class="module" id="relationship-basis">
+          <div class="module-header">
+            <h2 class="module-title">数据口径与提醒</h2>
+            <p class="module-note">这里明确哪些是直接观察、哪些是估算、哪些带预测性质，避免把页面结论当成绝对真值。</p>
+          </div>
+          <div class="analysis-grid">{data_basis_html}</div>
+        </section>
+      </div>
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用导航</h3>
+          <p>老板平时切页主要看这几个入口，关系页适合放在“看完首页之后、下钻详细页之前”。</p>
+          <div class="rail-links">
+            <a href="../index.html">返回首页</a>
+            <a href="./index.html">进入仪表盘</a>
+            <a href="./details.html">进入详细页</a>
+            <a class="current" href="./relationship.html">当前关系页</a>
+            <a href="./monthly.html">进入月度页</a>
+            <a href="./quarterly.html">进入季度页</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页定位</h3>
+          <p>如果只想快速看某一块，点这里直接跳，不用来回滚动。</p>
+          <div class="rail-links">
+            <a href="#relationship-overview">关系结论</a>
+            <a href="#relationship-metrics">核心指标</a>
+            <a href="#relationship-actions">关键建议</a>
+            <a href="#relationship-findings">关键发现</a>
+            <a href="#relationship-charts">关系图表</a>
+            <a href="#relationship-details">详细信息</a>
+            <a href="#relationship-basis">数据口径</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+  {floating_tooltip_script()}
 </body>
 </html>
 """
@@ -8733,6 +9538,9 @@ def build_export_payload(
             "cumulative_sales_source_label": cards.get("cumulative_sales_source_label"),
         },
         "summary_cards": json_ready_value(cards),
+        "inventory_sales_relationship": json_ready_value(
+            build_inventory_sales_relationship(metrics)
+        ),
         "today_focus": json_ready_value(build_today_focus(metrics)),
         "health_lights": json_ready_value(build_health_lights(cards, actions)),
         "time_strategy": json_ready_value(build_time_strategy(metrics)),
@@ -8790,10 +9598,12 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     detail_html_path = output_dir / f"库存销售详细页_{date_tag}.html"
     monthly_html_path = output_dir / f"库存销售月度页_{date_tag}.html"
     quarterly_html_path = output_dir / f"库存销售季度页_{date_tag}.html"
+    relationship_html_path = output_dir / f"库存销售关系页_{date_tag}.html"
     latest_html_path = output_dir / "index.html"
     latest_detail_html_path = output_dir / "details.html"
     latest_monthly_html_path = output_dir / "monthly.html"
     latest_quarterly_html_path = output_dir / "quarterly.html"
+    latest_relationship_html_path = output_dir / "relationship.html"
     md_path = output_dir / f"库存销售摘要_{date_tag}.md"
     report_path = output_dir / f"库存销售分析报告_{date_tag}.md"
     replenish_csv = output_dir / f"补货建议清单_{date_tag}.csv"
@@ -8803,6 +9613,7 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     pages_detail_html_path = pages_dir / "details.html"
     pages_monthly_html_path = pages_dir / "monthly.html"
     pages_quarterly_html_path = pages_dir / "quarterly.html"
+    pages_relationship_html_path = pages_dir / "relationship.html"
     pages_md_path = pages_dir / "summary.md"
     pages_report_path = pages_dir / "report.md"
     pages_replenish_csv = pages_dir / "补货建议清单.csv"
@@ -8812,27 +9623,32 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     detail_json_path = output_data_dir / f"details_{date_tag}.json"
     monthly_json_path = output_data_dir / f"monthly_{date_tag}.json"
     quarterly_json_path = output_data_dir / f"quarterly_{date_tag}.json"
+    relationship_json_path = output_data_dir / f"relationship_{date_tag}.json"
     manifest_json_path = output_data_dir / f"manifest_{date_tag}.json"
     latest_dashboard_json_path = output_data_dir / "dashboard.json"
     latest_detail_json_path = output_data_dir / "details.json"
     latest_monthly_json_path = output_data_dir / "monthly.json"
     latest_quarterly_json_path = output_data_dir / "quarterly.json"
+    latest_relationship_json_path = output_data_dir / "relationship.json"
     latest_manifest_json_path = output_data_dir / "manifest.json"
     pages_dashboard_json_path = pages_data_dir / "dashboard.json"
     pages_detail_json_path = pages_data_dir / "details.json"
     pages_monthly_json_path = pages_data_dir / "monthly.json"
     pages_quarterly_json_path = pages_data_dir / "quarterly.json"
+    pages_relationship_json_path = pages_data_dir / "relationship.json"
     pages_manifest_json_path = pages_data_dir / "manifest.json"
     html_output = build_html(metrics)
     detail_html_output = build_detail_html(metrics)
     monthly_html_output = build_monthly_html(metrics)
     quarterly_html_output = build_quarterly_html(metrics)
+    relationship_html_output = build_relationship_html(metrics)
     markdown_output = build_markdown_summary(metrics)
     report_output = build_business_report(metrics)
     dashboard_payload = build_export_payload(metrics, page_type="dashboard", generated_at=generated_at)
     detail_payload = build_export_payload(metrics, page_type="details", generated_at=generated_at)
     monthly_payload = build_export_payload(metrics, page_type="monthly", generated_at=generated_at)
     quarterly_payload = build_export_payload(metrics, page_type="quarterly", generated_at=generated_at)
+    relationship_payload = build_export_payload(metrics, page_type="relationship", generated_at=generated_at)
     manifest_payload = {
         "generated_at": generated_at.isoformat(),
         "date_tag": date_tag,
@@ -8843,6 +9659,7 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
             "details": "data/details.json",
             "monthly": "data/monthly.json",
             "quarterly": "data/quarterly.json",
+            "relationship": "data/relationship.json",
         },
         "available_exports": {
             "summary_markdown": "summary.md",
@@ -8864,16 +9681,21 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     detail_html_path.write_text(detail_html_output, encoding="utf-8")
     monthly_html_path.write_text(monthly_html_output, encoding="utf-8")
     quarterly_html_path.write_text(quarterly_html_output, encoding="utf-8")
+    relationship_html_path.write_text(relationship_html_output, encoding="utf-8")
     latest_html_path.write_text(html_output, encoding="utf-8")
     latest_detail_html_path.write_text(detail_html_output, encoding="utf-8")
     latest_monthly_html_path.write_text(monthly_html_output, encoding="utf-8")
     latest_quarterly_html_path.write_text(quarterly_html_output, encoding="utf-8")
+    latest_relationship_html_path.write_text(relationship_html_output, encoding="utf-8")
     md_path.write_text(markdown_output, encoding="utf-8")
     report_path.write_text(report_output, encoding="utf-8")
     dashboard_json_path.write_text(json.dumps(dashboard_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     detail_json_path.write_text(json.dumps(detail_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     monthly_json_path.write_text(json.dumps(monthly_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     quarterly_json_path.write_text(json.dumps(quarterly_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    relationship_json_path.write_text(
+        json.dumps(relationship_payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     manifest_json_path.write_text(json.dumps(manifest_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     latest_dashboard_json_path.write_text(
         json.dumps(dashboard_payload, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -8887,6 +9709,9 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     latest_quarterly_json_path.write_text(
         json.dumps(quarterly_payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    latest_relationship_json_path.write_text(
+        json.dumps(relationship_payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     latest_manifest_json_path.write_text(
         json.dumps(manifest_payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -8897,6 +9722,7 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     pages_detail_html_path.write_text(detail_html_output, encoding="utf-8")
     pages_monthly_html_path.write_text(monthly_html_output, encoding="utf-8")
     pages_quarterly_html_path.write_text(quarterly_html_output, encoding="utf-8")
+    pages_relationship_html_path.write_text(relationship_html_output, encoding="utf-8")
     pages_md_path.write_text(markdown_output, encoding="utf-8")
     pages_report_path.write_text(report_output, encoding="utf-8")
     pages_dashboard_json_path.write_text(
@@ -8910,6 +9736,9 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
     )
     pages_quarterly_json_path.write_text(
         json.dumps(quarterly_payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    pages_relationship_json_path.write_text(
+        json.dumps(relationship_payload, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     pages_manifest_json_path.write_text(
         json.dumps(manifest_payload, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -8926,10 +9755,13 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
         "quarterly_html": quarterly_html_path,
         "latest_monthly_html": latest_monthly_html_path,
         "latest_quarterly_html": latest_quarterly_html_path,
+        "relationship_html": relationship_html_path,
+        "latest_relationship_html": latest_relationship_html_path,
         "pages_html": pages_html_path,
         "pages_detail_html": pages_detail_html_path,
         "pages_monthly_html": pages_monthly_html_path,
         "pages_quarterly_html": pages_quarterly_html_path,
+        "pages_relationship_html": pages_relationship_html_path,
         "markdown": md_path,
         "pages_markdown": pages_md_path,
         "report": report_path,
@@ -8944,11 +9776,13 @@ def write_outputs(metrics: dict, output_dir: Path, pages_dir: Path) -> dict[str,
         "detail_json": latest_detail_json_path,
         "monthly_json": latest_monthly_json_path,
         "quarterly_json": latest_quarterly_json_path,
+        "relationship_json": latest_relationship_json_path,
         "manifest_json": latest_manifest_json_path,
         "pages_dashboard_json": pages_dashboard_json_path,
         "pages_detail_json": pages_detail_json_path,
         "pages_monthly_json": pages_monthly_json_path,
         "pages_quarterly_json": pages_quarterly_json_path,
+        "pages_relationship_json": pages_relationship_json_path,
         "pages_manifest_json": pages_manifest_json_path,
     }
 
@@ -8987,8 +9821,10 @@ def main() -> int:
     print(f"Pages HTML dashboard: {outputs['pages_html']}")
     print(f"Monthly HTML dashboard: {outputs['monthly_html']}")
     print(f"Quarterly HTML dashboard: {outputs['quarterly_html']}")
+    print(f"Relationship HTML dashboard: {outputs['relationship_html']}")
     print(f"Pages monthly dashboard: {outputs['pages_monthly_html']}")
     print(f"Pages quarterly dashboard: {outputs['pages_quarterly_html']}")
+    print(f"Pages relationship dashboard: {outputs['pages_relationship_html']}")
     print(f"Markdown summary: {outputs['markdown']}")
     print(f"Pages Markdown summary: {outputs['pages_markdown']}")
     print(f"Business report: {outputs['report']}")
@@ -8999,6 +9835,8 @@ def main() -> int:
     print(f"Pages clearance CSV: {outputs['pages_clearance_csv']}")
     print(f"Category risk CSV: {outputs['category_csv']}")
     print(f"Pages category risk CSV: {outputs['pages_category_csv']}")
+    print(f"Relationship JSON: {outputs['relationship_json']}")
+    print(f"Pages relationship JSON: {outputs['pages_relationship_json']}")
     return 0
 
 

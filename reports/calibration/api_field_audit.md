@@ -1,6 +1,6 @@
 # Yeusoft 截图 vs API 字段核对
 
-- 核对时间：2026-03-17 02:01:50
+- 核对时间：2026-03-17 19:55:22
 - 已经：18
 - 高度怀疑：5
 
@@ -39,12 +39,12 @@
 - 状态：已经
 - 结论：表格列头、动态尺码列和合计列都能和当前 JSON 的 `retdata[0].Title/Data` 对上，两张截图只是横向拆屏。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptSaleList`
-- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260316", "page": 0, "pagesize": 0, "spenum": "", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260317", "page": 0, "pagesize": 0, "spenum": "", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/零售明细统计.json`
 - 截图：零售明细统计-1.png, 零售明细统计-2.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-list`
-- JSON 行数：`1340`
+- JSON 行数：`1341`
 - 字段列表：DeptName, WareName, Spec, ColorName, RetailPrice, col01, col02, col03, col04, col05, col06, col07, col08, col09, col010, col011, col012, col013, col014, col015, col016, col017, col018, col019, col020, col021, col022, col023, col024, col025, col026, col027, col028, col029, col030, TotalMoney, TotalNum, TotalRetailMoney, Discount, Trade, Type, Type1, Type2, Years, Season, Pd, Sex, Img
 - SQLite：retail_detail_snapshots、size_metric_breakdowns
 - 动态列说明：
@@ -58,7 +58,7 @@
 - 状态：已经
 - 结论：截图列头与 `SelPersonSale` 返回字段能逐一对应，付款方式和会员字段也能对上。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposPerson/SelPersonSale`
-- 请求参数：`{"bdate": "20250301", "edate": "20260316", "name": "", "page": 0, "pagesize": 0}`
+- 请求参数：`{"bdate": "20250301", "edate": "20260317", "name": "", "page": 0, "pagesize": 0}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/导购员报表.json`
 - 截图：导购员报表.png
 - 抓取质量：`full-range-data`
@@ -75,7 +75,7 @@
 - 状态：已经
 - 结论：四张截图只是同一张明细表的横向切片，`ColumnsList` 与页面列头一致。
 - 接口：`https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData`
-- 请求参数：`{"gridid": "E004001007_main", "menuid": "E004001007", "parameter": {"BeginDate": "2025-03-01", "Depart": "  ", "EndDate": "2026-03-16", "Operater": "", "Tiem": "", "WareClause": ""}}`
+- 请求参数：`{"gridid": "E004001007_main", "menuid": "E004001007", "parameter": {"BeginDate": "2025-03-01", "Depart": "  ", "EndDate": "2026-03-17", "Operater": "", "Tiem": "", "WareClause": ""}}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/店铺零售清单.json`
 - 截图：店铺零售清单-1.png, 店铺零售清单-2.png, 店铺零售清单-3.png, 店铺零售清单-4.png
 - 抓取质量：`full-range-data`
@@ -93,12 +93,12 @@
 - 状态：已经
 - 结论：三张截图与 `ColumnsList` 一致，是当前主店销售主表。
 - 接口：`https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData`
-- 请求参数：`{"gridid": "E004001008_2", "menuid": "E004001008", "parameter": {"BeginDate": "20250301", "Depart": "'A0190248'", "EndDate": "20260316", "Operater": "", "Tiem": "1", "WareClause": ""}}`
+- 请求参数：`{"gridid": "E004001008_2", "menuid": "E004001008", "parameter": {"BeginDate": "20250301", "Depart": "'A0190248'", "EndDate": "20260317", "Operater": "", "Tiem": "1", "WareClause": ""}}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/销售清单.json`
 - 截图：销售清单-1.png, 销售清单-2.png, 销售清单-3.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-dict`
-- JSON 行数：`9745`
+- JSON 行数：`9764`
 - 字段列表：零售单号, 明细流水, 单据类型, 店铺名称, 款号, 品名, 吊牌价, 折扣, 单价, 颜色, 尺码, 数量, 金额, 吊牌金额, 输入人, 输入时间, 销售日期, 班组, 导购员, 会员卡号, 参与活动, 商城扣点, 成本价, 所属大区, 分管业务员, 品牌, 商品大类, 商品中类, 商品小类, 波段, 年份, 季节, 性别, 主题, 系列, 款式定位, 价格段, 设计师, 单据备注, 明细备注, 客户类型, 仓库分类, 业务主管, 上级店仓名, 地理区域, 省份, 城市, 区镇, 城市等级, 店铺面积, 店铺人数, 图片
 - SQLite：sales_order_lines
 - 动态列说明：
@@ -111,12 +111,12 @@
 - 状态：已经
 - 结论：截图和 JSON 的两段动态尺码头、现有库存/零售汇总列都能对齐。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockWaitList`
-- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260316", "page": 0, "pagesize": 0, "spenum": "", "stockflag": "0", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260317", "page": 0, "pagesize": 0, "spenum": "", "stockflag": "0", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存明细统计.json`
 - 截图：库存明细统计-1.png, 库存明细统计-2.png, 库存明细统计-3.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-list`
-- JSON 行数：`983`
+- JSON 行数：`981`
 - 字段列表：DeptName, WareName, Spec, ColorName, Type, Type1, Type2, Date1, Season, Pd, RetailPrice, Trade, Img, Sex, col01, col02, col03, col04, col05, col06, col07, col08, col09, col010, col011, col012, col013, col014, col015, col016, col017, col018, col019, col020, col021, col022, col023, col024, col025, col026, col027, col028, col029, col030, col031, col032, col033, col034, col035, NTotalNum, NTotalMoney, col036, col037, col038, col039, col040, col041, col042, col043, col044, col045, col046, col047, col048, col049, col050, col051, col052, col053, col054, col055, col056, col057, col058, col059, col060, col061, col062, col063, col064, col065, col066, col067, col068, col069, col070, STotalNum, STotalMoney
 - SQLite：inventory_detail_snapshots、size_metric_breakdowns
 - 动态列说明：
@@ -131,12 +131,12 @@
 - 状态：已经
 - 结论：三张截图覆盖了同一张表的所有列，`StoU` 和零售合计列能和 JSON 对上。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockSaleList`
-- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260316", "page": 0, "pagesize": 0, "spenum": "", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260317", "page": 0, "pagesize": 0, "spenum": "", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存零售统计.json`
 - 截图：库存零售统计-1.png, 库存零售统计-2.png, 库存零售统计-3.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-list`
-- JSON 行数：`1340`
+- JSON 行数：`1341`
 - 字段列表：DeptName, WareName, Spec, ColorName, Type, Type1, Type2, Date1, Season, Pd, RetailPrice, Trade, Img, StoU, col01, col02, col03, col04, col05, col06, col07, col08, col09, col010, col011, col012, col013, col014, col015, col016, col017, col018, col019, col020, STotalNum, STotalMoney, col021, col022, col023, col024, col025, col026, col027, col028, col029, col030, col031, col032, col033, col034, col035, col036, col037, col038, col039, col040, NTotalNum, NTotalMoney
 - SQLite：inventory_sales_snapshots、size_metric_breakdowns
 - 动态列说明：
@@ -201,12 +201,12 @@
 - 状态：已经
 - 结论：五张截图共同构成一张横向超宽表，`A01~A013` 的尺码列、`AStock` 和 `AMoney` 都能和 JSON 对上。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelDeptStockAnalysis`
-- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260316", "page": 0, "pagesize": 0, "spenum": "", "stockflag": "0", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "depts": "", "edate": "20260317", "page": 0, "pagesize": 0, "spenum": "", "stockflag": "0", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/库存多维分析.json`
 - 截图：库存多维分析-1.png, 库存多维分析-2.png, 库存多维分析-3.png, 库存多维分析-4.png, 库存多维分析-5.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-list`
-- JSON 行数：`983`
+- JSON 行数：`981`
 - 字段列表：Num, DeptName, WareName, Spec, ColorName, Type, Type1, Type2, Date1, Season, Pd, RetailPrice, Trade, Img, WareCode, DeptCode, A01, A02, A03, A04, A05, A06, A07, A08, A09, A010, A011, A012, A013, A014, A015, A016, A017, A018, A019, A020, AStock, AMoney, B01, B02, B03, B04, B05, B06, B07, B08, B09, B010, B011, B012, B013, B014, B015, B016, B017, B018, B019, B020, BStock, BMoney, D01, D02, D03, D04, D05, D06, D07, D08, D09, D010, D011, D012, D013, D014, D015, D016, D017, D018, D019, D020, DStock, DMoney, C01, C02, C03, C04, C05, C06, C07, C08, C09, C010, C011, C012, C013, C014, C015, C016, C017, C018, C019, C020, CStock, CMoney, F01, F02, F03, F04, F05, F06, F07, F08, F09, F010, F011, F012, F013, F014, F015, F016, F017, F018, F019, F020, FStock, FMoney
 - SQLite：当前未单独入 SQLite。
 - 备注：
@@ -217,7 +217,7 @@
 - 状态：已经
 - 结论：三张截图与 `SelInSalesReport` 返回字段完全对应，数量列和分类维度都能对上。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelInSalesReport`
-- 请求参数：`{"bdate": "20250301", "edate": "20260316", "page": 0, "pagesize": 0, "sort": "", "spenum": "", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "edate": "20260317", "page": 0, "pagesize": 0, "sort": "", "spenum": "", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/进销存统计.json`
 - 截图：进销存统计-1.png, 进销存统计-2.png, 进销存统计-3.png
 - 抓取质量：`full-range-data`
@@ -234,7 +234,7 @@
 - 状态：已经
 - 结论：页面列头、单据状态和首行值都能和 `SelOutInStockReport` 当前响应对上。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelOutInStockReport`
-- 请求参数：`{"bdate": "20250301", "datetype": "1", "doctype": "1,2,3,4,5,6,7", "edate": "20260316", "page": 0, "pagesize": 0, "spenum": "", "type": "已出库,已入库,在途", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "datetype": "1", "doctype": "1,2,3,4,5,6,7", "edate": "20260317", "page": 0, "pagesize": 0, "spenum": "", "type": "已出库,已入库,在途", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/出入库单据.json`
 - 截图：出入库单据-1.png
 - 抓取质量：`full-range-data`
@@ -250,30 +250,29 @@
 
 - 状态：高度怀疑
 - 结论：截图在，但当前 capture-cache 只有 opened-only，没有请求体和响应体，没法和 JSON 做精确对照。
-- 接口：`SelInSalesReportByDay`
-- 请求参数：`{}`
+- 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelInSalesReportByDay`
+- 请求参数：`{"bdate": "20250301", "edate": "20250331", "page": 0, "pagesize": 0, "spenum": "", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/日进销存.json`
 - 截图：日进销存.png
-- 抓取质量：`opened-only`
-- 响应结构：`missing-response`
-- JSON 行数：`0`
-- 字段列表：当前没有可用字段列表
+- 抓取质量：`full-range-data`
+- 响应结构：`erp-retdata-dict`
+- JSON 行数：`31`
+- 字段列表：Num, Date, DeptName, DeptCode, LastAmount, LastAmountPrice, InAmount, InAmountPrice, TBInAmount, TBInAmountPrice, RetuAmount, RetuAmountPrice, TBOutAmount, TBOutAmountPrice, SaleAmount, SaleAmountPrice, BSOutAmount, BSOutAmountPrice, ZMStockNum, ZMStockNumPrice, StockNum, StockNumPrice, WaitStockNum, WaitStockNumPrice
 - SQLite：当前无响应，也未入 SQLite。
 - 备注：
   - 这张表必须重新补抓成功响应后，才能继续做字段确认和 SQLite 同步。
-  - 当前 capture-cache 没有抓到这个接口的响应体。
 
 ### 会员总和分析
 
 - 状态：已经
 - 结论：截图和 `SelVipAnalysisReport` 的会员分析字段能对上，积分、储值、消费频次等字段明确。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelVipAnalysisReport`
-- 请求参数：`{"birthbdate": "", "birthedate": "", "page": 0, "pagesize": 0, "salebdate": "20250301", "saleedate": "20260316", "salemoney1": "0", "salemoney2": "0", "tag": "", "type": ""}`
+- 请求参数：`{"birthbdate": "", "birthedate": "", "page": 0, "pagesize": 0, "salebdate": "20250301", "saleedate": "20260317", "salemoney1": "0", "salemoney2": "0", "tag": "", "type": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/会员综合分析.json`
 - 截图：会员综合分析.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-list`
-- JSON 行数：`1182`
+- JSON 行数：`1184`
 - 字段列表：Num, OperName, VipName, VipCardID, VipGrade, VipCardType, BirthDate, Point, TotalPoint, RetuMoney, SSMoney, BVMoney, VipPosCardNum, InputDate, LastSaleDate, EachSale, SaleNumByYear, SaleStock, SaleNum, TotalMoney, SaleWeek, SaleSpace, VipType, VipTag
 - SQLite：vip_analysis_members
 - 备注：
@@ -285,12 +284,12 @@
 - 状态：已经
 - 结论：两张截图与 `SelVipSaleRank` 返回字段一致，排名、单数、款数、销量、销额和占比都能对上。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelVipSaleRank`
-- 请求参数：`{"bdate": "20250301", "edate": "20260316", "page": 0, "pagesize": 0}`
+- 请求参数：`{"bdate": "20250301", "edate": "20260317", "page": 0, "pagesize": 0}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/会员消费排行.json`
 - 截图：会员消费排行榜-1.png, 会员消费排行榜-2.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-dict`
-- JSON 行数：`1191`
+- JSON 行数：`1193`
 - 字段列表：Num, UserName, VipCardID, N, WareCnt, TN, TM, P, Img
 - SQLite：member_sales_rank
 - 备注：
@@ -301,7 +300,7 @@
 - 状态：已经
 - 结论：截图列头与 `ColumnsList` 一致，门店级储值金额汇总没有歧义。
 - 接口：`https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData`
-- 请求参数：`{"gridid": "E004004003_main", "menuid": "E004004003", "parameter": {"BeginDate": "2025-03-01", "EndDate": "2026-03-16"}}`
+- 请求参数：`{"gridid": "E004004003_main", "menuid": "E004004003", "parameter": {"BeginDate": "2025-03-01", "EndDate": "2026-03-17"}}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/储值按店汇总.json`
 - 截图：储值按店汇总.png
 - 抓取质量：`full-range-data`
@@ -317,7 +316,7 @@
 - 状态：已经
 - 结论：截图和 `ColumnsList` 一致，卡级余额/充值/消费字段都能对应。
 - 接口：`https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData`
-- 请求参数：`{"gridid": "E004004004_main", "menuid": "E004004004", "parameter": {"BeginDate": "2025-03-01", "EndDate": "2026-03-16", "Search": ""}}`
+- 请求参数：`{"gridid": "E004004004_main", "menuid": "E004004004", "parameter": {"BeginDate": "2025-03-01", "EndDate": "2026-03-17", "Search": ""}}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/储值卡汇总.json`
 - 截图：储值卡汇总.png
 - 抓取质量：`full-range-data`
@@ -333,7 +332,7 @@
 - 状态：已经
 - 结论：两张截图只是同一张明细表的横向拆屏，发生时间、单号、期初/期末余额与充值字段都能对上。
 - 接口：`https://erpapistaging.yeusoft.net/FxErpApi/FXDIYReport/GetDIYReportData`
-- 请求参数：`{"gridid": "E004004005_main", "menuid": "E004004005", "parameter": {"BeginDate": "2025-03-01", "EndDate": "2026-03-16", "Search": ""}}`
+- 请求参数：`{"gridid": "E004004005_main", "menuid": "E004004005", "parameter": {"BeginDate": "2025-03-01", "EndDate": "2026-03-17", "Search": ""}}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/储值卡明细.json`
 - 截图：储值卡明细-2.png, 储值卡明细.png
 - 抓取质量：`full-range-data`
@@ -349,12 +348,12 @@
 - 状态：已经
 - 结论：两张截图与 `SelSaleReportData` 的字段一致，销量、销额、累销、库存和周度序列字段都在当前响应内。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposReport/SelSaleReportData`
-- 请求参数：`{"bdate": "20250301", "edate": "20260316", "spenum": "", "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "edate": "20260317", "spenum": "", "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/商品销售情况.json`
 - 截图：商品销售情况-1.png, 商品销售情况-2.png
 - 抓取质量：`full-range-data`
 - 响应结构：`erp-retdata-dict`
-- JSON 行数：`1340`
+- JSON 行数：`1341`
 - 字段列表：Num, WareCode, ColorCode, Specification, Img, Color, SaleAmount, SaleMoney, SumSaleAmount, SumSaleMoney, SumArrival, WeekSellOut, SumSellOut, StockNum, FirstArrivalDate, FirstSaleDate, DaysSold, Week1, Week2, Week3, Week4, Week5, Week6, Week7, Week8, Trade, Year, Season, BD, MType, SumReturn
 - SQLite：product_sales_snapshot
 - 备注：
@@ -365,7 +364,7 @@
 - 状态：高度怀疑
 - 结论：截图页面同时出现了“进货/销售/库存”三段，但当前抓到的 `type=3` JSON 只明显对得上其中的库存区块，不能把三段都当成同一份响应。
 - 接口：`https://erpapistaging.yeusoft.net/eposapi/YisEposWareTypeAnalysis/SelWareTypeAnalysisList`
-- 请求参数：`{"bdate": "20250301", "edate": "20260316", "gridid": "E004005002_1", "menuid": "E004005002", "type": 3, "warecause": ""}`
+- 请求参数：`{"bdate": "20250301", "edate": "20260317", "gridid": "E004005002_1", "menuid": "E004005002", "type": 3, "warecause": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/商品品类分析.json`
 - 截图：商品品类分析-1.png, 商品品类分析-2.png, 商品品类分析-3.png
 - 抓取质量：`full-range-data`
@@ -384,12 +383,12 @@
 - 状态：已经
 - 结论：截图表头和 `DeptMonthSalesReport` 的 `PageData.Items` 字段一致；金额脱敏为 `****` 也是后端返回结果，不是对照异常。
 - 接口：`https://jyapistaging.yeusoft.net/JyApi/DeptMonthSalesReport/DeptMonthSalesReport`
-- 请求参数：`{"BeginDate": "2025-03-01", "EndDate": "2026-03-16", "MBeginDate": "2025-01-31", "MEndDate": "2026-02-15", "PageIndex": 1, "PageSize": 2000, "Type": "1", "YBeginDate": "2024-02-29", "YEndDate": "2025-03-15"}`
+- 请求参数：`{"BeginDate": "2025-03-01", "EndDate": "2026-03-17", "MBeginDate": "2025-01-31", "MEndDate": "2026-02-16", "PageIndex": 1, "PageSize": 2000, "Type": "1", "YBeginDate": "2024-02-29", "YEndDate": "2025-03-16"}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/门店销售月报.json`
 - 截图：门店销售月报.png
 - 抓取质量：`full-range-data`
 - 响应结构：`jyapi-page-items`
-- JSON 行数：`365`
+- JSON 行数：`366`
 - 字段列表：DeptName, Date, Week, Numberofweeks, SalePNum, SaleAmount, SaleMoney, Jointandseveral, Discountamount, Actualsales, CustomerSale, Retailcost, Retailgrossmargin, Grossprofitmargin, RetailMoney, VipSaleMoney, ProportionOfSales, YoY, MoM
 - SQLite：当前未入 SQLite，仅在 `scripts.dashboard.yeusoft` 中做页面解析。
 - 备注：
@@ -401,12 +400,12 @@
 - 状态：已经
 - 结论：两张截图与 `SelectRetailDocPaymentSlip` 的 `Data.Columns/List` 完整一致，支付方式列也能对上。
 - 接口：`https://jyapistaging.yeusoft.net/JyApi/ReconciliationAnalysis/SelectRetailDocPaymentSlip`
-- 请求参数：`{"BeginDate": "2025-03-01", "EndDate": "2026-03-16", "LastDate": "", "MenuID": "E004006001", "Search": "", "SearchType": "1"}`
+- 请求参数：`{"BeginDate": "2025-03-01", "EndDate": "2026-03-17", "LastDate": "", "MenuID": "E004006001", "Search": "", "SearchType": "1"}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/每日流水单.json`
 - 截图：每日流水单-1.png, 每日流水单-2.png
 - 抓取质量：`full-range-data`
 - 响应结构：`jyapi-columns-list`
-- JSON 行数：`3988`
+- JSON 行数：`3996`
 - 字段列表：Area, Organization, OrganizationName, Customer, CustomerName, Type, TypeName, MakeDate, DocType, DocTypeName, DocNo, Guide, TagMoney, Amount, Money, ActualMoney, SaleDiscount, UnitPrice, VipMovePhone, VipName, Remark, SourceNo, CashMoney, SwipeMoney, WxMoney, AlipayMoney, StockMoney, OrderMoney, CouponMoney, UseRebateMoney, UseBvMoney, OtherMoney, ActivityMoney, ScanCodeMoney, WipeZeroMoney, LookChangeMoney
 - SQLite：daily_flow_docs
 - 动态列说明：
@@ -422,9 +421,9 @@
 - 请求参数：`{"VolumeNumber": "", "condition": "", "searchval": ""}`
 - capture：`/Users/lizhihui/Workspace/Black-Tony/reports/capture-cache/会员中心.json`
 - 截图：会员中心-1.png, 会员中心-2.png
-- 抓取质量：`partial-range-data`
+- 抓取质量：`snapshot-data`
 - 响应结构：`erp-retdata-dict`
-- JSON 行数：`1297`
+- JSON 行数：`1300`
 - 字段列表：Num, VipCode, VipCardID, Name, MobliePhone, Birthday, Grade, GradeName, TotalPoint, ValidPoint, ValidStore, ValidUMoney, nsMoney, AttributionGuideName, AttributionDept, AttributionDeptName, PlatSet, LastSaleDate, RegisterDate, EndDate, TotalSaleFrequency, TotalSaleAmount, TotalSaleMoney, Label, Img, CheckStatus, StockCardMoney, StockCardBv, CanUsePosNum, SolarLunarCalendar, ssMoneyRebate, NickName, JtkhName
 - SQLite：当前未入 SQLite。
 - 备注：
