@@ -4968,41 +4968,37 @@ def build_homepage_role_actions(
     manager_actions: list[dict[str, str]] = []
     staff_actions: list[dict[str, str]] = []
 
-    def push(items: list[dict[str, str]], title: str, reason: str, result: str, priority: str) -> None:
+    def push(items: list[dict[str, str]], title: str, detail: str, priority: str) -> None:
         if len(items) >= 3:
             return
         if any(item["title"] == title for item in items):
             return
-        items.append({"title": title, "reason": reason, "result": result, "priority": priority})
+        items.append({"title": title, "detail": detail, "priority": priority})
 
     push(
         boss_actions,
         f"拍板本周{top_clearance}停补范围" if top_clearance != "袜品" else "拍板本周袜品收紧补货范围",
-        "库存压货重，补货端要先收紧，先用现有库存去化。",
-        "今天定出停补范围和补货边界。",
+        "库存压货重，今天定出停补范围和补货边界，先用现有库存去化。",
         "最高优先",
     )
     push(
         boss_actions,
         f"拍板{top_replenish}核心尺码补货预算",
-        "预算只给最能出单的主销尺码，不再平均铺货。",
-        "今天确定补货上限和优先尺码。",
+        f"{top_replenish}是当前主销，今天确定补货上限和优先尺码，不再平均铺货。",
         "高优先",
     )
     if profit and profit["projected_month_net_profit"] < 0:
         push(
             boss_actions,
             "统一今天折扣底线",
-            "月末净利还承压，先稳毛利和客单，别让利润再被打穿。",
-            "今天晨会前定出成交折扣边界和话术。",
+            "月末净利还承压，今天晨会前定出成交折扣边界和话术，先稳毛利。",
             "高优先",
         )
     if signals["vip_dormant_high"]:
         push(
             boss_actions,
             "确认会员回访名单和话术",
-            "今天的复购要靠高价值老客，不要只等自然进店。",
-            "今天定出前 10 位回访名单和邀约口径。",
+            "今天的复购要靠高价值老客，先定出前 10 位回访名单和邀约口径。",
             "今日完成",
         )
 
@@ -5010,8 +5006,7 @@ def build_homepage_role_actions(
         push(
             manager_actions,
             "中午前修正负库存异常 SKU",
-            "库存不准会直接带偏补货和去化判断，必须先修正。",
-            "输出今天可用库存口径。",
+            "库存不准会直接带偏补货和去化判断，今天中午前修正异常 SKU，并输出可用库存口径。",
             "最高优先",
         )
     manager_display_title = (
@@ -5022,53 +5017,46 @@ def build_homepage_role_actions(
     push(
         manager_actions,
         manager_display_title,
-        "高压库存要先前移去化，袜品继续保留顺手带卖位置。",
-        "下班前拍照确认清货位已调整。",
+        "高压库存要先前移去化，袜品继续保留顺手带卖位置，下班前拍照确认清货位已调整。",
         "高优先",
     )
     push(
         manager_actions,
         f"下班前整理{top_replenish}断码清单",
-        "主销断码会直接丢单，今天要先登记再安排补货。",
-        "提交补货依据给老板拍板。",
+        f"{top_replenish}断码会直接丢单，今天下班前整理断码清单，并提交补货依据给老板拍板。",
         "高优先",
     )
     if signals["guide_concentrated"]:
         push(
             manager_actions,
             f"复刻{signals['top_guide_name']}成交话术",
-            "头部店员的方法要今天拆给全员，别把成交全压在一个人身上。",
-            "今晚把可复用话术发给全员。",
+            f"头部店员的方法要今天拆给全员，今晚把 {signals['top_guide_name']} 的可复用话术发给全员。",
             "今日完成",
         )
     if signals["vip_dormant_high"]:
         push(
             manager_actions,
             "安排前 10 位会员回访",
-            "先把能唤醒的老客叫回来，再放大复购和连带。",
-            "今天发出回访名单并分配到人。",
+            "先把能唤醒的老客叫回来，今天发出回访名单并分配到人。",
             "今日完成",
         )
 
     push(
         staff_actions,
         f"今天先让顾客试{top_replenish}主销款",
-        "先把最能出单的主销款卖掉，别把精力分散到边缘品类。",
-        "下班前反馈 3 组高转化搭配。",
+        f"{top_replenish}是今天主销重点，先让顾客试主销款，下班前反馈 3 组高转化搭配。",
         "最高优先",
     )
     push(
         staff_actions,
         "今天顺手带卖袜品或基础款",
-        "袜品补货收紧，但销售端要用现有库存做连带去化。",
-        "每单至少带出 1 件可连带商品。",
+        "袜品今天只做顺手带卖和去化，不再追加深补，每单至少带出 1 件可连带商品。",
         "高优先",
     )
     push(
         staff_actions,
         "先做组合推荐，再决定让利",
-        "先做组合推荐和场景推荐，再决定要不要让利。",
-        "遇到犹豫顾客先按统一话术推荐两组搭配。",
+        "先做组合推荐和场景推荐，遇到犹豫顾客先按统一话术推荐两组搭配，再决定要不要让利。",
         "高优先" if signals["markdown_pressure_high"] or (profit and profit["projected_month_net_profit"] < 0) else "今日完成",
     )
 
@@ -5107,16 +5095,46 @@ def build_homepage_opportunity_cards(
             continue
         if name == "裤类":
             action = "销量高、库存浅，今天优先保核心尺码不断码。"
+            tip = "裤类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。"
+            thinking = [
+                "主销品类先保核心尺码，不做平均铺货。",
+                "当前优先保住能直接出单的品类，再去扩量。",
+            ]
         elif name == "衣类":
             action = "仍是主销中类，今天先保主色主码，小单快返。"
+            tip = "衣类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。"
+            thinking = [
+                "主销品类先保主色主码，不做平均铺货。",
+                "先守住稳定出单的款，再决定是否扩量。",
+            ]
         elif name == "内裤":
             action = "适合做组合连带，今天配袜品和基础款一起卖。"
+            tip = "内裤更适合作为组合连带去抬高客单，而不是单独放大补货。"
+            thinking = [
+                "先把内裤放进组合成交里，再看是否需要补核心基础款。",
+                "连带品类先看带卖效率，不做平均扩货。",
+            ]
         elif name == "袜品":
             action = "销售上只做顺手带卖，补货上只保基础畅销款，不再深补。"
+            tip = "袜品更适合作为顺手带卖去化，今天不作为主补方向。"
+            thinking = [
+                "袜品以现有库存去化和基础畅销款兜底为主。",
+                "先把预算留给主销品类，不做慢销货深补。",
+            ]
         elif name == "家居服":
-            action = "适合做场景推荐，今天先带卖再决定补量。"
+            action = "适合作为场景带卖验证，今天先带卖，不是主补方向。"
+            tip = "家居服今天更适合作为场景带卖验证，不作为主补方向。"
+            thinking = [
+                "先把补货预算留给裤类、衣类等主销品类。",
+                "家居服先看场景带卖表现，卖得动再小单快返。",
+            ]
         else:
             action = f"今天优先保{name}主销色和核心尺码，不做平均补货。"
+            tip = f"{name}当前卖得动、库存又不深，先保不断码更容易直接转成营业额。"
+            thinking = [
+                "主销品类先保核心尺码，不做平均铺货。",
+                "当前优先保住能直接出单的品类，再去扩量。",
+            ]
         cards.append(
             {
                 "name": name,
@@ -5124,16 +5142,13 @@ def build_homepage_opportunity_cards(
                 "stock": format_num(safe_float(row.get("库存"))),
                 "replenish": format_num(safe_float(row.get("建议补货量"))),
                 "action": action,
-                "tip": f"{name}当前卖得动、库存又不深，先保不断码更容易直接转成营业额。",
+                "tip": tip,
                 "data_points": [
                     f"{name}销售额 {format_num(safe_float(row.get('销售额')), 2)} 元。",
                     f"{name}当前库存 {format_num(safe_float(row.get('库存')))} 件。",
                     f"{name}建议补货量 {format_num(safe_float(row.get('建议补货量')))}。",
                 ],
-                "thinking": [
-                    "主销品类先保核心尺码，不做平均铺货。",
-                    "当前优先保住能直接出单的品类，再去扩量。",
-                ],
+                "thinking": thinking,
             }
         )
         if len(cards) >= 3:
@@ -5291,7 +5306,6 @@ def build_html(metrics: dict) -> str:
     support_notes = build_homepage_support_notes(metrics, decision, time_strategy, signals, boss_board)
 
     capture_date = pd.Timestamp(cards["data_capture_at"]).strftime("%Y-%m-%d")
-    store_note = f"{cards['store_name']} · 主输入人：{metrics['primary_input']}"
 
     strategy_tags_html = "".join(
         chip_html(item["label"], item["tone"]) for item in command_center["strategy_tags"]
@@ -5300,8 +5314,8 @@ def build_html(metrics: dict) -> str:
         f"<span class='meta-chip meta-chip-secondary'>{html.escape(item)}</span>"
         for item in [
             f"北京时间：{capture_date}",
-            store_note,
-            f"当前阶段：{decision['stage']} / {time_strategy['phase']}",
+            f"当前负责人：{metrics['primary_input']}",
+            f"当前阶段：{time_strategy['phase']}",
         ]
     )
     must_actions_html = "".join(
@@ -5312,9 +5326,8 @@ def build_html(metrics: dict) -> str:
             <h3>{html.escape(item['action'])}</h3>
             {tooltip_badge_html(str(item['why']))}
           </div>
-          <div class="must-action-meta"><span>对象</span><strong>{html.escape(item['target'])}</strong></div>
-          <p>{html.escape(item['purpose'])}</p>
-          {evidence_details_html(item['data_points'], item['thinking'])}
+          <p>{html.escape(str(item['sentence']))}</p>
+          {evidence_details_html(str(item['why']), item['data_points'], item['thinking'])}
         </article>
         """
         for index, item in enumerate(command_center["must_actions"], start=1)
@@ -5326,7 +5339,7 @@ def build_html(metrics: dict) -> str:
             <span>{html.escape(item['title'])}</span>
             {tooltip_badge_html(str(item['why']))}
           </div>
-          {evidence_details_html(item['data_points'], item['thinking'])}
+          {evidence_details_html(str(item['why']), item['data_points'], item['thinking'])}
         </li>
         """
         for item in command_center["risks"]
@@ -5342,7 +5355,7 @@ def build_html(metrics: dict) -> str:
           <div class="metric-note-row">
             <p class="metric-note">{html.escape(str(item['note']))}</p>
           </div>
-          {evidence_details_html(item['data_points'], item['thinking'])}
+          {evidence_details_html(str(item['tip']), item['data_points'], item['thinking'])}
         </article>
         """
         for item in core_metrics
@@ -5362,8 +5375,7 @@ def build_html(metrics: dict) -> str:
                     <strong>{html.escape(str(task["title"]))}</strong>
                     <span class="priority-badge">{html.escape(str(task["priority"]))}</span>
                   </div>
-                  <p>{html.escape(str(task["reason"]))}</p>
-                  <div class="task-result">{html.escape(str(task["result"]))}</div>
+                  <p>{html.escape(str(task["detail"]))}</p>
                 </div>
                 '''
                 for task in role["items"]
@@ -5383,7 +5395,7 @@ def build_html(metrics: dict) -> str:
               <div class="stat-row"><span>库存</span><strong>{html.escape(item['stock'])}</strong></div>
               <div class="stat-row"><span>建议补货量</span><strong>{html.escape(item['replenish'])}</strong></div>
               <p class="card-note">{html.escape(item['action'])}</p>
-              {evidence_details_html(item['data_points'], item['thinking'])}
+              {evidence_details_html(str(item['tip']), item['data_points'], item['thinking'])}
             </article>
             """
             for item in opportunity_cards
@@ -5400,7 +5412,7 @@ def build_html(metrics: dict) -> str:
               <div class="stat-row"><span>库存</span><strong>{html.escape(item['inventory'])}</strong></div>
               <div class="stat-row"><span>近期销量</span><strong>{html.escape(item['recent_sales'])}</strong></div>
               <p class="card-note">{html.escape(item['action'])}</p>
-              {evidence_details_html(item['data_points'], item['thinking'])}
+              {evidence_details_html(str(item['tip']), item['data_points'], item['thinking'])}
             </article>
             """
             for item in risk_cards
@@ -5417,11 +5429,10 @@ def build_html(metrics: dict) -> str:
               <div class="stat-row"><span>购买金额</span><strong>{html.escape(item['amount'])}</strong></div>
               <div class="stat-row"><span>消费次数</span><strong>{html.escape(item['visits'])}</strong></div>
               <div class="stat-row"><span>平均客单价</span><strong>{html.escape(item['aov'])}</strong></div>
-              <div class="member-action-label">今天建议动作</div>
               <p class="card-note">{html.escape(item['action'])}</p>
-              {evidence_details_html(item['data_points'], item['thinking'])}
+              {evidence_details_html(str(item['tip']), item['data_points'], item['thinking'])}
               <div class="member-button-row">
-                {''.join(f"<span class='member-mini-button'>{html.escape(button)}</span>" for button in item['buttons'])}
+                {''.join(f"<button type='button' class='member-mini-button'>{html.escape(button)}</button>" for button in item['buttons'])}
               </div>
             </article>
             """
@@ -5647,18 +5658,6 @@ def build_html(metrics: dict) -> str:
       line-height: 1.8;
       color: rgba(255, 255, 255, 0.86);
     }}
-    .must-action-meta {{
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: baseline;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.72);
-    }}
-    .must-action-meta strong {{
-      color: #ffffff;
-      font-size: 14px;
-    }}
     .command-side {{
       display: flex;
       flex-direction: column;
@@ -5706,7 +5705,7 @@ def build_html(metrics: dict) -> str:
       grid-template-columns: 1fr;
       gap: 10px;
     }}
-    .agent-button, .agent-button-disabled {{
+    .agent-button {{
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -5724,11 +5723,23 @@ def build_html(metrics: dict) -> str:
       color: #ffffff;
       box-shadow: 0 14px 26px rgba(29, 78, 216, 0.28);
     }}
-    .agent-button-disabled {{
+    .agent-button:hover,
+    .agent-button:focus-visible {{
+      transform: translateY(-1px);
+      box-shadow: 0 18px 28px rgba(29, 78, 216, 0.32);
+      outline: none;
+    }}
+    .agent-button.is-disabled {{
       background: rgba(255, 255, 255, 0.1);
       color: rgba(255, 255, 255, 0.7);
       border-color: rgba(255, 255, 255, 0.16);
       cursor: not-allowed;
+      box-shadow: none;
+    }}
+    .agent-button.is-disabled:hover,
+    .agent-button.is-disabled:focus-visible {{
+      transform: none;
+      box-shadow: none;
     }}
     .quick-nav {{
       display: grid;
@@ -6072,13 +6083,6 @@ def build_html(metrics: dict) -> str:
       color: #64748b;
       line-height: 1.8;
     }}
-    .task-result {{
-      margin-top: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1.7;
-    }}
     .priority-badge {{
       display: inline-flex;
       align-items: center;
@@ -6198,6 +6202,16 @@ def build_html(metrics: dict) -> str:
     .command-panel .evidence-title {{
       color: rgba(255, 255, 255, 0.74);
     }}
+    .evidence-text {{
+      margin: 0;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.8;
+    }}
+    .must-action-card .evidence-text,
+    .command-panel .evidence-text {{
+      color: rgba(255, 255, 255, 0.86);
+    }}
     .evidence-list {{
       margin: 0;
       padding-left: 18px;
@@ -6214,14 +6228,6 @@ def build_html(metrics: dict) -> str:
       color: #64748b;
       margin-bottom: 12px;
     }}
-    .member-action-label {{
-      margin-top: 12px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #64748b;
-    }}
     .member-button-row {{
       display: flex;
       gap: 8px;
@@ -6232,14 +6238,25 @@ def build_html(metrics: dict) -> str:
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid #dbe4f0;
-      background: #f8fafc;
-      color: #334155;
+      min-height: 34px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
       font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.08);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }}
+    .member-mini-button:hover,
+    .member-mini-button:focus-visible {{
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+      box-shadow: 0 12px 20px rgba(37, 99, 235, 0.12);
+      outline: none;
     }}
     .stat-row {{
       display: flex;
@@ -6478,7 +6495,7 @@ def build_html(metrics: dict) -> str:
             <div class="agent-button-grid">
               <a class="agent-button" href="./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成补货清单</a>
               <a class="agent-button" href="./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成去化清单</a>
-              <span class="agent-button-disabled">生成会员回访名单（预留）</span>
+              <button type="button" class="agent-button is-disabled" disabled>生成会员回访名单（即将支持）</button>
             </div>
           </section>
         </div>
@@ -6487,7 +6504,7 @@ def build_html(metrics: dict) -> str:
 
     <section class="context-strip">
       <div class="context-block">
-        <div class="context-kicker">阶段与底色</div>
+        <div class="context-kicker">当前阶段</div>
         <div class="context-chip-row">{context_meta_html}</div>
         <div class="context-chip-row">{strategy_tags_html}</div>
       </div>

@@ -1,7 +1,7 @@
 {
   "meta": {
     "page_type": "details",
-    "generated_at": "2026-03-17T21:16:30.854030+08:00",
+    "generated_at": "2026-03-17T21:43:18.207550+08:00",
     "store_name": "咸阳沣西吾悦专卖店",
     "analysis_batch_id": "sales_calibration_20260317_195522",
     "data_capture_at": "2026-03-17T19:55:31",
@@ -1376,7 +1376,7 @@
     }
   ],
   "time_strategy": {
-    "beijing_time": "2026-03-17 21:16",
+    "beijing_time": "2026-03-17 21:43",
     "season": "春季",
     "phase": "春夏换季期",
     "next_season": "夏季",

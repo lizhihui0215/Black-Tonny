@@ -192,18 +192,6 @@
       line-height: 1.8;
       color: rgba(255, 255, 255, 0.86);
     }
-    .must-action-meta {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: baseline;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.72);
-    }
-    .must-action-meta strong {
-      color: #ffffff;
-      font-size: 14px;
-    }
     .command-side {
       display: flex;
       flex-direction: column;
@@ -251,7 +239,7 @@
       grid-template-columns: 1fr;
       gap: 10px;
     }
-    .agent-button, .agent-button-disabled {
+    .agent-button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -269,11 +257,23 @@
       color: #ffffff;
       box-shadow: 0 14px 26px rgba(29, 78, 216, 0.28);
     }
-    .agent-button-disabled {
+    .agent-button:hover,
+    .agent-button:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 28px rgba(29, 78, 216, 0.32);
+      outline: none;
+    }
+    .agent-button.is-disabled {
       background: rgba(255, 255, 255, 0.1);
       color: rgba(255, 255, 255, 0.7);
       border-color: rgba(255, 255, 255, 0.16);
       cursor: not-allowed;
+      box-shadow: none;
+    }
+    .agent-button.is-disabled:hover,
+    .agent-button.is-disabled:focus-visible {
+      transform: none;
+      box-shadow: none;
     }
     .quick-nav {
       display: grid;
@@ -617,13 +617,6 @@
       color: #64748b;
       line-height: 1.8;
     }
-    .task-result {
-      margin-top: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1.7;
-    }
     .priority-badge {
       display: inline-flex;
       align-items: center;
@@ -743,6 +736,16 @@
     .command-panel .evidence-title {
       color: rgba(255, 255, 255, 0.74);
     }
+    .evidence-text {
+      margin: 0;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    .must-action-card .evidence-text,
+    .command-panel .evidence-text {
+      color: rgba(255, 255, 255, 0.86);
+    }
     .evidence-list {
       margin: 0;
       padding-left: 18px;
@@ -759,14 +762,6 @@
       color: #64748b;
       margin-bottom: 12px;
     }
-    .member-action-label {
-      margin-top: 12px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #64748b;
-    }
     .member-button-row {
       display: flex;
       gap: 8px;
@@ -777,14 +772,25 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid #dbe4f0;
-      background: #f8fafc;
-      color: #334155;
+      min-height: 34px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
       font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.08);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .member-mini-button:hover,
+    .member-mini-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+      box-shadow: 0 12px 20px rgba(37, 99, 235, 0.12);
+      outline: none;
     }
     .stat-row {
       display: flex;
@@ -1046,14 +1052,17 @@
           <div class="must-action-kicker">今日必须动作 1</div>
           <div class="title-row">
             <h3>先处理负库存</h3>
-            <span class='mini-tip tooltip-badge' title="负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。" data-tip="负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。" tabindex='0'>为什么</span>
+            <span class='mini-tip tooltip-badge' title="负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。" data-tip="负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。" tabindex='0'>?</span>
           </div>
-          <div class="must-action-meta"><span>对象</span><strong>105 个异常 SKU</strong></div>
-          <p>避免补货和去化判断失真</p>
+          <p>105 个异常 SKU 今天先修正，避免补货和去化判断失真。</p>
           
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>当前负库存 SKU 105 个。</li><li>库存覆盖天数 354.8 天。</li></ul>
@@ -1071,14 +1080,17 @@
           <div class="must-action-kicker">今日必须动作 2</div>
           <div class="title-row">
             <h3>先收紧袜品补货</h3>
-            <span class='mini-tip tooltip-badge' title="袜品库存压得重，继续平均补货只会把现金压进慢销货。" data-tip="袜品库存压得重，继续平均补货只会把现金压进慢销货。" tabindex='0'>为什么</span>
+            <span class='mini-tip tooltip-badge' title="袜品库存压得重，继续平均补货只会把现金压进慢销货。" data-tip="袜品库存压得重，继续平均补货只会把现金压进慢销货。" tabindex='0'>?</span>
           </div>
-          <div class="must-action-meta"><span>对象</span><strong>高压库存品类</strong></div>
-          <p>以现有库存去化为主，不再深补</p>
+          <p>袜品属于高压库存品类，今天以现有库存去化为主，不再深补。</p>
           
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">袜品库存压得重，继续平均补货只会把现金压进慢销货。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>袜品当前库存 791 件。</li><li>袜品近期销量 33 件。</li><li>库存覆盖天数 354.8 天。</li></ul>
@@ -1096,14 +1108,17 @@
           <div class="must-action-kicker">今日必须动作 3</div>
           <div class="title-row">
             <h3>先保裤类核心尺码</h3>
-            <span class='mini-tip tooltip-badge' title="裤类是当前主销品类，断码会直接影响今天成交。" data-tip="裤类是当前主销品类，断码会直接影响今天成交。" tabindex='0'>为什么</span>
+            <span class='mini-tip tooltip-badge' title="裤类是当前主销品类，断码会直接影响今天成交。" data-tip="裤类是当前主销品类，断码会直接影响今天成交。" tabindex='0'>?</span>
           </div>
-          <div class="must-action-meta"><span>对象</span><strong>主销断码款</strong></div>
-          <p>防止今天直接丢单</p>
+          <p>裤类是当前主销品类，今天先保核心尺码，避免断码直接丢单。</p>
           
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">裤类是当前主销品类，断码会直接影响今天成交。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>裤类销售额 77,075.84 元。</li><li>裤类当前库存 43 件。</li><li>裤类建议补货量 2,673。</li></ul>
@@ -1125,12 +1140,16 @@
         <li class="hero-risk-item">
           <div class="hero-risk-line">
             <span>月末净利预测 -7,893.98 元，继续深折扣会先伤毛利。</span>
-            <span class='mini-tip tooltip-badge' title="利润还没回正时，先稳毛利比先冲销量更重要。" data-tip="利润还没回正时，先稳毛利比先冲销量更重要。" tabindex='0'>为什么</span>
+            <span class='mini-tip tooltip-badge' title="利润还没回正时，先稳毛利比先冲销量更重要。" data-tip="利润还没回正时，先稳毛利比先冲销量更重要。" tabindex='0'>?</span>
           </div>
           
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">利润还没回正时，先稳毛利比先冲销量更重要。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>当前净利润 -20,232.95 元。</li><li>月末净利预测 -7,893.98 元。</li><li>保本进度 35.8%。</li></ul>
@@ -1147,12 +1166,16 @@
         <li class="hero-risk-item">
           <div class="hero-risk-line">
             <span>库存覆盖约 354.8 天，补货不能再平均下单。</span>
-            <span class='mini-tip tooltip-badge' title="库存覆盖太高时继续平均补货，会把现金继续压进慢销货。" data-tip="库存覆盖太高时继续平均补货，会把现金继续压进慢销货。" tabindex='0'>为什么</span>
+            <span class='mini-tip tooltip-badge' title="库存覆盖太高时继续平均补货，会把现金继续压进慢销货。" data-tip="库存覆盖太高时继续平均补货，会把现金继续压进慢销货。" tabindex='0'>?</span>
           </div>
           
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">库存覆盖太高时继续平均补货，会把现金继续压进慢销货。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>库存覆盖天数 354.8 天。</li><li>经营库存额 528,367.00 元。</li></ul>
@@ -1173,7 +1196,7 @@
             <div class="agent-button-grid">
               <a class="agent-button" href="./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成补货清单</a>
               <a class="agent-button" href="./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成去化清单</a>
-              <span class="agent-button-disabled">生成会员回访名单（预留）</span>
+              <button type="button" class="agent-button is-disabled" disabled>生成会员回访名单（即将支持）</button>
             </div>
           </section>
         </div>
@@ -1182,8 +1205,8 @@
 
     <section class="context-strip">
       <div class="context-block">
-        <div class="context-kicker">阶段与底色</div>
-        <div class="context-chip-row"><span class='meta-chip meta-chip-secondary'>北京时间：2026-03-17</span><span class='meta-chip meta-chip-secondary'>咸阳沣西吾悦专卖店 · 主输入人：郭文攀</span><span class='meta-chip meta-chip-secondary'>当前阶段：换季切换 / 春夏换季期</span></div>
+        <div class="context-kicker">当前阶段</div>
+        <div class="context-chip-row"><span class='meta-chip meta-chip-secondary'>北京时间：2026-03-17</span><span class='meta-chip meta-chip-secondary'>当前负责人：郭文攀</span><span class='meta-chip meta-chip-secondary'>当前阶段：春夏换季期</span></div>
         <div class="context-chip-row"><span class='mini-chip mini-chip-warn'>稳毛利优先</span><span class='mini-chip mini-chip-danger'>去库存阶段</span><span class='mini-chip mini-chip-primary'>保主销不断码</span><span class='mini-chip mini-chip-soft'>会员唤醒</span></div>
       </div>
       <div class="context-block">
@@ -1220,6 +1243,10 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">最近日销承接不够强时，动作要先压到更容易成交的主销品类。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>近 8 天经营销售额 9,441.77 元。</li><li>最近日销均值 1,150.69 元。</li><li>日销趋势 下滑。</li></ul>
         </div>
@@ -1245,6 +1272,10 @@
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">客单拉不起来时，只看成交单数，利润通常跟不上。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>当前客单价 171.67 元。</li><li>件单比约 1.06。</li><li>订单数 55 单。</li></ul>
@@ -1272,6 +1303,10 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">库存覆盖越高，越要先停补高压货，不然现金会继续压在慢销货里。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>库存覆盖天数 354.8 天。</li><li>经营库存额 528,367.00 元。</li><li>当前库存 5,810 件。</li></ul>
         </div>
@@ -1297,6 +1332,10 @@
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">会员占比高，说明今天最值得先做的是老客复购，而不是盲目追新客。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>会员销售占比 74.0%。</li><li>会员沉默占比约 50.4%。</li><li>优先会员 妞宝、年年、史振尧。</li></ul>
@@ -1324,6 +1363,10 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">净利没转正时，先守毛利边界，比先冲营业额更重要。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>当前净利润 -20,232.95 元。</li><li>保本销售额 65,628.23 元。</li><li>保本进度 35.8%。</li></ul>
         </div>
@@ -1349,6 +1392,10 @@
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">月底还有亏损风险时，今天的动作要先稳利润，再看放量。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>月末净利预测 -7,893.98 元。</li><li>当前净利润 -20,232.95 元。</li><li>保本进度 35.8%。</li></ul>
@@ -1382,8 +1429,7 @@
                     <strong>拍板本周袜品收紧补货范围</strong>
                     <span class="priority-badge">最高优先</span>
                   </div>
-                  <p>库存压货重，补货端要先收紧，先用现有库存去化。</p>
-                  <div class="task-result">今天定出停补范围和补货边界。</div>
+                  <p>库存压货重，今天定出停补范围和补货边界，先用现有库存去化。</p>
                 </div>
                 
                 <div class="role-task-item">
@@ -1391,8 +1437,7 @@
                     <strong>拍板裤类核心尺码补货预算</strong>
                     <span class="priority-badge">高优先</span>
                   </div>
-                  <p>预算只给最能出单的主销尺码，不再平均铺货。</p>
-                  <div class="task-result">今天确定补货上限和优先尺码。</div>
+                  <p>裤类是当前主销，今天确定补货上限和优先尺码，不再平均铺货。</p>
                 </div>
                 
                 <div class="role-task-item">
@@ -1400,8 +1445,7 @@
                     <strong>统一今天折扣底线</strong>
                     <span class="priority-badge">高优先</span>
                   </div>
-                  <p>月末净利还承压，先稳毛利和客单，别让利润再被打穿。</p>
-                  <div class="task-result">今天晨会前定出成交折扣边界和话术。</div>
+                  <p>月末净利还承压，今天晨会前定出成交折扣边界和话术，先稳毛利。</p>
                 </div>
                 
           </div>
@@ -1419,8 +1463,7 @@
                     <strong>中午前修正负库存异常 SKU</strong>
                     <span class="priority-badge">最高优先</span>
                   </div>
-                  <p>库存不准会直接带偏补货和去化判断，必须先修正。</p>
-                  <div class="task-result">输出今天可用库存口径。</div>
+                  <p>库存不准会直接带偏补货和去化判断，今天中午前修正异常 SKU，并输出可用库存口径。</p>
                 </div>
                 
                 <div class="role-task-item">
@@ -1428,8 +1471,7 @@
                     <strong>今天完成袜品清货陈列前移</strong>
                     <span class="priority-badge">高优先</span>
                   </div>
-                  <p>高压库存要先前移去化，袜品继续保留顺手带卖位置。</p>
-                  <div class="task-result">下班前拍照确认清货位已调整。</div>
+                  <p>高压库存要先前移去化，袜品继续保留顺手带卖位置，下班前拍照确认清货位已调整。</p>
                 </div>
                 
                 <div class="role-task-item">
@@ -1437,8 +1479,7 @@
                     <strong>下班前整理裤类断码清单</strong>
                     <span class="priority-badge">高优先</span>
                   </div>
-                  <p>主销断码会直接丢单，今天要先登记再安排补货。</p>
-                  <div class="task-result">提交补货依据给老板拍板。</div>
+                  <p>裤类断码会直接丢单，今天下班前整理断码清单，并提交补货依据给老板拍板。</p>
                 </div>
                 
           </div>
@@ -1456,8 +1497,7 @@
                     <strong>今天先让顾客试裤类主销款</strong>
                     <span class="priority-badge">最高优先</span>
                   </div>
-                  <p>先把最能出单的主销款卖掉，别把精力分散到边缘品类。</p>
-                  <div class="task-result">下班前反馈 3 组高转化搭配。</div>
+                  <p>裤类是今天主销重点，先让顾客试主销款，下班前反馈 3 组高转化搭配。</p>
                 </div>
                 
                 <div class="role-task-item">
@@ -1465,8 +1505,7 @@
                     <strong>今天顺手带卖袜品或基础款</strong>
                     <span class="priority-badge">高优先</span>
                   </div>
-                  <p>袜品补货收紧，但销售端要用现有库存做连带去化。</p>
-                  <div class="task-result">每单至少带出 1 件可连带商品。</div>
+                  <p>袜品今天只做顺手带卖和去化，不再追加深补，每单至少带出 1 件可连带商品。</p>
                 </div>
                 
                 <div class="role-task-item">
@@ -1474,8 +1513,7 @@
                     <strong>先做组合推荐，再决定让利</strong>
                     <span class="priority-badge">高优先</span>
                   </div>
-                  <p>先做组合推荐和场景推荐，再决定要不要让利。</p>
-                  <div class="task-result">遇到犹豫顾客先按统一话术推荐两组搭配。</div>
+                  <p>先做组合推荐和场景推荐，遇到犹豫顾客先按统一话术推荐两组搭配，再决定要不要让利。</p>
                 </div>
                 
           </div>
@@ -1502,6 +1540,10 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">裤类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>裤类销售额 77,075.84 元。</li><li>裤类当前库存 43 件。</li><li>裤类建议补货量 2,673。</li></ul>
         </div>
@@ -1526,12 +1568,16 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">衣类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>衣类销售额 73,382.00 元。</li><li>衣类当前库存 39 件。</li><li>衣类建议补货量 3,473。</li></ul>
         </div>
         <div class="evidence-group">
           <div class="evidence-title">经营思路</div>
-          <ul class="evidence-list"><li>主销品类先保核心尺码，不做平均铺货。</li><li>当前优先保住能直接出单的品类，再去扩量。</li></ul>
+          <ul class="evidence-list"><li>主销品类先保主色主码，不做平均铺货。</li><li>先守住稳定出单的款，再决定是否扩量。</li></ul>
         </div>
       </div>
     </details>
@@ -1540,22 +1586,26 @@
             
             <article class="focus-card focus-card-opportunity">
               <div class="focus-card-kicker">重点机会</div>
-              <div class="card-title title-row">家居服<span class='mini-tip tooltip-badge' title="家居服当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" data-tip="家居服当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" tabindex='0'>?</span></div>
+              <div class="card-title title-row">家居服<span class='mini-tip tooltip-badge' title="家居服今天更适合作为场景带卖验证，不作为主补方向。" data-tip="家居服今天更适合作为场景带卖验证，不作为主补方向。" tabindex='0'>?</span></div>
               <div class="stat-row"><span>销量</span><strong>38,813.02 元</strong></div>
               <div class="stat-row"><span>库存</span><strong>24</strong></div>
               <div class="stat-row"><span>建议补货量</span><strong>952</strong></div>
-              <p class="card-note">适合做场景推荐，今天先带卖再决定补量。</p>
+              <p class="card-note">适合作为场景带卖验证，今天先带卖，不是主补方向。</p>
               
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">家居服今天更适合作为场景带卖验证，不作为主补方向。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>家居服销售额 38,813.02 元。</li><li>家居服当前库存 24 件。</li><li>家居服建议补货量 952。</li></ul>
         </div>
         <div class="evidence-group">
           <div class="evidence-title">经营思路</div>
-          <ul class="evidence-list"><li>主销品类先保核心尺码，不做平均铺货。</li><li>当前优先保住能直接出单的品类，再去扩量。</li></ul>
+          <ul class="evidence-list"><li>先把补货预算留给裤类、衣类等主销品类。</li><li>家居服先看场景带卖表现，卖得动再小单快返。</li></ul>
         </div>
       </div>
     </details>
@@ -1581,6 +1631,10 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">袜品当前库存明显重于近期销量承接，先控补货再去化更稳。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>袜品当前库存 791 件。</li><li>袜品近期销量 33 件。</li><li>建议动作 先停补再去化。</li></ul>
         </div>
@@ -1604,6 +1658,10 @@
       <summary>查看依据</summary>
       <div class="evidence-content">
         <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">少女文胸当前库存明显重于近期销量承接，先控补货再去化更稳。</p>
+        </div>
+        <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>少女文胸当前库存 202 件。</li><li>少女文胸近期销量 5 件。</li><li>建议动作 观察并做组合去化。</li></ul>
         </div>
@@ -1626,6 +1684,10 @@
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">内裤当前库存明显重于近期销量承接，先控补货再去化更稳。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>内裤当前库存 169 件。</li><li>内裤近期销量 6 件。</li><li>建议动作 先停补再去化。</li></ul>
@@ -1654,12 +1716,15 @@
               <div class="stat-row"><span>购买金额</span><strong>7,165.00 元</strong></div>
               <div class="stat-row"><span>消费次数</span><strong>12</strong></div>
               <div class="stat-row"><span>平均客单价</span><strong>110.23 元</strong></div>
-              <div class="member-action-label">今天建议动作</div>
               <p class="card-note">优先回访，邀请到店试穿裤类和夏季新品。</p>
               
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">妞宝属于高价值会员，今天优先回访更容易拿到复购。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>购买金额 7,165.00 元。</li><li>消费次数 12 次。</li><li>平均客单价 110.23 元。</li></ul>
@@ -1672,7 +1737,7 @@
     </details>
     
               <div class="member-button-row">
-                <span class='member-mini-button'>生成回访话术</span><span class='member-mini-button'>生成邀约短信</span><span class='member-mini-button'>生成搭配建议</span>
+                <button type='button' class='member-mini-button'>生成回访话术</button><button type='button' class='member-mini-button'>生成邀约短信</button><button type='button' class='member-mini-button'>生成搭配建议</button>
               </div>
             </article>
             
@@ -1682,12 +1747,15 @@
               <div class="stat-row"><span>购买金额</span><strong>5,680.00 元</strong></div>
               <div class="stat-row"><span>消费次数</span><strong>9</strong></div>
               <div class="stat-row"><span>平均客单价</span><strong>129.09 元</strong></div>
-              <div class="member-action-label">今天建议动作</div>
               <p class="card-note">适合做组合推荐，提高连带，主推裤类搭配袜品或基础款。</p>
               
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">年年属于高价值会员，今天优先回访更容易拿到复购。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>购买金额 5,680.00 元。</li><li>消费次数 9 次。</li><li>平均客单价 129.09 元。</li></ul>
@@ -1700,7 +1768,7 @@
     </details>
     
               <div class="member-button-row">
-                <span class='member-mini-button'>生成回访话术</span><span class='member-mini-button'>生成邀约短信</span><span class='member-mini-button'>生成搭配建议</span>
+                <button type='button' class='member-mini-button'>生成回访话术</button><button type='button' class='member-mini-button'>生成邀约短信</button><button type='button' class='member-mini-button'>生成搭配建议</button>
               </div>
             </article>
             
@@ -1710,12 +1778,15 @@
               <div class="stat-row"><span>购买金额</span><strong>5,541.00 元</strong></div>
               <div class="stat-row"><span>消费次数</span><strong>19</strong></div>
               <div class="stat-row"><span>平均客单价</span><strong>167.91 元</strong></div>
-              <div class="member-action-label">今天建议动作</div>
               <p class="card-note">适合做复购提醒和到店唤醒，今天先发试穿邀约。</p>
               
     <details class="evidence-details">
       <summary>查看依据</summary>
       <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">史振尧属于高价值会员，今天优先回访更容易拿到复购。</p>
+        </div>
         <div class="evidence-group">
           <div class="evidence-title">数据依据</div>
           <ul class="evidence-list"><li>购买金额 5,541.00 元。</li><li>消费次数 19 次。</li><li>平均客单价 167.91 元。</li></ul>
@@ -1728,7 +1799,7 @@
     </details>
     
               <div class="member-button-row">
-                <span class='member-mini-button'>生成回访话术</span><span class='member-mini-button'>生成邀约短信</span><span class='member-mini-button'>生成搭配建议</span>
+                <button type='button' class='member-mini-button'>生成回访话术</button><button type='button' class='member-mini-button'>生成邀约短信</button><button type='button' class='member-mini-button'>生成搭配建议</button>
               </div>
             </article>
             </div>
