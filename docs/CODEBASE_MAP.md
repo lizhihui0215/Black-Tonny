@@ -19,7 +19,7 @@
    - Writes the SQLite analysis database and `latest_*` views to `reports/calibration/black_tony_analysis.sqlite`.
 4. `scripts/dashboard/main.py`
    - Reads the latest SQLite batch, optional cost snapshots, and optional Yeusoft highlight captures.
-   - Builds metrics, decision text, report content, and export payloads.
+   - Builds metrics, decision text, monthly execution boards, report content, and export payloads.
 5. `scripts/tools/publish_static_site.py`
    - Orchestrates end-to-end publish: capture refresh -> field audit -> SQLite build -> dashboard export -> manuals build -> readiness check.
 6. `scripts/tools/check_pages_ready.py`
@@ -89,6 +89,7 @@
   - `build_*_from_analysis`
   - `build_metrics`
   - `build_time_strategy`
+  - `build_execution_board`
   - `build_decision_engine`
   - `build_retail_consulting_analysis`
   - `build_export_payload`
@@ -97,6 +98,7 @@
 - Add new analysis modules under `scripts/analysis/` that read `latest_*` views and return clearly labeled outputs.
 - Extract reusable business helpers out of `scripts/dashboard/main.py` only when both payload and HTML need the same logic.
 - Extend `build_export_payload()` under existing root sections before inventing a parallel payload format.
+- Put new action-first page sections on top of the existing payload roots when possible; the monthly execution page now reads `execution_board` instead of inventing a second JSON file shape.
 - Add new SQLite derived views if reuse is needed across multiple consumers.
 - Keep HTML wording in `main.py` or shared helpers, not in `site/dashboard/` generated files.
 

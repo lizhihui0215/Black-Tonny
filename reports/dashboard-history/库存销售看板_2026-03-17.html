@@ -15,7 +15,9 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f6f7fb;
+      background:
+        radial-gradient(circle at top left, rgba(191, 219, 254, 0.45), transparent 32%),
+        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
       color: #1f2937;
     }
     .page {
@@ -58,174 +60,276 @@
       color: #1d4ed8;
       border-color: #bfdbfe;
     }
-    .page-shell {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 250px;
-      gap: 18px;
-    }
-    .main-column {
-      min-width: 0;
-    }
-    .side-rail {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      align-self: start;
-    }
-    .rail-card {
-      position: sticky;
-      top: 88px;
-      background: #fff;
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-    }
-    .rail-card h3 {
-      margin: 0 0 8px;
-      font-size: 17px;
-      color: #0f172a;
-    }
-    .rail-card p {
-      margin: 0 0 12px;
-      font-size: 12px;
-      line-height: 1.8;
-      color: #64748b;
-    }
-    .rail-links {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .rail-links a {
-      display: block;
-      text-decoration: none;
-      color: #334155;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-    .rail-links a.current {
-      background: #dbeafe;
-      border-color: #bfdbfe;
-      color: #1d4ed8;
-    }
-    .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+    .hero-command-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 58%, #0f766e 100%);
       color: white;
-      padding: 24px;
-      border-radius: 22px;
+      padding: 26px;
+      border-radius: 26px;
       margin-bottom: 18px;
-      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.18);
     }
-    .hero h1 {
-      margin: 0 0 10px;
-      font-size: 30px;
+    .command-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 18px;
+      align-items: start;
+    }
+    .command-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+    .command-main h1 {
+      margin: 0 0 12px;
+      font-size: 32px;
       line-height: 1.25;
     }
-    .hero p {
+    .command-conclusion {
       margin: 0;
-      opacity: 0.94;
+      font-size: 18px;
       line-height: 1.8;
+      color: rgba(255, 255, 255, 0.96);
     }
-    .hero-note {
-      margin-top: 12px;
+    .command-conclusion span {
+      display: block;
+      margin-bottom: 6px;
       font-size: 13px;
-      opacity: 0.9;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.78);
+      text-transform: uppercase;
     }
-    .hero-status {
+    .command-meta {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      font-size: 13px;
+      margin-top: 14px;
     }
-    .hero-status-chip {
+    .meta-chip {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      border-radius: 999px;
       padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.94);
       font-size: 12px;
       font-weight: 700;
-      line-height: 1.5;
     }
-    .action-strip {
-      margin-bottom: 18px;
-      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
-      border: 1px solid #fed7aa;
+    .meta-chip-secondary {
+      background: #f8fafc;
+      border-color: #dbe4f0;
+      color: #334155;
     }
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-top: 16px;
-    }
-    .action-card {
-      background: #ffffff;
-      border: 1px solid #fde68a;
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);
-    }
-    .action-kicker {
-      font-size: 12px;
+    .command-subtitle {
+      margin: 18px 0 10px;
+      font-size: 13px;
       font-weight: 800;
-      color: #b45309;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.78);
     }
-    .action-title {
-      margin: 0 0 8px;
-      font-size: 20px;
-      color: #0f172a;
-    }
-    .action-text {
-      margin: 0 0 12px;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #475569;
-    }
-    .action-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 10px 14px;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 800;
-      background: #1d4ed8;
-      color: #ffffff;
-    }
-    .quick-nav {
+    .command-tags {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+    }
+    .must-action-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .must-action-card {
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(14px);
+    }
+    .must-action-primary {
+      box-shadow: 0 12px 24px rgba(14, 116, 144, 0.18);
+    }
+    .must-action-danger {
+      background: rgba(127, 29, 29, 0.22);
+      border-color: rgba(254, 202, 202, 0.24);
+    }
+    .must-action-warn {
+      background: rgba(146, 64, 14, 0.2);
+      border-color: rgba(253, 230, 138, 0.24);
+    }
+    .must-action-soft {
+      background: rgba(30, 41, 59, 0.24);
+    }
+    .must-action-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.74);
+      margin-bottom: 10px;
+    }
+    .must-action-card h3 {
+      margin: 0 0 12px;
+      font-size: 22px;
+      line-height: 1.45;
+      color: #ffffff;
+    }
+    .title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .must-action-card p {
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.86);
+    }
+    .must-action-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .must-action-meta strong {
+      color: #ffffff;
+      font-size: 14px;
+    }
+    .command-side {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .command-panel {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 18px;
+      backdrop-filter: blur(14px);
+    }
+    .panel-kicker {
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .risk-list {
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.9;
+      font-size: 14px;
+    }
+    .hero-risk-item + .hero-risk-item {
+      margin-top: 8px;
+    }
+    .hero-risk-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .panel-note {
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .agent-button-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .agent-button, .agent-button-disabled {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }
+    .agent-button {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      box-shadow: 0 14px 26px rgba(29, 78, 216, 0.28);
+    }
+    .agent-button-disabled {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      border-color: rgba(255, 255, 255, 0.16);
+      cursor: not-allowed;
+    }
+    .quick-nav {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
       margin: 12px 0 18px;
     }
     .quick-nav a {
       text-decoration: none;
-      color: #1d4ed8;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      padding: 8px 12px;
-      border-radius: 999px;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid #dbe4f0;
+      padding: 12px 14px;
+      border-radius: 16px;
       font-size: 13px;
       font-weight: 700;
-      white-space: nowrap;
+      text-align: center;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+    .context-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.95fr);
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+    .context-block {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid #dbe4f0;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+    .context-kicker {
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+    .context-chip-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .context-block .quick-nav {
+      margin: 0;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .module {
       background: white;
-      border-radius: 18px;
+      border-radius: 22px;
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 18px;
     }
     .module-header {
@@ -249,57 +353,133 @@
     }
     .detail-link {
       text-decoration: none;
-      color: white;
-      background: #1d4ed8;
+      color: #0f172a;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
       border-radius: 999px;
       padding: 10px 14px;
       font-size: 13px;
       font-weight: 800;
-      box-shadow: 0 8px 18px rgba(29, 78, 216, 0.22);
+      box-shadow: 0 8px 18px rgba(191, 219, 254, 0.32);
     }
-    .focus-wrap {
+    .metrics-grid {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
     }
-    .focus-panel {
-      background: #fffdf7;
-      border: 1px solid #fde68a;
-      border-radius: 16px;
-      padding: 16px;
+    .metric-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+      min-width: 0;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }
-    .focus-headline {
-      font-size: 28px;
-      font-weight: 800;
+    .metric-card.is-emphasis {
+      padding: 20px;
+      border-width: 2px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1);
+    }
+    .metric-card-good {
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+      border-color: #bbf7d0;
+    }
+    .metric-card-warn {
+      background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+      border-color: #fde68a;
+    }
+    .metric-card-danger {
+      background: linear-gradient(180deg, #fff7f7 0%, #ffffff 100%);
+      border-color: #fecaca;
+    }
+    .metric-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .status-good {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .status-warn {
+      background: #fef3c7;
       color: #92400e;
-      margin: 0 0 10px;
-      line-height: 1.35;
     }
-    .focus-summary {
-      margin: 0;
+    .status-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .metric-title {
       font-size: 14px;
-      line-height: 1.8;
-      color: #5b4636;
+      color: #64748b;
     }
-    .submodule-header {
-      margin: 18px 0 10px;
-    }
-    .submodule-title {
-      margin: 0 0 6px;
-      font-size: 18px;
+    .metric-value {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
       color: #0f172a;
     }
-    .submodule-note {
+    .metric-note-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .metric-note {
       margin: 0;
       font-size: 13px;
       color: #64748b;
       line-height: 1.8;
+      flex: 1;
     }
-    .chip-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .mini-tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .metric-card .mini-tip,
+    .focus-card .mini-tip,
+    .member-card .mini-tip {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .inline-tip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.6;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .mini-chip {
       display: inline-flex;
@@ -376,97 +556,115 @@
       outline: 2px solid #93c5fd;
       outline-offset: 2px;
     }
-    .focus-list, .task-list {
-      margin: 10px 0 0 18px;
-      padding: 0;
-      line-height: 1.9;
-      color: #334155;
-      font-size: 14px;
-    }
-    .task-list li + li,
-    .focus-list li + li {
-      margin-top: 4px;
-    }
-    .task-list strong {
-      display: block;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-    .metrics-grid, .cards-grid {
+    .role-grid, .member-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
-    .metric-card, .opportunity-card, .risk-card, .member-card {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      padding: 16px;
-      min-width: 0;
+    .role-card {
+      border-radius: 18px;
+      border: 1px solid #dbe4f0;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     }
-    .metric-card {
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    .role-card-owner {
+      border-top: 4px solid #1d4ed8;
     }
-    .metric-title {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 8px;
+    .role-card-manager {
+      border-top: 4px solid #d97706;
     }
-    .metric-value {
-      font-size: 30px;
-      font-weight: 800;
-      margin-bottom: 6px;
+    .role-card-staff {
+      border-top: 4px solid #0f766e;
+    }
+    .role-header h3 {
+      margin: 0 0 6px;
+      font-size: 20px;
       color: #0f172a;
     }
-    .metric-note {
+    .role-header p {
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .role-task-list {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .role-task-item {
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    .role-task-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }
+    .role-task-top strong {
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .role-task-item p {
+      margin: 0;
       font-size: 13px;
       color: #64748b;
+      line-height: 1.8;
+    }
+    .task-result {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
       line-height: 1.7;
     }
-    .inline-tip {
+    .priority-badge {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      margin-left: 6px;
-      padding: 1px 8px;
       border-radius: 999px;
-      border: 1px solid #bfdbfe;
-      background: #eff6ff;
-      color: #1d4ed8;
-      font-size: 11px;
+      padding: 5px 9px;
+      font-size: 12px;
       font-weight: 800;
-      line-height: 1.6;
-      vertical-align: middle;
+      color: #92400e;
+      background: #fef3c7;
       white-space: nowrap;
     }
-    .metric-red {
-      border-color: #fecaca;
-      background: #fff7f7;
+    .focus-sections {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
     }
-    .metric-red .metric-value {
-      color: #991b1b;
+    .focus-card {
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
     }
-    .metric-yellow {
-      border-color: #fde68a;
-      background: #fffbeb;
+    .focus-card + .focus-card {
+      margin-top: 12px;
     }
-    .metric-yellow .metric-value {
-      color: #92400e;
-    }
-    .metric-green {
+    .focus-card-opportunity {
+      background: linear-gradient(180deg, #effcf5 0%, #ffffff 100%);
       border-color: #bbf7d0;
-      background: #f0fdf4;
     }
-    .metric-green .metric-value {
-      color: #166534;
+    .focus-card-risk {
+      background: linear-gradient(180deg, #fff7f7 0%, #ffffff 100%);
+      border-color: #fecaca;
     }
-    .card-kicker {
+    .focus-card-kicker {
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .card-title {
       font-size: 18px;
@@ -477,10 +675,116 @@
       word-break: break-word;
     }
     .card-note {
-      font-size: 12px;
+      margin: 12px 0 0;
+      font-size: 13px;
       color: #64748b;
+      line-height: 1.8;
+    }
+    .member-card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #dbe4f0;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .evidence-details {
       margin-top: 10px;
-      line-height: 1.7;
+    }
+    .evidence-details summary {
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .evidence-details summary::-webkit-details-marker {
+      display: none;
+    }
+    .evidence-content {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .evidence-group {
+      border-radius: 14px;
+      background: rgba(248, 250, 252, 0.82);
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+    }
+    .must-action-card .evidence-group,
+    .command-panel .evidence-group {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+    .must-action-card .evidence-details summary,
+    .command-panel .evidence-details summary,
+    .hero-risk-item .evidence-details summary {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }
+    .evidence-title {
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+    .must-action-card .evidence-title,
+    .command-panel .evidence-title {
+      color: rgba(255, 255, 255, 0.74);
+    }
+    .evidence-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    .must-action-card .evidence-list,
+    .command-panel .evidence-list {
+      color: rgba(255, 255, 255, 0.86);
+    }
+    .member-guide {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+    .member-action-label {
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+    .member-button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .member-mini-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
     }
     .stat-row {
       display: flex;
@@ -495,36 +799,95 @@
       color: #0f172a;
       font-size: 15px;
     }
-    .risk-card {
-      background: #fff8f5;
-      border-color: #fed7aa;
+    .page-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
     }
-    .member-card {
-      background: #f8fafc;
-    }
-    .strip-card {
-      margin-top: 14px;
-      border: 1px solid #dbeafe;
-      background: #eff6ff;
-      border-radius: 16px;
-      padding: 14px 16px;
+    .page-nav-card {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    .strip-card strong {
+      flex-direction: column;
+      gap: 8px;
+      text-decoration: none;
       color: #0f172a;
-      font-size: 16px;
-      display: block;
-      margin-bottom: 4px;
+      border: 1px solid #dbe4f0;
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
     }
-    .strip-card p {
+    .page-nav-card strong {
+      font-size: 16px;
+    }
+    .page-nav-card span {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .page-nav-card.is-current {
+      border-color: #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    }
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .support-card {
+      border-radius: 18px;
+      border: 1px solid #dbe4f0;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+      overflow: visible;
+      min-width: 0;
+    }
+    .support-card details {
+      width: 100%;
+      height: auto;
+    }
+    .support-card details[open] {
+      height: auto;
+    }
+    .support-card summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .support-card summary::-webkit-details-marker {
+      display: none;
+    }
+    .support-content {
+      padding: 0 16px 16px;
+      overflow: visible;
+    }
+    .support-content p {
       margin: 0;
       color: #475569;
       font-size: 13px;
-      line-height: 1.7;
+      line-height: 1.85;
+    }
+    .fold-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #475569;
+      line-height: 1.9;
+      font-size: 13px;
+      white-space: normal;
+    }
+    .fold-list li {
+      overflow-wrap: anywhere;
+    }
+    .fold-list li + li {
+      margin-top: 4px;
+    }
+    .support-link-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     .strip-link {
       text-decoration: none;
@@ -546,25 +909,20 @@
       .page {
         padding: 16px;
       }
-      .page-shell {
-        grid-template-columns: 1fr;
-      }
-      .rail-card {
-        position: static;
-      }
-      .rail-links {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .focus-wrap {
+      .command-layout,
+      .context-strip,
+      .must-action-grid,
+      .metrics-grid,
+      .role-grid,
+      .focus-sections,
+      .member-grid,
+      .page-nav-grid,
+      .support-grid {
         grid-template-columns: 1fr;
       }
       .module-header {
         flex-direction: column;
         align-items: flex-start;
-      }
-      .metrics-grid, .cards-grid {
-        grid-template-columns: 1fr;
       }
     }
     @media (max-width: 640px) {
@@ -577,40 +935,37 @@
       .top-nav-link {
         width: 100%;
       }
-      .hero {
+      .hero-command-section {
         padding: 18px;
-        border-radius: 16px;
+        border-radius: 18px;
       }
-      .hero h1 {
-        font-size: 24px;
+      .command-main h1 {
+        font-size: 26px;
       }
-      .hero p,
-      .hero-note,
+      .command-conclusion,
+      .panel-note,
       .module-note,
-      .focus-summary,
       .metric-note,
       .card-note,
-      .task-list,
-      .focus-list {
+      .support-content p,
+      .fold-list {
         font-size: 12px;
         line-height: 1.75;
       }
-      .hero-status-chip {
+      .meta-chip,
+      .meta-chip-secondary {
         width: 100%;
       }
       .quick-nav {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 2px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .context-block .quick-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .module {
         padding: 14px;
         border-radius: 16px;
         margin-bottom: 14px;
-      }
-      .focus-headline {
-        font-size: 22px;
       }
       .metric-value {
         font-size: 24px;
@@ -620,9 +975,6 @@
         padding: 6px 10px;
         white-space: normal;
       }
-      .rail-links {
-        grid-template-columns: 1fr;
-      }
       .card-title {
         font-size: 16px;
       }
@@ -631,9 +983,6 @@
       }
       .stat-row strong {
         font-size: 14px;
-      }
-      .strip-card {
-        align-items: flex-start;
       }
     }
   
@@ -674,402 +1023,800 @@
   <div class="page">
     <nav class="top-nav">
       <div class="top-nav-links">
-        <a class="top-nav-link" href="../index.html">首页</a>
-        <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
-        <a class="top-nav-link" href="./details.html">详细页</a>
-        <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
-        <a class="top-nav-link" href="./monthly.html">月度页</a>
-        <a class="top-nav-link" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../index.html">今日要做</a>
+        <a class="top-nav-link is-active" href="./index.html">经营看板</a>
+        <a class="top-nav-link" href="./details.html">数据明细</a>
+        <a class="top-nav-link" href="./relationship.html">库存销售关系</a>
+        <a class="top-nav-link" href="./monthly.html">月度分析</a>
+        <a class="top-nav-link" href="./quarterly.html">季度趋势</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
-        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护</a>
       </div>
     </nav>
-    <section class="hero">
-      <h1>咸阳沣西吾悦专卖店 老板经营仪表盘</h1>
-      <p>首页只保留老板 10 秒内最该知道的事情。总览、经营策略、图表和明细已经拆到详细页，首页更适合每天快速拍板。</p>
-      <div class="hero-note">咸阳沣西吾悦专卖店 · 主输入人：郭文攀 · 当前季节：春季 / 春夏换季期 · 当前阶段：换季切换 · 日销趋势：下滑</div>
-      <div class="hero-status">
-        <div class="hero-status-chip">最近抓取日期：2026-03-17（北京时间）</div>
-        <div class="hero-status-chip">数据导入日期：2026-03-17（北京时间）</div>
-      </div>
-    </section>
 
-    <section class="module action-strip">
-      <div class="module-header">
-        <h2 class="module-title">老板娘最常用 3 步</h2>
-        <p class="module-note">如果今天只做最常用的动作，先点这 3 个，不用在模块里慢慢找。</p>
-      </div>
-      <div class="action-grid">
-        <article class="action-card">
-          <div class="action-kicker">第 1 步</div>
-          <h3 class="action-title">回首页</h3>
-          <p class="action-text">如果要重新选入口、打开文档中心，或者让别人从最清楚的地方开始，就先回首页。</p>
-          <a class="action-link" href="../index.html">直接回首页</a>
-        </article>
-        <article class="action-card">
-          <div class="action-kicker">第 2 步</div>
-          <h3 class="action-title">看详细页</h3>
-          <p class="action-text">如果你已经看完首页结论，下一步通常就是去详细页看总览、经营策略和补货去化明细。</p>
-          <a class="action-link" href="./details.html">直接看详细页</a>
-          <a class="action-link" href="./relationship.html">专门看库存和销售关系</a>
-        </article>
-        <article class="action-card">
-          <div class="action-kicker">第 3 步</div>
-          <h3 class="action-title">一键同步</h3>
-          <p class="action-text">如果店里电脑已经开了本地服务，回首页同步区直接一键抓取，就能刷新今天最新报表。</p>
-          <a class="action-link" href="../index.html#local-console">去同步区</a>
-        </article>
-      </div>
-    </section>
-
-    <div class="page-shell">
-      <div class="main-column">
-    <nav class="quick-nav">
-      <a href="#focus">今日重点</a>
-      <a href="#core-metrics">核心指标</a>
-      <a href="#money-opportunities">赚钱机会</a>
-      <a href="#inventory-risks">库存风险</a>
-      <a href="#replenish-opportunities">补货机会</a>
-      <a href="#member-ops">会员经营</a>
-    </nav>
-
-    <section class="module" id="focus">
-      <div class="module-header">
-        <h2 class="module-title">1. 今日经营重点</h2>
-        <a class="detail-link" href="./details.html">查看详细数据与图表</a>
-        <a class="detail-link" href="./relationship.html">查看库存和销售关系页</a>
-      </div>
-      <div class="focus-wrap">
-        <div class="focus-panel">
-          <div class="focus-headline">先稳毛利，别靠打折硬撑。</div>
-          <p class="focus-summary">春夏换季期阶段，最近日销下滑，但按当前节奏月末净利约 -7,893.98 元。 当前实销折扣约 7.7 折，家居服、常规内裤、裤类 这些中类折扣依赖偏重。先稳毛利、提组合，再谈放大量。 当前阶段：换季切换；最近日销均值 1,150.69 元。 当前净利润 -20,232.95 元，尚未过保本线。 按当前节奏月末净利润约 -7,893.98 元。 POS 库存主要压在 2026春、2025秋、2026夏。 近段时间净入库 12,170 件，补货节奏也要一并考虑。 会员沉默占比约 50.4%，这周要主动唤醒老客。 最近件单比约 1.06，说明成交有了，但每单带得还不够。</p>
-          <div class="chip-row"><span class='mini-chip mini-chip-primary tooltip-badge' title="为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。" data-tip="为什么：负库存会让补货和去化判断失真。怎么做：先核对盘点、调拨和销售回写。好处：后面的经营动作才不会跑偏。注意：别在没校正库存前直接下补货单。" tabindex="0" role="note">先处理负库存</span><span class='mini-chip mini-chip-primary tooltip-badge' title="为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。" data-tip="为什么：库存压力已经高于当前销售承接能力。怎么做：先暂停深补，再做清货位、组合价、会员定向去化。好处：先回现金再谈增长。注意：别把主销款一起打乱。" tabindex="0" role="note">先去库存</span><span class='mini-chip mini-chip-primary'>先稳毛利</span></div>
-          <ul class="focus-list"><li>当前阶段：换季切换 / 春夏换季期</li><li>日销趋势：下滑</li><li>今日主打法：稳毛利优先</li><li>季节判断：春夏换季，重心是薄款起量、冬款不深补。</li></ul>
-        </div>
-        <div class="focus-panel">
-          <div class="submodule-header">
-            <h3 class="submodule-title">今日执行任务</h3>
-            <p class="submodule-note">先把今天要做的事排清楚，再让店员按顺序执行。</p>
+    <section class="hero-command-section" id="today-focus">
+      <div class="command-layout">
+        <div class="command-main">
+          <div class="command-kicker">老板经营驾驶舱</div>
+          <h1>咸阳沣西吾悦专卖店 老板经营仪表盘</h1>
+          <p class="command-conclusion"><span>今日经营结论</span>当前处于 春夏换季期，今天先稳毛利、去库存、保主销、会员唤醒，不要靠深折扣硬冲销量。</p>
+          <div class="command-subtitle">今日必须动作</div>
+          <div class="must-action-grid">
+        <article class="must-action-card must-action-danger">
+          <div class="must-action-kicker">今日必须动作 1</div>
+          <div class="title-row">
+            <h3>先处理负库存</h3>
+            <span class='mini-tip tooltip-badge' title="负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。" data-tip="负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。" tabindex='0'>为什么</span>
           </div>
-          <ul class="task-list"><li><span class='mini-chip mini-chip-soft'>处理负库存</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。" data-tip="为什么：只看到风险还不够，要落到动作。怎么做：明确哪些停补、哪些清货位、哪些做组合促销。好处：执行更快。注意：动作要有人负责和复盘。" tabindex="0" role="note">安排去库存动作</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" data-tip="把 袜品 调整到更容易被看到的位置，主销前移，慢销后移，帮助今天更快出货。" tabindex="0" role="note">调整袜品陈列</span></li><li><span class='mini-chip mini-chip-soft tooltip-badge' title="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" data-tip="先检查 裤类 有没有缺核心尺码。断码会直接影响成交，确认后再做补货。" tabindex="0" role="note">检查裤类断码</span></li><li><span class='mini-chip mini-chip-soft'>检查折扣依赖</span></li></ul>
-          <div class="submodule-header">
-            <h3 class="submodule-title">今天先别做</h3>
-          </div>
-          <ul class="focus-list"><li><span class='mini-chip mini-chip-warn'>不要先看单款，先看品类，再下钻到 SKU。</span></li><li><span class='mini-chip mini-chip-warn'>不要把道具金额和库存算进正常经营判断。</span></li><li><span class='mini-chip mini-chip-warn'>不要把其他输入人的店铺数据当成本店结论。</span></li><li><span class='mini-chip mini-chip-warn'>不要因为某个冬款历史卖过，就在春夏阶段继续追补。</span></li><li><span class='mini-chip mini-chip-warn'>不要只等自然回购，沉默会员需要主动叫回。</span></li><li><span class='mini-chip mini-chip-warn'>不要为了冲销量继续做深折扣，先看组合和尺码结构。</span></li><li><span class='mini-chip mini-chip-warn'>不要只盯单数，今天要想办法把每单带得更多。</span></li></ul>
+          <div class="must-action-meta"><span>对象</span><strong>105 个异常 SKU</strong></div>
+          <p>避免补货和去化判断失真</p>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>当前负库存 SKU 105 个。</li><li>库存覆盖天数 354.8 天。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>先修库存口径，再决定补货和去化。</li><li>优先处理高销量、低库存、还在补货建议里的异常款。</li></ul>
         </div>
       </div>
-      <div class="strip-card">
-        <div>
-          <strong>总览和经营策略已移到详细页顶部</strong>
-          <p>详细页会根据每日销售、整体销售、库存动态和利润保本状态自动刷新，更适合复盘和细看。</p>
-        </div>
-        <a class="strip-link" href="./details.html#overview-section">打开详细页</a>
-      </div>
-      
-      <div class="strip-card">
-        <div>
-          <strong>POS 高价值数据已接入</strong>
-          <p>POS 全期零售：861,076.11 元；POS 商品动销：售罄率 63.1%；POS 会员排行：妞宝、年年、史振尧。主销中类 衣类、裤类、儿童内衣套装，会员销售占比 75.4%。 当前库存 4,846 件，快销潜力款 566 个，积压风险款 145 个。</p>
-        </div>
-        <a class="strip-link" href="./details.html#overview-section">看 POS 详情</a>
-      </div>
+    </details>
+    
+        </article>
         
+        <article class="must-action-card must-action-danger">
+          <div class="must-action-kicker">今日必须动作 2</div>
+          <div class="title-row">
+            <h3>先收紧袜品补货</h3>
+            <span class='mini-tip tooltip-badge' title="袜品库存压得重，继续平均补货只会把现金压进慢销货。" data-tip="袜品库存压得重，继续平均补货只会把现金压进慢销货。" tabindex='0'>为什么</span>
+          </div>
+          <div class="must-action-meta"><span>对象</span><strong>高压库存品类</strong></div>
+          <p>以现有库存去化为主，不再深补</p>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>袜品当前库存 791 件。</li><li>袜品近期销量 33 件。</li><li>库存覆盖天数 354.8 天。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前优先级是先去库存，再把预算让给主销。</li><li>补货端先收紧，销售端用现有库存做去化。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        
+        <article class="must-action-card must-action-primary">
+          <div class="must-action-kicker">今日必须动作 3</div>
+          <div class="title-row">
+            <h3>先保裤类核心尺码</h3>
+            <span class='mini-tip tooltip-badge' title="裤类是当前主销品类，断码会直接影响今天成交。" data-tip="裤类是当前主销品类，断码会直接影响今天成交。" tabindex='0'>为什么</span>
+          </div>
+          <div class="must-action-meta"><span>对象</span><strong>主销断码款</strong></div>
+          <p>防止今天直接丢单</p>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>裤类销售额 77,075.84 元。</li><li>裤类当前库存 43 件。</li><li>裤类建议补货量 2,673。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>主销不断码，比平均补货更能保住营业额。</li><li>补货先给核心尺码和主色，不做平均铺货。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        </div>
+        </div>
+        <div class="command-side">
+          <section class="command-panel">
+            <div class="panel-kicker">今日最大风险</div>
+            <ul class="risk-list">
+        <li class="hero-risk-item">
+          <div class="hero-risk-line">
+            <span>月末净利预测 -7,893.98 元，继续深折扣会先伤毛利。</span>
+            <span class='mini-tip tooltip-badge' title="利润还没回正时，先稳毛利比先冲销量更重要。" data-tip="利润还没回正时，先稳毛利比先冲销量更重要。" tabindex='0'>为什么</span>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>当前净利润 -20,232.95 元。</li><li>月末净利预测 -7,893.98 元。</li><li>保本进度 35.8%。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前阶段优先级是稳毛利，再去放大营业额。</li><li>先守折扣底线和连带，不做深折扣冲量。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </li>
+        
+        <li class="hero-risk-item">
+          <div class="hero-risk-line">
+            <span>库存覆盖约 354.8 天，补货不能再平均下单。</span>
+            <span class='mini-tip tooltip-badge' title="库存覆盖太高时继续平均补货，会把现金继续压进慢销货。" data-tip="库存覆盖太高时继续平均补货，会把现金继续压进慢销货。" tabindex='0'>为什么</span>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>库存覆盖天数 354.8 天。</li><li>经营库存额 528,367.00 元。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>先停补高压货，再把预算让给主销。</li><li>当前要优先去库存，不是继续铺货。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </li>
+        </ul>
+          </section>
+          <section class="command-panel">
+            <div class="panel-kicker">执行按钮</div>
+            <p class="panel-note">先把清单拉出来，再交给店长和店员执行。</p>
+            <div class="agent-button-grid">
+              <a class="agent-button" href="./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成补货清单</a>
+              <a class="agent-button" href="./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成去化清单</a>
+              <span class="agent-button-disabled">生成会员回访名单（预留）</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="context-strip">
+      <div class="context-block">
+        <div class="context-kicker">阶段与底色</div>
+        <div class="context-chip-row"><span class='meta-chip meta-chip-secondary'>北京时间：2026-03-17</span><span class='meta-chip meta-chip-secondary'>咸阳沣西吾悦专卖店 · 主输入人：郭文攀</span><span class='meta-chip meta-chip-secondary'>当前阶段：换季切换 / 春夏换季期</span></div>
+        <div class="context-chip-row"><span class='mini-chip mini-chip-warn'>稳毛利优先</span><span class='mini-chip mini-chip-danger'>去库存阶段</span><span class='mini-chip mini-chip-primary'>保主销不断码</span><span class='mini-chip mini-chip-soft'>会员唤醒</span></div>
+      </div>
+      <div class="context-block">
+        <div class="context-kicker">快捷跳转</div>
+        <nav class="quick-nav">
+          <a href="#today-focus">今日重点</a>
+          <a href="#core-metrics">核心指标</a>
+          <a href="#role-actions">今日动作</a>
+          <a href="#opportunity-section">重点机会</a>
+          <a href="#risk-section">重点风险</a>
+          <a href="#member-section">会员经营</a>
+        </nav>
+      </div>
     </section>
 
     <section class="module" id="core-metrics">
       <div class="module-header">
-        <h2 class="module-title">2. 核心经营指标</h2>
-        <p class="module-note">先看这 4 个数字，再判断今天是去库存、保畅销，还是冲保本线。</p>
+        <h2 class="module-title">核心指标</h2>
+        <a class="detail-link" href="./details.html">去数据明细看原因</a>
       </div>
+      <p class="module-note">首页只保留今天拍板最关键的 6 个数；重点先看月末净利预测和库存覆盖天数。</p>
       <div class="metrics-grid">
-        <div class="metric-card metric-neutral">
-          <div class="metric-title">经营销售额</div>
+        <article class="metric-card  metric-card-danger">
+          <div class="metric-top">
+            <div class="metric-title title-row">近 8 天经营销售额<span class='mini-tip tooltip-badge' title="最近日销承接不够强时，动作要先压到更容易成交的主销品类。" data-tip="最近日销承接不够强时，动作要先压到更容易成交的主销品类。" tabindex='0'>?</span></div>
+            <span class="status-badge status-danger">危险</span>
+          </div>
           <div class="metric-value">9,441.77 元</div>
-          <div class="metric-note">近 8 天经营销售额</div>
-        </div>
-        
-        <div class="metric-card metric-neutral">
-          <div class="metric-title">客单价</div>
-          <div class="metric-value">171.67 元</div>
-          <div class="metric-note">经营销售额 / 订单数</div>
-        </div>
-        
-        <div class="metric-card metric-red">
-          <div class="metric-title">库存覆盖天数</div>
-          <div class="metric-value">354.8 天</div>
-          <div class="metric-note">库存还能卖多久</div>
-        </div>
-        
-        <div class="metric-card metric-neutral">
-          <div class="metric-title">会员销售占比</div>
-          <div class="metric-value">74.0%</div>
-          <div class="metric-note">会员销售贡献</div>
-        </div>
-        </div>
-      
-        <div class="submodule-header">
-          <h3 class="submodule-title">利润与保本</h3>
-          <p class="submodule-note">成本快照已接入。这里不只看赚没赚钱，还看固定费用、人工压力、保本进度和月末预测。</p>
-        </div>
-        <div class="metrics-grid profit-grid">
+          <div class="metric-note-row">
+            <p class="metric-note">当前日销承接偏弱，今天动作先围绕高转化品类展开。</p>
+          </div>
           
-          <div class="metric-card metric-red">
-            <div class="metric-title">净利润</div>
-            <div class="metric-value">-20,232.95 元</div>
-            <div class="metric-note">未过保本线</div>
-          </div>
-            
-          <div class="metric-card metric-neutral">
-            <div class="metric-title">毛利额</div>
-            <div class="metric-value">11,268.60 元</div>
-            <div class="metric-note">毛利率 48.0% <span class='inline-tip tooltip-badge' title='销售口径：POS销售清单（月累计）；毛利率口径：默认毛利率（48%）；按当前口径估算毛利额 11,268.60 元。' data-tip='销售口径：POS销售清单（月累计）；毛利率口径：默认毛利率（48%）；按当前口径估算毛利额 11,268.60 元。' tabindex='0' role='note'>口径</span></div>
-          </div>
-            
-          <div class="metric-card metric-neutral">
-            <div class="metric-title">固定费用</div>
-            <div class="metric-value">24,001.55 元</div>
-            <div class="metric-note">当前成本快照 <span class='inline-tip tooltip-badge' title='固定费用来源：当前成本快照；本月固定费用 24,001.55 元；平均每天固定支出约 774.24 元。' data-tip='固定费用来源：当前成本快照；本月固定费用 24,001.55 元；平均每天固定支出约 774.24 元。' tabindex='0' role='note'>说明</span></div>
-          </div>
-            
-          <div class="metric-card metric-neutral">
-            <div class="metric-title">人工费用</div>
-            <div class="metric-value">7,500.00 元</div>
-            <div class="metric-note">按当前工资口径 <span class='inline-tip tooltip-badge' title='当前人工费用按月计 7,500.00 元；平均每天人工成本约 241.94 元。' data-tip='当前人工费用按月计 7,500.00 元；平均每天人工成本约 241.94 元。' tabindex='0' role='note'>说明</span></div>
-          </div>
-            
-          <div class="metric-card metric-neutral">
-            <div class="metric-title">保本销售额</div>
-            <div class="metric-value">65,628.23 元</div>
-            <div class="metric-note">保本日销约 2,117.04 元 <span class='inline-tip tooltip-badge' title='公式：总费用 31,501.55 元 / 毛利率 48.0% = 保本销售额 65,628.23 元；对应保本日销约 2,117.04 元。' data-tip='公式：总费用 31,501.55 元 / 毛利率 48.0% = 保本销售额 65,628.23 元；对应保本日销约 2,117.04 元。' tabindex='0' role='note'>公式</span></div>
-          </div>
-            
-          <div class="metric-card metric-yellow">
-            <div class="metric-title">保本进度</div>
-            <div class="metric-value">35.8%</div>
-            <div class="metric-note">还差 42,151.99 元 <span class='inline-tip tooltip-badge' title='当前销售 23,476.24 元；保本销售额 65,628.23 元；距离保本还差 42,151.99 元；剩余每天至少要卖 2,601.53 元。' data-tip='当前销售 23,476.24 元；保本销售额 65,628.23 元；距离保本还差 42,151.99 元；剩余每天至少要卖 2,601.53 元。' tabindex='0' role='note'>说明</span></div>
-          </div>
-            
-          <div class="metric-card metric-red">
-            <div class="metric-title">月末净利预测</div>
-            <div class="metric-value">-7,893.98 元</div>
-            <div class="metric-note">按当前节奏月底还有亏损风险 <span class='inline-tip tooltip-badge' title='计算过程：已实现销售 23,476.24 元；当前平均日销 1,586.53 元；剩余 16.2 天预计新增销售 25,706.20 元；月末销售约 49,182.44 元；按毛利率 48.0% 预计月末毛利 23,607.57 元；再减总费用 31,501.55 元，得到月末净利预测 -7,893.98 元。' data-tip='计算过程：已实现销售 23,476.24 元；当前平均日销 1,586.53 元；剩余 16.2 天预计新增销售 25,706.20 元；月末销售约 49,182.44 元；按毛利率 48.0% 预计月末毛利 23,607.57 元；再减总费用 31,501.55 元，得到月末净利预测 -7,893.98 元。' tabindex='0' role='note'>公式</span></div>
-          </div>
-            
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>近 8 天经营销售额 9,441.77 元。</li><li>最近日销均值 1,150.69 元。</li><li>日销趋势 下滑。</li></ul>
         </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前不是先扩所有品类，而是先守高转化品类。</li><li>先让营业额承接稳定，再谈放量。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
         
+        <article class="metric-card  metric-card-danger">
+          <div class="metric-top">
+            <div class="metric-title title-row">客单价<span class='mini-tip tooltip-badge' title="客单拉不起来时，只看成交单数，利润通常跟不上。" data-tip="客单拉不起来时，只看成交单数，利润通常跟不上。" tabindex='0'>?</span></div>
+            <span class="status-badge status-danger">危险</span>
+          </div>
+          <div class="metric-value">171.67 元</div>
+          <div class="metric-note-row">
+            <p class="metric-note">客单偏低，今天先做组合成交，不只追求单量。</p>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>当前客单价 171.67 元。</li><li>件单比约 1.06。</li><li>订单数 55 单。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>先做组合销售和顺手带卖，再决定要不要让利。</li><li>一单多带一件，比单纯多成交一单更稳利润。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        
+        <article class="metric-card is-emphasis metric-card-danger">
+          <div class="metric-top">
+            <div class="metric-title title-row">库存覆盖天数<span class='mini-tip tooltip-badge' title="库存覆盖越高，越要先停补高压货，不然现金会继续压在慢销货里。" data-tip="库存覆盖越高，越要先停补高压货，不然现金会继续压在慢销货里。" tabindex='0'>?</span></div>
+            <span class="status-badge status-danger">危险</span>
+          </div>
+          <div class="metric-value">354.8 天</div>
+          <div class="metric-note-row">
+            <p class="metric-note">库存过重，今天先停补高压货。</p>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>库存覆盖天数 354.8 天。</li><li>经营库存额 528,367.00 元。</li><li>当前库存 5,810 件。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前先去库存，再把预算和货位留给主销。</li><li>高压货先控补货，主销货只保断码。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        
+        <article class="metric-card  metric-card-good">
+          <div class="metric-top">
+            <div class="metric-title title-row">会员销售占比<span class='mini-tip tooltip-badge' title="会员占比高，说明今天最值得先做的是老客复购，而不是盲目追新客。" data-tip="会员占比高，说明今天最值得先做的是老客复购，而不是盲目追新客。" tabindex='0'>?</span></div>
+            <span class="status-badge status-good">健康</span>
+          </div>
+          <div class="metric-value">74.0%</div>
+          <div class="metric-note-row">
+            <p class="metric-note">会员贡献高，今天先回访高价值老客，放大复购。</p>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>会员销售占比 74.0%。</li><li>会员沉默占比约 50.4%。</li><li>优先会员 妞宝、年年、史振尧。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>先做高价值会员回访，再放大复购和连带。</li><li>老客复购通常比临时拉新更稳。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        
+        <article class="metric-card  metric-card-danger">
+          <div class="metric-top">
+            <div class="metric-title title-row">净利润<span class='mini-tip tooltip-badge' title="净利没转正时，先守毛利边界，比先冲营业额更重要。" data-tip="净利没转正时，先守毛利边界，比先冲营业额更重要。" tabindex='0'>?</span></div>
+            <span class="status-badge status-danger">危险</span>
+          </div>
+          <div class="metric-value">-20,232.95 元</div>
+          <div class="metric-note-row">
+            <p class="metric-note">净利还没转正，今天先稳毛利和连带。</p>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>当前净利润 -20,232.95 元。</li><li>保本销售额 65,628.23 元。</li><li>保本进度 35.8%。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>净利没站稳时，不要靠深折扣换销量。</li><li>先保毛利、连带和主销效率。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        
+        <article class="metric-card is-emphasis metric-card-danger">
+          <div class="metric-top">
+            <div class="metric-title title-row">月末净利预测<span class='mini-tip tooltip-badge' title="月底还有亏损风险时，今天的动作要先稳利润，再看放量。" data-tip="月底还有亏损风险时，今天的动作要先稳利润，再看放量。" tabindex='0'>?</span></div>
+            <span class="status-badge status-danger">危险</span>
+          </div>
+          <div class="metric-value">-7,893.98 元</div>
+          <div class="metric-note-row">
+            <p class="metric-note">月底仍有亏损风险，今天先稳毛利，不做深折扣。</p>
+          </div>
+          
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>月末净利预测 -7,893.98 元。</li><li>当前净利润 -20,232.95 元。</li><li>保本进度 35.8%。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前优先级是稳毛利、去库存、保主销。</li><li>先把利润风险压住，再决定是否加大动作。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+        </article>
+        </div>
     </section>
 
-    <section class="module" id="money-opportunities">
+    <section class="module" id="role-actions">
       <div class="module-header">
-        <h2 class="module-title">3. 赚钱机会</h2>
-        <p class="module-note">优先找卖得快但库存浅的品类，先保不断货，再谈放大销售额。</p>
+        <h2 class="module-title">今日动作</h2>
+        <p class="module-note">今天谁做什么、为什么做、先后顺序是什么，都直接写在这里。</p>
       </div>
-      <div class="cards-grid">
-            <article class="opportunity-card">
-              <div class="card-kicker">赚钱机会</div>
-              <div class="card-title">裤类</div>
-              <div class="stat-row"><span>销售额</span><strong>87,143.47</strong></div>
-              <div class="stat-row"><span>当前库存</span><strong>56</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>3,092</strong></div>
-            </article>
+      <div class="role-grid">
+        <article class="role-card role-card-owner">
+          <div class="role-header">
+            <h3>老板今天拍板</h3>
+            <p>今天先把预算、停补和经营边界拍清楚。</p>
+          </div>
+          <div class="role-task-list">
             
-            <article class="opportunity-card">
-              <div class="card-kicker">赚钱机会</div>
-              <div class="card-title">衣类</div>
-              <div class="stat-row"><span>销售额</span><strong>72,436.25</strong></div>
-              <div class="stat-row"><span>当前库存</span><strong>7</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>3,449</strong></div>
-            </article>
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>拍板本周袜品收紧补货范围</strong>
+                    <span class="priority-badge">最高优先</span>
+                  </div>
+                  <p>库存压货重，补货端要先收紧，先用现有库存去化。</p>
+                  <div class="task-result">今天定出停补范围和补货边界。</div>
+                </div>
+                
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>拍板裤类核心尺码补货预算</strong>
+                    <span class="priority-badge">高优先</span>
+                  </div>
+                  <p>预算只给最能出单的主销尺码，不再平均铺货。</p>
+                  <div class="task-result">今天确定补货上限和优先尺码。</div>
+                </div>
+                
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>统一今天折扣底线</strong>
+                    <span class="priority-badge">高优先</span>
+                  </div>
+                  <p>月末净利还承压，先稳毛利和客单，别让利润再被打穿。</p>
+                  <div class="task-result">今天晨会前定出成交折扣边界和话术。</div>
+                </div>
+                
+          </div>
+        </article>
+        
+        <article class="role-card role-card-manager">
+          <div class="role-header">
+            <h3>店长今天执行</h3>
+            <p>今天先把库存、陈列和补货顺序排好。</p>
+          </div>
+          <div class="role-task-list">
             
-            <article class="opportunity-card">
-              <div class="card-kicker">赚钱机会</div>
-              <div class="card-title">家居服</div>
-              <div class="stat-row"><span>销售额</span><strong>51,533.07</strong></div>
-              <div class="stat-row"><span>当前库存</span><strong>21</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>1,239</strong></div>
-            </article>
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>中午前修正负库存异常 SKU</strong>
+                    <span class="priority-badge">最高优先</span>
+                  </div>
+                  <p>库存不准会直接带偏补货和去化判断，必须先修正。</p>
+                  <div class="task-result">输出今天可用库存口径。</div>
+                </div>
+                
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>今天完成袜品清货陈列前移</strong>
+                    <span class="priority-badge">高优先</span>
+                  </div>
+                  <p>高压库存要先前移去化，袜品继续保留顺手带卖位置。</p>
+                  <div class="task-result">下班前拍照确认清货位已调整。</div>
+                </div>
+                
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>下班前整理裤类断码清单</strong>
+                    <span class="priority-badge">高优先</span>
+                  </div>
+                  <p>主销断码会直接丢单，今天要先登记再安排补货。</p>
+                  <div class="task-result">提交补货依据给老板拍板。</div>
+                </div>
+                
+          </div>
+        </article>
+        
+        <article class="role-card role-card-staff">
+          <div class="role-header">
+            <h3>店员今天执行</h3>
+            <p>今天按主销、连带和毛利顺序去成交。</p>
+          </div>
+          <div class="role-task-list">
             
-            <article class="opportunity-card">
-              <div class="card-kicker">赚钱机会</div>
-              <div class="card-title">常规内裤</div>
-              <div class="stat-row"><span>销售额</span><strong>48,931.63</strong></div>
-              <div class="stat-row"><span>当前库存</span><strong>240</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>3,556</strong></div>
-            </article>
-            </div>
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>今天先让顾客试裤类主销款</strong>
+                    <span class="priority-badge">最高优先</span>
+                  </div>
+                  <p>先把最能出单的主销款卖掉，别把精力分散到边缘品类。</p>
+                  <div class="task-result">下班前反馈 3 组高转化搭配。</div>
+                </div>
+                
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>今天顺手带卖袜品或基础款</strong>
+                    <span class="priority-badge">高优先</span>
+                  </div>
+                  <p>袜品补货收紧，但销售端要用现有库存做连带去化。</p>
+                  <div class="task-result">每单至少带出 1 件可连带商品。</div>
+                </div>
+                
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>先做组合推荐，再决定让利</strong>
+                    <span class="priority-badge">高优先</span>
+                  </div>
+                  <p>先做组合推荐和场景推荐，再决定要不要让利。</p>
+                  <div class="task-result">遇到犹豫顾客先按统一话术推荐两组搭配。</div>
+                </div>
+                
+          </div>
+        </article>
+        </div>
     </section>
 
-    <section class="module" id="inventory-risks">
-      <div class="module-header">
-        <h2 class="module-title">4. 库存风险</h2>
-        <p class="module-note">这里看库存压力最大的品类。先停补、再去化、再调陈列。</p>
-      </div>
-      <div class="cards-grid">
-            <article class="risk-card">
-              <div class="card-title">袜品</div>
-              <div class="stat-row"><span>库存数量</span><strong>791</strong></div>
-              <div class="stat-row"><span>近期销量</span><strong>33</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" data-tip="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" data-tip="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" data-tip="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" tabindex="0" role="note">清货陈列</span></div>
-            </article>
-            
-            <article class="risk-card">
-              <div class="card-title">袜品</div>
-              <div class="stat-row"><span>库存数量</span><strong>235</strong></div>
-              <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" data-tip="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" data-tip="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" data-tip="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" tabindex="0" role="note">调整陈列</span></div>
-            </article>
-            
-            <article class="risk-card">
-              <div class="card-title">少女文胸</div>
-              <div class="stat-row"><span>库存数量</span><strong>202</strong></div>
-              <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" data-tip="为什么：补货方向对，但节奏要收。怎么做：先补销量高、库存低的主销款。好处：降低预算浪费。注意：不要平均补货。" tabindex="0" role="note">控制补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" data-tip="为什么：搭配卖比单独推慢销货更容易成交。怎么做：和基础款、袜品、家居服一起卖。好处：提升连带。注意：搭配要同客群、同场景。" tabindex="0" role="note">组合去化</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" data-tip="为什么：陈列会直接影响试穿和成交。怎么做：前移主销、压缩慢销、分区更清楚。好处：让货更会说话。注意：调整后要观察 3-7 天数据。" tabindex="0" role="note">调整陈列</span></div>
-            </article>
-            
-            <article class="risk-card">
-              <div class="card-title">内裤</div>
-              <div class="stat-row"><span>库存数量</span><strong>169</strong></div>
-              <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
-              <div class="chip-row"><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" data-tip="为什么：当前库存已经足够甚至偏多。怎么做：先停新进货，把现有库存先卖掉。好处：减少继续压货。注意：要区分停补的是问题品类，不是所有货。" tabindex="0" role="note">停止补货</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" data-tip="为什么：慢销货单独推不好卖。怎么做：和基础款、低决策商品做组合价。好处：提高成交率。注意：要控制折扣，不要把主销毛利一起拖低。" tabindex="0" role="note">组合促销</span><span class='mini-chip mini-chip-danger tooltip-badge' title="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" data-tip="为什么：顾客先看到，去化效率才会起来。怎么做：把需要优先卖掉的货放到门口或主通道。好处：提升曝光。注意：不能让清货区压过主销区。" tabindex="0" role="note">清货陈列</span></div>
-            </article>
-            </div>
-    </section>
-
-    <section class="module" id="replenish-opportunities">
-      <div class="module-header">
-        <h2 class="module-title">5. 补货机会</h2>
-        <p class="module-note">这里只显示最值得优先补的品类。具体款号、颜色和尺码，去详细页再下钻。</p>
-      </div>
-      <div class="cards-grid">
-            <article class="opportunity-card">
-              <div class="card-kicker">补货机会</div>
-              <div class="card-title">衣类</div>
-              <div class="stat-row"><span>销售额</span><strong>73,382.00</strong></div>
-              <div class="stat-row"><span>库存</span><strong>39</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>3,473</strong></div>
-              <div class="card-note">建议补货 SKU：85</div>
-            </article>
-            
-            <article class="opportunity-card">
-              <div class="card-kicker">补货机会</div>
-              <div class="card-title">家居服</div>
-              <div class="stat-row"><span>销售额</span><strong>38,813.02</strong></div>
-              <div class="stat-row"><span>库存</span><strong>24</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>952</strong></div>
-              <div class="card-note">建议补货 SKU：59</div>
-            </article>
-            
-            <article class="opportunity-card">
-              <div class="card-kicker">补货机会</div>
-              <div class="card-title">裤类</div>
-              <div class="stat-row"><span>销售额</span><strong>77,075.84</strong></div>
+    <div class="focus-sections">
+      <section class="module" id="opportunity-section">
+        <div class="module-header">
+          <h2 class="module-title">今日重点机会</h2>
+          <p class="module-note">只保留最值得马上放大的 3 个方向，先保主销不断码，再谈放量。</p>
+        </div>
+        <div>
+            <article class="focus-card focus-card-opportunity">
+              <div class="focus-card-kicker">重点机会</div>
+              <div class="card-title title-row">裤类<span class='mini-tip tooltip-badge' title="裤类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" data-tip="裤类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" tabindex='0'>?</span></div>
+              <div class="stat-row"><span>销量</span><strong>77,075.84 元</strong></div>
               <div class="stat-row"><span>库存</span><strong>43</strong></div>
               <div class="stat-row"><span>建议补货量</span><strong>2,673</strong></div>
-              <div class="card-note">建议补货 SKU：54</div>
+              <p class="card-note">销量高、库存浅，今天优先保核心尺码不断码。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>裤类销售额 77,075.84 元。</li><li>裤类当前库存 43 件。</li><li>裤类建议补货量 2,673。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>主销品类先保核心尺码，不做平均铺货。</li><li>当前优先保住能直接出单的品类，再去扩量。</li></ul>
+        </div>
+      </div>
+    </details>
+    
             </article>
             
-            <article class="opportunity-card">
-              <div class="card-kicker">补货机会</div>
-              <div class="card-title">儿童袜</div>
-              <div class="stat-row"><span>销售额</span><strong>22,777.16</strong></div>
-              <div class="stat-row"><span>库存</span><strong>119</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>3,433</strong></div>
-              <div class="card-note">建议补货 SKU：44</div>
+            <article class="focus-card focus-card-opportunity">
+              <div class="focus-card-kicker">重点机会</div>
+              <div class="card-title title-row">衣类<span class='mini-tip tooltip-badge' title="衣类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" data-tip="衣类当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" tabindex='0'>?</span></div>
+              <div class="stat-row"><span>销量</span><strong>73,382.00 元</strong></div>
+              <div class="stat-row"><span>库存</span><strong>39</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>3,473</strong></div>
+              <p class="card-note">仍是主销中类，今天先保主色主码，小单快返。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>衣类销售额 73,382.00 元。</li><li>衣类当前库存 39 件。</li><li>衣类建议补货量 3,473。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>主销品类先保核心尺码，不做平均铺货。</li><li>当前优先保住能直接出单的品类，再去扩量。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+            </article>
+            
+            <article class="focus-card focus-card-opportunity">
+              <div class="focus-card-kicker">重点机会</div>
+              <div class="card-title title-row">家居服<span class='mini-tip tooltip-badge' title="家居服当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" data-tip="家居服当前卖得动、库存又不深，先保不断码更容易直接转成营业额。" tabindex='0'>?</span></div>
+              <div class="stat-row"><span>销量</span><strong>38,813.02 元</strong></div>
+              <div class="stat-row"><span>库存</span><strong>24</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>952</strong></div>
+              <p class="card-note">适合做场景推荐，今天先带卖再决定补量。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>家居服销售额 38,813.02 元。</li><li>家居服当前库存 24 件。</li><li>家居服建议补货量 952。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>主销品类先保核心尺码，不做平均铺货。</li><li>当前优先保住能直接出单的品类，再去扩量。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+            </article>
+            </div>
+      </section>
+
+      <section class="module" id="risk-section">
+        <div class="module-header">
+          <h2 class="module-title">今日重点风险</h2>
+          <p class="module-note">只保留今天必须处置的 3 个风险，先停补、再去化、再纠偏。</p>
+        </div>
+        <div>
+            <article class="focus-card focus-card-risk">
+              <div class="focus-card-kicker">重点风险</div>
+              <div class="card-title title-row">袜品<span class='mini-tip tooltip-badge' title="袜品当前库存明显重于近期销量承接，先控补货再去化更稳。" data-tip="袜品当前库存明显重于近期销量承接，先控补货再去化更稳。" tabindex='0'>?</span></div>
+              <div class="stat-row"><span>库存</span><strong>791</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>33</strong></div>
+              <p class="card-note">补货先收紧，销售只做顺手带卖和清货去化。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>袜品当前库存 791 件。</li><li>袜品近期销量 33 件。</li><li>建议动作 先停补再去化。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前先去库存，再把预算和货位让给主销。</li><li>风险品类销售上可以去化，但补货端必须更克制。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+            </article>
+            
+            <article class="focus-card focus-card-risk">
+              <div class="focus-card-kicker">重点风险</div>
+              <div class="card-title title-row">少女文胸<span class='mini-tip tooltip-badge' title="少女文胸当前库存明显重于近期销量承接，先控补货再去化更稳。" data-tip="少女文胸当前库存明显重于近期销量承接，先控补货再去化更稳。" tabindex='0'>?</span></div>
+              <div class="stat-row"><span>库存</span><strong>202</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>5</strong></div>
+              <p class="card-note">今天先停补，优先做组合去化。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>少女文胸当前库存 202 件。</li><li>少女文胸近期销量 5 件。</li><li>建议动作 观察并做组合去化。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前先去库存，再把预算和货位让给主销。</li><li>风险品类销售上可以去化，但补货端必须更克制。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+            </article>
+            
+            <article class="focus-card focus-card-risk">
+              <div class="focus-card-kicker">重点风险</div>
+              <div class="card-title title-row">内裤<span class='mini-tip tooltip-badge' title="内裤当前库存明显重于近期销量承接，先控补货再去化更稳。" data-tip="内裤当前库存明显重于近期销量承接，先控补货再去化更稳。" tabindex='0'>?</span></div>
+              <div class="stat-row"><span>库存</span><strong>169</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>6</strong></div>
+              <p class="card-note">先控制补货，再看连带效率。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>内裤当前库存 169 件。</li><li>内裤近期销量 6 件。</li><li>建议动作 先停补再去化。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>当前先去库存，再把预算和货位让给主销。</li><li>风险品类销售上可以去化，但补货端必须更克制。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+            </article>
+            </div>
+      </section>
+    </div>
+
+    <section class="module" id="member-section">
+      <div class="module-header">
+        <h2 class="module-title">会员经营</h2>
+        <p class="module-note">不只看会员数据，直接给出今天可以执行的回访动作。</p>
+      </div>
+      <div class="member-grid">
+            <article class="member-card">
+              <div class="card-title title-row">妞宝<span class='mini-tip tooltip-badge' title="妞宝属于高价值会员，今天优先回访更容易拿到复购。" data-tip="妞宝属于高价值会员，今天优先回访更容易拿到复购。" tabindex='0'>?</span></div>
+              <div class="member-guide">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>7,165.00 元</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>12</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>110.23 元</strong></div>
+              <div class="member-action-label">今天建议动作</div>
+              <p class="card-note">优先回访，邀请到店试穿裤类和夏季新品。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>购买金额 7,165.00 元。</li><li>消费次数 12 次。</li><li>平均客单价 110.23 元。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>高价值老客复购效率更高，优先级高于泛泛群发促销。</li><li>先用试穿邀约和搭配推荐把到店率拉起来。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+              <div class="member-button-row">
+                <span class='member-mini-button'>生成回访话术</span><span class='member-mini-button'>生成邀约短信</span><span class='member-mini-button'>生成搭配建议</span>
+              </div>
+            </article>
+            
+            <article class="member-card">
+              <div class="card-title title-row">年年<span class='mini-tip tooltip-badge' title="年年属于高价值会员，今天优先回访更容易拿到复购。" data-tip="年年属于高价值会员，今天优先回访更容易拿到复购。" tabindex='0'>?</span></div>
+              <div class="member-guide">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>5,680.00 元</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>9</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>129.09 元</strong></div>
+              <div class="member-action-label">今天建议动作</div>
+              <p class="card-note">适合做组合推荐，提高连带，主推裤类搭配袜品或基础款。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>购买金额 5,680.00 元。</li><li>消费次数 9 次。</li><li>平均客单价 129.09 元。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>高价值老客复购效率更高，优先级高于泛泛群发促销。</li><li>先用试穿邀约和搭配推荐把到店率拉起来。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+              <div class="member-button-row">
+                <span class='member-mini-button'>生成回访话术</span><span class='member-mini-button'>生成邀约短信</span><span class='member-mini-button'>生成搭配建议</span>
+              </div>
+            </article>
+            
+            <article class="member-card">
+              <div class="card-title title-row">史振尧<span class='mini-tip tooltip-badge' title="史振尧属于高价值会员，今天优先回访更容易拿到复购。" data-tip="史振尧属于高价值会员，今天优先回访更容易拿到复购。" tabindex='0'>?</span></div>
+              <div class="member-guide">服务导购：郭文攀</div>
+              <div class="stat-row"><span>购买金额</span><strong>5,541.00 元</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>19</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>167.91 元</strong></div>
+              <div class="member-action-label">今天建议动作</div>
+              <p class="card-note">适合做复购提醒和到店唤醒，今天先发试穿邀约。</p>
+              
+    <details class="evidence-details">
+      <summary>查看依据</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list"><li>购买金额 5,541.00 元。</li><li>消费次数 19 次。</li><li>平均客单价 167.91 元。</li></ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list"><li>高价值老客复购效率更高，优先级高于泛泛群发促销。</li><li>先用试穿邀约和搭配推荐把到店率拉起来。</li></ul>
+        </div>
+      </div>
+    </details>
+    
+              <div class="member-button-row">
+                <span class='member-mini-button'>生成回访话术</span><span class='member-mini-button'>生成邀约短信</span><span class='member-mini-button'>生成搭配建议</span>
+              </div>
             </article>
             </div>
     </section>
 
-    <section class="module" id="member-ops">
+    <section class="module fold-module">
       <div class="module-header">
-        <h2 class="module-title">6. 会员经营</h2>
-        <p class="module-note">高价值会员适合优先回访。详细页里会有更完整的会员、店员和参考店信息。</p>
+        <h2 class="module-title">辅助说明</h2>
+        <p class="module-note">需要解释时再展开，首页默认只保留拍板和执行内容。</p>
       </div>
-      <div class="cards-grid">
-            <article class="member-card">
-              <div class="card-title">妞宝</div>
-              <div class="card-note">服务导购：郭文攀</div>
-              <div class="stat-row"><span>购买金额</span><strong>7,165.00</strong></div>
-              <div class="stat-row"><span>消费次数</span><strong>12</strong></div>
-              <div class="stat-row"><span>平均客单价</span><strong>110.23</strong></div>
-            </article>
-            
-            <article class="member-card">
-              <div class="card-title">年年</div>
-              <div class="card-note">服务导购：郭文攀</div>
-              <div class="stat-row"><span>购买金额</span><strong>5,680.00</strong></div>
-              <div class="stat-row"><span>消费次数</span><strong>9</strong></div>
-              <div class="stat-row"><span>平均客单价</span><strong>129.09</strong></div>
-            </article>
-            
-            <article class="member-card">
-              <div class="card-title">史振尧</div>
-              <div class="card-note">服务导购：郭文攀</div>
-              <div class="stat-row"><span>购买金额</span><strong>5,541.00</strong></div>
-              <div class="stat-row"><span>消费次数</span><strong>19</strong></div>
-              <div class="stat-row"><span>平均客单价</span><strong>167.91</strong></div>
-            </article>
+      <div class="support-grid">
+        <article class="support-card">
+          <details>
+            <summary>为什么今天这样拍板</summary>
+            <div class="support-content">
+              <ul class="fold-list"><li>当前处于 春夏换季期，今天不是增长优先，先稳毛利、去库存、保主销。</li><li>月末净利预测 -7,893.98 元，今天先守利润边界。</li><li>库存覆盖约 354.8 天，补货要先收紧高压品类。</li><li>会员沉默占比约 50.4%，今天要主动做唤醒。</li><li>最近件单比约 1.06，今天先做组合成交。</li></ul>
             </div>
-      <div class="strip-card">
-        <div>
-          <strong>详细页包含总览、经营策略、图表、补货去化、会员店员和下载区</strong>
-          <p>首页用于每天拍板，详细页用于复盘、解释和交给店员执行。</p>
-        </div>
-        <a class="strip-link" href="./details.html">去详细页</a>
+          </details>
+        </article>
+        <article class="support-card">
+          <details>
+            <summary>今天先别这样做</summary>
+            <div class="support-content">
+              <ul class="fold-list"><li>不要先看单款，先看品类，再下钻到 SKU。</li><li>不要把道具金额和库存算进正常经营判断。</li><li>不要把其他输入人的店铺数据当成本店结论。</li><li>不要因为某个冬款历史卖过，就在春夏阶段继续追补。</li><li>不要只等自然回购，沉默会员需要主动叫回。</li></ul>
+            </div>
+          </details>
+        </article>
+        <article class="support-card">
+          <details>
+            <summary>关键经营底数</summary>
+            <div class="support-content">
+              <ul class="fold-list"><li>POS 总销售额 861,076.11 元。</li><li>当前库存 4,846 件。</li><li>快销潜力款 566 个。</li><li>积压风险款 145 个。</li><li>会员人数 1,184 人。</li><li>当前实销折扣约 7.7 折。</li></ul>
+              <div class="support-link-row">
+                <a class="strip-link" href="./details.html#overview-section">去数据明细看原因</a>
+              </div>
+            </div>
+          </details>
+        </article>
       </div>
     </section>
 
     <section class="module">
       <div class="module-header">
-        <h2 class="module-title">老板拍板参考</h2>
-        <p class="module-note">这组话术更适合晨会或微信里直接发给店员。</p>
+        <h2 class="module-title">页面职责导航</h2>
+        <p class="module-note">首页负责今天拍板，原因、图表和下钻都放到其他页面。</p>
       </div>
-      <ul class="task-list">
-        <li>
-          <strong>先看哪张表</strong>
-          <span>先看 家居服、常规内裤、裤类 的折扣依赖，再看 130/M、120/S、110/XS 这些主销尺码。今天先稳毛利，再决定要不要做活动。</span>
-        </li>
+      <div class="page-nav-grid">
+        <a class="page-nav-card " href="../index.html">
+          <strong>今日要做</strong>
+          <span>快速看今天先做什么。</span>
+        </a>
         
-        <li>
-          <strong>今天怎么做</strong>
-          <span>今天先把 家居服、常规内裤、裤类 做高毛利搭配和门口陈列，补货只保 130/M、120/S、110/XS 这些主销尺码，别直接靠深折扣冲量。</span>
-        </li>
+        <a class="page-nav-card is-current" href="./index.html">
+          <strong>经营看板</strong>
+          <span>老板 10 秒拍板，当前页。</span>
+        </a>
         
-        <li>
-          <strong>老板今天拍板什么</strong>
-          <span>今天先拍板 家居服、常规内裤、裤类 是否继续让利，同时确认 130/M、120/S、110/XS 这些尺码的补货预算，别平均补货。</span>
-        </li>
-        </ul>
+        <a class="page-nav-card " href="./details.html">
+          <strong>数据明细</strong>
+          <span>看完整经营分析与图表。</span>
+        </a>
+        
+        <a class="page-nav-card " href="./relationship.html">
+          <strong>库存销售关系</strong>
+          <span>专看库存与销售匹配情况。</span>
+        </a>
+        
+        <a class="page-nav-card " href="./monthly.html">
+          <strong>月度分析</strong>
+          <span>看阶段趋势与方向。</span>
+        </a>
+        
+        <a class="page-nav-card " href="./quarterly.html">
+          <strong>季度趋势</strong>
+          <span>看长期走势。</span>
+        </a>
+        
+        <a class="page-nav-card " href="../manuals/index.html">
+          <strong>文档中心</strong>
+          <span>看说明和操作手册。</span>
+        </a>
+        
+        <a class="page-nav-card " href="../costs/index.html">
+          <strong>成本维护</strong>
+          <span>维护费用与利润口径。</span>
+        </a>
+        </div>
     </section>
-      </div>
-      <aside class="side-rail">
-        <section class="rail-card">
-          <h3>常用导航</h3>
-          <p>老板每天最常用的入口都固定在这里，不用回头找按钮。</p>
-          <div class="rail-links">
-            <a href="../index.html">返回首页</a>
-            <a class="current" href="./index.html">当前仪表盘</a>
-            <a href="./details.html">进入详细页</a>
-            <a href="./relationship.html">进入关系页</a>
-            <a href="./monthly.html">进入月度页</a>
-            <a href="./quarterly.html">进入季度页</a>
-            <a href="../manuals/index.html">进入文档中心</a>
-            <a href="../costs/index.html">进入成本维护台</a>
-          </div>
-        </section>
-        <section class="rail-card">
-          <h3>本页定位</h3>
-          <p>如果只想快速跳到某一块，直接点右边，不用整页来回找。</p>
-          <div class="rail-links">
-            <a href="#focus">今日重点</a>
-            <a href="#core-metrics">核心指标</a>
-            <a href="#money-opportunities">赚钱机会</a>
-            <a href="#inventory-risks">库存风险</a>
-            <a href="#replenish-opportunities">补货机会</a>
-            <a href="#member-ops">会员经营</a>
-          </div>
-        </section>
-      </aside>
-    </div>
   </div>
 
   <script>

@@ -3293,7 +3293,7 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
         "clearance_advice": clearance_advice,
         "category_advice": category_advice,
         "role_guidance": {
-            "老板娘": owner_advice,
+            "老板": owner_advice,
             "店长": manager_advice,
             "店员": staff_advice,
         },
@@ -3316,7 +3316,7 @@ def build_retail_consulting_analysis(metrics: dict, period_type: str | None = No
 
 def render_consulting_analysis_html(
     analysis: dict[str, object],
-    title: str = "经营分析与销售建议",
+    title: str = "经营分析与执行动作",
     section_id: str = "consulting-analysis",
 ) -> str:
     sections = [
@@ -3328,10 +3328,10 @@ def render_consulting_analysis_html(
         ("库存健康分析", analysis["inventory_analysis"]),
         ("会员 / 客单价 / 连带率分析", analysis["member_analysis"]),
         ("目标达成与节奏分析", analysis["rhythm_analysis"]),
-        ("本周优先动作建议", analysis["weekly_actions"]),
-        ("补货建议", analysis["replenish_advice"]),
-        ("去化 / 清货建议", analysis["clearance_advice"]),
-        ("品类经营建议", analysis["category_advice"]),
+        ("本周优先动作", analysis["weekly_actions"]),
+        ("补货动作", analysis["replenish_advice"]),
+        ("去化 / 清货动作", analysis["clearance_advice"]),
+        ("品类经营动作", analysis["category_advice"]),
         ("风险预警清单", analysis["risk_alerts"]),
         ("如果下周不处理，最可能出现的问题", analysis["if_ignore"]),
     ]
@@ -3339,7 +3339,7 @@ def render_consulting_analysis_html(
     role_blocks = "".join(
         f"""
         <div class="analysis-card">
-          <h3>{html.escape(role)}建议</h3>
+          <h3>{html.escape(role)}动作</h3>
           <ul class="analysis-list">
             {"".join(f"<li>{html.escape(item)}</li>" for item in items)}
           </ul>
@@ -3403,7 +3403,7 @@ def render_consulting_analysis_html(
         {section_cards}
       </div>
       <div class="module-header" style="margin-top:18px;">
-        <h2 class="module-title">老板娘 / 店长 / 店员分角色建议</h2>
+        <h2 class="module-title">老板 / 店长 / 店员分角色动作</h2>
         <p class="module-note">同一份数据，三个角色的动作不一样，这里直接拆开给执行。</p>
       </div>
       <div class="analysis-grid">
@@ -3450,19 +3450,19 @@ def append_consulting_analysis_markdown(lines: list[str], analysis: dict[str, ob
     lines.extend(f"- {item}" for item in analysis["member_analysis"])
     lines.extend(["", "## 目标达成与节奏分析"])
     lines.extend(f"- {item}" for item in analysis["rhythm_analysis"])
-    lines.extend(["", "## 本周优先动作建议"])
+    lines.extend(["", "## 本周优先动作"])
     lines.extend(f"- {item}" for item in analysis["weekly_actions"])
-    lines.extend(["", "## 补货建议"])
+    lines.extend(["", "## 补货动作"])
     lines.extend(f"- {item}" for item in analysis["replenish_advice"])
-    lines.extend(["", "## 去化 / 清货建议"])
+    lines.extend(["", "## 去化 / 清货动作"])
     lines.extend(f"- {item}" for item in analysis["clearance_advice"])
-    lines.extend(["", "## 品类经营建议"])
+    lines.extend(["", "## 品类经营动作"])
     lines.extend(f"- {item}" for item in analysis["category_advice"])
-    lines.extend(["", "## 老板娘 / 店长 / 店员分角色建议", "", "### 给老板娘的建议"])
-    lines.extend(f"- {item}" for item in analysis["role_guidance"]["老板娘"])
-    lines.extend(["", "### 给店长的建议"])
+    lines.extend(["", "## 老板 / 店长 / 店员分角色动作", "", "### 给老板的动作"])
+    lines.extend(f"- {item}" for item in analysis["role_guidance"]["老板"])
+    lines.extend(["", "### 给店长的动作"])
     lines.extend(f"- {item}" for item in analysis["role_guidance"]["店长"])
-    lines.extend(["", "### 给店员的建议"])
+    lines.extend(["", "### 给店员的动作"])
     lines.extend(f"- {item}" for item in analysis["role_guidance"]["店员"])
     lines.extend(["", "## 风险预警清单"])
     lines.extend(f"- {item}" for item in analysis["risk_alerts"])
@@ -4314,7 +4314,7 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
           <div class="card-title">返回老板仪表盘</div>
           <p class="table-tip">回到短版首页，快速看今天最该做什么。</p>
           <div class="chip-row">
-            <a class="download-link" href="./index.html">返回首页</a>
+            <a class="download-link" href="./index.html">返回今日要做</a>
           </div>
         </div>
         <div class="opportunity-card">
@@ -4358,186 +4358,1099 @@ def build_detail_sections(metrics: dict, reference_intro: str) -> dict[str, str]
     }
 
 
-def build_html(metrics: dict) -> str:
+def normalize_business_category_name(name: object) -> str:
+    text = str(name or "").strip()
+    if not text or text.lower() == "nan":
+        return "该品类"
+    if "少女" in text and "文胸" in text:
+        return "少女文胸"
+    if "文胸" in text:
+        return "文胸"
+    if "家居" in text:
+        return "家居服"
+    if "袜" in text:
+        return "袜品"
+    if "内裤" in text:
+        return "内裤"
+    if "裤" in text:
+        return "裤类"
+    if "上衣" in text or "衣" in text:
+        return "衣类"
+    return text
+
+
+def normalize_dashboard_level(level: str | None) -> str:
+    if level == "red":
+        return "red"
+    if level == "green":
+        return "green"
+    return "yellow"
+
+
+def homepage_status_meta(level: str | None) -> dict[str, str]:
+    normalized = normalize_dashboard_level(level)
+    mapping = {
+        "green": {"label": "健康", "tone": "good"},
+        "yellow": {"label": "预警", "tone": "warn"},
+        "red": {"label": "危险", "tone": "danger"},
+    }
+    return mapping[normalized]
+
+
+def select_homepage_category_rows(df: pd.DataFrame, label_col: str, limit: int = 3) -> list[dict[str, object]]:
+    if df.empty or label_col not in df.columns:
+        return []
+
+    selected: list[dict[str, object]] = []
+    seen: set[str] = set()
+    for _, row in df.iterrows():
+        display_name = normalize_business_category_name(row.get(label_col))
+        if display_name in seen:
+            continue
+        seen.add(display_name)
+        payload = {column: row.get(column) for column in df.columns}
+        payload["display_name"] = display_name
+        selected.append(payload)
+        if len(selected) >= limit:
+            break
+    return selected
+
+
+def find_homepage_category_row(df: pd.DataFrame, label_col: str, display_name: str) -> dict[str, object] | None:
+    for row in select_homepage_category_rows(df, label_col, 12):
+        if row["display_name"] == display_name:
+            return row
+    return None
+
+
+def tooltip_badge_html(tip: str, label: str = "?") -> str:
+    safe_tip = html.escape(str(tip), quote=True)
+    safe_label = html.escape(label)
+    return (
+        f"<span class='mini-tip tooltip-badge' title=\"{safe_tip}\" data-tip=\"{safe_tip}\" tabindex='0'>{safe_label}</span>"
+    )
+
+
+def evidence_details_html(
+    why_text: str,
+    data_points: list[str],
+    thinking_points: list[str],
+    *,
+    summary_label: str = "查看依据",
+) -> str:
+    data_html = "".join(f"<li>{html.escape(item)}</li>" for item in data_points if item)
+    thinking_html = "".join(f"<li>{html.escape(item)}</li>" for item in thinking_points if item)
+    if not data_html and not thinking_html:
+        return ""
+    return f"""
+    <details class="evidence-details">
+      <summary>{html.escape(summary_label)}</summary>
+      <div class="evidence-content">
+        <div class="evidence-group">
+          <div class="evidence-title">为什么这么做</div>
+          <p class="evidence-text">{html.escape(why_text)}</p>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">数据依据</div>
+          <ul class="evidence-list">{data_html}</ul>
+        </div>
+        <div class="evidence-group">
+          <div class="evidence-title">经营思路</div>
+          <ul class="evidence-list">{thinking_html}</ul>
+        </div>
+      </div>
+    </details>
+    """
+
+
+def build_homepage_command_center(
+    metrics: dict,
+    decision: dict[str, object],
+    time_strategy: dict[str, object],
+    signals: dict[str, object],
+) -> dict[str, object]:
+    cards = metrics["summary_cards"]
+    actions = metrics["action_summary"]
+    profit = cards.get("profit_snapshot")
+    top_replenish_row = (
+        find_homepage_category_row(metrics["replenish_categories"], "中类", normalize_business_category_name(
+            top_label_from_series(metrics["replenish_categories"]["中类"], "主销品类")
+        ))
+    )
+    top_clearance_row = (
+        find_homepage_category_row(metrics["clearance_categories"], "大类", normalize_business_category_name(
+            top_label_from_series(metrics["clearance_categories"]["大类"], "高压库存品类")
+        ))
+    )
+    top_replenish = normalize_business_category_name(
+        top_label_from_series(metrics["replenish_categories"]["中类"], "主销品类")
+    )
+    top_clearance = normalize_business_category_name(
+        top_label_from_series(metrics["clearance_categories"]["大类"], "高压库存品类")
+    )
+
+    strategy_labels: list[str] = []
+    strategy_tones: dict[str, str] = {}
+
+    def add_strategy(label: str, tone: str) -> None:
+        if label not in strategy_labels:
+            strategy_labels.append(label)
+            strategy_tones[label] = tone
+
+    if signals["markdown_pressure_high"] or (profit and profit["projected_month_net_profit"] < 0):
+        add_strategy("稳毛利优先", "warn")
+    if cards["estimated_inventory_days"] >= 120 or actions["high_risk_category_count"] > 0:
+        add_strategy("去库存阶段", "danger")
+    add_strategy("保主销不断码", "primary")
+    if signals["vip_dormant_high"] or cards["member_sales_ratio"] >= 0.55:
+        add_strategy("会员唤醒", "soft")
+    if signals["low_joint"]:
+        add_strategy("组合销售", "soft")
+
+    strategy_tags = [{"label": label, "tone": strategy_tones[label]} for label in strategy_labels[:4]]
+
+    strategy_verbs: list[str] = []
+    if any(item["label"] == "稳毛利优先" for item in strategy_tags):
+        strategy_verbs.append("稳毛利")
+    if any(item["label"] == "去库存阶段" for item in strategy_tags):
+        strategy_verbs.append("去库存")
+    strategy_verbs.append("保主销")
+    if any(item["label"] == "会员唤醒" for item in strategy_tags):
+        strategy_verbs.append("会员唤醒")
+    conclusion = f"当前处于 {time_strategy['phase']}，今天先{'、'.join(dedupe_preserve_order(strategy_verbs)[:4])}"
+    if signals["markdown_pressure_high"] or (profit and profit["projected_month_net_profit"] < 0):
+        conclusion += "，不要靠深折扣硬冲销量。"
+    elif cards["negative_sku_count"] > 0:
+        conclusion += "，先把库存口径纠偏后再下动作。"
+    else:
+        conclusion += "，按主销和库存压力排顺序执行。"
+
+    must_actions: list[dict[str, object]] = []
+
+    def add_action(
+        action: str,
+        target: str,
+        purpose: str,
+        tone: str,
+        why: str,
+        data_points: list[str],
+        thinking: list[str],
+    ) -> None:
+        if len(must_actions) >= 3:
+            return
+        if any(item["action"] == action for item in must_actions):
+            return
+        must_actions.append(
+            {
+                "action": action,
+                "sentence": target,
+                "purpose": purpose,
+                "tone": tone,
+                "why": why,
+                "data_points": data_points,
+                "thinking": thinking,
+            }
+        )
+
+    if cards["negative_sku_count"] > 0:
+        add_action(
+            "先处理负库存",
+            f"{format_num(cards['negative_sku_count'])} 个异常 SKU 今天先修正，避免补货和去化判断失真。",
+            "避免补货和去化判断失真",
+            "danger",
+            "负库存不先纠偏，今天所有补货和去化判断都会继续跑偏。",
+            [
+                f"当前负库存 SKU {format_num(cards['negative_sku_count'])} 个。",
+                f"库存覆盖天数 {format_num(cards['estimated_inventory_days'], 1)} 天。",
+            ],
+            [
+                "先修库存口径，再决定补货和去化。",
+                "优先处理高销量、低库存、还在补货建议里的异常款。",
+            ],
+        )
+    if cards["estimated_inventory_days"] >= 120 or actions["high_risk_category_count"] > 0:
+        top_clearance_action = f"先收紧{top_clearance}补货" if top_clearance == "袜品" else f"先停补{top_clearance}"
+        top_clearance_purpose = (
+            "以现有库存去化为主，不再深补"
+            if top_clearance == "袜品"
+            else "优先做去化，把现金和货位腾出来"
+        )
+        add_action(
+            top_clearance_action,
+            (
+                "袜品属于高压库存品类，今天以现有库存去化为主，不再深补。"
+                if top_clearance == "袜品"
+                else f"{top_clearance}属于高压库存品类，今天先停补，优先做去化。"
+            ),
+            top_clearance_purpose,
+            "danger",
+            (
+                f"{top_clearance}库存压得重，继续平均补货只会把现金压进慢销货。"
+            ),
+            [
+                f"{top_clearance}当前库存 {format_num(safe_float((top_clearance_row or {}).get('实际库存')))} 件。"
+                if top_clearance_row
+                else "",
+                f"{top_clearance}近期销量 {format_num(safe_float((top_clearance_row or {}).get('近期零售')))} 件。"
+                if top_clearance_row
+                else "",
+                f"库存覆盖天数 {format_num(cards['estimated_inventory_days'], 1)} 天。",
+            ],
+            [
+                "当前优先级是先去库存，再把预算让给主销。",
+                "补货端先收紧，销售端用现有库存做去化。",
+            ],
+        )
+    if actions["replenish_count"] > 0:
+        add_action(
+            f"先保{top_replenish}核心尺码",
+            f"{top_replenish}是当前主销品类，今天先保核心尺码，避免断码直接丢单。",
+            "防止今天直接丢单",
+            "primary",
+            f"{top_replenish}是当前主销品类，断码会直接影响今天成交。",
+            [
+                f"{top_replenish}销售额 {format_num(safe_float((top_replenish_row or {}).get('销售额')), 2)} 元。"
+                if top_replenish_row
+                else "",
+                f"{top_replenish}当前库存 {format_num(safe_float((top_replenish_row or {}).get('库存')))} 件。"
+                if top_replenish_row
+                else "",
+                f"{top_replenish}建议补货量 {format_num(safe_float((top_replenish_row or {}).get('建议补货量')))}。"
+                if top_replenish_row
+                else "",
+            ],
+            [
+                "主销不断码，比平均补货更能保住营业额。",
+                "补货先给核心尺码和主色，不做平均铺货。",
+            ],
+        )
+    if signals["vip_dormant_high"]:
+        add_action(
+            "今天回访前 10 位会员",
+            f"前 10 位高价值会员今天先回访，优先做唤醒和复购。",
+            "先做唤醒和复购",
+            "soft",
+            "会员贡献高但沉默占比也高，今天先把高价值老客叫回来。",
+            [
+                f"会员销售占比 {format_num(cards['member_sales_ratio'] * 100, 1)}%。",
+                f"会员沉默占比约 {format_num(signals['dormant_ratio'] * 100, 1)}%。",
+                f"优先回访 {signals['top_member_names']}。",
+            ],
+            [
+                "当前不是先追新客，而是先放大高价值老客复购。",
+                "先用试穿邀约和组合推荐把老客叫回来。",
+            ],
+        )
+    if signals["markdown_pressure_high"] and len(must_actions) < 3:
+        add_action(
+            "先停深折扣冲量",
+            f"{signals['discount_category_names']} 今天先停深折扣冲量，避免先伤毛利再伤利润。",
+            "避免先伤毛利再伤利润",
+            "warn",
+            "利润还没站稳时继续深折扣，会先伤毛利再伤净利。",
+            [
+                f"月末净利预测 {format_num((profit or {}).get('projected_month_net_profit', 0), 2)} 元。",
+                f"当前实销折扣约 {format_num(signals['weighted_discount_rate'] * 10, 1)} 折。",
+                f"折扣依赖品类 {signals['discount_category_names']}。",
+            ],
+            [
+                "当前优先级是稳毛利，不是靠低价硬冲销量。",
+                "先做组合成交和主销尺码保障，再决定要不要让利。",
+            ],
+        )
+    if signals["low_joint"] and len(must_actions) < 3:
+        add_action(
+            "今天每单至少多带 1 件",
+            "现有袜品和基础连带款今天顺手带卖，每单至少多带 1 件。",
+            "先把客单拉起来，同时消化可连带库存",
+            "primary",
+            "件单比偏低时，只冲单量不够，今天要靠连带把客单和利润抬回来。",
+            [
+                f"最近件单比约 {format_num(signals['latest_joint_rate'], 2)}。",
+                f"会员销售占比 {format_num(cards['member_sales_ratio'] * 100, 1)}%。",
+            ],
+            [
+                "先做组合成交，再看让利。",
+                "袜品和基础款更适合做顺手带卖和去化，不代表要继续深补。",
+            ],
+        )
+    while len(must_actions) < 3:
+        add_action(
+            f"今天先看{top_replenish}主销款",
+            f"{top_replenish}卖得快、库存浅，今天先把预算保到最能出单的位置。",
+            "把预算先保到最能出单的位置",
+            "soft",
+            f"{top_replenish}更能直接承接今天的营业额。",
+            [
+                f"{top_replenish}建议补货量 {format_num(safe_float((top_replenish_row or {}).get('建议补货量')))}。"
+                if top_replenish_row
+                else "",
+            ],
+            [
+                "预算先保主销，不做平均铺货。",
+            ],
+        )
+
+    risks: list[dict[str, object]] = []
+    if profit and profit["projected_month_net_profit"] < 0:
+        risks.append(
+            {
+                "title": f"月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元，继续深折扣会先伤毛利。",
+                "why": "利润还没回正时，先稳毛利比先冲销量更重要。",
+                "data_points": [
+                    f"当前净利润 {format_num(profit['net_profit'], 2)} 元。",
+                    f"月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元。",
+                    f"保本进度 {format_num(min(profit['breakeven_progress_ratio'], 9.99) * 100, 1)}%。",
+                ],
+                "thinking": [
+                    "当前阶段优先级是稳毛利，再去放大营业额。",
+                    "先守折扣底线和连带，不做深折扣冲量。",
+                ],
+            }
+        )
+    if cards["estimated_inventory_days"] >= 120:
+        risks.append(
+            {
+                "title": f"库存覆盖约 {format_num(cards['estimated_inventory_days'], 1)} 天，补货不能再平均下单。",
+                "why": "库存覆盖太高时继续平均补货，会把现金继续压进慢销货。",
+                "data_points": [
+                    f"库存覆盖天数 {format_num(cards['estimated_inventory_days'], 1)} 天。",
+                    f"经营库存额 {format_num(cards['inventory_amount'], 2)} 元。",
+                ],
+                "thinking": [
+                    "先停补高压货，再把预算让给主销。",
+                    "当前要优先去库存，不是继续铺货。",
+                ],
+            }
+        )
+    if signals["markdown_pressure_high"] and len(risks) < 2:
+        risks.append(
+            {
+                "title": f"{signals['discount_category_names']} 折扣依赖偏重，今天先稳折扣再看销量。",
+                "why": "折扣依赖高时，继续让利会先伤利润质量。",
+                "data_points": [
+                    f"当前实销折扣约 {format_num(signals['weighted_discount_rate'] * 10, 1)} 折。",
+                    f"折扣依赖品类 {signals['discount_category_names']}。",
+                ],
+                "thinking": [
+                    "先做组合成交和主销尺码保障，再决定是否让利。",
+                ],
+            }
+        )
+    if signals["vip_dormant_high"] and len(risks) < 2:
+        risks.append(
+            {
+                "title": f"会员沉默占比约 {format_num(signals['dormant_ratio'] * 100, 1)}%，再等自然回购会更慢。",
+                "why": "老客沉默越久，复购越难等回来。",
+                "data_points": [
+                    f"会员沉默占比约 {format_num(signals['dormant_ratio'] * 100, 1)}%。",
+                    f"会员销售占比 {format_num(cards['member_sales_ratio'] * 100, 1)}%。",
+                ],
+                "thinking": [
+                    "先主动回访高价值会员，再放大复购。",
+                ],
+            }
+        )
+    if cards["negative_sku_count"] > 0 and len(risks) < 2:
+        risks.append(
+            {
+                "title": f"当前还有 {format_num(cards['negative_sku_count'])} 个负库存 SKU，不先纠偏就会误判补货。",
+                "why": "库存不准时，补货和去化结论都会继续失真。",
+                "data_points": [
+                    f"当前负库存 SKU {format_num(cards['negative_sku_count'])} 个。",
+                ],
+                "thinking": [
+                    "先修库存口径，再做补货和去化动作。",
+                ],
+            }
+        )
+    risks = risks[:2]
+
+    return {
+        "conclusion": conclusion,
+        "must_actions": must_actions,
+        "risks": risks,
+        "strategy_tags": strategy_tags,
+    }
+
+
+def build_homepage_core_metrics(
+    metrics: dict,
+    decision: dict[str, object],
+    signals: dict[str, object],
+) -> list[dict[str, object]]:
     cards = metrics["summary_cards"]
     profit = cards.get("profit_snapshot")
+    sales_trend = decision["sales_trend"]
+
+    inventory_level = "red" if cards["estimated_inventory_days"] > 180 else "yellow" if cards["estimated_inventory_days"] > 120 else "green"
+    sales_level = "green" if sales_trend["direction"] == "up" else "yellow" if sales_trend["direction"] == "flat" else "red"
+    aov_level = "red" if signals["low_joint"] else "green" if cards["avg_order_value"] > 0 else "yellow"
+    member_level = "green" if cards["member_sales_ratio"] >= 0.6 else "yellow" if cards["member_sales_ratio"] >= 0.4 else "red"
+    net_level = normalize_dashboard_level((profit or {}).get("status"))
+    forecast_level = normalize_dashboard_level((profit or {}).get("projected_monthly_status"))
+
+    forecast_note = "缺少成本快照，先维护费用和毛利口径。"
+    forecast_value = "待补成本口径"
+    net_note = "缺少成本快照，首页先不强行给净利结论。"
+    net_value = "待补成本口径"
+    if profit:
+        net_value = f"{format_num(profit['net_profit'], 2)} 元"
+        if profit["net_profit"] < 0 and not profit["passed_breakeven"]:
+            net_note = "净利还没转正，今天先稳毛利和连带。"
+        elif profit["net_profit"] < 0:
+            net_note = "净利仍承压，今天别靠深折扣换销量。"
+        else:
+            net_note = "净利已经回正，今天继续守主销和复购。"
+        if profit.get("breakeven_available"):
+            if profit["projected_month_net_profit"] < 0:
+                forecast_note = "月底仍有亏损风险，今天先稳毛利，不做深折扣。"
+            elif not profit["passed_breakeven"]:
+                forecast_note = (
+                    f"月底有机会回正，但今天还要盯保本进度 {format_num(min(profit['breakeven_progress_ratio'], 9.99) * 100, 1)}%。"
+                )
+            else:
+                forecast_note = "月底净利有望转正，今天继续保主销和复购。"
+        else:
+            forecast_note = f"{profit['forecast_headline']}；先补有效毛利率再精确算保本进度。"
+        forecast_value = f"{format_num(profit['projected_month_net_profit'], 2)} 元"
+
+    return [
+        {
+            "title": f"近 {cards['sales_days']} 天经营销售额",
+            "value": f"{format_num(cards['sales_amount'], 2)} 元",
+            "note": (
+                "当前日销承接偏弱，今天动作先围绕高转化品类展开。"
+                if sales_trend["direction"] == "down"
+                else "日销承接一般，今天先把动作压到主销和复购上。"
+                if sales_trend["direction"] == "flat"
+                else "日销在回升，今天重点守住主销不断码。"
+            ),
+            "tip": "最近日销承接不够强时，动作要先压到更容易成交的主销品类。",
+            "data_points": [
+                f"近 {cards['sales_days']} 天经营销售额 {format_num(cards['sales_amount'], 2)} 元。",
+                f"最近日销均值 {format_num(sales_trend['recent_avg'], 2)} 元。",
+                f"日销趋势 {sales_trend['label']}。",
+            ],
+            "thinking": [
+                "当前不是先扩所有品类，而是先守高转化品类。",
+                "先让营业额承接稳定，再谈放量。",
+            ],
+            "level": sales_level,
+            "emphasis": False,
+        },
+        {
+            "title": "客单价",
+            "value": f"{format_num(cards['avg_order_value'], 2)} 元",
+            "note": "客单偏低，今天先做组合成交，不只追求单量。"
+            if signals["low_joint"]
+            else "客单还有空间，今天让店员先做搭配成交和顺手带卖。",
+            "tip": "客单拉不起来时，只看成交单数，利润通常跟不上。",
+            "data_points": [
+                f"当前客单价 {format_num(cards['avg_order_value'], 2)} 元。",
+                f"件单比约 {format_num(signals['latest_joint_rate'], 2)}。"
+                if signals["latest_joint_rate"]
+                else "",
+                f"订单数 {format_num(cards['sales_orders'])} 单。",
+            ],
+            "thinking": [
+                "先做组合销售和顺手带卖，再决定要不要让利。",
+                "一单多带一件，比单纯多成交一单更稳利润。",
+            ],
+            "level": aov_level,
+            "emphasis": False,
+        },
+        {
+            "title": "库存覆盖天数",
+            "value": f"{format_num(cards['estimated_inventory_days'], 1)} 天",
+            "note": (
+                "库存过重，今天先停补高压货。"
+                if cards["estimated_inventory_days"] > 180
+                else "库存偏长，今天先收紧补货，把货位让给主销。"
+                if cards["estimated_inventory_days"] > 120
+                else "库存压力可控，今天重点防主销断码。"
+            ),
+            "tip": "库存覆盖越高，越要先停补高压货，不然现金会继续压在慢销货里。",
+            "data_points": [
+                f"库存覆盖天数 {format_num(cards['estimated_inventory_days'], 1)} 天。",
+                f"经营库存额 {format_num(cards['inventory_amount'], 2)} 元。",
+                f"当前库存 {format_num(cards['inventory_qty'])} 件。",
+            ],
+            "thinking": [
+                "当前先去库存，再把预算和货位留给主销。",
+                "高压货先控补货，主销货只保断码。",
+            ],
+            "level": inventory_level,
+            "emphasis": True,
+        },
+        {
+            "title": "会员销售占比",
+            "value": f"{format_num(cards['member_sales_ratio'] * 100, 1)}%",
+            "note": (
+                "会员贡献高，今天先回访高价值老客，放大复购。"
+                if cards["member_sales_ratio"] >= 0.6
+                else "会员还有空间，今天先补回访和唤醒动作。"
+                if cards["member_sales_ratio"] >= 0.4
+                else "会员带动偏弱，今天先把回访名单跑起来。"
+            ),
+            "tip": "会员占比高，说明今天最值得先做的是老客复购，而不是盲目追新客。",
+            "data_points": [
+                f"会员销售占比 {format_num(cards['member_sales_ratio'] * 100, 1)}%。",
+                f"会员沉默占比约 {format_num(signals['dormant_ratio'] * 100, 1)}%。"
+                if signals["vip_dormant_high"]
+                else "",
+                f"优先会员 {signals['top_member_names']}。",
+            ],
+            "thinking": [
+                "先做高价值会员回访，再放大复购和连带。",
+                "老客复购通常比临时拉新更稳。",
+            ],
+            "level": member_level,
+            "emphasis": False,
+        },
+        {
+            "title": "净利润",
+            "value": net_value,
+            "note": net_note,
+            "tip": "净利没转正时，先守毛利边界，比先冲营业额更重要。",
+            "data_points": [
+                f"当前净利润 {net_value}。",
+                f"保本销售额 {format_num((profit or {}).get('breakeven_sales', 0), 2)} 元。"
+                if profit and profit.get("breakeven_available")
+                else "",
+                f"保本进度 {format_num(min((profit or {}).get('breakeven_progress_ratio', 0), 9.99) * 100, 1)}%。"
+                if profit and profit.get("breakeven_available")
+                else "",
+            ],
+            "thinking": [
+                "净利没站稳时，不要靠深折扣换销量。",
+                "先保毛利、连带和主销效率。",
+            ],
+            "level": net_level,
+            "emphasis": False,
+        },
+        {
+            "title": "月末净利预测",
+            "value": forecast_value,
+            "note": forecast_note,
+            "tip": "月底还有亏损风险时，今天的动作要先稳利润，再看放量。",
+            "data_points": [
+                f"月末净利预测 {forecast_value}。",
+                f"当前净利润 {net_value}。",
+                f"保本进度 {format_num(min((profit or {}).get('breakeven_progress_ratio', 0), 9.99) * 100, 1)}%。"
+                if profit and profit.get("breakeven_available")
+                else "",
+            ],
+            "thinking": [
+                "当前优先级是稳毛利、去库存、保主销。",
+                "先把利润风险压住，再决定是否加大动作。",
+            ],
+            "level": forecast_level,
+            "emphasis": True,
+        },
+    ]
+
+
+def build_homepage_role_actions(
+    metrics: dict,
+    signals: dict[str, object],
+) -> list[dict[str, object]]:
+    cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
+    top_replenish = normalize_business_category_name(
+        top_label_from_series(metrics["replenish_categories"]["中类"], "主销品类")
+    )
+    top_clearance = normalize_business_category_name(
+        top_label_from_series(metrics["clearance_categories"]["大类"], "高压库存品类")
+    )
+
+    boss_actions: list[dict[str, str]] = []
+    manager_actions: list[dict[str, str]] = []
+    staff_actions: list[dict[str, str]] = []
+
+    def push(items: list[dict[str, str]], title: str, reason: str, result: str, priority: str) -> None:
+        if len(items) >= 3:
+            return
+        if any(item["title"] == title for item in items):
+            return
+        items.append({"title": title, "reason": reason, "result": result, "priority": priority})
+
+    push(
+        boss_actions,
+        f"拍板本周{top_clearance}停补范围" if top_clearance != "袜品" else "拍板本周袜品收紧补货范围",
+        "库存压货重，补货端要先收紧，先用现有库存去化。",
+        "今天定出停补范围和补货边界。",
+        "最高优先",
+    )
+    push(
+        boss_actions,
+        f"拍板{top_replenish}核心尺码补货预算",
+        "预算只给最能出单的主销尺码，不再平均铺货。",
+        "今天确定补货上限和优先尺码。",
+        "高优先",
+    )
+    if profit and profit["projected_month_net_profit"] < 0:
+        push(
+            boss_actions,
+            "统一今天折扣底线",
+            "月末净利还承压，先稳毛利和客单，别让利润再被打穿。",
+            "今天晨会前定出成交折扣边界和话术。",
+            "高优先",
+        )
+    if signals["vip_dormant_high"]:
+        push(
+            boss_actions,
+            "确认会员回访名单和话术",
+            "今天的复购要靠高价值老客，不要只等自然进店。",
+            "今天定出前 10 位回访名单和邀约口径。",
+            "今日完成",
+        )
+
+    if cards["negative_sku_count"] > 0:
+        push(
+            manager_actions,
+            "中午前修正负库存异常 SKU",
+            "库存不准会直接带偏补货和去化判断，必须先修正。",
+            "输出今天可用库存口径。",
+            "最高优先",
+        )
+    manager_display_title = (
+        "今天完成袜品清货陈列前移"
+        if top_clearance == "袜品"
+        else f"今天完成{top_clearance}和袜品陈列调整"
+    )
+    push(
+        manager_actions,
+        manager_display_title,
+        "高压库存要先前移去化，袜品继续保留顺手带卖位置。",
+        "下班前拍照确认清货位已调整。",
+        "高优先",
+    )
+    push(
+        manager_actions,
+        f"下班前整理{top_replenish}断码清单",
+        "主销断码会直接丢单，今天要先登记再安排补货。",
+        "提交补货依据给老板拍板。",
+        "高优先",
+    )
+    if signals["guide_concentrated"]:
+        push(
+            manager_actions,
+            f"复刻{signals['top_guide_name']}成交话术",
+            "头部店员的方法要今天拆给全员，别把成交全压在一个人身上。",
+            "今晚把可复用话术发给全员。",
+            "今日完成",
+        )
+    if signals["vip_dormant_high"]:
+        push(
+            manager_actions,
+            "安排前 10 位会员回访",
+            "先把能唤醒的老客叫回来，再放大复购和连带。",
+            "今天发出回访名单并分配到人。",
+            "今日完成",
+        )
+
+    push(
+        staff_actions,
+        f"今天先让顾客试{top_replenish}主销款",
+        "先把最能出单的主销款卖掉，别把精力分散到边缘品类。",
+        "下班前反馈 3 组高转化搭配。",
+        "最高优先",
+    )
+    push(
+        staff_actions,
+        "今天顺手带卖袜品或基础款",
+        "袜品补货收紧，但销售端要用现有库存做连带去化。",
+        "每单至少带出 1 件可连带商品。",
+        "高优先",
+    )
+    push(
+        staff_actions,
+        "先做组合推荐，再决定让利",
+        "先做组合推荐和场景推荐，再决定要不要让利。",
+        "遇到犹豫顾客先按统一话术推荐两组搭配。",
+        "高优先" if signals["markdown_pressure_high"] or (profit and profit["projected_month_net_profit"] < 0) else "今日完成",
+    )
+
+    return [
+        {
+            "title": "老板今天拍板",
+            "note": "今天先把预算、停补和经营边界拍清楚。",
+            "tone": "owner",
+            "items": boss_actions[:3],
+        },
+        {
+            "title": "店长今天执行",
+            "note": "今天先把库存、陈列和补货顺序排好。",
+            "tone": "manager",
+            "items": manager_actions[:3],
+        },
+        {
+            "title": "店员今天执行",
+            "note": "今天按主销、连带和毛利顺序去成交。",
+            "tone": "staff",
+            "items": staff_actions[:3],
+        },
+    ]
+
+
+def build_homepage_opportunity_cards(
+    metrics: dict,
+    excluded_names: set[str] | None = None,
+) -> list[dict[str, str]]:
+    excluded_names = excluded_names or set()
+    selected_rows = select_homepage_category_rows(metrics["replenish_categories"], "中类", 6)
+    cards: list[dict[str, str]] = []
+    for row in selected_rows:
+        name = str(row["display_name"])
+        if name in excluded_names:
+            continue
+        if name == "裤类":
+            action = "销量高、库存浅，今天优先保核心尺码不断码。"
+        elif name == "衣类":
+            action = "仍是主销中类，今天先保主色主码，小单快返。"
+        elif name == "内裤":
+            action = "适合做组合连带，今天配袜品和基础款一起卖。"
+        elif name == "袜品":
+            action = "销售上只做顺手带卖，补货上只保基础畅销款，不再深补。"
+        elif name == "家居服":
+            action = "适合做场景推荐，今天先带卖再决定补量。"
+        else:
+            action = f"今天优先保{name}主销色和核心尺码，不做平均补货。"
+        cards.append(
+            {
+                "name": name,
+                "sales": f"{format_num(safe_float(row.get('销售额')), 2)} 元",
+                "stock": format_num(safe_float(row.get("库存"))),
+                "replenish": format_num(safe_float(row.get("建议补货量"))),
+                "action": action,
+                "tip": f"{name}当前卖得动、库存又不深，先保不断码更容易直接转成营业额。",
+                "data_points": [
+                    f"{name}销售额 {format_num(safe_float(row.get('销售额')), 2)} 元。",
+                    f"{name}当前库存 {format_num(safe_float(row.get('库存')))} 件。",
+                    f"{name}建议补货量 {format_num(safe_float(row.get('建议补货量')))}。",
+                ],
+                "thinking": [
+                    "主销品类先保核心尺码，不做平均铺货。",
+                    "当前优先保住能直接出单的品类，再去扩量。",
+                ],
+            }
+        )
+        if len(cards) >= 3:
+            break
+    return cards
+
+
+def build_homepage_risk_cards(metrics: dict) -> list[dict[str, str]]:
+    selected_rows = select_homepage_category_rows(metrics["clearance_categories"], "大类", 3)
+    cards: list[dict[str, str]] = []
+    for row in selected_rows:
+        name = str(row["display_name"])
+        if name == "少女文胸":
+            action = "今天先停补，优先做组合去化。"
+        elif name == "袜品":
+            action = "补货先收紧，销售只做顺手带卖和清货去化。"
+        elif name == "内裤":
+            action = "先控制补货，再看连带效率。"
+        elif name == "裤类":
+            action = "只保主销尺码，边缘款今天先停补。"
+        elif str(row.get("建议动作", "")) == "先停补再去化":
+            action = f"{name}今天先停补，优先做组合去化。"
+        else:
+            action = f"{name}先控制补货，再调陈列去化。"
+        cards.append(
+            {
+                "name": name,
+                "inventory": format_num(safe_float(row.get("实际库存"))),
+                "recent_sales": format_num(safe_float(row.get("近期零售"))),
+                "action": action,
+                "tip": f"{name}当前库存明显重于近期销量承接，先控补货再去化更稳。",
+                "data_points": [
+                    f"{name}当前库存 {format_num(safe_float(row.get('实际库存')))} 件。",
+                    f"{name}近期销量 {format_num(safe_float(row.get('近期零售')))} 件。",
+                    f"建议动作 {str(row.get('建议动作', '先控制补货'))}。",
+                ],
+                "thinking": [
+                    "当前先去库存，再把预算和货位让给主销。",
+                    "风险品类销售上可以去化，但补货端必须更克制。",
+                ],
+            }
+        )
+    return cards
+
+
+def build_homepage_member_cards(metrics: dict, time_strategy: dict[str, object]) -> list[dict[str, str]]:
+    top_replenish = normalize_business_category_name(
+        top_label_from_series(metrics["replenish_categories"]["中类"], "主销品类")
+    )
+    action_templates = [
+        f"优先回访，邀请到店试穿{top_replenish}和{time_strategy['next_season']}新品。",
+        f"适合做组合推荐，提高连带，主推{top_replenish}搭配袜品或基础款。",
+        "适合做复购提醒和到店唤醒，今天先发试穿邀约。",
+    ]
+
+    members: list[dict[str, str]] = []
+    for index, (_, row) in enumerate(metrics["top_members"].head(3).iterrows()):
+        members.append(
+            {
+                "name": str(row["VIP姓名"]),
+                "guide": str(row["服务导购"]),
+                "amount": f"{format_num(row['购买金额'], 2)} 元",
+                "visits": format_num(row["消费次数/年"]),
+                "aov": f"{format_num(row['平均单笔消费额'], 2)} 元",
+                "action": action_templates[min(index, len(action_templates) - 1)],
+                "buttons": ["生成回访话术", "生成邀约短信", "生成搭配建议"],
+                "tip": f"{row['VIP姓名']}属于高价值会员，今天优先回访更容易拿到复购。",
+                "data_points": [
+                    f"购买金额 {format_num(row['购买金额'], 2)} 元。",
+                    f"消费次数 {format_num(row['消费次数/年'])} 次。",
+                    f"平均客单价 {format_num(row['平均单笔消费额'], 2)} 元。",
+                ],
+                "thinking": [
+                    "高价值老客复购效率更高，优先级高于泛泛群发促销。",
+                    "先用试穿邀约和搭配推荐把到店率拉起来。",
+                ],
+            }
+        )
+    return members
+
+
+def build_homepage_support_notes(
+    metrics: dict,
+    decision: dict[str, object],
+    time_strategy: dict[str, object],
+    signals: dict[str, object],
+    boss_board: dict[str, object],
+) -> dict[str, list[str]]:
+    cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
+    pos_highlights = metrics.get("yeusoft_highlights") or {}
+    product_sales = pos_highlights.get("product_sales") or {}
+    sales_overview = pos_highlights.get("sales_overview") or {}
+    vip_analysis = pos_highlights.get("vip_analysis") or {}
+    retail_detail = pos_highlights.get("retail_detail") or {}
+
+    why_items = [
+        f"当前处于 {time_strategy['phase']}，今天不是增长优先，先稳毛利、去库存、保主销。",
+    ]
+    if profit:
+        why_items.append(
+            f"月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元，今天先守利润边界。"
+        )
+    why_items.append(
+        f"库存覆盖约 {format_num(cards['estimated_inventory_days'], 1)} 天，补货要先收紧高压品类。"
+    )
+    if signals["vip_dormant_high"]:
+        why_items.append(
+            f"会员沉默占比约 {format_num(signals['dormant_ratio'] * 100, 1)}%，今天要主动做唤醒。"
+        )
+    if signals["low_joint"]:
+        why_items.append(
+            f"最近件单比约 {format_num(signals['latest_joint_rate'], 2)}，今天先做组合成交。"
+        )
+    elif signals["markdown_pressure_high"]:
+        why_items.append(
+            f"{signals['discount_category_names']} 折扣依赖偏重，今天先稳折扣不再硬冲量。"
+        )
+
+    facts: list[str] = []
+    if sales_overview:
+        facts.append(f"POS 总销售额 {format_num(sales_overview.get('sales_amount', 0), 2)} 元。")
+    if product_sales:
+        facts.append(f"当前库存 {format_num(product_sales.get('current_stock_qty', 0))} 件。")
+        facts.append(f"快销潜力款 {format_num(product_sales.get('fast_sellout_count', 0))} 个。")
+        facts.append(f"积压风险款 {format_num(product_sales.get('backlog_count', 0))} 个。")
+    if vip_analysis:
+        facts.append(f"会员人数 {format_num(vip_analysis.get('member_count', 0))} 人。")
+    if retail_detail:
+        facts.append(
+            f"当前实销折扣约 {format_num(safe_float(retail_detail.get('weighted_discount_rate')) * 10, 1)} 折。"
+        )
+
+    return {
+        "why": why_items[:5],
+        "dont": [str(item) for item in boss_board["dont_do"][:5]],
+        "facts": facts[:6],
+    }
+
+
+def build_html(metrics: dict) -> str:
+    cards = metrics["summary_cards"]
     pos_highlights = metrics.get("yeusoft_highlights")
-    focus = build_today_focus(metrics)
     boss_board = build_boss_action_board(metrics)
     decision = build_decision_engine(metrics)
     time_strategy = build_time_strategy(metrics)
-
-    inventory_days_level = (
-        "red" if cards["estimated_inventory_days"] > 180 else "yellow" if cards["estimated_inventory_days"] > 120 else "green"
-    )
-    core_metrics = [
-        ("经营销售额", f"{format_num(cards['sales_amount'], 2)} 元", f"近 {cards['sales_days']} 天经营销售额", "neutral"),
-        ("客单价", f"{format_num(cards['avg_order_value'], 2)} 元", "经营销售额 / 订单数", "neutral"),
-        ("库存覆盖天数", f"{format_num(cards['estimated_inventory_days'], 1)} 天", "库存还能卖多久", inventory_days_level),
-        ("会员销售占比", f"{format_num(cards['member_sales_ratio'] * 100, 1)}%", "会员销售贡献", "neutral"),
-    ]
-
-    money_opportunities = (
-        metrics["replenish"][metrics["replenish"]["库存周数"] < 1]
-        .groupby("中类")
-        .agg(销售额=("销售金额", "sum"), 当前库存=("库存", "sum"), 建议补货量=("建议补货量", "sum"))
-        .reset_index()
-        .sort_values(["销售额", "当前库存"], ascending=[False, True])
-        .head(4)
-    )
-    if money_opportunities.empty:
-        money_opportunities = (
-            metrics["replenish_categories"][["中类", "销售额", "库存", "建议补货量"]]
-            .rename(columns={"库存": "当前库存"})
-            .head(4)
-        )
-
-    inventory_risks = metrics["clearance_categories"].head(4).copy()
-    replenish_focus = (
-        metrics["replenish_categories"]
-        .sort_values(["SKU数", "销售额", "库存"], ascending=[False, False, True])
-        .head(4)
-        .copy()
-    )
-    member_focus = metrics["top_members"].head(3).copy()
+    signals = build_homepage_operating_signals(metrics)
+    command_center = build_homepage_command_center(metrics, decision, time_strategy, signals)
+    core_metrics = build_homepage_core_metrics(metrics, decision, signals)
+    role_actions = build_homepage_role_actions(metrics, signals)
+    risk_cards = build_homepage_risk_cards(metrics)
+    risk_names = {item["name"] for item in risk_cards}
+    opportunity_cards = build_homepage_opportunity_cards(metrics, excluded_names=risk_names)
+    member_cards = build_homepage_member_cards(metrics, time_strategy)
+    support_notes = build_homepage_support_notes(metrics, decision, time_strategy, signals, boss_board)
 
     capture_date = pd.Timestamp(cards["data_capture_at"]).strftime("%Y-%m-%d")
-    current_strategy = [
-        f"当前阶段：{decision['stage']} / {decision['phase']}",
-        f"日销趋势：{decision['sales_trend']['label']}",
-        f"今日主打法：{decision['mode']}",
-        f"季节判断：{time_strategy['headline']}",
-    ]
     store_note = f"{cards['store_name']} · 主输入人：{metrics['primary_input']}"
-    pos_highlight_cards = build_yeusoft_highlight_cards(pos_highlights)
-    profit_card_defs = build_profit_card_defs(profit)
-    pos_strip_html = ""
-    if pos_highlight_cards:
-        strip_summary = "；".join(f"{item['title']}：{item['value']}" for item in pos_highlight_cards[:3])
-        strip_note = " ".join(item["note"] for item in pos_highlight_cards[:2])
-        pos_strip_html = f"""
-      <div class="strip-card">
-        <div>
-          <strong>POS 高价值数据已接入</strong>
-          <p>{html.escape(strip_summary)}。{html.escape(strip_note)}</p>
-        </div>
-        <a class="strip-link" href="./details.html#overview-section">看 POS 详情</a>
-      </div>
-        """
 
+    strategy_tags_html = "".join(
+        chip_html(item["label"], item["tone"]) for item in command_center["strategy_tags"]
+    )
+    context_meta_html = "".join(
+        f"<span class='meta-chip meta-chip-secondary'>{html.escape(item)}</span>"
+        for item in [
+            f"北京时间：{capture_date}",
+            store_note,
+            f"当前阶段：{decision['stage']} / {time_strategy['phase']}",
+        ]
+    )
+    must_actions_html = "".join(
+        f"""
+        <article class="must-action-card must-action-{item['tone']}">
+          <div class="must-action-kicker">今日必须动作 {index}</div>
+          <div class="title-row">
+            <h3>{html.escape(item['action'])}</h3>
+            {tooltip_badge_html(str(item['why']))}
+          </div>
+          <div class="must-action-meta"><span>对象</span><strong>{html.escape(item['target'])}</strong></div>
+          <p>{html.escape(item['purpose'])}</p>
+          {evidence_details_html(item['data_points'], item['thinking'])}
+        </article>
+        """
+        for index, item in enumerate(command_center["must_actions"], start=1)
+    )
+    hero_risks_html = "".join(
+        f"""
+        <li class="hero-risk-item">
+          <div class="hero-risk-line">
+            <span>{html.escape(item['title'])}</span>
+            {tooltip_badge_html(str(item['why']))}
+          </div>
+          {evidence_details_html(item['data_points'], item['thinking'])}
+        </li>
+        """
+        for item in command_center["risks"]
+    )
     core_metric_html = "".join(
         f"""
-        <div class="metric-card metric-{level}">
-          <div class="metric-title">{title}</div>
-          <div class="metric-value">{value}</div>
-          <div class="metric-note">{note}</div>
-        </div>
-        """
-        for title, value, note, level in core_metrics
-    )
-
-    profit_cards_html = ""
-    if profit:
-        profit_metrics_html = "".join(
-            f"""
-          <div class="metric-card metric-{level}">
-            <div class="metric-title">{title}</div>
-            <div class="metric-value">{value}</div>
-            <div class="metric-note">{note}</div>
+        <article class="metric-card {'is-emphasis' if item['emphasis'] else ''} metric-card-{homepage_status_meta(item['level'])['tone']}">
+          <div class="metric-top">
+            <div class="metric-title title-row">{html.escape(str(item['title']))}{tooltip_badge_html(str(item['tip']), '?')}</div>
+            <span class="status-badge status-{homepage_status_meta(item['level'])['tone']}">{homepage_status_meta(item['level'])['label']}</span>
           </div>
-            """
-            for title, value, note, level in profit_card_defs[:7]
-        )
-        profit_cards_html = f"""
-        <div class="submodule-header">
-          <h3 class="submodule-title">利润与保本</h3>
-          <p class="submodule-note">成本快照已接入。这里不只看赚没赚钱，还看固定费用、人工压力、保本进度和月末预测。</p>
-        </div>
-        <div class="metrics-grid profit-grid">
-          {profit_metrics_html}
-        </div>
+          <div class="metric-value">{html.escape(str(item['value']))}</div>
+          <div class="metric-note-row">
+            <p class="metric-note">{html.escape(str(item['note']))}</p>
+          </div>
+          {evidence_details_html(item['data_points'], item['thinking'])}
+        </article>
         """
-
-    money_html = (
+        for item in core_metrics
+    )
+    role_actions_html = "".join(
+        f"""
+        <article class="role-card role-card-{role['tone']}">
+          <div class="role-header">
+            <h3>{html.escape(str(role['title']))}</h3>
+            <p>{html.escape(str(role['note']))}</p>
+          </div>
+          <div class="role-task-list">
+            {''.join(
+                f'''
+                <div class="role-task-item">
+                  <div class="role-task-top">
+                    <strong>{html.escape(str(task["title"]))}</strong>
+                    <span class="priority-badge">{html.escape(str(task["priority"]))}</span>
+                  </div>
+                  <p>{html.escape(str(task["reason"]))}</p>
+                  <div class="task-result">{html.escape(str(task["result"]))}</div>
+                </div>
+                '''
+                for task in role["items"]
+            )}
+          </div>
+        </article>
+        """
+        for role in role_actions
+    )
+    opportunity_html = (
         "".join(
             f"""
-            <article class="opportunity-card">
-              <div class="card-kicker">赚钱机会</div>
-              <div class="card-title">{html.escape(str(row['中类']))}</div>
-              <div class="stat-row"><span>销售额</span><strong>{format_num(row['销售额'], 2)}</strong></div>
-              <div class="stat-row"><span>当前库存</span><strong>{format_num(row['当前库存'])}</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>{format_num(row['建议补货量'])}</strong></div>
+            <article class="focus-card focus-card-opportunity">
+              <div class="focus-card-kicker">重点机会</div>
+              <div class="card-title title-row">{html.escape(item['name'])}{tooltip_badge_html(str(item['tip']), '?')}</div>
+              <div class="stat-row"><span>销量</span><strong>{html.escape(item['sales'])}</strong></div>
+              <div class="stat-row"><span>库存</span><strong>{html.escape(item['stock'])}</strong></div>
+              <div class="stat-row"><span>建议补货量</span><strong>{html.escape(item['replenish'])}</strong></div>
+              <p class="card-note">{html.escape(item['action'])}</p>
+              {evidence_details_html(item['data_points'], item['thinking'])}
             </article>
             """
-            for _, row in money_opportunities.iterrows()
+            for item in opportunity_cards
         )
-        if not money_opportunities.empty
-        else render_empty("当前没有明显的低库存赚钱机会。")
+        if opportunity_cards
+        else render_empty("当前没有需要马上放大的重点机会。")
     )
-
-    inventory_risk_html = (
+    risk_html = (
         "".join(
             f"""
-            <article class="risk-card">
-              <div class="card-title">{html.escape(str(row['大类']))}</div>
-              <div class="stat-row"><span>库存数量</span><strong>{format_num(row['实际库存'])}</strong></div>
-              <div class="stat-row"><span>近期销量</span><strong>{format_num(row['近期零售'])}</strong></div>
-              <div class="chip-row">{''.join(chip_html(item, 'danger') for item in suggestions_for_risk_action(str(row['建议动作'])))}</div>
+            <article class="focus-card focus-card-risk">
+              <div class="focus-card-kicker">重点风险</div>
+              <div class="card-title title-row">{html.escape(item['name'])}{tooltip_badge_html(str(item['tip']), '?')}</div>
+              <div class="stat-row"><span>库存</span><strong>{html.escape(item['inventory'])}</strong></div>
+              <div class="stat-row"><span>近期销量</span><strong>{html.escape(item['recent_sales'])}</strong></div>
+              <p class="card-note">{html.escape(item['action'])}</p>
+              {evidence_details_html(item['data_points'], item['thinking'])}
             </article>
             """
-            for _, row in inventory_risks.iterrows()
+            for item in risk_cards
         )
-        if not inventory_risks.empty
-        else render_empty("当前没有明显的高库存风险品类。")
+        if risk_cards
+        else render_empty("当前没有需要立即处置的重点风险。")
     )
-
-    replenish_html = (
-        "".join(
-            f"""
-            <article class="opportunity-card">
-              <div class="card-kicker">补货机会</div>
-              <div class="card-title">{html.escape(str(row['中类']))}</div>
-              <div class="stat-row"><span>销售额</span><strong>{format_num(row['销售额'], 2)}</strong></div>
-              <div class="stat-row"><span>库存</span><strong>{format_num(row['库存'])}</strong></div>
-              <div class="stat-row"><span>建议补货量</span><strong>{format_num(row['建议补货量'])}</strong></div>
-              <div class="card-note">建议补货 SKU：{format_num(row['SKU数'])}</div>
-            </article>
-            """
-            for _, row in replenish_focus.iterrows()
-        )
-        if not replenish_focus.empty
-        else render_empty("当前没有需要优先补货的品类。")
-    )
-
     member_html = (
         "".join(
             f"""
             <article class="member-card">
-              <div class="card-title">{html.escape(str(row['VIP姓名']))}</div>
-              <div class="card-note">服务导购：{html.escape(str(row['服务导购']))}</div>
-              <div class="stat-row"><span>购买金额</span><strong>{format_num(row['购买金额'], 2)}</strong></div>
-              <div class="stat-row"><span>消费次数</span><strong>{format_num(row['消费次数/年'])}</strong></div>
-              <div class="stat-row"><span>平均客单价</span><strong>{format_num(row['平均单笔消费额'], 2)}</strong></div>
+              <div class="card-title title-row">{html.escape(item['name'])}{tooltip_badge_html(str(item['tip']), '?')}</div>
+              <div class="member-guide">服务导购：{html.escape(item['guide'])}</div>
+              <div class="stat-row"><span>购买金额</span><strong>{html.escape(item['amount'])}</strong></div>
+              <div class="stat-row"><span>消费次数</span><strong>{html.escape(item['visits'])}</strong></div>
+              <div class="stat-row"><span>平均客单价</span><strong>{html.escape(item['aov'])}</strong></div>
+              <div class="member-action-label">今天建议动作</div>
+              <p class="card-note">{html.escape(item['action'])}</p>
+              {evidence_details_html(item['data_points'], item['thinking'])}
+              <div class="member-button-row">
+                {''.join(f"<span class='member-mini-button'>{html.escape(button)}</span>" for button in item['buttons'])}
+              </div>
             </article>
             """
-            for _, row in member_focus.iterrows()
+            for item in member_cards
         )
-        if not member_focus.empty
+        if member_cards
         else render_empty("当前没有可展示的高价值会员。")
     )
-
-    conclusions_html = "".join(chip_html(item, "primary") for item in focus["conclusions"])
-    tasks_html = "".join(f"<li>{chip_html(item, 'soft')}</li>" for item in focus["tasks"])
-    dont_do_html = "".join(f"<li>{chip_html(item, 'warn')}</li>" for item in boss_board["dont_do"])
-    strategy_summary_html = "".join(f"<li>{html.escape(item)}</li>" for item in current_strategy)
-    action_today_html = "".join(
+    dont_do_html = "".join(f"<li>{html.escape(item)}</li>" for item in boss_board["dont_do"][:5])
+    why_support_html = "".join(f"<li>{html.escape(item)}</li>" for item in support_notes["why"])
+    facts_support_html = "".join(f"<li>{html.escape(item)}</li>" for item in support_notes["facts"])
+    page_roles = [
+        ("今日要做", "../index.html", "快速看今天先做什么。", ""),
+        ("经营看板", "./index.html", "老板 10 秒拍板，当前页。", "is-current"),
+        ("数据明细", "./details.html", "看完整经营分析与图表。", ""),
+        ("库存销售关系", "./relationship.html", "专看库存与销售匹配情况。", ""),
+        ("月度分析", "./monthly.html", "看阶段趋势与方向。", ""),
+        ("季度趋势", "./quarterly.html", "看长期走势。", ""),
+        ("文档中心", "../manuals/index.html", "看说明和操作手册。", ""),
+        ("成本维护", "../costs/index.html", "维护费用与利润口径。", ""),
+    ]
+    page_role_html = "".join(
         f"""
-        <li>
-          <strong>{html.escape(item['title'])}</strong>
-          <span>{html.escape(item['body'])}</span>
-        </li>
+        <a class="page-nav-card {extra_class}" href="{href}">
+          <strong>{html.escape(label)}</strong>
+          <span>{html.escape(note)}</span>
+        </a>
         """
-        for item in boss_board["actions_today"]
+        for label, href, note, extra_class in page_roles
     )
 
     return f"""<!DOCTYPE html>
@@ -4557,7 +5470,9 @@ def build_html(metrics: dict) -> str:
     body {{
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f6f7fb;
+      background:
+        radial-gradient(circle at top left, rgba(191, 219, 254, 0.45), transparent 32%),
+        linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
       color: #1f2937;
     }}
     .page {{
@@ -4600,174 +5515,276 @@ def build_html(metrics: dict) -> str:
       color: #1d4ed8;
       border-color: #bfdbfe;
     }}
-    .page-shell {{
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 250px;
-      gap: 18px;
-    }}
-    .main-column {{
-      min-width: 0;
-    }}
-    .side-rail {{
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      align-self: start;
-    }}
-    .rail-card {{
-      position: sticky;
-      top: 88px;
-      background: #fff;
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-    }}
-    .rail-card h3 {{
-      margin: 0 0 8px;
-      font-size: 17px;
-      color: #0f172a;
-    }}
-    .rail-card p {{
-      margin: 0 0 12px;
-      font-size: 12px;
-      line-height: 1.8;
-      color: #64748b;
-    }}
-    .rail-links {{
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }}
-    .rail-links a {{
-      display: block;
-      text-decoration: none;
-      color: #334155;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 13px;
-      font-weight: 700;
-    }}
-    .rail-links a.current {{
-      background: #dbeafe;
-      border-color: #bfdbfe;
-      color: #1d4ed8;
-    }}
-    .hero {{
-      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+    .hero-command-section {{
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 58%, #0f766e 100%);
       color: white;
-      padding: 24px;
-      border-radius: 22px;
+      padding: 26px;
+      border-radius: 26px;
       margin-bottom: 18px;
-      box-shadow: 0 18px 48px rgba(15, 23, 42, 0.18);
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.18);
     }}
-    .hero h1 {{
-      margin: 0 0 10px;
-      font-size: 30px;
+    .command-layout {{
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 18px;
+      align-items: start;
+    }}
+    .command-kicker {{
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }}
+    .command-main h1 {{
+      margin: 0 0 12px;
+      font-size: 32px;
       line-height: 1.25;
     }}
-    .hero p {{
+    .command-conclusion {{
       margin: 0;
-      opacity: 0.94;
+      font-size: 18px;
       line-height: 1.8;
+      color: rgba(255, 255, 255, 0.96);
     }}
-    .hero-note {{
-      margin-top: 12px;
+    .command-conclusion span {{
+      display: block;
+      margin-bottom: 6px;
       font-size: 13px;
-      opacity: 0.9;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.78);
+      text-transform: uppercase;
     }}
-    .hero-status {{
+    .command-meta {{
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      font-size: 13px;
+      margin-top: 14px;
     }}
-    .hero-status-chip {{
+    .meta-chip {{
       display: inline-flex;
       align-items: center;
-      justify-content: center;
       gap: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffffff;
-      border-radius: 999px;
       padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.94);
       font-size: 12px;
       font-weight: 700;
-      line-height: 1.5;
     }}
-    .action-strip {{
-      margin-bottom: 18px;
-      background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
-      border: 1px solid #fed7aa;
+    .meta-chip-secondary {{
+      background: #f8fafc;
+      border-color: #dbe4f0;
+      color: #334155;
     }}
-    .action-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-top: 16px;
-    }}
-    .action-card {{
-      background: #ffffff;
-      border: 1px solid #fde68a;
-      border-radius: 18px;
-      padding: 16px;
-      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.08);
-    }}
-    .action-kicker {{
-      font-size: 12px;
+    .command-subtitle {{
+      margin: 18px 0 10px;
+      font-size: 13px;
       font-weight: 800;
-      color: #b45309;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.78);
     }}
-    .action-title {{
-      margin: 0 0 8px;
-      font-size: 20px;
-      color: #0f172a;
-    }}
-    .action-text {{
-      margin: 0 0 12px;
-      font-size: 13px;
-      line-height: 1.8;
-      color: #475569;
-    }}
-    .action-link {{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 10px 14px;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 800;
-      background: #1d4ed8;
-      color: #ffffff;
-    }}
-    .quick-nav {{
+    .command-tags {{
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+    }}
+    .must-action-grid {{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }}
+    .must-action-card {{
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(14px);
+    }}
+    .must-action-primary {{
+      box-shadow: 0 12px 24px rgba(14, 116, 144, 0.18);
+    }}
+    .must-action-danger {{
+      background: rgba(127, 29, 29, 0.22);
+      border-color: rgba(254, 202, 202, 0.24);
+    }}
+    .must-action-warn {{
+      background: rgba(146, 64, 14, 0.2);
+      border-color: rgba(253, 230, 138, 0.24);
+    }}
+    .must-action-soft {{
+      background: rgba(30, 41, 59, 0.24);
+    }}
+    .must-action-kicker {{
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255, 255, 255, 0.74);
+      margin-bottom: 10px;
+    }}
+    .must-action-card h3 {{
+      margin: 0 0 12px;
+      font-size: 22px;
+      line-height: 1.45;
+      color: #ffffff;
+    }}
+    .title-row {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }}
+    .must-action-card p {{
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.86);
+    }}
+    .must-action-meta {{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.72);
+    }}
+    .must-action-meta strong {{
+      color: #ffffff;
+      font-size: 14px;
+    }}
+    .command-side {{
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }}
+    .command-panel {{
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 18px;
+      backdrop-filter: blur(14px);
+    }}
+    .panel-kicker {{
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.8);
+    }}
+    .risk-list {{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.9;
+      font-size: 14px;
+    }}
+    .hero-risk-item + .hero-risk-item {{
+      margin-top: 8px;
+    }}
+    .hero-risk-line {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }}
+    .panel-note {{
+      margin: 0 0 12px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      line-height: 1.8;
+    }}
+    .agent-button-grid {{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }}
+    .agent-button, .agent-button-disabled {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      border: 1px solid transparent;
+    }}
+    .agent-button {{
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      box-shadow: 0 14px 26px rgba(29, 78, 216, 0.28);
+    }}
+    .agent-button-disabled {{
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      border-color: rgba(255, 255, 255, 0.16);
+      cursor: not-allowed;
+    }}
+    .quick-nav {{
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
       margin: 12px 0 18px;
     }}
     .quick-nav a {{
       text-decoration: none;
-      color: #1d4ed8;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      padding: 8px 12px;
-      border-radius: 999px;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid #dbe4f0;
+      padding: 12px 14px;
+      border-radius: 16px;
       font-size: 13px;
       font-weight: 700;
-      white-space: nowrap;
+      text-align: center;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }}
+    .context-strip {{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.95fr);
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 18px;
+    }}
+    .context-block {{
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid #dbe4f0;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }}
+    .context-kicker {{
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748b;
+    }}
+    .context-chip-row {{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }}
+    .context-block .quick-nav {{
+      margin: 0;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }}
     .module {{
       background: white;
-      border-radius: 18px;
+      border-radius: 22px;
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 18px;
     }}
     .module-header {{
@@ -4791,57 +5808,133 @@ def build_html(metrics: dict) -> str:
     }}
     .detail-link {{
       text-decoration: none;
-      color: white;
-      background: #1d4ed8;
+      color: #0f172a;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
       border-radius: 999px;
       padding: 10px 14px;
       font-size: 13px;
       font-weight: 800;
-      box-shadow: 0 8px 18px rgba(29, 78, 216, 0.22);
+      box-shadow: 0 8px 18px rgba(191, 219, 254, 0.32);
     }}
-    .focus-wrap {{
+    .metrics-grid {{
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
     }}
-    .focus-panel {{
-      background: #fffdf7;
-      border: 1px solid #fde68a;
-      border-radius: 16px;
-      padding: 16px;
+    .metric-card {{
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+      min-width: 0;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
     }}
-    .focus-headline {{
-      font-size: 28px;
-      font-weight: 800;
+    .metric-card.is-emphasis {{
+      padding: 20px;
+      border-width: 2px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.1);
+    }}
+    .metric-card-good {{
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+      border-color: #bbf7d0;
+    }}
+    .metric-card-warn {{
+      background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);
+      border-color: #fde68a;
+    }}
+    .metric-card-danger {{
+      background: linear-gradient(180deg, #fff7f7 0%, #ffffff 100%);
+      border-color: #fecaca;
+    }}
+    .metric-top {{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }}
+    .status-badge {{
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+    .status-good {{
+      background: #dcfce7;
+      color: #166534;
+    }}
+    .status-warn {{
+      background: #fef3c7;
       color: #92400e;
-      margin: 0 0 10px;
-      line-height: 1.35;
     }}
-    .focus-summary {{
-      margin: 0;
+    .status-danger {{
+      background: #fee2e2;
+      color: #991b1b;
+    }}
+    .metric-title {{
       font-size: 14px;
-      line-height: 1.8;
-      color: #5b4636;
+      color: #64748b;
     }}
-    .submodule-header {{
-      margin: 18px 0 10px;
-    }}
-    .submodule-title {{
-      margin: 0 0 6px;
-      font-size: 18px;
+    .metric-value {{
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
       color: #0f172a;
     }}
-    .submodule-note {{
+    .metric-note-row {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }}
+    .metric-note {{
       margin: 0;
       font-size: 13px;
       color: #64748b;
       line-height: 1.8;
+      flex: 1;
     }}
-    .chip-row {{
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+    .mini-tip {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      flex-shrink: 0;
+    }}
+    .metric-card .mini-tip,
+    .focus-card .mini-tip,
+    .member-card .mini-tip {{
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }}
+    .inline-tip {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.6;
+      white-space: nowrap;
+      flex-shrink: 0;
     }}
     .mini-chip {{
       display: inline-flex;
@@ -4918,97 +6011,115 @@ def build_html(metrics: dict) -> str:
       outline: 2px solid #93c5fd;
       outline-offset: 2px;
     }}
-    .focus-list, .task-list {{
-      margin: 10px 0 0 18px;
-      padding: 0;
-      line-height: 1.9;
-      color: #334155;
-      font-size: 14px;
-    }}
-    .task-list li + li,
-    .focus-list li + li {{
-      margin-top: 4px;
-    }}
-    .task-list strong {{
-      display: block;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }}
-    .metrics-grid, .cards-grid {{
+    .role-grid, .member-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }}
-    .metric-card, .opportunity-card, .risk-card, .member-card {{
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      padding: 16px;
-      min-width: 0;
+    .role-card {{
+      border-radius: 18px;
+      border: 1px solid #dbe4f0;
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     }}
-    .metric-card {{
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    .role-card-owner {{
+      border-top: 4px solid #1d4ed8;
     }}
-    .metric-title {{
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 8px;
+    .role-card-manager {{
+      border-top: 4px solid #d97706;
     }}
-    .metric-value {{
-      font-size: 30px;
-      font-weight: 800;
-      margin-bottom: 6px;
+    .role-card-staff {{
+      border-top: 4px solid #0f766e;
+    }}
+    .role-header h3 {{
+      margin: 0 0 6px;
+      font-size: 20px;
       color: #0f172a;
     }}
-    .metric-note {{
+    .role-header p {{
+      margin: 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.8;
+    }}
+    .role-task-list {{
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }}
+    .role-task-item {{
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }}
+    .role-task-top {{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 6px;
+    }}
+    .role-task-top strong {{
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.6;
+    }}
+    .role-task-item p {{
+      margin: 0;
       font-size: 13px;
       color: #64748b;
+      line-height: 1.8;
+    }}
+    .task-result {{
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
       line-height: 1.7;
     }}
-    .inline-tip {{
+    .priority-badge {{
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      margin-left: 6px;
-      padding: 1px 8px;
       border-radius: 999px;
-      border: 1px solid #bfdbfe;
-      background: #eff6ff;
-      color: #1d4ed8;
-      font-size: 11px;
+      padding: 5px 9px;
+      font-size: 12px;
       font-weight: 800;
-      line-height: 1.6;
-      vertical-align: middle;
+      color: #92400e;
+      background: #fef3c7;
       white-space: nowrap;
     }}
-    .metric-red {{
-      border-color: #fecaca;
-      background: #fff7f7;
+    .focus-sections {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
     }}
-    .metric-red .metric-value {{
-      color: #991b1b;
+    .focus-card {{
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
     }}
-    .metric-yellow {{
-      border-color: #fde68a;
-      background: #fffbeb;
+    .focus-card + .focus-card {{
+      margin-top: 12px;
     }}
-    .metric-yellow .metric-value {{
-      color: #92400e;
-    }}
-    .metric-green {{
+    .focus-card-opportunity {{
+      background: linear-gradient(180deg, #effcf5 0%, #ffffff 100%);
       border-color: #bbf7d0;
-      background: #f0fdf4;
     }}
-    .metric-green .metric-value {{
-      color: #166534;
+    .focus-card-risk {{
+      background: linear-gradient(180deg, #fff7f7 0%, #ffffff 100%);
+      border-color: #fecaca;
     }}
-    .card-kicker {{
+    .focus-card-kicker {{
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }}
     .card-title {{
       font-size: 18px;
@@ -5019,10 +6130,116 @@ def build_html(metrics: dict) -> str:
       word-break: break-word;
     }}
     .card-note {{
-      font-size: 12px;
+      margin: 12px 0 0;
+      font-size: 13px;
       color: #64748b;
+      line-height: 1.8;
+    }}
+    .member-card {{
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #dbe4f0;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }}
+    .evidence-details {{
       margin-top: 10px;
-      line-height: 1.7;
+    }}
+    .evidence-details summary {{
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 800;
+    }}
+    .evidence-details summary::-webkit-details-marker {{
+      display: none;
+    }}
+    .evidence-content {{
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }}
+    .evidence-group {{
+      border-radius: 14px;
+      background: rgba(248, 250, 252, 0.82);
+      border: 1px solid #e2e8f0;
+      padding: 12px;
+    }}
+    .must-action-card .evidence-group,
+    .command-panel .evidence-group {{
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.16);
+    }}
+    .must-action-card .evidence-details summary,
+    .command-panel .evidence-details summary,
+    .hero-risk-item .evidence-details summary {{
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #ffffff;
+    }}
+    .evidence-title {{
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748b;
+    }}
+    .must-action-card .evidence-title,
+    .command-panel .evidence-title {{
+      color: rgba(255, 255, 255, 0.74);
+    }}
+    .evidence-list {{
+      margin: 0;
+      padding-left: 18px;
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.8;
+    }}
+    .must-action-card .evidence-list,
+    .command-panel .evidence-list {{
+      color: rgba(255, 255, 255, 0.86);
+    }}
+    .member-guide {{
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 12px;
+    }}
+    .member-action-label {{
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748b;
+    }}
+    .member-button-row {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }}
+    .member-mini-button {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
     }}
     .stat-row {{
       display: flex;
@@ -5037,36 +6254,95 @@ def build_html(metrics: dict) -> str:
       color: #0f172a;
       font-size: 15px;
     }}
-    .risk-card {{
-      background: #fff8f5;
-      border-color: #fed7aa;
+    .page-nav-grid {{
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
     }}
-    .member-card {{
-      background: #f8fafc;
-    }}
-    .strip-card {{
-      margin-top: 14px;
-      border: 1px solid #dbeafe;
-      background: #eff6ff;
-      border-radius: 16px;
-      padding: 14px 16px;
+    .page-nav-card {{
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }}
-    .strip-card strong {{
+      flex-direction: column;
+      gap: 8px;
+      text-decoration: none;
       color: #0f172a;
-      font-size: 16px;
-      display: block;
-      margin-bottom: 4px;
+      border: 1px solid #dbe4f0;
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
     }}
-    .strip-card p {{
+    .page-nav-card strong {{
+      font-size: 16px;
+    }}
+    .page-nav-card span {{
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.8;
+    }}
+    .page-nav-card.is-current {{
+      border-color: #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    }}
+    .support-grid {{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }}
+    .support-card {{
+      border-radius: 18px;
+      border: 1px solid #dbe4f0;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+      overflow: visible;
+      min-width: 0;
+    }}
+    .support-card details {{
+      width: 100%;
+      height: auto;
+    }}
+    .support-card details[open] {{
+      height: auto;
+    }}
+    .support-card summary {{
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+    }}
+    .support-card summary::-webkit-details-marker {{
+      display: none;
+    }}
+    .support-content {{
+      padding: 0 16px 16px;
+      overflow: visible;
+    }}
+    .support-content p {{
       margin: 0;
       color: #475569;
       font-size: 13px;
-      line-height: 1.7;
+      line-height: 1.85;
+    }}
+    .fold-list {{
+      margin: 0;
+      padding-left: 18px;
+      color: #475569;
+      line-height: 1.9;
+      font-size: 13px;
+      white-space: normal;
+    }}
+    .fold-list li {{
+      overflow-wrap: anywhere;
+    }}
+    .fold-list li + li {{
+      margin-top: 4px;
+    }}
+    .support-link-row {{
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }}
     .strip-link {{
       text-decoration: none;
@@ -5088,25 +6364,20 @@ def build_html(metrics: dict) -> str:
       .page {{
         padding: 16px;
       }}
-      .page-shell {{
-        grid-template-columns: 1fr;
-      }}
-      .rail-card {{
-        position: static;
-      }}
-      .rail-links {{
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }}
-      .focus-wrap {{
+      .command-layout,
+      .context-strip,
+      .must-action-grid,
+      .metrics-grid,
+      .role-grid,
+      .focus-sections,
+      .member-grid,
+      .page-nav-grid,
+      .support-grid {{
         grid-template-columns: 1fr;
       }}
       .module-header {{
         flex-direction: column;
         align-items: flex-start;
-      }}
-      .metrics-grid, .cards-grid {{
-        grid-template-columns: 1fr;
       }}
     }}
     @media (max-width: 640px) {{
@@ -5119,40 +6390,37 @@ def build_html(metrics: dict) -> str:
       .top-nav-link {{
         width: 100%;
       }}
-      .hero {{
+      .hero-command-section {{
         padding: 18px;
-        border-radius: 16px;
+        border-radius: 18px;
       }}
-      .hero h1 {{
-        font-size: 24px;
+      .command-main h1 {{
+        font-size: 26px;
       }}
-      .hero p,
-      .hero-note,
+      .command-conclusion,
+      .panel-note,
       .module-note,
-      .focus-summary,
       .metric-note,
       .card-note,
-      .task-list,
-      .focus-list {{
+      .support-content p,
+      .fold-list {{
         font-size: 12px;
         line-height: 1.75;
       }}
-      .hero-status-chip {{
+      .meta-chip,
+      .meta-chip-secondary {{
         width: 100%;
       }}
       .quick-nav {{
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 2px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }}
+      .context-block .quick-nav {{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }}
       .module {{
         padding: 14px;
         border-radius: 16px;
         margin-bottom: 14px;
-      }}
-      .focus-headline {{
-        font-size: 22px;
       }}
       .metric-value {{
         font-size: 24px;
@@ -5161,9 +6429,6 @@ def build_html(metrics: dict) -> str:
         font-size: 12px;
         padding: 6px 10px;
         white-space: normal;
-      }}
-      .rail-links {{
-        grid-template-columns: 1fr;
       }}
       .card-title {{
         font-size: 16px;
@@ -5174,9 +6439,6 @@ def build_html(metrics: dict) -> str:
       .stat-row strong {{
         font-size: 14px;
       }}
-      .strip-card {{
-        align-items: flex-start;
-      }}
     }}
   {floating_tooltip_css()}
   </style>
@@ -5185,185 +6447,149 @@ def build_html(metrics: dict) -> str:
   <div class="page">
     <nav class="top-nav">
       <div class="top-nav-links">
-        <a class="top-nav-link" href="../index.html">首页</a>
-        <a class="top-nav-link is-active" href="./index.html">仪表盘</a>
-        <a class="top-nav-link" href="./details.html">详细页</a>
-        <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
-        <a class="top-nav-link" href="./monthly.html">月度页</a>
-        <a class="top-nav-link" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../index.html">今日要做</a>
+        <a class="top-nav-link is-active" href="./index.html">经营看板</a>
+        <a class="top-nav-link" href="./details.html">数据明细</a>
+        <a class="top-nav-link" href="./relationship.html">库存销售关系</a>
+        <a class="top-nav-link" href="./monthly.html">月度分析</a>
+        <a class="top-nav-link" href="./quarterly.html">季度趋势</a>
         <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
-        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护</a>
       </div>
     </nav>
-    <section class="hero">
-      <h1>{cards['store_name']} 老板经营仪表盘</h1>
-      <p>首页只保留老板 10 秒内最该知道的事情。总览、经营策略、图表和明细已经拆到详细页，首页更适合每天快速拍板。</p>
-      <div class="hero-note">{store_note} · 当前季节：{time_strategy['season']} / {time_strategy['phase']} · 当前阶段：{decision['stage']} · 日销趋势：{decision['sales_trend']['label']}</div>
-      <div class="hero-status">
-        <div class="hero-status-chip">最近抓取日期：{capture_date}（北京时间）</div>
-        <div class="hero-status-chip">数据导入日期：{capture_date}（北京时间）</div>
+
+    <section class="hero-command-section" id="today-focus">
+      <div class="command-layout">
+        <div class="command-main">
+          <div class="command-kicker">老板经营驾驶舱</div>
+          <h1>{cards['store_name']} 老板经营仪表盘</h1>
+          <p class="command-conclusion"><span>今日经营结论</span>{html.escape(command_center['conclusion'])}</p>
+          <div class="command-subtitle">今日必须动作</div>
+          <div class="must-action-grid">{must_actions_html}</div>
+        </div>
+        <div class="command-side">
+          <section class="command-panel">
+            <div class="panel-kicker">今日最大风险</div>
+            <ul class="risk-list">{hero_risks_html}</ul>
+          </section>
+          <section class="command-panel">
+            <div class="panel-kicker">执行按钮</div>
+            <p class="panel-note">先把清单拉出来，再交给店长和店员执行。</p>
+            <div class="agent-button-grid">
+              <a class="agent-button" href="./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成补货清单</a>
+              <a class="agent-button" href="./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv">生成去化清单</a>
+              <span class="agent-button-disabled">生成会员回访名单（预留）</span>
+            </div>
+          </section>
+        </div>
       </div>
     </section>
 
-    <section class="module action-strip">
-      <div class="module-header">
-        <h2 class="module-title">老板娘最常用 3 步</h2>
-        <p class="module-note">如果今天只做最常用的动作，先点这 3 个，不用在模块里慢慢找。</p>
+    <section class="context-strip">
+      <div class="context-block">
+        <div class="context-kicker">阶段与底色</div>
+        <div class="context-chip-row">{context_meta_html}</div>
+        <div class="context-chip-row">{strategy_tags_html}</div>
       </div>
-      <div class="action-grid">
-        <article class="action-card">
-          <div class="action-kicker">第 1 步</div>
-          <h3 class="action-title">回首页</h3>
-          <p class="action-text">如果要重新选入口、打开文档中心，或者让别人从最清楚的地方开始，就先回首页。</p>
-          <a class="action-link" href="../index.html">直接回首页</a>
-        </article>
-        <article class="action-card">
-          <div class="action-kicker">第 2 步</div>
-          <h3 class="action-title">看详细页</h3>
-          <p class="action-text">如果你已经看完首页结论，下一步通常就是去详细页看总览、经营策略和补货去化明细。</p>
-          <a class="action-link" href="./details.html">直接看详细页</a>
-          <a class="action-link" href="./relationship.html">专门看库存和销售关系</a>
-        </article>
-        <article class="action-card">
-          <div class="action-kicker">第 3 步</div>
-          <h3 class="action-title">一键同步</h3>
-          <p class="action-text">如果店里电脑已经开了本地服务，回首页同步区直接一键抓取，就能刷新今天最新报表。</p>
-          <a class="action-link" href="../index.html#local-console">去同步区</a>
-        </article>
+      <div class="context-block">
+        <div class="context-kicker">快捷跳转</div>
+        <nav class="quick-nav">
+          <a href="#today-focus">今日重点</a>
+          <a href="#core-metrics">核心指标</a>
+          <a href="#role-actions">今日动作</a>
+          <a href="#opportunity-section">重点机会</a>
+          <a href="#risk-section">重点风险</a>
+          <a href="#member-section">会员经营</a>
+        </nav>
       </div>
-    </section>
-
-    <div class="page-shell">
-      <div class="main-column">
-    <nav class="quick-nav">
-      <a href="#focus">今日重点</a>
-      <a href="#core-metrics">核心指标</a>
-      <a href="#money-opportunities">赚钱机会</a>
-      <a href="#inventory-risks">库存风险</a>
-      <a href="#replenish-opportunities">补货机会</a>
-      <a href="#member-ops">会员经营</a>
-    </nav>
-
-    <section class="module" id="focus">
-      <div class="module-header">
-        <h2 class="module-title">1. 今日经营重点</h2>
-        <a class="detail-link" href="./details.html">查看详细数据与图表</a>
-        <a class="detail-link" href="./relationship.html">查看库存和销售关系页</a>
-      </div>
-      <div class="focus-wrap">
-        <div class="focus-panel">
-          <div class="focus-headline">{boss_board['headline']}</div>
-          <p class="focus-summary">{boss_board['summary']}</p>
-          <div class="chip-row">{conclusions_html}</div>
-          <ul class="focus-list">{strategy_summary_html}</ul>
-        </div>
-        <div class="focus-panel">
-          <div class="submodule-header">
-            <h3 class="submodule-title">今日执行任务</h3>
-            <p class="submodule-note">先把今天要做的事排清楚，再让店员按顺序执行。</p>
-          </div>
-          <ul class="task-list">{tasks_html}</ul>
-          <div class="submodule-header">
-            <h3 class="submodule-title">今天先别做</h3>
-          </div>
-          <ul class="focus-list">{dont_do_html}</ul>
-        </div>
-      </div>
-      <div class="strip-card">
-        <div>
-          <strong>总览和经营策略已移到详细页顶部</strong>
-          <p>详细页会根据每日销售、整体销售、库存动态和利润保本状态自动刷新，更适合复盘和细看。</p>
-        </div>
-        <a class="strip-link" href="./details.html#overview-section">打开详细页</a>
-      </div>
-      {pos_strip_html}
     </section>
 
     <section class="module" id="core-metrics">
       <div class="module-header">
-        <h2 class="module-title">2. 核心经营指标</h2>
-        <p class="module-note">先看这 4 个数字，再判断今天是去库存、保畅销，还是冲保本线。</p>
+        <h2 class="module-title">核心指标</h2>
+        <a class="detail-link" href="./details.html">去数据明细看原因</a>
       </div>
+      <p class="module-note">首页只保留今天拍板最关键的 6 个数；重点先看月末净利预测和库存覆盖天数。</p>
       <div class="metrics-grid">{core_metric_html}</div>
-      {profit_cards_html}
     </section>
 
-    <section class="module" id="money-opportunities">
+    <section class="module" id="role-actions">
       <div class="module-header">
-        <h2 class="module-title">3. 赚钱机会</h2>
-        <p class="module-note">优先找卖得快但库存浅的品类，先保不断货，再谈放大销售额。</p>
+        <h2 class="module-title">今日动作</h2>
+        <p class="module-note">今天谁做什么、为什么做、先后顺序是什么，都直接写在这里。</p>
       </div>
-      <div class="cards-grid">{money_html}</div>
+      <div class="role-grid">{role_actions_html}</div>
     </section>
 
-    <section class="module" id="inventory-risks">
-      <div class="module-header">
-        <h2 class="module-title">4. 库存风险</h2>
-        <p class="module-note">这里看库存压力最大的品类。先停补、再去化、再调陈列。</p>
-      </div>
-      <div class="cards-grid">{inventory_risk_html}</div>
-    </section>
-
-    <section class="module" id="replenish-opportunities">
-      <div class="module-header">
-        <h2 class="module-title">5. 补货机会</h2>
-        <p class="module-note">这里只显示最值得优先补的品类。具体款号、颜色和尺码，去详细页再下钻。</p>
-      </div>
-      <div class="cards-grid">{replenish_html}</div>
-    </section>
-
-    <section class="module" id="member-ops">
-      <div class="module-header">
-        <h2 class="module-title">6. 会员经营</h2>
-        <p class="module-note">高价值会员适合优先回访。详细页里会有更完整的会员、店员和参考店信息。</p>
-      </div>
-      <div class="cards-grid">{member_html}</div>
-      <div class="strip-card">
-        <div>
-          <strong>详细页包含总览、经营策略、图表、补货去化、会员店员和下载区</strong>
-          <p>首页用于每天拍板，详细页用于复盘、解释和交给店员执行。</p>
+    <div class="focus-sections">
+      <section class="module" id="opportunity-section">
+        <div class="module-header">
+          <h2 class="module-title">今日重点机会</h2>
+          <p class="module-note">只保留最值得马上放大的 3 个方向，先保主销不断码，再谈放量。</p>
         </div>
-        <a class="strip-link" href="./details.html">去详细页</a>
+        <div>{opportunity_html}</div>
+      </section>
+
+      <section class="module" id="risk-section">
+        <div class="module-header">
+          <h2 class="module-title">今日重点风险</h2>
+          <p class="module-note">只保留今天必须处置的 3 个风险，先停补、再去化、再纠偏。</p>
+        </div>
+        <div>{risk_html}</div>
+      </section>
+    </div>
+
+    <section class="module" id="member-section">
+      <div class="module-header">
+        <h2 class="module-title">会员经营</h2>
+        <p class="module-note">不只看会员数据，直接给出今天可以执行的回访动作。</p>
+      </div>
+      <div class="member-grid">{member_html}</div>
+    </section>
+
+    <section class="module fold-module">
+      <div class="module-header">
+        <h2 class="module-title">辅助说明</h2>
+        <p class="module-note">需要解释时再展开，首页默认只保留拍板和执行内容。</p>
+      </div>
+      <div class="support-grid">
+        <article class="support-card">
+          <details>
+            <summary>为什么今天这样拍板</summary>
+            <div class="support-content">
+              <ul class="fold-list">{why_support_html}</ul>
+            </div>
+          </details>
+        </article>
+        <article class="support-card">
+          <details>
+            <summary>今天先别这样做</summary>
+            <div class="support-content">
+              <ul class="fold-list">{dont_do_html}</ul>
+            </div>
+          </details>
+        </article>
+        <article class="support-card">
+          <details>
+            <summary>关键经营底数</summary>
+            <div class="support-content">
+              <ul class="fold-list">{facts_support_html}</ul>
+              <div class="support-link-row">
+                <a class="strip-link" href="./details.html#overview-section">去数据明细看原因</a>
+              </div>
+            </div>
+          </details>
+        </article>
       </div>
     </section>
 
     <section class="module">
       <div class="module-header">
-        <h2 class="module-title">老板拍板参考</h2>
-        <p class="module-note">这组话术更适合晨会或微信里直接发给店员。</p>
+        <h2 class="module-title">页面职责导航</h2>
+        <p class="module-note">首页负责今天拍板，原因、图表和下钻都放到其他页面。</p>
       </div>
-      <ul class="task-list">{action_today_html}</ul>
+      <div class="page-nav-grid">{page_role_html}</div>
     </section>
-      </div>
-      <aside class="side-rail">
-        <section class="rail-card">
-          <h3>常用导航</h3>
-          <p>老板每天最常用的入口都固定在这里，不用回头找按钮。</p>
-          <div class="rail-links">
-            <a href="../index.html">返回首页</a>
-            <a class="current" href="./index.html">当前仪表盘</a>
-            <a href="./details.html">进入详细页</a>
-            <a href="./relationship.html">进入关系页</a>
-            <a href="./monthly.html">进入月度页</a>
-            <a href="./quarterly.html">进入季度页</a>
-            <a href="../manuals/index.html">进入文档中心</a>
-            <a href="../costs/index.html">进入成本维护台</a>
-          </div>
-        </section>
-        <section class="rail-card">
-          <h3>本页定位</h3>
-          <p>如果只想快速跳到某一块，直接点右边，不用整页来回找。</p>
-          <div class="rail-links">
-            <a href="#focus">今日重点</a>
-            <a href="#core-metrics">核心指标</a>
-            <a href="#money-opportunities">赚钱机会</a>
-            <a href="#inventory-risks">库存风险</a>
-            <a href="#replenish-opportunities">补货机会</a>
-            <a href="#member-ops">会员经营</a>
-          </div>
-        </section>
-      </aside>
-    </div>
   </div>
 {floating_tooltip_script()}
 </body>
@@ -5745,7 +6971,7 @@ def build_detail_html(metrics: dict) -> str:
     """
     consulting_panel_html = render_consulting_analysis_html(
         consulting_analysis,
-        "经营分析与销售建议",
+        "经营分析与执行动作",
         "consulting-analysis",
     )
     replenish_category_table = metrics["replenish_categories"][["中类", "季节策略", "SKU数", "销售额", "库存", "建议补货量", "补货原则", "主销尺码", "控折扣原则", "预算建议"]].copy()
@@ -7037,9 +8263,9 @@ def build_detail_html(metrics: dict) -> str:
   <div class="page">
     <nav class="top-nav">
       <div class="top-nav-links">
-        <a class="top-nav-link" href="../index.html">首页</a>
-        <a class="top-nav-link" href="./index.html">仪表盘</a>
-        <a class="top-nav-link is-active" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="../index.html">今日要做</a>
+        <a class="top-nav-link" href="./index.html">经营看板</a>
+        <a class="top-nav-link is-active" href="./details.html">数据明细</a>
         <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
         <a class="top-nav-link" href="./monthly.html">月度页</a>
         <a class="top-nav-link" href="./quarterly.html">季度页</a>
@@ -7059,7 +8285,7 @@ def build_detail_html(metrics: dict) -> str:
 
     <section class="module action-strip">
       <div class="module-header">
-        <h2 class="module-title">老板娘最常用 3 步</h2>
+          <h2 class="module-title">老板最常用 3 步</h2>
         <p class="module-note">如果你已经在详细页里了，最常见的动作通常还是这 3 个。</p>
       </div>
       <div class="action-grid">
@@ -7143,9 +8369,9 @@ def build_detail_html(metrics: dict) -> str:
           <h3>常用导航</h3>
           <p>老板和店员在任何细节页里，都能从这里直接回到常用页面。</p>
           <div class="rail-links">
-            <a href="../index.html">返回首页</a>
+            <a href="../index.html">进入今日要做</a>
             <a href="./index.html">回仪表盘</a>
-            <a class="current" href="./details.html">当前详细页</a>
+            <a class="current" href="./details.html">当前数据明细页</a>
             <a href="./relationship.html">进入关系页</a>
             <a href="./monthly.html">进入月度页</a>
             <a href="./quarterly.html">进入季度页</a>
@@ -7494,6 +8720,605 @@ def build_period_summary(metrics: dict, period_type: str) -> dict[str, object]:
     }
 
 
+def build_execution_item(
+    owner: str,
+    when: str,
+    action: str,
+    target: str,
+    goal: str,
+    *,
+    evidence: str,
+    value_label: str,
+    data_source: str,
+    confidence: str,
+    tone: str = "neutral",
+) -> dict[str, str]:
+    owner_prefix = f"{owner}{when}" if owner else when
+    sentence = f"{owner_prefix}{action}{target}，{goal}。"
+    return {
+        "owner": owner,
+        "when": when,
+        "action": action,
+        "object": target,
+        "goal": goal,
+        "sentence": sentence,
+        "evidence": evidence,
+        "value_label": value_label,
+        "data_source": data_source,
+        "confidence": confidence,
+        "tone": tone,
+    }
+
+
+def build_risk_alert(
+    title: str,
+    *,
+    level: str,
+    evidence: str,
+    action: str,
+    value_label: str,
+    data_source: str,
+    confidence: str,
+) -> dict[str, str]:
+    return {
+        "title": title,
+        "level": level,
+        "evidence": evidence,
+        "action": action,
+        "value_label": value_label,
+        "data_source": data_source,
+        "confidence": confidence,
+    }
+
+
+def build_monthly_core_metrics(
+    metrics: dict,
+    period_summary: dict[str, object],
+) -> list[tuple[str, str, str, str]]:
+    cards = metrics["summary_cards"]
+    action_summary = metrics.get("action_summary", {})
+    latest = period_summary.get("latest")
+    product_sales = period_summary.get("product_sales")
+    vip_analysis = period_summary.get("vip_analysis") or {}
+    store_month_report = period_summary.get("store_month_report") or {}
+    profit = period_summary.get("profit")
+
+    inventory_days = float(cards.get("estimated_inventory_days", 0) or 0)
+    inventory_tone = "red" if inventory_days >= 180 else "yellow" if inventory_days >= 90 else "green"
+
+    metric_cards: list[tuple[str, str, str, str]] = []
+    if latest:
+        metric_cards.append(
+            (
+                "本月销售额",
+                f"{format_num(latest['sales_amount'], 2)} 元",
+                f"直接观测 | 周期 {latest['label']}",
+                "neutral",
+            )
+        )
+    metric_cards.append(
+        (
+            "月环比",
+            str(period_summary.get("delta_text") or "暂无可比周期"),
+            "直接观测 | 和上月对比",
+            str(period_summary.get("delta_tone") or "neutral"),
+        )
+    )
+    metric_cards.append(
+        (
+            "库存覆盖天数",
+            f"{format_num(inventory_days, 1)} 天",
+            "估算判断 | 按最近销售速度估算",
+            inventory_tone,
+        )
+    )
+    if product_sales:
+        cross_share = float(product_sales.get("cross_season_stock_share", 0) or 0)
+        metric_cards.append(
+            (
+                "跨季库存占比",
+                f"{format_num(cross_share * 100, 1)}%",
+                "直接观测 | 当前不在主销季的库存占比",
+                "red" if cross_share >= 0.35 else "yellow" if cross_share >= 0.2 else "green",
+            )
+        )
+    else:
+        high_risk_count = int(action_summary.get("high_risk_category_count", 0) or 0)
+        metric_cards.append(
+            (
+                "高压货品类",
+                format_num(high_risk_count),
+                "估算判断 | 存销比偏高的品类数",
+                "red" if high_risk_count >= 2 else "yellow" if high_risk_count == 1 else "green",
+            )
+        )
+    if profit:
+        metric_cards.append(
+            (
+                "月末净利预测",
+                f"{format_num(profit['projected_month_net_profit'], 2)} 元",
+                "预测风险 | 按当前毛利率、费用和平均日销推算",
+                "green"
+                if profit["projected_month_net_profit"] > 0
+                else "yellow"
+                if profit["projected_month_gross_profit"] >= profit["total_expense"] * 0.9
+                else "red",
+            )
+        )
+    else:
+        metric_cards.append(
+            (
+                "会员销售占比",
+                f"{format_num(cards['member_sales_ratio'] * 100, 1)}%",
+                "直接观测 | 当前会员贡献",
+                "green" if cards["member_sales_ratio"] >= 0.6 else "yellow" if cards["member_sales_ratio"] >= 0.4 else "neutral",
+            )
+        )
+
+    latest_joint = store_month_report.get("latest_month") or {}
+    if vip_analysis:
+        dormant_ratio = float(vip_analysis.get("dormant_ratio", 0) or 0)
+        active_recent_count = int(vip_analysis.get("active_recent_count", 0) or 0)
+        member_note = f"直接观测 | 近60天活跃 {format_num(active_recent_count)} 人"
+        if latest_joint:
+            member_note += f"，件单比 {format_num(latest_joint.get('joint_rate', 0), 2)}"
+        metric_cards.append(
+            (
+                "会员沉默占比",
+                f"{format_num(dormant_ratio * 100, 1)}%",
+                member_note,
+                "red" if dormant_ratio >= 0.35 else "yellow" if dormant_ratio >= 0.2 else "green",
+            )
+        )
+    elif latest_joint:
+        joint_rate = float(latest_joint.get("joint_rate", 0) or 0)
+        low_joint_days = int(store_month_report.get("low_joint_days", 0) or 0)
+        metric_cards.append(
+            (
+                "本月件单比",
+                format_num(joint_rate, 2),
+                f"直接观测 | 低连带天数 {format_num(low_joint_days)}",
+                "yellow" if joint_rate < 1.2 else "green",
+            )
+        )
+    else:
+        metric_cards.append(
+            (
+                "会员销售占比",
+                f"{format_num(cards['member_sales_ratio'] * 100, 1)}%",
+                "直接观测 | 当前会员贡献",
+                "green" if cards["member_sales_ratio"] >= 0.6 else "yellow" if cards["member_sales_ratio"] >= 0.4 else "neutral",
+            )
+        )
+    return metric_cards[:6]
+
+
+def build_execution_board(
+    metrics: dict,
+    period_type: str | None = None,
+    *,
+    period_summary: dict[str, object] | None = None,
+    consulting_analysis: dict[str, object] | None = None,
+) -> dict[str, object]:
+    role_actions = {"老板": [], "店长": [], "店员": []}
+    if consulting_analysis:
+        for role, items in (consulting_analysis.get("role_guidance") or {}).items():
+            normalized_role = "老板" if str(role) == "老板娘" else str(role)
+            if normalized_role in role_actions:
+                role_actions[normalized_role] = [str(item) for item in list(items)[:3]]
+
+    button_items = [
+        {
+            "label": "生成补货清单",
+            "href": "./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv",
+            "status": "ready",
+            "note": "导出当前补货 SKU 清单",
+        },
+        {
+            "label": "生成清货清单",
+            "href": "./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv",
+            "status": "ready",
+            "note": "导出当前清货 SKU 清单",
+        },
+        {
+            "label": "生成会员回访名单",
+            "href": "",
+            "status": "placeholder",
+            "note": "预留 UI，下一步接会员分层导出",
+        },
+    ]
+
+    if period_type != "monthly":
+        return {
+            "today_must_do": [],
+            "weekly_strategy": [],
+            "risk_alerts": [],
+            "role_actions": role_actions,
+            "execution_buttons": button_items,
+        }
+
+    cards = metrics["summary_cards"]
+    profit = cards.get("profit_snapshot")
+    period_summary = period_summary or build_period_summary(metrics, "monthly")
+    consulting_analysis = consulting_analysis or build_retail_consulting_analysis(metrics, "monthly")
+    signals = build_homepage_operating_signals(metrics)
+    replenish_categories = metrics.get("replenish_categories", pd.DataFrame())
+    seasonal_categories = metrics.get("seasonal_categories", pd.DataFrame())
+    clearance_categories = metrics.get("clearance_categories", pd.DataFrame())
+    top_members = metrics.get("top_members", pd.DataFrame()).head(10).copy()
+    vip_analysis = period_summary.get("vip_analysis") or {}
+
+    top_replenish = replenish_categories.iloc[0] if not replenish_categories.empty else None
+    top_clearance = clearance_categories.iloc[0] if not clearance_categories.empty else None
+    top_seasonal = seasonal_categories.iloc[0] if not seasonal_categories.empty else None
+
+    top_replenish_label = str(top_replenish["中类"]) if top_replenish is not None else "主销中类"
+    top_clearance_label = str(top_clearance["大类"]) if top_clearance is not None else "高库存品类"
+    core_size_names = str(signals.get("core_size_names") or "主销尺码")
+    top_member_count = min(len(top_members), 10)
+    member_object = (
+        f"前 {top_member_count} 位高价值会员"
+        if top_member_count > 0
+        else "沉默会员前 10 人"
+    )
+    latest_joint_rate = float(signals.get("latest_joint_rate", 0) or 0)
+
+    candidate_items: dict[str, dict[str, str]] = {}
+    candidate_priorities: dict[str, int] = {}
+
+    if int(cards.get("negative_sku_count", 0) or 0) > 0:
+        negative_limit = min(int(cards["negative_sku_count"]), 10)
+        candidate_items["negative_inventory"] = build_execution_item(
+            "店长",
+            "今天",
+            "盘点并校正",
+            f"负库存前 {negative_limit} 款",
+            "先把库存口径校准，再安排补货和去化",
+            evidence=(
+                f"当前负库存 SKU {format_num(cards['negative_sku_count'])} 个，"
+                f"负库存金额 {format_num(cards['negative_inventory_amount'], 2)} 元。"
+            ),
+            value_label="直接观测",
+            data_source="库存快照",
+            confidence="高：异常数量直接来自库存快照；具体成因仍需盘点、调拨和销售回写核对。",
+            tone="red",
+        )
+        candidate_priorities["negative_inventory"] = 120
+
+    if top_clearance is not None or float(cards.get("estimated_inventory_days", 0) or 0) >= 90:
+        clearance_inventory = (
+            format_num(top_clearance["实际库存"])
+            if top_clearance is not None and "实际库存" in top_clearance
+            else "-"
+        )
+        candidate_items["clearance"] = build_execution_item(
+            "老板",
+            "今天",
+            "拍板并下发",
+            f"{top_clearance_label}停补和清货位规则",
+            "先释放库存和货位，把预算留给主销款",
+            evidence=(
+                f"库存覆盖约 {format_num(cards['estimated_inventory_days'], 1)} 天；"
+                f"{top_clearance_label} 当前待去化库存约 {clearance_inventory} 件。"
+            ),
+            value_label="估算判断",
+            data_source="库存动态 + 存销结构",
+            confidence="中：基于库存覆盖天数、近期动销和高库存规则生成，执行前仍建议门店复核货位和季节。",
+            tone="red" if cards["estimated_inventory_days"] >= 180 else "yellow",
+        )
+        candidate_priorities["clearance"] = 110 if cards["estimated_inventory_days"] >= 180 else 90
+
+    if top_replenish is not None:
+        candidate_items["replenish"] = build_execution_item(
+            "老板",
+            "今天",
+            "确认",
+            f"{top_replenish_label}核心尺码补货单（{core_size_names}）",
+            "先保主销不断码，守住本月营业额",
+            evidence=(
+                f"{top_replenish_label} 当前建议补货量约 {format_num(top_replenish['建议补货量'])}，"
+                f"对应销售额 {format_num(top_replenish['销售额'], 2)} 元。"
+            ),
+            value_label="估算判断",
+            data_source="销量快照 + 补货规则",
+            confidence="中：基于近阶段动销、库存周数和季节策略规则生成，适合先补核心尺码。",
+            tone="green" if str(top_replenish.get("季节策略")) == "当季主推" else "yellow",
+        )
+        candidate_priorities["replenish"] = 100
+
+    if top_member_count > 0 or signals["vip_dormant_high"] or cards["member_sales_ratio"] >= 0.5:
+        member_evidence = (
+            f"会员沉默占比约 {format_num(float(vip_analysis.get('dormant_ratio', 0) or 0) * 100, 1)}%，"
+            f"近60天活跃 {format_num(int(vip_analysis.get('active_recent_count', 0) or 0))} 人。"
+            if vip_analysis
+            else f"会员销售占比约 {format_num(cards['member_sales_ratio'] * 100, 1)}%。"
+        )
+        candidate_items["member"] = build_execution_item(
+            "店员",
+            "今天",
+            "联系",
+            member_object,
+            "把换季试穿和复购先拉回来",
+            evidence=member_evidence,
+            value_label="直接观测",
+            data_source="会员快照",
+            confidence="高：会员金额和活跃状态来自会员快照；到店转化仍需要现场执行验证。",
+            tone="red" if signals["vip_dormant_high"] else "yellow",
+        )
+        candidate_priorities["member"] = 85 if signals["vip_dormant_high"] else 75
+
+    if signals["low_joint"]:
+        candidate_items["combo"] = build_execution_item(
+            "店员",
+            "今天",
+            "统一主推",
+            f"{top_replenish_label}+袜品/内裤组合单",
+            "先把件单比抬起来，不只追单数",
+            evidence=(
+                f"最近月度件单比约 {format_num(latest_joint_rate, 2)}，"
+                f"低连带天数 {format_num(int(signals.get('low_joint_days', 0) or 0))} 天。"
+            ),
+            value_label="直接观测",
+            data_source="门店销售月报",
+            confidence="高：件单比来自门店销售月报；组合成交成效需要按日复盘。",
+            tone="yellow",
+        )
+        candidate_priorities["combo"] = 80
+
+    if profit and profit["projected_month_net_profit"] < 0:
+        candidate_items["profit"] = build_execution_item(
+            "老板",
+            "今天",
+            "对齐",
+            "本周保本日销和高毛利组合目标",
+            "先把月底亏损风险压住，再决定要不要放大促销",
+            evidence=(
+                f"当前保本进度 {format_num(profit['breakeven_progress_ratio'] * 100, 1)}%，"
+                f"月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+            ),
+            value_label="预测风险",
+            data_source="利润快照 + 月销售",
+            confidence="中：基于当前毛利率、费用和平均日销预测；月内节奏变化会影响结果。",
+            tone="red",
+        )
+        candidate_priorities["profit"] = 95
+
+    preferred_keys: list[str] = []
+    if "negative_inventory" in candidate_items:
+        preferred_keys.append("negative_inventory")
+    elif "clearance" in candidate_items:
+        preferred_keys.append("clearance")
+    elif "profit" in candidate_items:
+        preferred_keys.append("profit")
+    elif "replenish" in candidate_items:
+        preferred_keys.append("replenish")
+
+    if "replenish" in candidate_items:
+        preferred_keys.append("replenish")
+    elif "combo" in candidate_items:
+        preferred_keys.append("combo")
+    elif "profit" in candidate_items:
+        preferred_keys.append("profit")
+
+    if "member" in candidate_items:
+        preferred_keys.append("member")
+    elif "combo" in candidate_items:
+        preferred_keys.append("combo")
+    elif "clearance" in candidate_items:
+        preferred_keys.append("clearance")
+
+    fallback_keys = [
+        key
+        for key, _ in sorted(candidate_priorities.items(), key=lambda item: item[1], reverse=True)
+    ]
+    selected_keys: list[str] = []
+    for key in preferred_keys + fallback_keys:
+        if key in candidate_items and key not in selected_keys:
+            selected_keys.append(key)
+        if len(selected_keys) == 3:
+            break
+    today_must_do = [candidate_items[key] for key in selected_keys[:3]]
+
+    weekly_strategy: list[dict[str, str]] = []
+    if top_clearance is not None:
+        weekly_strategy.append(
+            build_execution_item(
+                "老板",
+                "本周",
+                "把",
+                f"{top_clearance_label}专项去化表",
+                "统一停补、清货位和组合价，别让旧货继续占预算",
+                evidence=(
+                    f"{top_clearance_label} 当前待去化库存约 {format_num(top_clearance['实际库存'])} 件，"
+                    f"库存覆盖约 {format_num(cards['estimated_inventory_days'], 1)} 天。"
+                ),
+                value_label="估算判断",
+                data_source="库存动态 + 存销结构",
+                confidence="中：优先级来自库存和动销规则，执行时仍建议结合现场货位复核。",
+                tone="red" if cards["estimated_inventory_days"] >= 180 else "yellow",
+            )
+        )
+    if top_replenish is not None:
+        weekly_strategy.append(
+            build_execution_item(
+                "店长",
+                "本周",
+                "把",
+                f"{top_replenish_label}补货单分成 A / B / C 三级",
+                "先补断码款，再补次主销，避免平均下单",
+                evidence=(
+                    f"{top_replenish_label} 当前建议补货量约 {format_num(top_replenish['建议补货量'])}，"
+                    f"核心尺码优先看 {core_size_names}。"
+                ),
+                value_label="估算判断",
+                data_source="销量快照 + 补货规则",
+                confidence="中：分级顺序基于销量和库存周数规则，适合门店做小单快返。",
+                tone="green" if str(top_replenish.get("季节策略")) == "当季主推" else "yellow",
+            )
+        )
+    if top_member_count > 0 or signals["vip_dormant_high"]:
+        weekly_strategy.append(
+            build_execution_item(
+                "店员",
+                "本周",
+                "把",
+                f"{member_object}分成到店、回访、暂缓 3 组",
+                "每天至少跟进 10 人，把复购和试穿拉回来",
+                evidence=(
+                    f"会员沉默占比约 {format_num(float(vip_analysis.get('dormant_ratio', 0) or 0) * 100, 1)}%，"
+                    f"会员销售占比约 {format_num(cards['member_sales_ratio'] * 100, 1)}%。"
+                ),
+                value_label="直接观测",
+                data_source="会员快照",
+                confidence="高：名单和活跃状态来自会员快照；分组策略仍建议由门店结合近期互动记录微调。",
+                tone="yellow",
+            )
+        )
+    elif signals["low_joint"]:
+        weekly_strategy.append(
+            build_execution_item(
+                "店员",
+                "本周",
+                "把",
+                f"{top_replenish_label}组合话术跑满每个班次",
+                "先把件单比拉起来，别只盯单量",
+                evidence=(
+                    f"最近月度件单比约 {format_num(latest_joint_rate, 2)}，"
+                    f"低连带天数 {format_num(int(signals.get('low_joint_days', 0) or 0))} 天。"
+                ),
+                value_label="直接观测",
+                data_source="门店销售月报",
+                confidence="高：件单比来自门店销售月报；执行效果建议按日复盘。",
+                tone="yellow",
+            )
+        )
+    if len(weekly_strategy) < 3 and profit and profit["projected_month_net_profit"] < 0:
+        weekly_strategy.append(
+            build_execution_item(
+                "老板",
+                "本周",
+                "盯住",
+                "保本日销和高毛利组合表",
+                "先把月底亏损风险压住，再放大营业额",
+                evidence=(
+                    f"当前保本进度 {format_num(profit['breakeven_progress_ratio'] * 100, 1)}%，"
+                    f"月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+                ),
+                value_label="预测风险",
+                data_source="利润快照 + 月销售",
+                confidence="中：基于当前毛利率、费用和平均日销预测。",
+                tone="red",
+            )
+        )
+    weekly_strategy = weekly_strategy[:3]
+
+    risk_alerts: list[dict[str, str]] = []
+    if top_clearance is not None or cards["estimated_inventory_days"] >= 90:
+        clearance_qty = (
+            format_num(top_clearance["实际库存"])
+            if top_clearance is not None and "实际库存" in top_clearance
+            else "-"
+        )
+        risk_alerts.append(
+            build_risk_alert(
+                "旧货继续压库存",
+                level="red" if cards["estimated_inventory_days"] >= 180 else "yellow",
+                evidence=(
+                    f"库存覆盖约 {format_num(cards['estimated_inventory_days'], 1)} 天；"
+                    f"{top_clearance_label} 当前待去化库存约 {clearance_qty} 件。"
+                ),
+                action=f"本周先停补 {top_clearance_label}，再把它挪到清货位做组合去化。",
+                value_label="估算判断",
+                data_source="库存动态 + 存销结构",
+                confidence="中：基于库存覆盖和近期动销规则判断。",
+            )
+        )
+    if top_replenish is not None:
+        risk_alerts.append(
+            build_risk_alert(
+                "主销可能先断码",
+                level="yellow",
+                evidence=(
+                    f"{top_replenish_label} 当前建议补货量约 {format_num(top_replenish['建议补货量'])}，"
+                    f"核心尺码优先看 {core_size_names}。"
+                ),
+                action=f"今天先确认 {top_replenish_label} 的 {core_size_names} 补货单，只补核心尺码和主销色。",
+                value_label="估算判断",
+                data_source="销量快照 + 补货规则",
+                confidence="中：基于动销、库存周数和季节策略生成。",
+            )
+        )
+    if profit and profit["projected_month_net_profit"] < 0:
+        risk_alerts.append(
+            build_risk_alert(
+                "月底仍有亏损风险",
+                level="red",
+                evidence=(
+                    f"当前保本进度 {format_num(profit['breakeven_progress_ratio'] * 100, 1)}%，"
+                    f"月末净利预测 {format_num(profit['projected_month_net_profit'], 2)} 元。"
+                ),
+                action="老板本周先盯保本日销和高毛利组合，不要急着用深折扣冲量。",
+                value_label="预测风险",
+                data_source="利润快照 + 月销售",
+                confidence="中：基于当前毛利率、费用和平均日销预测。",
+            )
+        )
+    elif signals["vip_dormant_high"]:
+        risk_alerts.append(
+            build_risk_alert(
+                "老客继续沉默",
+                level="yellow",
+                evidence=(
+                    f"会员沉默占比约 {format_num(float(vip_analysis.get('dormant_ratio', 0) or 0) * 100, 1)}%，"
+                    f"近60天活跃 {format_num(int(vip_analysis.get('active_recent_count', 0) or 0))} 人。"
+                ),
+                action="店员本周先把高价值会员和沉默会员分层回访，先拉回到店试穿。",
+                value_label="直接观测",
+                data_source="会员快照",
+                confidence="高：会员活跃状态直接来自会员快照。",
+            )
+        )
+    elif signals["low_joint"]:
+        risk_alerts.append(
+            build_risk_alert(
+                "成交有了但每单带得不够",
+                level="yellow",
+                evidence=(
+                    f"最近月度件单比约 {format_num(latest_joint_rate, 2)}，"
+                    f"低连带天数 {format_num(int(signals.get('low_joint_days', 0) or 0))} 天。"
+                ),
+                action=f"店员本周统一主推 {top_replenish_label} + 袜品/内裤组合单，先把件单比拉起来。",
+                value_label="直接观测",
+                data_source="门店销售月报",
+                confidence="高：件单比直接来自门店销售月报。",
+            )
+        )
+    if len(risk_alerts) < 3 and top_seasonal is not None:
+        risk_alerts.append(
+            build_risk_alert(
+                "跨季货继续占预算",
+                level="yellow",
+                evidence=(
+                    f"{top_seasonal['中类']} 当前季节策略为 {top_seasonal['季节策略']}，"
+                    f"当前库存约 {format_num(top_seasonal['库存'])}。"
+                ),
+                action=f"老板本周把 {top_seasonal['中类']} 单独列表处理，有库存先去化，没库存先别追补。",
+                value_label="估算判断",
+                data_source="季节策略 + 库存快照",
+                confidence="中：基于当前季节、库存和策略规则生成。",
+            )
+        )
+    risk_alerts = risk_alerts[:3]
+
+    return {
+        "today_must_do": today_must_do,
+        "weekly_strategy": weekly_strategy,
+        "risk_alerts": risk_alerts,
+        "role_actions": role_actions,
+        "execution_buttons": button_items,
+    }
+
+
 def build_period_charts(period_summary: dict[str, object], period_type: str) -> list[str]:
     rows = period_summary["rows"]
     if not rows:
@@ -7597,10 +9422,394 @@ def build_period_cards(rows: list[dict[str, object]], period_type: str) -> str:
     return f"<div class='period-card-grid'>{''.join(cards_html)}</div>"
 
 
+def build_monthly_action_first_page(
+    metrics: dict,
+    period_summary: dict[str, object],
+    consulting_analysis: dict[str, object],
+) -> str:
+    cards = metrics["summary_cards"]
+    execution_board = build_execution_board(
+        metrics,
+        "monthly",
+        period_summary=period_summary,
+        consulting_analysis=consulting_analysis,
+    )
+    latest = period_summary.get("latest")
+    charts = build_period_charts(period_summary, "monthly")
+    period_cards_html = build_period_cards(period_summary["rows"], "monthly")
+    core_metric_cards = build_monthly_core_metrics(metrics, period_summary)
+    hero_note = (
+        execution_board["today_must_do"][0]["sentence"]
+        if execution_board["today_must_do"]
+        else str(period_summary.get("overview_text") or "当前还没有足够的月度数据。")
+    )
+    capture_date = pd.Timestamp(cards["data_capture_at"]).strftime("%Y-%m-%d")
+    season_text = f"{cards['current_season_name']} / {cards['phase_name']}"
+
+    core_metric_html = "".join(
+        f"""
+        <div class="metric-card metric-{tone}">
+          <div class="metric-title">{html.escape(title)}</div>
+          <div class="metric-value">{html.escape(value)}</div>
+          <div class="metric-note">{html.escape(note)}</div>
+        </div>
+        """
+        for title, value, note, tone in core_metric_cards
+    )
+
+    today_cards_html = "".join(
+        f"""
+        <article class="exec-card exec-card-{item['tone']}">
+          <div class="exec-head">
+            <span class="exec-owner">{html.escape(item['owner'])}</span>
+            <span class="exec-tag">{html.escape(item['value_label'])}</span>
+          </div>
+          <div class="exec-main">
+            <div class="exec-item">
+              <span class="exec-label">动作</span>
+              <strong class="exec-value">{html.escape(item['action'])}</strong>
+            </div>
+            <div class="exec-item">
+              <span class="exec-label">对象</span>
+              <strong class="exec-value">{html.escape(item['object'])}</strong>
+            </div>
+            <div class="exec-item">
+              <span class="exec-label">目的</span>
+              <strong class="exec-value">{html.escape(item['goal'])}</strong>
+            </div>
+          </div>
+          <p class="exec-sentence">{html.escape(item['sentence'])}</p>
+          <p class="exec-meta"><strong>证据：</strong>{html.escape(item['evidence'])}</p>
+          <p class="exec-meta"><strong>数据源：</strong>{html.escape(item['data_source'])}</p>
+          <p class="exec-meta"><strong>置信说明：</strong>{html.escape(item['confidence'])}</p>
+        </article>
+        """
+        for item in execution_board["today_must_do"]
+    ) or render_empty("当前还没有足够的数据来生成今日必须动作。")
+
+    execution_buttons_html = "".join(
+        (
+            f"""
+            <a class="action-button" href="{item['href']}">
+              <span>{html.escape(item['label'])}</span>
+              <small>{html.escape(item['note'])}</small>
+            </a>
+            """
+            if item["status"] == "ready"
+            else f"""
+            <button type="button" class="action-button is-placeholder" disabled>
+              <span>{html.escape(item['label'])}</span>
+              <small>{html.escape(item['note'])}</small>
+            </button>
+            """
+        )
+        for item in execution_board["execution_buttons"]
+    )
+
+    weekly_strategy_html = "".join(
+        f"""
+        <article class="strategy-card strategy-card-{item['tone']}">
+          <div class="strategy-head">
+            <span class="strategy-owner">{html.escape(item['owner'])}</span>
+            <span class="strategy-tag">{html.escape(item['value_label'])}</span>
+          </div>
+          <h3>{html.escape(item['sentence'])}</h3>
+          <p>{html.escape(item['evidence'])}</p>
+          <p class="strategy-meta"><strong>置信说明：</strong>{html.escape(item['confidence'])}</p>
+        </article>
+        """
+        for item in execution_board["weekly_strategy"]
+    ) or render_empty("当前还没有足够的数据来生成本周策略。")
+
+    risk_alerts_html = "".join(
+        f"""
+        <article class="risk-card risk-card-{item['level']}">
+          <div class="risk-head">
+            <h3>{html.escape(item['title'])}</h3>
+            <span class="risk-tag">{html.escape(item['value_label'])}</span>
+          </div>
+          <p class="risk-evidence"><strong>证据：</strong>{html.escape(item['evidence'])}</p>
+          <p class="risk-action"><strong>现在怎么做：</strong>{html.escape(item['action'])}</p>
+          <p class="risk-meta"><strong>数据源：</strong>{html.escape(item['data_source'])}</p>
+          <p class="risk-meta"><strong>置信说明：</strong>{html.escape(item['confidence'])}</p>
+        </article>
+        """
+        for item in execution_board["risk_alerts"]
+    ) or render_empty("当前还没有足够的数据来生成风险预警。")
+
+    role_actions_html = "".join(
+        f"""
+        <article class="role-card">
+          <div class="role-title">{html.escape(role)}</div>
+          <ul class="role-list">
+            {"".join(f"<li>{html.escape(task)}</li>" for task in items)}
+          </ul>
+        </article>
+        """
+        for role, items in execution_board["role_actions"].items()
+    )
+
+    charts_html = "".join(f"<section class='chart-card'>{chart}</section>" for chart in charts) or render_empty("当前还没有可展示的月度图表。")
+    purchase_action_html = "".join(
+        f"<li>{html.escape(item)}</li>" for item in period_summary["purchase_guidance"]
+    ) or "<li>当前还没有足够的数据来生成进货动作。</li>"
+    detailed_analysis_html = render_consulting_analysis_html(
+        consulting_analysis,
+        "月度详细分析与执行依据",
+        "period-consulting",
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{cards['store_name']} 月度经营执行页</title>
+  <style>
+    :root {{
+      color-scheme: light;
+    }}
+    * {{ box-sizing: border-box; }}
+    html, body {{ margin: 0; padding: 0; background: #f8fafc; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }}
+    .page {{ max-width: 1440px; margin: 0 auto; padding: 18px; }}
+    .top-nav {{ display:flex; justify-content:flex-start; margin-bottom:16px; }}
+    .top-nav-links {{ display:flex; gap:10px; flex-wrap:wrap; }}
+    .top-nav-link {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:800; color:#334155; background:#fff; border:1px solid #dbe4f0; text-decoration:none; }}
+    .top-nav-link.is-active {{ background:#dbeafe; color:#1d4ed8; border-color:#bfdbfe; }}
+    .hero {{ background:linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%); color:#fff; padding:24px; border-radius:22px; box-shadow:0 18px 48px rgba(15, 23, 42, 0.18); margin-bottom:18px; }}
+    .hero h1 {{ margin:0 0 10px; font-size:30px; line-height:1.25; }}
+    .hero p {{ margin:0; line-height:1.8; opacity:0.95; }}
+    .hero-note {{ margin-top:12px; font-size:14px; line-height:1.8; opacity:0.95; }}
+    .hero-status {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }}
+    .hero-status-chip {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); }}
+    .page-shell {{ display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:18px; }}
+    .main-column {{ min-width:0; }}
+    .side-rail {{ display:flex; flex-direction:column; gap:16px; align-self:start; }}
+    .rail-card {{ position:sticky; top:88px; background:#fff; border-radius:18px; padding:16px; box-shadow:0 10px 30px rgba(15,23,42,0.08); }}
+    .rail-card h3 {{ margin:0 0 8px; font-size:17px; }}
+    .rail-card p {{ margin:0 0 12px; font-size:12px; line-height:1.8; color:#64748b; }}
+    .rail-links {{ display:flex; flex-direction:column; gap:8px; }}
+    .rail-links a {{ display:block; text-decoration:none; color:#334155; background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:10px 12px; font-size:13px; font-weight:700; }}
+    .rail-links a.current {{ background:#dbeafe; border-color:#bfdbfe; color:#1d4ed8; }}
+    .quick-nav {{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 0 18px; }}
+    .quick-nav a {{ text-decoration:none; color:#1d4ed8; background:#eff6ff; border:1px solid #bfdbfe; padding:8px 12px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; }}
+    .module {{ background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(15,23,42,0.08); padding:18px; margin-bottom:18px; }}
+    .module-header {{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:14px; flex-wrap:wrap; }}
+    .module-title {{ margin:0; font-size:22px; }}
+    .module-note {{ margin:0; font-size:13px; color:#64748b; line-height:1.8; }}
+    .metrics-grid, .exec-grid, .strategy-grid, .risk-grid, .role-grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; }}
+    .metric-card, .exec-card, .strategy-card, .risk-card, .role-card, .chart-card {{ background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }}
+    .metric-card {{ box-shadow:0 8px 24px rgba(15,23,42,0.06); }}
+    .metric-title {{ font-size:14px; color:#64748b; margin-bottom:8px; }}
+    .metric-value {{ font-size:28px; font-weight:800; margin-bottom:6px; color:#0f172a; line-height:1.3; }}
+    .metric-note {{ font-size:13px; color:#64748b; line-height:1.7; }}
+    .metric-green {{ border-color:#bbf7d0; background:#f0fdf4; }}
+    .metric-green .metric-value {{ color:#166534; }}
+    .metric-yellow {{ border-color:#fde68a; background:#fffbeb; }}
+    .metric-yellow .metric-value {{ color:#92400e; }}
+    .metric-red {{ border-color:#fecaca; background:#fff7f7; }}
+    .metric-red .metric-value {{ color:#991b1b; }}
+    .exec-card-red, .strategy-card-red, .risk-card-red {{ border-color:#fecaca; background:#fff7f7; }}
+    .exec-card-yellow, .strategy-card-yellow, .risk-card-yellow {{ border-color:#fde68a; background:#fffbeb; }}
+    .exec-card-green, .strategy-card-green {{ border-color:#bbf7d0; background:#f0fdf4; }}
+    .exec-card-neutral, .strategy-card-neutral {{ border-color:#e2e8f0; background:#f8fafc; }}
+    .exec-head, .strategy-head, .risk-head {{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }}
+    .exec-owner, .strategy-owner, .risk-tag, .exec-tag, .strategy-tag {{ display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:6px 10px; font-size:12px; font-weight:800; background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; }}
+    .exec-main {{ display:grid; gap:10px; margin-bottom:12px; }}
+    .exec-item {{ display:grid; gap:4px; }}
+    .exec-label {{ font-size:12px; font-weight:700; color:#64748b; }}
+    .exec-value {{ font-size:18px; color:#0f172a; line-height:1.5; }}
+    .exec-sentence, .strategy-card h3 {{ margin:0 0 10px; font-size:16px; line-height:1.8; color:#0f172a; }}
+    .exec-meta, .strategy-card p, .risk-card p {{ margin:6px 0 0; font-size:13px; line-height:1.8; color:#475569; }}
+    .button-strip {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-top:16px; }}
+    .action-button {{ display:flex; flex-direction:column; gap:6px; align-items:flex-start; justify-content:center; padding:14px 16px; border-radius:16px; border:1px solid #bfdbfe; background:#eff6ff; color:#1d4ed8; text-decoration:none; font-size:15px; font-weight:800; }}
+    .action-button small {{ font-size:12px; font-weight:600; color:#475569; }}
+    .action-button.is-placeholder {{ border-color:#dbe4f0; background:#f8fafc; color:#94a3b8; cursor:not-allowed; }}
+    .risk-card h3, .role-title {{ margin:0; font-size:18px; color:#0f172a; }}
+    .role-list {{ margin:12px 0 0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }}
+    .detail-collapsible summary {{ cursor:pointer; font-size:20px; font-weight:800; color:#0f172a; }}
+    .detail-collapsible[open] summary {{ margin-bottom:12px; }}
+    .detail-stack {{ display:grid; gap:16px; margin-top:12px; }}
+    .detail-block {{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:16px; }}
+    .detail-block h3 {{ margin:0 0 10px; font-size:18px; }}
+    .detail-list {{ margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }}
+    .period-card-grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:14px; }}
+    .period-card {{ background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }}
+    .period-card-head {{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }}
+    .period-card-title {{ font-size:18px; font-weight:800; color:#0f172a; }}
+    .period-card-note {{ margin-top:10px; font-size:12px; color:#64748b; line-height:1.7; }}
+    .period-stat-grid {{ display:grid; gap:8px; }}
+    .period-stat {{ display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; color:#475569; }}
+    .period-stat strong {{ color:#0f172a; }}
+    .mini-chip {{ display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:700; white-space:nowrap; }}
+    .mini-chip-neutral, .mini-chip-soft {{ background:#f1f5f9; color:#334155; }}
+    .mini-chip-green {{ background:#dcfce7; color:#166534; }}
+    .mini-chip-yellow {{ background:#fef3c7; color:#92400e; }}
+    .mini-chip-red {{ background:#fee2e2; color:#991b1b; }}
+    .analysis-grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }}
+    .analysis-card {{ background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; min-width:0; }}
+    .analysis-card h3 {{ margin:0 0 10px; font-size:17px; color:#0f172a; }}
+    .analysis-list {{ margin:0; padding-left:18px; color:#334155; font-size:14px; line-height:1.9; }}
+    .priority-red {{ background:#fff7f7; border-color:#fecaca; }}
+    .priority-yellow {{ background:#fffbeb; border-color:#fde68a; }}
+    .priority-neutral {{ background:#f8fafc; border-color:#cbd5e1; }}
+    .priority-green {{ background:#f0fdf4; border-color:#bbf7d0; }}
+    .empty-card {{ border:1px dashed #cbd5e1; border-radius:16px; padding:20px; color:#64748b; background:#f8fafc; font-size:14px; line-height:1.8; }}
+    @media (max-width: 960px) {{
+      .page-shell {{ grid-template-columns:1fr; }}
+      .rail-card {{ position:static; }}
+      .rail-links {{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); }}
+    }}
+    @media (max-width: 640px) {{
+      .page {{ padding:12px; }}
+      .hero {{ padding:18px; border-radius:16px; }}
+      .hero h1 {{ font-size:24px; }}
+      .hero-status-chip, .top-nav-link {{ width:100%; }}
+      .top-nav-links {{ width:100%; }}
+      .quick-nav {{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px; }}
+      .module {{ padding:14px; margin-bottom:14px; }}
+      .metric-value {{ font-size:24px; }}
+      .rail-links {{ grid-template-columns:1fr; }}
+    }}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="top-nav">
+      <div class="top-nav-links">
+        <a class="top-nav-link" href="../index.html">今日要做</a>
+        <a class="top-nav-link" href="./index.html">经营看板</a>
+        <a class="top-nav-link" href="./details.html">数据明细</a>
+        <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
+        <a class="top-nav-link is-active" href="./monthly.html">月度页</a>
+        <a class="top-nav-link" href="./quarterly.html">季度页</a>
+        <a class="top-nav-link" href="../manuals/index.html">文档中心</a>
+        <a class="top-nav-link" href="../costs/index.html">成本维护台</a>
+      </div>
+    </nav>
+    <section class="hero">
+      <h1>{cards['store_name']} 月度经营执行页</h1>
+      <p>先告诉老板今天要干什么，再展开看本周策略、风险和数据依据。目标只有一个：3 秒内知道该拍什么板、谁先去执行。</p>
+      <div class="hero-note">{html.escape(hero_note)}</div>
+      <div class="hero-status">
+        <div class="hero-status-chip">最新月度：{html.escape(str(latest['label'])) if latest else '暂无月度样本'}</div>
+        <div class="hero-status-chip">最近抓取：{capture_date}</div>
+        <div class="hero-status-chip">当前阶段：{html.escape(season_text)}</div>
+        <div class="hero-status-chip">{html.escape(str(period_summary.get('delta_text') or '暂无环比'))}</div>
+      </div>
+    </section>
+    <div class="page-shell">
+      <div class="main-column">
+        <nav class="quick-nav">
+          <a href="#must-do">今日动作</a>
+          <a href="#weekly-strategy">本周策略</a>
+          <a href="#risk-alerts">风险预警</a>
+          <a href="#core-metrics">核心指标</a>
+          <a href="#role-actions">执行分工</a>
+          <a href="#period-details">详细分析</a>
+        </nav>
+
+        <section class="module" id="must-do">
+          <div class="module-header">
+            <h2 class="module-title">今日必须动作</h2>
+            <p class="module-note">只保留 3 条。先做完这 3 条，再看下面的周策略和详细分析。</p>
+          </div>
+          <div class="exec-grid">{today_cards_html}</div>
+          <div class="button-strip">{execution_buttons_html}</div>
+        </section>
+
+        <section class="module" id="weekly-strategy">
+          <div class="module-header">
+            <h2 class="module-title">本周策略</h2>
+            <p class="module-note">把今天的动作拉长成 7 天节奏，避免门店只顾当天救火。</p>
+          </div>
+          <div class="strategy-grid">{weekly_strategy_html}</div>
+        </section>
+
+        <section class="module" id="risk-alerts">
+          <div class="module-header">
+            <h2 class="module-title">风险预警</h2>
+            <p class="module-note">每条都写明证据、现在怎么做，以及它属于直接观测、估算判断还是预测风险。</p>
+          </div>
+          <div class="risk-grid">{risk_alerts_html}</div>
+        </section>
+
+        <section class="module" id="core-metrics">
+          <div class="module-header">
+            <h2 class="module-title">核心指标</h2>
+            <p class="module-note">只保留会影响老板拍板的关键指标，不再把所有统计都堆到第一屏。</p>
+          </div>
+          <div class="metrics-grid">{core_metric_html}</div>
+        </section>
+
+        <section class="module" id="role-actions">
+          <div class="module-header">
+            <h2 class="module-title">执行分工</h2>
+            <p class="module-note">同一份数据拆成老板、店长、店员三份动作，防止大家都知道问题，但没人知道自己先做什么。</p>
+          </div>
+          <div class="role-grid">{role_actions_html}</div>
+        </section>
+
+        <details class="module detail-collapsible" id="period-details">
+          <summary>详细分析（默认收起）</summary>
+          <p class="module-note">上面先看执行，下面再看趋势、阶段明细和判断依据。需要复盘或开会时再展开。</p>
+          <div class="detail-stack">
+            <section class="detail-block">
+              <h3>月度趋势图表</h3>
+              <div class="metrics-grid">{charts_html}</div>
+            </section>
+            <section class="detail-block">
+              <h3>月度阶段明细</h3>
+              {period_cards_html}
+            </section>
+            <section class="detail-block">
+              <h3>进货动作依据</h3>
+              <ul class="detail-list">{purchase_action_html}</ul>
+            </section>
+            {detailed_analysis_html}
+          </div>
+        </details>
+      </div>
+
+      <aside class="side-rail">
+        <section class="rail-card">
+          <h3>常用入口</h3>
+          <p>老板切页时只保留最常用的入口，先回执行页，再去看明细。</p>
+          <div class="rail-links">
+            <a href="../index.html">进入今日要做</a>
+            <a href="./index.html">进入经营看板</a>
+            <a href="./details.html">进入数据明细</a>
+            <a href="./relationship.html">进入关系页</a>
+            <a class="current" href="./monthly.html">当前月度页</a>
+            <a href="./quarterly.html">进入季度页</a>
+          </div>
+        </section>
+        <section class="rail-card">
+          <h3>本页顺序</h3>
+          <p>从上到下就是拍板顺序，先动作，后策略，最后才看详细分析。</p>
+          <div class="rail-links">
+            <a href="#must-do">今日动作</a>
+            <a href="#weekly-strategy">本周策略</a>
+            <a href="#risk-alerts">风险预警</a>
+            <a href="#core-metrics">核心指标</a>
+            <a href="#role-actions">执行分工</a>
+            <a href="#period-details">详细分析</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+
 def build_period_page(metrics: dict, period_type: str) -> str:
     cards = metrics["summary_cards"]
     period_summary = build_period_summary(metrics, period_type)
     consulting_analysis = build_retail_consulting_analysis(metrics, period_type)
+    if period_type == "monthly":
+        return build_monthly_action_first_page(metrics, period_summary, consulting_analysis)
     latest = period_summary["latest"]
     peak = period_summary["peak"]
     product_sales = period_summary["product_sales"]
@@ -7838,7 +10047,7 @@ def build_period_page(metrics: dict, period_type: str) -> str:
     support_html = "".join(support_cards) if support_cards else render_empty("当前还没有足够的补充分析。")
     consulting_html = render_consulting_analysis_html(
         consulting_analysis,
-        f"{period_label}经营分析与销售建议",
+        f"{period_label}经营分析与执行动作",
         "period-consulting",
     )
 
@@ -7959,9 +10168,9 @@ def build_period_page(metrics: dict, period_type: str) -> str:
   <div class="page">
     <nav class="top-nav">
       <div class="top-nav-links">
-        <a class="top-nav-link" href="../index.html">首页</a>
-        <a class="top-nav-link" href="./index.html">仪表盘</a>
-        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="../index.html">今日要做</a>
+        <a class="top-nav-link" href="./index.html">经营看板</a>
+        <a class="top-nav-link" href="./details.html">数据明细</a>
         <a class="top-nav-link" href="./relationship.html">库存销售关系页</a>
         <a class="top-nav-link {'is-active' if period_type == 'monthly' else ''}" href="./monthly.html">月度页</a>
         <a class="top-nav-link {'is-active' if period_type == 'quarterly' else ''}" href="./quarterly.html">季度页</a>
@@ -8042,9 +10251,9 @@ def build_period_page(metrics: dict, period_type: str) -> str:
           <h3>常用导航</h3>
           <p>固定入口放这里，老板看完趋势页可以直接跳回首页、仪表盘或详细页。</p>
           <div class="rail-links">
-            <a href="../index.html">返回首页</a>
-            <a href="./index.html">进入仪表盘</a>
-            <a href="./details.html">进入详细页</a>
+            <a href="../index.html">进入今日要做</a>
+            <a href="./index.html">进入经营看板</a>
+            <a href="./details.html">进入数据明细</a>
             <a href="./relationship.html">进入关系页</a>
             <a class="current" href="./{current_nav}">当前{period_label}页</a>
             <a href="./{other_period_nav}">进入{other_period_label}页</a>
@@ -8743,9 +10952,9 @@ def build_relationship_html(metrics: dict) -> str:
   <div class="page">
     <nav class="top-nav">
       <div class="top-nav-links">
-        <a class="top-nav-link" href="../index.html">首页</a>
-        <a class="top-nav-link" href="./index.html">仪表盘</a>
-        <a class="top-nav-link" href="./details.html">详细页</a>
+        <a class="top-nav-link" href="../index.html">今日要做</a>
+        <a class="top-nav-link" href="./index.html">经营看板</a>
+        <a class="top-nav-link" href="./details.html">数据明细</a>
         <a class="top-nav-link is-active" href="./relationship.html">库存销售关系页</a>
         <a class="top-nav-link" href="./monthly.html">月度页</a>
         <a class="top-nav-link" href="./quarterly.html">季度页</a>
@@ -8832,9 +11041,9 @@ def build_relationship_html(metrics: dict) -> str:
           <h3>常用导航</h3>
           <p>老板平时切页主要看这几个入口，关系页适合放在“看完首页之后、下钻详细页之前”。</p>
           <div class="rail-links">
-            <a href="../index.html">返回首页</a>
-            <a href="./index.html">进入仪表盘</a>
-            <a href="./details.html">进入详细页</a>
+            <a href="../index.html">进入今日要做</a>
+            <a href="./index.html">进入经营看板</a>
+            <a href="./details.html">进入数据明细</a>
             <a class="current" href="./relationship.html">当前关系页</a>
             <a href="./monthly.html">进入月度页</a>
             <a href="./quarterly.html">进入季度页</a>
@@ -9542,6 +11751,9 @@ def build_export_payload(
             build_inventory_sales_relationship(metrics)
         ),
         "today_focus": json_ready_value(build_today_focus(metrics)),
+        "execution_board": json_ready_value(
+            build_execution_board(metrics, period_type)
+        ),
         "health_lights": json_ready_value(build_health_lights(cards, actions)),
         "time_strategy": json_ready_value(build_time_strategy(metrics)),
         "decision": json_ready_value(build_decision_engine(metrics)),

@@ -68,6 +68,7 @@
 | Realized sales MTD | `latest_monthly_sales_summary` | directly observed | MTD sales amount lookup | latest batch only |
 | Profit estimate to date | SQLite sales + local cost snapshots | estimated | `summary_cards.profit_snapshot` | requires files outside SQLite |
 | Month-end forecast | profit snapshot projected fields | forecast | decision engine, forecast headline | depends on margin and remaining-days assumptions |
+| Action-first monthly execution board | inventory snapshots + member snapshots + monthly sales + profit snapshot | mixed direct / estimated / forecast | `execution_board` on the monthly payload and monthly HTML | cards are rule-driven summaries, so evidence is direct but action priority is heuristic |
 | Same-season historical reference | none first-class yet | insufficient data | not materially implemented | latest-batch model is not enough on its own |
 | Confidence / caveat labels | `quality_checks`, source lineage, consulting basis notes | directly observed + narrative inference | insights and future confidence slots | not every payload section exposes an explicit confidence enum yet |
 
@@ -76,3 +77,4 @@
 - If you need batch provenance or source metadata, join back to `import_batches` and `source_files`.
 - If you need long-history analysis, query base tables across multiple `batch_id` values on purpose; do not assume `latest_*` is enough.
 - Keep actual, estimated, and forecast outputs separated in downstream payload design.
+- For action cards, keep the evidence line tied to a concrete SQLite or cost source even when the action itself is heuristic.

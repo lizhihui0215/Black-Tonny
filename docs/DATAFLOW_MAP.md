@@ -178,6 +178,7 @@
 
 ### Narrative and strategy step
 - `build_time_strategy()`
+- `build_execution_board()`
 - `build_decision_engine()`
 - `build_retail_consulting_analysis()`
 - `build_today_focus()`
@@ -197,6 +198,7 @@
   - `profit_snapshot.projected_*`
   - decision headline/summary when talking about month-end outcomes
   - daily/weekly/monthly action plans in `time_strategy`
+  - monthly execution-board risk cards when they reference month-end profit outcomes
 
 ## Stage 5: Export
 ### Owner
@@ -207,6 +209,7 @@
 - `meta`
 - `summary_cards`
 - `today_focus`
+- `execution_board`
 - `health_lights`
 - `time_strategy`
 - `decision`

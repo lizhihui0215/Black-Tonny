@@ -21,6 +21,14 @@ Do not rebuild the database. Do not replace the current data flow.
   - estimated
   - forecasted
 - If data is insufficient, say so explicitly. Never fabricate historical comparisons.
+- All outputs, analysis, documentation, and user-facing explanations must be written in English by default.
+- Code identifiers (variables, functions) should remain in English.
+- Avoid mixing languages unless explicitly requested.
+- Internal engineering analysis, code, and technical documentation must remain in English.
+- All boss-facing reports, business summaries, dashboard explanations, and decision-support outputs must be written in Chinese (Simplified Chinese).
+- When generating outputs, clearly distinguish:
+  - internal (English)
+  - external/business-facing (Chinese)
 
 ## Required working order
 Before proposing code changes, read in this order:

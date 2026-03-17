@@ -19,6 +19,7 @@
 | `meta` | object | directly observed metadata | identify page type, generation time, store, batch, pipeline labels | always present |
 | `summary_cards` | object | mostly directly observed / deterministic derived, with nested estimate+forecast blocks | top-level KPI pack | always present; nested optional blocks may be `null` |
 | `today_focus` | object | heuristic recommendation | short action shortlist for today | empty arrays if no actions |
+| `execution_board` | object | mixed direct / estimated / forecast action pack | action-first monthly execution page content | arrays degrade to `[]`; role map degrades to empty lists |
 | `health_lights` | array | derived actual + heuristic banding | color-coded health cards | empty array if source metrics missing |
 | `time_strategy` | object | heuristic plan | day/week/month action guidance by season and phase | strings/lists fall back to generic wording |
 | `decision` | object | heuristic conclusion with forecast-aware wording | current operating mode/headline/summary | always present if metrics build succeeds |
@@ -202,6 +203,59 @@
 
 ### Current label boundary
 - Estimated / heuristic action shortlist.
+
+## `execution_board`
+### Shape
+- `today_must_do: object[]`
+- `weekly_strategy: object[]`
+- `risk_alerts: object[]`
+- `role_actions: object`
+- `execution_buttons: object[]`
+
+### `today_must_do` / `weekly_strategy` item shape
+- `owner`
+- `when`
+- `action`
+- `object`
+- `goal`
+- `sentence`
+- `evidence`
+- `value_label`
+- `data_source`
+- `confidence`
+- `tone`
+
+### `risk_alerts` item shape
+- `title`
+- `level`
+- `evidence`
+- `action`
+- `value_label`
+- `data_source`
+- `confidence`
+
+### `role_actions`
+- `老板: string[]`
+- `店长: string[]`
+- `店员: string[]`
+
+### `execution_buttons` item shape
+- `label`
+- `href`
+- `status`
+- `note`
+
+### Current label boundary
+- Directly observed:
+  - negative inventory, member dormancy, joint-rate evidence fields
+- Estimated:
+  - stockout / clearance / replenishment action cards driven by rules
+- Forecast:
+  - risk cards or must-do actions that cite `profit_snapshot.projected_*`
+
+### Fallback behavior
+- Non-monthly pages currently return empty `today_must_do`, `weekly_strategy`, and `risk_alerts`.
+- The button list may include placeholder rows where UI exists before a dedicated export is wired.
 
 ## `health_lights`
 ### Item shape

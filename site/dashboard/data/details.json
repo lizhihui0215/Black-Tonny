@@ -1,7 +1,7 @@
 {
   "meta": {
     "page_type": "details",
-    "generated_at": "2026-03-17T20:11:42.821067+08:00",
+    "generated_at": "2026-03-17T21:16:30.854030+08:00",
     "store_name": "咸阳沣西吾悦专卖店",
     "analysis_batch_id": "sales_calibration_20260317_195522",
     "data_capture_at": "2026-03-17T19:55:31",
@@ -1313,6 +1313,36 @@
       "检查折扣依赖"
     ]
   },
+  "execution_board": {
+    "today_must_do": [],
+    "weekly_strategy": [],
+    "risk_alerts": [],
+    "role_actions": {
+      "老板": [],
+      "店长": [],
+      "店员": []
+    },
+    "execution_buttons": [
+      {
+        "label": "生成补货清单",
+        "href": "./%E8%A1%A5%E8%B4%A7%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv",
+        "status": "ready",
+        "note": "导出当前补货 SKU 清单"
+      },
+      {
+        "label": "生成清货清单",
+        "href": "./%E5%8E%BB%E5%8C%96%E5%BB%BA%E8%AE%AE%E6%B8%85%E5%8D%95.csv",
+        "status": "ready",
+        "note": "导出当前清货 SKU 清单"
+      },
+      {
+        "label": "生成会员回访名单",
+        "href": "",
+        "status": "placeholder",
+        "note": "预留 UI，下一步接会员分层导出"
+      }
+    ]
+  },
   "health_lights": [
     {
       "level": "red",
@@ -1346,7 +1376,7 @@
     }
   ],
   "time_strategy": {
-    "beijing_time": "2026-03-17 20:11",
+    "beijing_time": "2026-03-17 21:16",
     "season": "春季",
     "phase": "春夏换季期",
     "next_season": "夏季",
@@ -1424,7 +1454,7 @@
       "儿童内衣 / 棉品 / 家居服要分清角色：主销、连带、去化，别放在一张表里平均看。"
     ],
     "role_guidance": {
-      "老板娘": [
+      "老板": [
         "本周先盯 3 个数：保本进度、库存覆盖天数、裤类 的断码情况。",
         "需要你拍板的不是所有货，而是 少女文胸 怎么去化、儿童袜 是否暂缓、裤类 补货预算给多少。",
         "如果这周只能做一个经营动作，就先把高库存慢销货位和清货策略定下来，不要让旧货继续占预算。",
