@@ -51,6 +51,9 @@ const FULL_REPORTS = [
   "每日流水单",
   "会员中心",
 ];
+const KNOWN_IGNORED_REPORTS = {
+  退货明细: "接口当前已确认不稳定，暂时忽略并沿用现状，后续单独处理。",
+};
 
 function withTimeout(promise, reportName, ms = 90000) {
   return Promise.race([
@@ -107,8 +110,28 @@ function summarizeCounts(reports) {
       acc[item.status] = (acc[item.status] || 0) + 1;
       return acc;
     },
-    { total: 0, ok: 0, partial: 0, warning: 0, "opened-only": 0, error: 0 },
+    { total: 0, ok: 0, partial: 0, warning: 0, ignored: 0, "opened-only": 0, error: 0 },
   );
+}
+
+function ignoredReasonFor(reportName) {
+  return KNOWN_IGNORED_REPORTS[normalizeReportName(reportName)] || "";
+}
+
+function applyKnownIssuePolicy(summary) {
+  if (!summary) {
+    return summary;
+  }
+  const ignoredReason = ignoredReasonFor(summary.reportName || summary.requestedReportName || "");
+  if (!ignoredReason || summary.status === "ok") {
+    return summary;
+  }
+  return {
+    ...summary,
+    status: "ignored",
+    ignored: true,
+    ignoredReason,
+  };
 }
 
 function buildReportSummary(result, requestedRange) {
@@ -215,14 +238,14 @@ async function buildFallbackSummary(reportName, requestedRange, outputDir, error
         },
         requestedRange,
       );
-      return {
+      return applyKnownIssuePolicy({
         ...summary,
         status: "warning",
         fallbackUsed: true,
         fallbackSource: candidate.label,
         fallbackCapturedAt: payload.capturedAt || "",
         staleReason: String(error),
-      };
+      });
     } catch {
       // Continue trying the next fallback source.
     }
@@ -266,24 +289,33 @@ async function main() {
           reportName,
           reportTimeoutMs,
         );
-        const summary = buildReportSummary(result, requestedRange);
+        const summary = applyKnownIssuePolicy(buildReportSummary(result, requestedRange));
         summaries.push(summary);
         await persistLastSuccess(summary, result.payload.reportName, OUTPUT_DIR);
-        console.log(`[OK] ${reportName}`);
+        console.log(summary.status === "ignored" ? `[IGNORED] ${reportName}` : `[OK] ${reportName}`);
       } catch (error) {
         const fallbackSummary = await buildFallbackSummary(reportName, requestedRange, OUTPUT_DIR, error);
         if (fallbackSummary) {
           summaries.push(fallbackSummary);
-          console.warn(`[WARN] ${reportName}: ${error}；已沿用${fallbackSummary.fallbackSource}`);
+          if (fallbackSummary.status === "ignored") {
+            console.warn(`[IGNORED] ${reportName}: ${error}；已沿用${fallbackSummary.fallbackSource}`);
+          } else {
+            console.warn(`[WARN] ${reportName}: ${error}；已沿用${fallbackSummary.fallbackSource}`);
+          }
         } else {
-          summaries.push({
+          const errorSummary = applyKnownIssuePolicy({
             status: "error",
             reportName,
             requestedDateRange: requestedRange,
             captureQuality: "error",
             error: String(error),
           });
-          console.error(`[ERROR] ${reportName}: ${error}`);
+          summaries.push(errorSummary);
+          if (errorSummary.status === "ignored") {
+            console.warn(`[IGNORED] ${reportName}: ${error}`);
+          } else {
+            console.error(`[ERROR] ${reportName}: ${error}`);
+          }
         }
       }
 

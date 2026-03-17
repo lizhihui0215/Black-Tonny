@@ -202,6 +202,7 @@ def main() -> int:
                 "ok": int(counts.get("ok") or 0),
                 "partial": int(counts.get("partial") or 0),
                 "warning": int(counts.get("warning") or 0),
+                "ignored": int(counts.get("ignored") or 0),
                 "opened_only": int(counts.get("opened-only") or 0),
                 "error": int(counts.get("error") or 0),
             }
@@ -211,7 +212,8 @@ def main() -> int:
                     status="ok" if scan_counts.get("error", 0) == 0 else "warning",
                     detail=(
                         f"成功 {scan_counts.get('ok', 0)} 张，部分成功 {scan_counts.get('partial', 0)} 张，"
-                        f"warning {scan_counts.get('warning', 0)} 张，失败 {scan_counts.get('error', 0)} 张。"
+                        f"warning {scan_counts.get('warning', 0)} 张，已忽略 {scan_counts.get('ignored', 0)} 张，"
+                        f"失败 {scan_counts.get('error', 0)} 张。"
                     ),
                     command=scan_cmd,
                 )

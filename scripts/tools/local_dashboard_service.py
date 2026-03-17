@@ -113,6 +113,7 @@ class JobState:
     ok_reports: int = 0
     partial_reports: int = 0
     warning_reports: int = 0
+    ignored_reports: int = 0
     opened_only_reports: int = 0
     error_reports: int = 0
 
@@ -150,6 +151,7 @@ def snapshot_state() -> dict[str, Any]:
             "ok_reports": STATE.ok_reports,
             "partial_reports": STATE.partial_reports,
             "warning_reports": STATE.warning_reports,
+            "ignored_reports": STATE.ignored_reports,
             "opened_only_reports": STATE.opened_only_reports,
             "error_reports": STATE.error_reports,
         }
@@ -207,6 +209,7 @@ def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_da
         ok_reports=0,
         partial_reports=0,
         warning_reports=0,
+        ignored_reports=0,
         opened_only_reports=0,
         error_reports=0,
     )
@@ -227,10 +230,12 @@ def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_da
             ok_reports=int(counts.get("ok") or 0),
             partial_reports=int(counts.get("partial") or 0),
             warning_reports=int(counts.get("warning") or 0),
+            ignored_reports=int(counts.get("ignored") or 0),
             opened_only_reports=int(counts.get("opened-only") or 0),
             error_reports=int(counts.get("error") or 0),
         )
         warning_count = int(counts.get("warning") or 0)
+        ignored_count = int(counts.get("ignored") or 0)
         error_count = int(counts.get("error") or 0)
         append_step(
             "执行全量同步",
@@ -238,7 +243,7 @@ def refresh_job(source: str = "unknown", mode: str = DEFAULT_SYNC_MODE, start_da
             (
                 f"已按 {sync_start_date} 到 {sync_end_date} 运行全量同步。"
                 f" 成功 {counts.get('ok', 0)} 张，部分成功 {counts.get('partial', 0)} 张，"
-                f"沿用上次成功数据 {warning_count} 张，仅打开未取数 {counts.get('opened-only', 0)} 张，"
+                f"warning {warning_count} 张，已忽略 {ignored_count} 张，仅打开未取数 {counts.get('opened-only', 0)} 张，"
                 f"失败 {error_count} 张。"
             ),
         )

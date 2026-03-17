@@ -18,7 +18,15 @@ const REPORT_ALIAS_MAP = {
   销售明细统计: "零售明细统计",
   导购员统计: "导购员报表",
 };
-const SNAPSHOT_REPORTS = new Set(["库存综合分析"]);
+const NON_RANGE_REPORTS = new Set(["库存综合分析", "会员中心"]);
+const DIRECT_API_TIMEOUT_MS = 30000;
+const DIRECT_API_TIMEOUT_BY_REPORT = {
+  日进销存: 120000,
+};
+const SCREENSHOT_TIMEOUT_MS = 120000;
+const RANGE_CHUNK_DAYS_BY_REPORT = {
+  日进销存: 31,
+};
 const REPORT_GROUP_MAP = {
   零售明细统计: "零售报表",
   销售明细统计: "零售报表",
@@ -132,8 +140,20 @@ function sanitizeName(value) {
     .slice(0, 80);
 }
 
+function interactiveNodeSelector() {
+  return "a, button, li, p, span, div, .el-menu-item, .el-submenu__title, .ivu-menu-item, .menu-item";
+}
+
 function summarizeText(value, limit = 500) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, limit);
+}
+
+function redactSensitiveText(value) {
+  return String(value || "")
+    .replace(/(authorization:\s*Bearer\s+)[^\s\\]+/gi, "$1<REDACTED>")
+    .replace(/(token:\s*)[^\s\\]+/gi, "$1<REDACTED>")
+    .replace(/("authorization"\s*:\s*"Bearer\s+)[^"]+/gi, '$1<REDACTED>')
+    .replace(/("token"\s*:\s*")[^"]+/gi, '$1<REDACTED>');
 }
 
 export function normalizeReportName(reportName) {
@@ -275,6 +295,78 @@ function isLikelyDataEndpoint(url) {
   return /report|analysis|slip|customreport|vip|member|sale|stock|inout/i.test(url);
 }
 
+function directApiTimeoutMs(reportName) {
+  const resolvedReportName = normalizeReportName(reportName);
+  return DIRECT_API_TIMEOUT_BY_REPORT[resolvedReportName] || DIRECT_API_TIMEOUT_MS;
+}
+
+function directApiChunkDays(reportName) {
+  const resolvedReportName = normalizeReportName(reportName);
+  return RANGE_CHUNK_DAYS_BY_REPORT[resolvedReportName] || 0;
+}
+
+function numericValue(value) {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : 0;
+}
+
+function buildMergedSummaryRows(dataRows) {
+  const keyOrder = Array.from(
+    new Set(dataRows.flatMap((row) => (row && typeof row === "object" ? Object.keys(row) : []))),
+  );
+  const summaryTextKeys = new Set(["Date", "DeptName", "DeptCode"]);
+  const totals = {};
+
+  for (const key of keyOrder) {
+    if (key === "Num") {
+      continue;
+    }
+    if (summaryTextKeys.has(key)) {
+      totals[key] = "";
+      continue;
+    }
+    totals[key] = dataRows.reduce((acc, row) => acc + numericValue(row?.[key]), 0);
+  }
+
+  return [
+    { Num: "小计", ...totals },
+    { Num: "合计", ...totals },
+  ];
+}
+
+function mergeDayInSalesChunkBodies(bodies) {
+  const validBodies = bodies.filter((body) => body && typeof body === "object");
+  if (!validBodies.length) {
+    return null;
+  }
+
+  const dataRows = validBodies
+    .flatMap((body) => body?.retdata?.Data || [])
+    .filter((row) => row && typeof row === "object")
+    .sort((left, right) => String(left.Date || "").localeCompare(String(right.Date || "")))
+    .map((row, index) => ({
+      ...row,
+      Num: index + 1,
+    }));
+
+  return {
+    ...(validBodies[0] || {}),
+    retdata: {
+      Count: dataRows.length,
+      SumData: buildMergedSummaryRows(dataRows),
+      Data: dataRows,
+    },
+  };
+}
+
+function mergeChunkedBodies(reportName, bodies) {
+  const resolvedReportName = normalizeReportName(reportName);
+  if (resolvedReportName === "日进销存") {
+    return mergeDayInSalesChunkBodies(bodies);
+  }
+  return bodies[bodies.length - 1] || null;
+}
+
 function summarizeCapture(reportName, captureLog, requestedRange) {
   const responses = captureLog.responses.map((item) => ({
     ...item,
@@ -282,12 +374,21 @@ function summarizeCapture(reportName, captureLog, requestedRange) {
   }));
   const dataResponses = responses.filter((item) => isLikelyDataEndpoint(item.url) || (item.rowCount ?? 0) > 0);
   const preferredResponse =
+    dataResponses.find((item) => item.source === "direct-api-merged") ||
     dataResponses.find((item) => (item.rowCount ?? 0) > 0) ||
     dataResponses.find((item) => DATA_ENDPOINT_HINTS.some((keyword) => item.url.includes(keyword))) ||
     dataResponses[0] ||
     null;
 
   const matchingRequest =
+    [...captureLog.requests]
+      .reverse()
+      .find(
+        (item) =>
+          preferredResponse &&
+          item.url === preferredResponse.url &&
+          (!preferredResponse.source || item.source === preferredResponse.source),
+      ) ||
     [...captureLog.requests]
       .reverse()
       .find((item) => preferredResponse && item.url === preferredResponse.url) ||
@@ -301,14 +402,14 @@ function summarizeCapture(reportName, captureLog, requestedRange) {
   const requestedEnd = compactDateValue(requestedRange.end);
   const requestStart = compactDateValue(requestRange?.start || "");
   const requestEnd = compactDateValue(requestRange?.end || "");
-  const isSnapshotReport = SNAPSHOT_REPORTS.has(reportName);
-  const rangeMatched = isSnapshotReport
+  const isNonRangeReport = NON_RANGE_REPORTS.has(reportName);
+  const rangeMatched = isNonRangeReport
     ? true
     : Boolean(requestStart && requestEnd && requestStart === requestedStart && requestEnd === requestedEnd);
   const rowCount = preferredResponse?.rowCount ?? 0;
 
   let captureQuality = "opened-only";
-  if (preferredResponse && isSnapshotReport) {
+  if (preferredResponse && isNonRangeReport) {
     captureQuality = "snapshot-data";
   } else if (preferredResponse && rangeMatched && rowCount > 0) {
     captureQuality = "full-range-data";
@@ -322,7 +423,7 @@ function summarizeCapture(reportName, captureLog, requestedRange) {
 
   return {
     captureQuality,
-    reportMode: isSnapshotReport ? "snapshot" : "date-range",
+    reportMode: isNonRangeReport ? "snapshot" : "date-range",
     requestedRange,
     requestRange: requestRange || { start: "", end: "" },
     rangeMatched,
@@ -430,6 +531,54 @@ async function extractAuth(page) {
 
 function compactDate(value) {
   return String(value || "").replace(/-/g, "");
+}
+
+function parseDateInput(value) {
+  const normalized = String(value || "").trim();
+  const match = normalized.match(/^(\d{4})-?(\d{2})-?(\d{2})$/);
+  if (!match) {
+    return null;
+  }
+  return new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+}
+
+function formatIsoDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function daysBetweenInclusive(startDate, endDate) {
+  const start = parseDateInput(startDate);
+  const end = parseDateInput(endDate);
+  if (!start || !end) {
+    return 0;
+  }
+  return Math.floor((end.getTime() - start.getTime()) / 86400000) + 1;
+}
+
+function splitDateRange(startDate, endDate, chunkDays) {
+  const start = parseDateInput(startDate);
+  const end = parseDateInput(endDate);
+  if (!start || !end || !chunkDays || chunkDays <= 0) {
+    return [{ start: startDate, end: endDate }];
+  }
+
+  const chunks = [];
+  let cursor = new Date(start.getTime());
+  while (cursor.getTime() <= end.getTime()) {
+    const chunkStart = new Date(cursor.getTime());
+    const chunkEnd = new Date(cursor.getTime());
+    chunkEnd.setUTCDate(chunkEnd.getUTCDate() + chunkDays - 1);
+    if (chunkEnd.getTime() > end.getTime()) {
+      chunkEnd.setTime(end.getTime());
+    }
+    chunks.push({
+      start: formatIsoDate(chunkStart),
+      end: formatIsoDate(chunkEnd),
+    });
+    cursor.setUTCDate(cursor.getUTCDate() + chunkDays);
+  }
+
+  return chunks;
 }
 
 function shiftDate(dateText, yearDelta = 0, monthDelta = 0) {
@@ -762,16 +911,8 @@ function buildDirectReportRequest(reportName, startDate, endDate, auth = {}) {
 }
 
 async function enrichReportWithDirectApi(session, reportName, captureLog, options = {}) {
-  const requestPlan = buildDirectReportRequest(
-    reportName,
-    options.startDate || session.startDate || START_DATE,
-    options.endDate || session.endDate || END_DATE,
-    session.auth || {},
-  );
-  if (!requestPlan) {
-    return false;
-  }
-
+  const requestedStartDate = options.startDate || session.startDate || START_DATE;
+  const requestedEndDate = options.endDate || session.endDate || END_DATE;
   const headers = {
     "content-type": "application/json;charset=UTF-8",
   };
@@ -780,32 +921,99 @@ async function enrichReportWithDirectApi(session, reportName, captureLog, option
     headers.authorization = `Bearer ${session.auth.token}`;
   }
 
-  const response = await session.context.request.post(requestPlan.url, {
-    data: requestPlan.body,
-    headers,
-    failOnStatusCode: false,
-  });
+  const postPlan = async (requestPlan, source) => {
+    const response = await session.context.request.post(requestPlan.url, {
+      data: requestPlan.body,
+      headers,
+      timeout: directApiTimeoutMs(reportName),
+      failOnStatusCode: false,
+    });
 
-  let body;
-  try {
-    body = await response.json();
-  } catch {
-    body = summarizeText(await response.text(), 3000);
+    let body;
+    try {
+      body = await response.json();
+    } catch {
+      body = summarizeText(await response.text(), 3000);
+    }
+
+    captureLog.requests.push({
+      method: "POST",
+      url: requestPlan.url,
+      postData: requestPlan.body,
+      source,
+    });
+    captureLog.responses.push({
+      status: response.status(),
+      url: requestPlan.url,
+      body,
+      source,
+    });
+    return { ok: response.ok(), body };
+  };
+
+  const chunkDays = directApiChunkDays(reportName);
+  if (chunkDays && daysBetweenInclusive(requestedStartDate, requestedEndDate) > chunkDays) {
+    const chunkRanges = splitDateRange(requestedStartDate, requestedEndDate, chunkDays);
+    const mergedRequestPlan = buildDirectReportRequest(
+      reportName,
+      requestedStartDate,
+      requestedEndDate,
+      session.auth || {},
+    );
+    if (!mergedRequestPlan) {
+      return false;
+    }
+
+    const chunkBodies = [];
+    for (const chunkRange of chunkRanges) {
+      const chunkPlan = buildDirectReportRequest(
+        reportName,
+        chunkRange.start,
+        chunkRange.end,
+        session.auth || {},
+      );
+      if (!chunkPlan) {
+        return false;
+      }
+      const result = await postPlan(chunkPlan, "direct-api-chunk");
+      if (!result.ok) {
+        return false;
+      }
+      chunkBodies.push(result.body);
+    }
+
+    const mergedBody = mergeChunkedBodies(reportName, chunkBodies);
+    if (!mergedBody) {
+      return false;
+    }
+
+    captureLog.requests.push({
+      method: "POST",
+      url: mergedRequestPlan.url,
+      postData: mergedRequestPlan.body,
+      source: "direct-api-merged",
+    });
+    captureLog.responses.push({
+      status: 200,
+      url: mergedRequestPlan.url,
+      body: mergedBody,
+      source: "direct-api-merged",
+    });
+    return true;
   }
 
-  captureLog.requests.push({
-    method: "POST",
-    url: requestPlan.url,
-    postData: requestPlan.body,
-    source: "direct-api",
-  });
-  captureLog.responses.push({
-    status: response.status(),
-    url: requestPlan.url,
-    body,
-    source: "direct-api",
-  });
-  return response.ok();
+  const requestPlan = buildDirectReportRequest(
+    reportName,
+    requestedStartDate,
+    requestedEndDate,
+    session.auth || {},
+  );
+  if (!requestPlan) {
+    return false;
+  }
+
+  const result = await postPlan(requestPlan, "direct-api");
+  return result.ok;
 }
 
 function flattenMenu(items, bucket = [], parents = []) {
@@ -872,7 +1080,7 @@ async function revealReportMenu(frame, page) {
     }
   });
   await page.waitForTimeout(1500);
-  const candidates = frame.locator("li, p, span, div").filter({ hasText: "报表管理" });
+  const candidates = frame.locator(interactiveNodeSelector()).filter({ hasText: "报表管理" });
   const count = await candidates.count();
   for (let index = 0; index < count; index += 1) {
     const item = candidates.nth(index);
@@ -887,7 +1095,7 @@ async function revealReportMenu(frame, page) {
     }
   }
   await frame.evaluate(() => {
-    const labels = Array.from(document.querySelectorAll("li, p, span, div"));
+    const labels = Array.from(document.querySelectorAll("a, button, li, p, span, div, .el-menu-item, .el-submenu__title, .ivu-menu-item, .menu-item"));
     const target = labels.find((item) => (item.textContent || "").trim() === "报表管理");
     target?.click();
   });
@@ -897,7 +1105,9 @@ async function revealReportMenu(frame, page) {
 async function clickExactTextNode(frame, text) {
   return frame.evaluate((expectedText) => {
     const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
-    const candidates = Array.from(document.querySelectorAll("li, p, span, div"))
+    const candidates = Array.from(
+      document.querySelectorAll("a, button, li, p, span, div, .el-menu-item, .el-submenu__title, .ivu-menu-item, .menu-item"),
+    )
       .filter((item) => {
         const rect = item.getBoundingClientRect();
         return rect.width > 0 && rect.height > 0 && normalize(item.textContent) === expectedText;
@@ -942,7 +1152,7 @@ async function tryOpenReportByMenuItem(frame, page, reportName, menuItem) {
             reason: success ? "" : "tab-not-activated",
           };
         } catch (error) {
-          return { ok: false, reason: `addTab:${String(error)}` };
+          return { ok: false, reason: `addTab:${redactSensitiveText(error)}` };
         }
       }
 
@@ -955,7 +1165,7 @@ async function tryOpenReportByMenuItem(frame, page, reportName, menuItem) {
       return result;
     }
     return result || { ok: false, reason: "empty-result" };
-  }).catch((error) => ({ ok: false, reason: `exception:${String(error)}` }));
+  }).catch((error) => ({ ok: false, reason: `exception:${redactSensitiveText(error)}` }));
 }
 
 async function ensureReportGroup(frame, page, reportName) {
@@ -967,7 +1177,7 @@ async function ensureReportGroup(frame, page, reportName) {
     await page.waitForTimeout(600);
     return;
   }
-  const groupCandidates = frame.locator("li, p, span, div").filter({ hasText: groupName });
+  const groupCandidates = frame.locator(interactiveNodeSelector()).filter({ hasText: groupName });
   const count = await groupCandidates.count();
   for (let index = 0; index < count; index += 1) {
     const item = groupCandidates.nth(index);
@@ -990,7 +1200,7 @@ async function clickReportMenuItem(frame, reportName) {
     return;
   }
 
-  const candidates = frame.locator("li, p, span, div").filter({ hasText: reportName });
+  const candidates = frame.locator(interactiveNodeSelector()).filter({ hasText: reportName });
   const count = await candidates.count();
   if (!count) {
     throw new Error(`未找到报表菜单项：${reportName}`);
@@ -1219,7 +1429,7 @@ export async function captureReportInSession(session, reportName, options = {}) 
       startDate: requestedRange.start,
       endDate: requestedRange.end,
     }).catch((error) => {
-      console.log(`[STEP] direct api skipped: ${String(error)}`);
+      console.log(`[STEP] direct api skipped: ${redactSensitiveText(error)}`);
       return false;
     });
   }
@@ -1282,7 +1492,7 @@ export async function captureReportInSession(session, reportName, options = {}) 
 
   const screenshotPath = path.join(outputDir, `${sanitizeName(resolvedReportName)}.png`);
   console.log("[STEP] screenshot");
-  await session.page.screenshot({ path: screenshotPath, fullPage: true });
+  await session.page.screenshot({ path: screenshotPath, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
 
   const finalCaptureLog = session.collector.stop();
   const captureSummary = summarizeCapture(resolvedReportName, finalCaptureLog, requestedRange);
