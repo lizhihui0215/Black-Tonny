@@ -5,6 +5,7 @@ reports/yeusoft_inspect/
 reports/yeusoft_explore/
 reports/yeusoft_report_capture/
 reports/capture-cache/
+reports/capture-cache-debug/
 reports/debug/
 reports/calibration/*.sqlite
 data/imports/
